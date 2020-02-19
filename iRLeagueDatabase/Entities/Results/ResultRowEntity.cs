@@ -17,12 +17,12 @@ namespace iRLeagueDatabase.Entities.Results
     public class ResultRowEntity : MappableEntity
     {
         [Key, Column(Order = 0), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ResultRowId { get; set; }
+        public long ResultRowId { get; set; }
 
         public override object MappingId => ResultRowId;
 
         [Key, ForeignKey(nameof(Result)), Column(Order = 1)]
-        public int? ResultId { get; set; }
+        public long? ResultId { get; set; }
         public virtual ResultEntity Result { get; set; }
 
         public DateTime? Date => Result?.Session?.Date;

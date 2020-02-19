@@ -12,7 +12,7 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
     public class ScheduleInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public int? ScheduleId { get; set; }
+        public long? ScheduleId { get; set; }
 
         object IMappableDTO.MappingId => ScheduleId;
     }

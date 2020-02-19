@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\iRLeagueManager\Communication\bin\Debug\Communication.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -59,6 +63,14 @@
     <Compile Include="Migrations\202002180825596_CascadeDeleteResult.cs" />
     <Compile Include="Migrations\202002180825596_CascadeDeleteResult.designer.cs">
       <DependentUpon>202002180825596_CascadeDeleteResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002182237492_UpdateScoringModel.cs" />
+    <Compile Include="Migrations\202002182237492_UpdateScoringModel.designer.cs">
+      <DependentUpon>202002182237492_UpdateScoringModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002190545406_ChangeKeyType.cs" />
+    <Compile Include="Migrations\202002190545406_ChangeKeyType.designer.cs">
+      <DependentUpon>202002190545406_ChangeKeyType.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -91,12 +103,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Communication\Communication.csproj">
-      <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
-      <Name>Communication</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +111,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002180825596_CascadeDeleteResult.resx">
       <DependentUpon>202002180825596_CascadeDeleteResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002182237492_UpdateScoringModel.resx">
+      <DependentUpon>202002182237492_UpdateScoringModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002190545406_ChangeKeyType.resx">
+      <DependentUpon>202002190545406_ChangeKeyType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

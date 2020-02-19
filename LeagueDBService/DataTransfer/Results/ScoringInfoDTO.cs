@@ -10,7 +10,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class ScoringInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public int ScoringId { get; set; }
+        public long ScoringId { get; set; }
 
         object IMappableDTO.MappingId => ScoringId;
     }

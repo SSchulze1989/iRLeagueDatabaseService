@@ -32,10 +32,12 @@ namespace iRLeagueDatabase
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
             OrphansToHandle = new OrphansToHandle();
-            OrphansToHandle.Add<SessionBaseEntity, ScheduleEntity>();
-            OrphansToHandle.Add<RaceSessionEntity, ScheduleEntity>();
-            OrphansToHandle.Add<ResultEntity, SessionBaseEntity>();
-            OrphansToHandle.Add<ResultEntity, RaceSessionEntity>();
+            OrphansToHandle.Add<ScheduleEntity, SeasonEntity>(x => x.Season);
+            OrphansToHandle.Add<SessionBaseEntity, ScheduleEntity>(x => x.Schedule);
+            OrphansToHandle.Add<RaceSessionEntity, ScheduleEntity>(x => x.Schedule);
+            OrphansToHandle.Add<ResultEntity, SessionBaseEntity>(x => x.Session);
+            OrphansToHandle.Add<ResultEntity, RaceSessionEntity>(x => x.Session as RaceSessionEntity);
+            OrphansToHandle.Add<ResultRowEntity, ResultEntity>(x => x.Result);
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -71,6 +73,25 @@ namespace iRLeagueDatabase
                 .HasRequired(r => r.Schedule)
                 .WithMany(r => r.Sessions)
                 .WillCascadeOnDelete();
+
+            modelBuilder.Entity<ScoringEntity>()
+                .HasMany(r => r.Sessions)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ScoringRefId");
+                    rm.MapRightKey("SessionRefId");
+                    rm.ToTable("Scoring_Session");
+                });
+            modelBuilder.Entity<ScoringEntity>()
+                .HasMany(r => r.MultiScoringResults)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ScoringParentId");
+                    rm.MapRightKey("ScoringChildId");
+                    rm.ToTable("MultiScoringMap");
+                });
         }
 
         public override int SaveChanges()
@@ -111,11 +132,13 @@ namespace iRLeagueDatabase
             {
                 if (IsInstanceOf(entityKeyOne, item.ChildToDelete) && IsInstanceOf(entityKeyTwo, item.Parent))
                 {
-                    return entityKeyOne;
+                    if (item.NavigationProperty(entityKeyOne) == null)
+                        return entityKeyOne;
                 }
                 if (IsInstanceOf(entityKeyOne, item.Parent) && IsInstanceOf(entityKeyTwo, item.ChildToDelete))
                 {
-                    return entityKeyTwo;
+                    if (item.NavigationProperty(entityKeyTwo) == null)
+                        return entityKeyTwo;
                 }
             }
 
@@ -143,15 +166,26 @@ namespace iRLeagueDatabase
             List = new List<EntityPairDto>();
         }
 
-        public void Add<TChildObjectToDelete, TParentObject>()
+        public void Add<TChildObjectToDelete, TParentObject>(Func<TChildObjectToDelete, TParentObject> navigationProperty)
         {
-            List.Add(new EntityPairDto() { ChildToDelete = typeof(TChildObjectToDelete), Parent = typeof(TParentObject) });
+            List.Add(new EntityPairDto<TChildObjectToDelete, TParentObject>(navigationProperty));
         }
     }
 
     public class EntityPairDto
     {
-        public Type ChildToDelete { get; set; }
-        public Type Parent { get; set; }
+        public virtual Type ChildToDelete { get; set; }
+        public virtual Type Parent { get; set; }
+        public Func<object, object> NavigationProperty { get; set; }
+    }
+
+    public class EntityPairDto<TChild, TParent> : EntityPairDto
+    {
+        public EntityPairDto(Func<TChild, TParent> navigationProperty)
+        {
+            ChildToDelete = typeof(TChild);
+            Parent = typeof(TParent);
+            NavigationProperty = new Func<object, object>(x => navigationProperty((TChild)x));
+        }
     }
 }

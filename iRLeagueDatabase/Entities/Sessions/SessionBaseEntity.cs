@@ -33,7 +33,7 @@ namespace iRLeagueDatabase.Entities.Sessions
         /// </summary>
         [Key]
         //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SessionId { get; set; }
+        public long SessionId { get; set; }
 
         public string SessionTitle { get; set; }
         

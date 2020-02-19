@@ -14,7 +14,7 @@ namespace iRLeagueDatabase.Entities.Reviews
     public class CommentBaseEntity : Revision
     {
         [Key]
-        public int CommentId { get; set; }
+        public long CommentId { get; set; }
 
         public override object MappingId => CommentId;
 

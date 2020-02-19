@@ -15,7 +15,7 @@ namespace iRLeagueDatabase.Entities.Members
     public class LeagueMemberEntity : MappableEntity
     {
         [Key]
-        public int MemberId { get; set; } = 0;
+        public long MemberId { get; set; } = 0;
         public string Firstname { get; set; } = "Firstname";
         public string Lastname { get; set; } = "Lastname";
         public string Fullname => Firstname + ' ' + Lastname;

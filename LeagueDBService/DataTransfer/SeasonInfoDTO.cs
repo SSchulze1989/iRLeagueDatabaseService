@@ -12,7 +12,7 @@ namespace iRLeagueDatabase.DataTransfer
     public class SeasonInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public int SeasonId { get; set; }
+        public long SeasonId { get; set; }
 
         [DataMember]
         public string SeasonName { get; set; }

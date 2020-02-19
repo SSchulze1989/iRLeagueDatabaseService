@@ -14,7 +14,7 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
     public class SessionInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public int? SessionId { get; set; }
+        public long? SessionId { get; set; }
 
         [DataMember]
         /// <summary>

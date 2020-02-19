@@ -16,25 +16,21 @@ namespace iRLeagueDatabase.Entities.Results
     public class ScoringEntity : Revision
     {
         [Key]
-        public int ScoringId { get; set; }
-
+        public long ScoringId { get; set; }
+        public string Name { get; set; }
         public override object MappingId => ScoringId;
-
         public int DropWeeks { get; set; }
-
         public int AverageRaceNr { get; set; }
-
-        [ForeignKey(nameof(Schedule))]
-        public int? ScheduleId { get; set; }
-        public ScheduleEntity Schedule { get; set; }
-
-        //[XmlArray("TotalScoringPoints")]
-        //[XmlArrayItem("Entry")]
-        //[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        ////public XmlDictionary<uint, int> XmlScorinPoints { get => (TotalScoringPoints != null) ? TotalScoringPoints : new Dictionary<uint, int>(); }
-        //public XmlDictionaryRow<uint, int>[] XmlScoringPoints { get => TotalScoringPoints.Cast<XmlDictionaryRow<uint, int>>().ToArray(); set => TotalScoringPoints = value.ToDictionary(k => k.Key, v => v.Value); }
-
-        public string ScoringRuleName { get; set; }
+        public virtual List<SessionBaseEntity> Sessions { get; set; }
+        [ForeignKey(nameof(Season))]
+        public long SeasonId { get; set; }
+        [Required]
+        public virtual SeasonEntity Season { get; set; }
+        public string BasePoints { get; set; }
+        public string BonusPoints { get; set; }
+        public string IncPenaltyPoints { get; set; }
+        public string MultiScoringFactors { get; set; }
+        public virtual List<ScoringEntity> MultiScoringResults { get; set; }
 
         //public ScoringRuleBase Rule { get; set; }
 

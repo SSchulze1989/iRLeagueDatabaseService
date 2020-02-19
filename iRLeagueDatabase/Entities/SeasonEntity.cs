@@ -16,7 +16,7 @@ namespace iRLeagueDatabase.Entities
     public class SeasonEntity : Revision
     {   
         [Key]
-        public int SeasonId { get; set; }
+        public long SeasonId { get; set; }
 
         public override object MappingId => SeasonId;
 
@@ -24,7 +24,7 @@ namespace iRLeagueDatabase.Entities
         
         public virtual List<ScheduleEntity> Schedules { get; set; }
 
-        //public virtual List<ScoringEntity> Scorings { get; set; }
+        public virtual List<ScoringEntity> Scorings { get; set; }
 
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
 

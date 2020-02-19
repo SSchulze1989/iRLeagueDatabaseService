@@ -15,7 +15,7 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// <summary>
         /// Unique race id for the league
         /// </summary>
-        public int RaceId { get; set; }
+        public long RaceId { get; set; }
 
         [DataMember]
         /// <summary>

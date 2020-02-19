@@ -8,7 +8,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
 {
     public class StandingsRowDTO
     {
-        public int MemberId { get; set; }
+        public long MemberId { get; set; }
 
         public int Pos { get; set; }
         

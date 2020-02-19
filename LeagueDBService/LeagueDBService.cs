@@ -71,7 +71,7 @@ namespace LeagueDBService
             return result;
         }
 
-        public LeagueMemberDataDTO GetMember(int memberId)
+        public LeagueMemberDataDTO GetMember(long memberId)
         {
             LeagueMemberDataDTO leagueMember;
             using (var leagueDb = new LeagueDbContext())
@@ -91,7 +91,7 @@ namespace LeagueDBService
             }
         }
 
-        public List<SeasonDataDTO> GetSeasons(int[] seasonIds = null)
+        public List<SeasonDataDTO> GetSeasons(long[] seasonIds = null)
         {
             //IQueryable<Season> seasonEntities;
             IEnumerable<SeasonEntity> seasonEntities;
@@ -113,7 +113,7 @@ namespace LeagueDBService
 
                 //seasonDTOs = mapper.ProjectTo<SeasonDataDTO>(seasonEntities).ToList();
 
-                if (seasonIds == null || seasonIds == new int[0])
+                if (seasonIds == null || seasonIds == new long[0])
                 {
                     seasonEntities = leagueDb.Seasons.ToArray();
                 }
@@ -165,7 +165,7 @@ namespace LeagueDBService
             return returnData;
         }
 
-        public List<LeagueMemberDataDTO> GetMembers(int[] memberIds = null)
+        public List<LeagueMemberDataDTO> GetMembers(long[] memberIds = null)
         {
             IQueryable<LeagueMemberEntity> memberEntities;
             List<LeagueMemberDataDTO> memberDTOs;
@@ -174,7 +174,7 @@ namespace LeagueDBService
 
             using (var leagueDb = new LeagueDbContext())
             {
-                if (memberIds == null || memberIds == new int[0])
+                if (memberIds == null || memberIds == new long[0])
                 {
                     memberEntities = leagueDb.Members.AsQueryable();
                 }
@@ -230,7 +230,7 @@ namespace LeagueDBService
 
         public LeagueMemberDataDTO GetLastMember()
         {
-            int lastMemberId = 0;
+            long lastMemberId = 0;
 
             using (var leagueDb = new LeagueDbContext())
             {
@@ -277,7 +277,7 @@ namespace LeagueDBService
             return returnData;
         }
 
-        public SeasonDataDTO GetSeason(int seasonId)
+        public SeasonDataDTO GetSeason(long seasonId)
         {
             var mapper = MapperConfiguration.CreateMapper();
             SeasonDataDTO season = null;
@@ -290,7 +290,7 @@ namespace LeagueDBService
             return season;
         }
 
-        public IncidentReviewDataDTO GetReview(int reviewId)
+        public IncidentReviewDataDTO GetReview(long reviewId)
         {
             var mapper = MapperConfiguration.CreateMapper();
             IncidentReviewDataDTO review = null;
@@ -344,7 +344,7 @@ namespace LeagueDBService
             return returnReview;
         }
 
-        public CommentDataDTO GetComment(int commentId)
+        public CommentDataDTO GetComment(long commentId)
         {
             var mapper = MapperConfiguration.CreateMapper();
             CommentDataDTO comment = null;
@@ -403,7 +403,7 @@ namespace LeagueDBService
             return returnComment;
         }
 
-        public SessionDataDTO GetSession(int sessionId)
+        public SessionDataDTO GetSession(long sessionId)
         {
             SessionDataDTO sessionData;
             using (var leagueDb = new LeagueDbContext())
@@ -456,7 +456,7 @@ namespace LeagueDBService
             return returnData;
         }
 
-        public ScheduleDataDTO GetSchedule(int scheduleId)
+        public ScheduleDataDTO GetSchedule(long scheduleId)
         {
             ScheduleDataDTO scheduleData;
             using (var leagueDb = new LeagueDbContext())
@@ -510,7 +510,7 @@ namespace LeagueDBService
             return returnData;
         }
 
-        public List<ScheduleDataDTO> GetSchedules(int[] scheduleIds = null)
+        public List<ScheduleDataDTO> GetSchedules(long[] scheduleIds = null)
         {
             IQueryable<ScheduleEntity> scheduleEntities;
             List<ScheduleDataDTO> scheduleDTOs;
@@ -521,7 +521,7 @@ namespace LeagueDBService
             {
                 var scheduleSet = leagueDb.Set<ScheduleEntity>();
 
-                if (scheduleIds == null || scheduleIds == new int[0])
+                if (scheduleIds == null || scheduleIds == new long[0])
                 {
                     scheduleEntities = scheduleSet.AsQueryable();
                 }
@@ -536,7 +536,7 @@ namespace LeagueDBService
             return scheduleDTOs;
         }
 
-        public ResultDataDTO GetResult(int resultId)
+        public ResultDataDTO GetResult(long resultId)
         {
             ResultDataDTO resultData;
             using (var leagueDb = new LeagueDbContext())
@@ -590,7 +590,7 @@ namespace LeagueDBService
             return returnData;
         }
 
-        public StandingsRowDTO[] GetSeasonStandings(int seasonId, int? lastSessionId = null)
+        public StandingsRowDTO[] GetSeasonStandings(long seasonId, long? lastSessionId = null)
         {
             SeasonEntity seasonEntity;
             List<StandingsRowDTO> standings = new List<StandingsRowDTO>();
@@ -705,7 +705,7 @@ namespace LeagueDBService
             return standingsRows;
         }
 
-        public StandingsRowDTO[] GetTeamStandings(int seasonId, int? lastSessionId)
+        public StandingsRowDTO[] GetTeamStandings(long seasonId, long? lastSessionId)
         {
             return null;
         }

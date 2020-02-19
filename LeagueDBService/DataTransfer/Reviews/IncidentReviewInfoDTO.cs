@@ -11,7 +11,7 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
     public class IncidentReviewInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public int? ReviewId { get; set; }
+        public long? ReviewId { get; set; }
 
         object IMappableDTO.MappingId => ReviewId;
     }

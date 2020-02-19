@@ -25,6 +25,6 @@ namespace iRLeagueDatabase.Entities.Results
         /// </summary>
         /// <param name="result">Result sheet for calculation - only "FinalResults" are taken into account</param>
         /// <returns>Dictionaray with |MemberId, ChampPoints|</returns>
-        public abstract Dictionary<int, int> GetChampPoints(ResultEntity result);
+        public abstract Dictionary<long, int> GetChampPoints(ResultEntity result);
     }
 }

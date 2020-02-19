@@ -13,7 +13,7 @@ namespace iRLeagueDatabase.Entities.Sessions
     public class ScheduleEntity : Revision
     {
         [Key]
-        public int ScheduleId { get; set; }
+        public long ScheduleId { get; set; }
 
         public string Name { get; set; }
 

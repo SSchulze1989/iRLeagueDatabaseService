@@ -26,7 +26,7 @@ namespace iRLeagueDatabase.Entities.Results
         //public virtual SeasonEntity Season { get; set; }
 
         [Key, ForeignKey(nameof(Session))]
-        public virtual int ResultId { get; set; }
+        public virtual long ResultId { get; set; }
         [Required]
         public virtual SessionBaseEntity Session { get; set; }
 

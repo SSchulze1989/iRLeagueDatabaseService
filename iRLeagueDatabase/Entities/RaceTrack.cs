@@ -10,7 +10,7 @@ namespace iRLeagueDatabase.Entities
     [Serializable]
     public class RaceTrack
     {
-        public int TrackId { get; set; }
+        public long TrackId { get; set; }
         public string TrackName { get; set; }
         public List<TrackConfig> Configs { get; set; }
         //Race track data

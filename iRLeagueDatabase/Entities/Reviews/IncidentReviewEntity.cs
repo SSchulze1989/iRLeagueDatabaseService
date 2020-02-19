@@ -20,7 +20,7 @@ namespace iRLeagueDatabase.Entities.Reviews
     public class IncidentReviewEntity : Revision
     {
         [Key]
-        public int ReviewId { get; set; }
+        public long ReviewId { get; set; }
 
         public override object MappingId => ReviewId;
 

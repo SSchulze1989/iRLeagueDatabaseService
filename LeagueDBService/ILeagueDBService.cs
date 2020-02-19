@@ -26,19 +26,19 @@ namespace LeagueDBService
         string Test(string name);
 
         [OperationContract]
-        SeasonDataDTO GetSeason(int seasonId);
+        SeasonDataDTO GetSeason(long seasonId);
 
         [OperationContract]
-        List<SeasonDataDTO> GetSeasons(int[] seasonIds = null);
+        List<SeasonDataDTO> GetSeasons(long[] seasonIds = null);
 
         [OperationContract]
         SeasonDataDTO PutSeason(SeasonDataDTO season);
 
         [OperationContract]
-        LeagueMemberDataDTO GetMember(int memberId);
+        LeagueMemberDataDTO GetMember(long memberId);
 
         [OperationContract]
-        List<LeagueMemberDataDTO> GetMembers(int[] memberId = null);
+        List<LeagueMemberDataDTO> GetMembers(long[] memberId = null);
 
         [OperationContract]
         LeagueMemberDataDTO[] UpdateMemberList(LeagueMemberDataDTO[] members);
@@ -50,43 +50,43 @@ namespace LeagueDBService
         LeagueMemberDataDTO PutMember(LeagueMemberDataDTO member);
 
         [OperationContract]
-        IncidentReviewDataDTO GetReview(int reviewId);
+        IncidentReviewDataDTO GetReview(long reviewId);
 
         [OperationContract]
         IncidentReviewDataDTO PutReview(IncidentReviewDataDTO review);
 
         [OperationContract]
-        SessionDataDTO GetSession(int sessionId);
+        SessionDataDTO GetSession(long sessionId);
 
         [OperationContract]
         SessionDataDTO PutSession(SessionDataDTO session);
 
         [OperationContract]
-        CommentDataDTO GetComment(int commentId);
+        CommentDataDTO GetComment(long commentId);
 
         [OperationContract]
         CommentDataDTO PutComment(ReviewCommentDataDTO comment);
 
         [OperationContract]
-        ScheduleDataDTO GetSchedule(int scheduleId);
+        ScheduleDataDTO GetSchedule(long scheduleId);
 
         [OperationContract]
-        List<ScheduleDataDTO> GetSchedules(int[] scheduleIds = null);
+        List<ScheduleDataDTO> GetSchedules(long[] scheduleIds = null);
 
         [OperationContract]
         ScheduleDataDTO PutSchedule(ScheduleDataDTO schedule);
 
         [OperationContract]
-        ResultDataDTO GetResult(int resultId);
+        ResultDataDTO GetResult(long resultId);
 
         [OperationContract]
         ResultDataDTO PutResult(ResultDataDTO result);
 
         [OperationContract]
-        StandingsRowDTO[] GetSeasonStandings(int seasonId, int? lastSessionId);
+        StandingsRowDTO[] GetSeasonStandings(long seasonId, long? lastSessionId);
 
         [OperationContract]
-        StandingsRowDTO[] GetTeamStandings(int seasonId, int? lastSessionId);
+        StandingsRowDTO[] GetTeamStandings(long seasonId, long? lastSessionId);
 
         [OperationContract]
         void CleanUpSessions();

@@ -23,7 +23,7 @@ namespace iRLeagueDatabase.Entities.Sessions
         /// Unique race id for the league
         /// </summary>
         [Key]
-        public int RaceId { get; set; }
+        public long RaceId { get; set; }
         
         /// <summary>
         /// Number of laps for the race. Set to 0 for time based races.

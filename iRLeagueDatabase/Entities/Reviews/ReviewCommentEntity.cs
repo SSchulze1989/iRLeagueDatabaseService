@@ -18,7 +18,7 @@ namespace iRLeagueDatabase.Entities.Reviews
         public VoteEnum Vote { get; set; }
 
         [ForeignKey(nameof(Review))]
-        public int? ReviewId { get; set; }
+        public long? ReviewId { get; set; }
         public IncidentReviewEntity Review { get; set; }
 
         public LeagueMemberEntity MemberAtFault { get; set; }

@@ -28,7 +28,7 @@ namespace iRLeagueDatabase.Entities.Results
             return Math.Max(MaxPoints - (place - 1) * PlaceDropOff, 0);
         }
 
-        public override Dictionary<int, int> GetChampPoints(ResultEntity result)
+        public override Dictionary<long, int> GetChampPoints(ResultEntity result)
         {
             return result.RawResults.ToDictionary(k => k.Member.MemberId, v => GetSingleChampPoint(v.FinalPosition));
         }

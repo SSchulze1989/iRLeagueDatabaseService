@@ -12,7 +12,7 @@ namespace iRLeagueDatabase.DataTransfer.Members
     public class LeagueMemberInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public int MemberId { get; set; }
+        public long MemberId { get; set; }
 
         object IMappableDTO.MappingId => MemberId;
     }
