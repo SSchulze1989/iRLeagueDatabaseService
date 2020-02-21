@@ -23,12 +23,11 @@ namespace iRLeagueDatabase
 
         private readonly OrphansToHandle OrphansToHandle;
 
-        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False")
+        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
         }
 
-        public LeagueDbContext(string nameOrConnectionString) : base(nameOrConnectionString)
+        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog="+dbName+"; Integrated Security = True; Pooling=False" : "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
             OrphansToHandle = new OrphansToHandle();

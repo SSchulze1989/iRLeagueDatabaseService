@@ -30,8 +30,11 @@ namespace LeagueDBService
 
         MapperConfiguration MapperConfiguration { get; set; }
 
+        private string DatabaseName { get; set; }
+
         public LeagueDBService()
         {
+            DatabaseName = "TestDatabase";
             MapperProfile = new AppProfile();
             MapperConfiguration = new MapperConfiguration(cfg =>
             {
@@ -40,9 +43,19 @@ namespace LeagueDBService
             });
         }
 
+        public LeagueDBService(string databaseName) : this()
+        {
+            DatabaseName = databaseName;
+        }
+
+        public void SetDatabaseName(string databaseName)
+        {
+            DatabaseName = databaseName;
+        }
+
         public void CleanUpSessions()
         {
-            //using (var leagueDb = new LeagueDbContext())
+            //using (var leagueDb = new LeagueDbContext(DatabaseName))
             //{
             //    var Sessions = leagueDb.Sessions.ToArray();
             //    foreach (var session in Sessions)
@@ -64,7 +77,7 @@ namespace LeagueDBService
         public string TestDB()
         {
             string result;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 result = leagueDb.Seasons.First().SeasonName;
             }
@@ -74,7 +87,7 @@ namespace LeagueDBService
         public LeagueMemberDataDTO GetMember(long memberId)
         {
             LeagueMemberDataDTO leagueMember;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var memberEntity = leagueDb.Members.SingleOrDefault(x => x.MemberId == memberId);
                 if (memberEntity != null)
@@ -99,7 +112,7 @@ namespace LeagueDBService
 
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 // Deprecated becaus Automapper ignores include statements with ProjectTo()
                 //if (seasonIds == null || seasonIds == new int[0])
@@ -139,7 +152,7 @@ namespace LeagueDBService
             SeasonDataDTO returnData;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            using (LeagueDbContext leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -172,7 +185,7 @@ namespace LeagueDBService
 
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 if (memberIds == null || memberIds == new long[0])
                 {
@@ -197,7 +210,7 @@ namespace LeagueDBService
             LeagueMemberDataDTO[] returnData;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            using (LeagueDbContext leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 foreach (var memberData in members)
@@ -232,7 +245,7 @@ namespace LeagueDBService
         {
             long lastMemberId = 0;
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var member = leagueDb.Members.ToList().Last();
                 lastMemberId = member.MemberId;
@@ -249,7 +262,7 @@ namespace LeagueDBService
             LeagueMemberDataDTO returnData;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            using (LeagueDbContext leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -281,7 +294,7 @@ namespace LeagueDBService
         {
             var mapper = MapperConfiguration.CreateMapper();
             SeasonDataDTO season = null;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var seasonEntity = leagueDb.Seasons.SingleOrDefault(x => x.SeasonId == seasonId);
                 season = mapper.Map<SeasonDataDTO>(seasonEntity);
@@ -294,7 +307,7 @@ namespace LeagueDBService
         {
             var mapper = MapperConfiguration.CreateMapper();
             IncidentReviewDataDTO review = null;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var reviewEntitiy = leagueDb.Set<IncidentReviewEntity>().Find(reviewId);
                 review = mapper.Map<IncidentReviewDataDTO>(reviewEntitiy);
@@ -310,7 +323,7 @@ namespace LeagueDBService
             IncidentReviewDataDTO returnReview;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -349,7 +362,7 @@ namespace LeagueDBService
             var mapper = MapperConfiguration.CreateMapper();
             CommentDataDTO comment = null;
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var commentSet = leagueDb.Set<CommentBaseEntity>();
                 var commentEntity = commentSet.Where(x => x.CommentId == commentId).FirstOrDefault();
@@ -374,7 +387,7 @@ namespace LeagueDBService
             CommentDataDTO returnComment;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -406,7 +419,7 @@ namespace LeagueDBService
         public SessionDataDTO GetSession(long sessionId)
         {
             SessionDataDTO sessionData;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var memberEntity = leagueDb.Set<SessionBaseEntity>().Find(sessionId);
                 if (memberEntity != null)
@@ -428,7 +441,7 @@ namespace LeagueDBService
             SessionDataDTO returnData = null;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            using (LeagueDbContext leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -459,7 +472,7 @@ namespace LeagueDBService
         public ScheduleDataDTO GetSchedule(long scheduleId)
         {
             ScheduleDataDTO scheduleData;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var memberEntity = leagueDb.Set<ScheduleEntity>().Find(scheduleId);
                 if (memberEntity != null)
@@ -481,7 +494,7 @@ namespace LeagueDBService
             ScheduleDataDTO returnData = null;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            using (LeagueDbContext leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -517,7 +530,7 @@ namespace LeagueDBService
 
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var scheduleSet = leagueDb.Set<ScheduleEntity>();
 
@@ -539,7 +552,7 @@ namespace LeagueDBService
         public ResultDataDTO GetResult(long resultId)
         {
             ResultDataDTO resultData;
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 var memberEntity = leagueDb.Set<ResultEntity>().Find(resultId);
                 if (memberEntity != null)
@@ -561,7 +574,7 @@ namespace LeagueDBService
             ResultDataDTO returnData = null;
             var mapper = MapperConfiguration.CreateMapper();
 
-            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            using (LeagueDbContext leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var mapper = MapperHelper.GetEntityMapper(leagueDb);
                 MapperProfile.DbContext = leagueDb;
@@ -595,7 +608,7 @@ namespace LeagueDBService
             SeasonEntity seasonEntity;
             List<StandingsRowDTO> standings = new List<StandingsRowDTO>();
 
-            using (var leagueDb = new LeagueDbContext())
+            using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 seasonEntity = leagueDb.Seasons.Find(seasonId);
 

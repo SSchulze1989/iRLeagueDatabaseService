@@ -20,6 +20,8 @@ namespace LeagueDBService
     public interface ILeagueDBService
     {
         [OperationContract]
+        void SetDatabaseName(string databaseName);
+        [OperationContract]
         string TestDB();
 
         [OperationContract]
