@@ -590,6 +590,60 @@ namespace LeagueDBService
             return returnData;
         }
 
+        public ScoringDataDTO PutScoring(ScoringDataDTO scoringData)
+        {
+            ScoringDataDTO returnData = null;
+            var mapper = MapperConfiguration.CreateMapper();
+
+            using (LeagueDbContext leagueDb = new LeagueDbContext())
+            {
+                //var mapper = MapperHelper.GetEntityMapper(leagueDb);
+                MapperProfile.DbContext = leagueDb;
+
+                ScoringEntity scoringEntity;
+                var scoringSet = leagueDb.Set<ScoringEntity>();
+
+                //Put review to Db
+                if (scoringSet.Any(x => x.ScoringId == scoringData.ScoringId))
+                {
+                    scoringEntity = scoringSet.Find(scoringData.ScoringId);
+                    mapper.Map(scoringData, scoringEntity);
+                }
+                else
+                {
+                    scoringEntity = mapper.Map<ScoringEntity>(scoringData);
+                    scoringSet.Add(scoringEntity);
+                }
+                leagueDb.SaveChanges();
+
+                //Get review object to return
+                scoringEntity = scoringSet.Find(scoringData.ScoringId);
+                returnData = mapper.Map<ScoringDataDTO>(scoringEntity);
+            }
+
+            return returnData;
+        }
+
+        public ScoringDataDTO GetScoring(long scoringId)
+        {
+            ScoringDataDTO scoringData;
+            using (var leagueDb = new LeagueDbContext())
+            {
+                var memberEntity = leagueDb.Set<ScoringEntity>().Find(scoringId);
+                if (memberEntity != null)
+                {
+                    var mapper = MapperConfiguration.CreateMapper();
+
+                    scoringData = mapper.Map<ScoringDataDTO>(memberEntity);
+                }
+                else
+                {
+                    scoringData = null;
+                }
+                return scoringData;
+            }
+        }
+
         public StandingsRowDTO[] GetSeasonStandings(long seasonId, long? lastSessionId = null)
         {
             SeasonEntity seasonEntity;

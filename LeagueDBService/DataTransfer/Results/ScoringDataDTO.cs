@@ -20,18 +20,29 @@ namespace iRLeagueDatabase.DataTransfer.Results
         //[DataMember]
         //public int ScoringId { get; set; }
         [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public long ScoringId { get; set; }
+        [DataMember]
         public int DropWeeks { get; set; }
         [DataMember]
         public int AverageRaceNr { get; set; }
         [DataMember]
-        public ScheduleDataDTO Schedule { get; set; }
+        public virtual List<SessionInfoDTO> Sessions { get; set; }
         [DataMember]
-        public string ScoringRuleName { get; set; }
-
+        public long SeasonId { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
+        public virtual SeasonEntity Season { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
+        public string BasePoints { get; set; }
+        [DataMember]
+        public string BonusPoints { get; set; }
+        [DataMember]
+        public string IncPenaltyPoints { get; set; }
+        [DataMember]
+        public string MultiScoringFactors { get; set; }
+        [DataMember]
+        public virtual List<ScoringInfoDTO> MultiScoringResults { get; set; }
 
         public ScoringDataDTO() { }
     }
