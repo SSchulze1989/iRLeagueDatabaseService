@@ -85,6 +85,12 @@ namespace LeagueDBService
         ResultDataDTO PutResult(ResultDataDTO result);
 
         [OperationContract]
+        ScoringDataDTO GetScoring(long scoringId);
+
+        [OperationContract]
+        ScoringDataDTO PutScoring(ScoringDataDTO scoring);
+
+        [OperationContract]
         StandingsRowDTO[] GetSeasonStandings(long seasonId, long? lastSessionId);
 
         [OperationContract]
