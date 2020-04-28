@@ -11,6 +11,16 @@ namespace iRLeagueDatabase.Mapper
 {
     public partial class DTOMapper
     {
+        public void RegisterResultsTypeMaps()
+        {
+            RegisterTypeMap<ResultEntity, ResultInfoDTO>(MapToResultInfoDTO);
+            RegisterTypeMap<ResultEntity, ResultDataDTO>(MapToResulDataDTO);
+            RegisterTypeMap<ResultRowEntity, ResultRowDataDTO>(MapToResultRowDataDTO);
+            RegisterTypeMap<ScoredResultRowEntity, ScoredResultRowDataDTO>(MapToScoredResultRowDataDTO);
+            RegisterTypeMap<ScoringEntity, ScoringInfoDTO>(MapToScoringInfoDTO);
+            RegisterTypeMap<ScoringEntity, ScoringDataDTO>(MapToScoringDataDTO);
+        }
+
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
         {
             if (source == null)

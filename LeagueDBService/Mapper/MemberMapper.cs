@@ -11,6 +11,12 @@ namespace iRLeagueDatabase.Mapper
 {
     public partial class DTOMapper
     {
+        public void RegisterMemberTypeMaps()
+        {
+            RegisterTypeMap<LeagueMemberEntity, LeagueMemberInfoDTO>(MapToMemberInfoDTO);
+            RegisterTypeMap<LeagueMemberEntity, LeagueMemberDataDTO>(MapToMemberDataDTO);
+        }
+
         public LeagueMemberInfoDTO MapToMemberInfoDTO(LeagueMemberEntity source, LeagueMemberInfoDTO target = null)
         {
             if (source == null)

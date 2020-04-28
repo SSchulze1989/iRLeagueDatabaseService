@@ -9,10 +9,9 @@ using System.Runtime.CompilerServices;
 
 using iRLeagueDatabase;
 //using iRLeagueDatabase.Entities;
-using iRLeagueManager;
-using iRLeagueManager.Data;
-using iRLeagueManager.Models;
-using iRLeagueManager.Models.Sessions;
+using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.Mapper;
 
 namespace TestConsole
 {
@@ -30,11 +29,20 @@ namespace TestConsole
             ////dbContext.SaveChanges();
             //Session = dbContext.Sessions.Find(2);
 
-            var client = new LeagueContext();
+            //var client = new LeagueContext();
 
-            var session = client.GetModelAsync<SessionModel>(1).Result;
+            //var session = client.GetModelAsync<SessionModel>(1).Result;
 
-            Console.ReadKey();
+            //Console.ReadKey();
+
+            var dbContext = new LeagueDbContext();
+
+            var season = dbContext.Set<SeasonEntity>().First();
+            var mapper = new DTOMapper();
+
+            SeasonDataDTO seasonDto = mapper.MapTo(season, typeof(SeasonDataDTO)) as SeasonDataDTO;
+
+
         }
 
         static void NotifyDirect(object sender, PropertyChangedEventArgs e)

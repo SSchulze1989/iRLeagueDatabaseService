@@ -11,6 +11,15 @@ namespace iRLeagueDatabase.Mapper
 {
     public partial class DTOMapper
     {
+        public void RegisterReviewsTypeMaps()
+        {
+            RegisterTypeMap<IncidentReviewEntity, IncidentReviewInfoDTO>(MapToReviewInfoDTO);
+            RegisterTypeMap<IncidentReviewEntity, IncidentReviewDataDTO>(MapToReviewDataDTO);
+            RegisterTypeMap<CommentBaseEntity, CommentInfoDTO>(MapToCommentInfoDTO);
+            RegisterTypeMap<CommentBaseEntity, CommentDataDTO>(MapToCommentDataDTO);
+            RegisterTypeMap<ReviewCommentEntity, ReviewCommentDataDTO>(MapToReviewCommentDataDTO);
+        }
+
         public IncidentReviewInfoDTO MapToReviewInfoDTO(IncidentReviewEntity source, IncidentReviewInfoDTO target = null)
         {
             if (source == null)

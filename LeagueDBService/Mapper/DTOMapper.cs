@@ -24,6 +24,11 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMaps();
         }
 
+        public void RegisterTypeMaps()
+        {
+
+        }
+
         public TTarget MapTo<TTarget>(MappableEntity source) where TTarget : MappableDTO, new()
         {
             var target = new TTarget();
@@ -86,6 +91,11 @@ namespace iRLeagueDatabase.Mapper
                 throw new InvalidOperationException("Can not add typemap. Already defined a typemap configuration for the given Types\nType1: " + typeMap.SourceType.Name + " - Type2: " + typeMap.TargetType.Name + ".");
 
             TypeMaps.Add(typeMap);
+        }
+
+        public object MapTo(object source, Type targetType)
+        {
+            return MapTo(source, null, source.GetType(), targetType);
         }
 
         public object MapTo(object source, object target, Type sourceType, Type targetType)

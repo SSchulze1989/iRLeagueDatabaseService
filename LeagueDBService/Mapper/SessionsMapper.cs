@@ -11,6 +11,17 @@ namespace iRLeagueDatabase.Mapper
 {
     public partial class DTOMapper
     {
+        public void RegisterSessionsTypeMaps()
+        {
+            RegisterTypeMap<ScheduleEntity, ScheduleInfoDTO>(MapToScheduleInfoDTO);
+            RegisterTypeMap<ScheduleEntity, ScheduleDataDTO>(MapToScheduleDataDTO);
+            RegisterTypeMap<SessionBaseEntity, SessionInfoDTO>(MapToSessionInfoDTO);
+            RegisterTypeMap<SessionBaseEntity, SessionDataDTO>(MapToSessionDataDTO);
+            RegisterTypeMap<RaceSessionEntity, RaceSessionDataDTO>(MapToRaceSessionDataDTO);
+            RegisterTypeMap<RaceSessionEntity, SessionInfoDTO>(src => new SessionInfoDTO(), MapToSessionInfoDTO, DefaultCompare);
+            RegisterTypeMap<RaceSessionEntity, SessionDataDTO>(src => new RaceSessionDataDTO(), (src, trg) => MapToRaceSessionDataDTO(src, trg as RaceSessionDataDTO), DefaultCompare);
+        }
+
         public SessionInfoDTO MapToSessionInfoDTO(SessionBaseEntity source, SessionInfoDTO target = null)
         {
             if (source == null)

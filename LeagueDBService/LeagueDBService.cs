@@ -906,7 +906,7 @@ namespace LeagueDBService
 
         public GetItemsResponse GetFromDatabase(GetItemsRequest requestMsg)
         {
-            GetItemsResponse responseMsg;
+            GetItemsResponse responseMsg = new GetItemsResponse();
 
             if (requestMsg == null)
                 return null;
@@ -919,14 +919,20 @@ namespace LeagueDBService
             {
                 var dbSet = dbContext.Set(rqType);
                 var mapper = new DTOMapper();
+                responseMsg.databaseName = dbName;
 
                 List<MappableDTO> resultItems = new List<MappableDTO>();
                 foreach (var keys in requesIds)
                 {
                     var entity = dbSet.Find(keys);
-                    var dto = mapper.MapTo(entity, null, );
+                    var dto = mapper.MapTo(entity, rqType) as MappableDTO;
+                    resultItems.Add(dto);
                 }
+                responseMsg.Items = resultItems;
             };
+
+            responseMsg.status = "success";
+            return responseMsg;
         }
 
         public GetItemsResponse MessageTest(GetItemsRequest request)

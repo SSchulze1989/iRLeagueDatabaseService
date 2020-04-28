@@ -12,6 +12,13 @@ namespace iRLeagueDatabase.Mapper
 {
     public partial class DTOMapper
     {
+        private void RegisterBaseTypeMaps()
+        {
+            //Base types
+            RegisterTypeMap<SeasonEntity, SeasonInfoDTO>(MapToSeasonInfoDTO);
+            RegisterTypeMap<SeasonEntity, SeasonDataDTO>(MapToSeasonDataDTO);
+        }
+
         public VersionInfoDTO MapToVersionInfoDTO(Revision source, VersionInfoDTO target)
         {
             if (source == null)
