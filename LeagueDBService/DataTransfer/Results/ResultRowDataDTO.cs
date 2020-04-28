@@ -14,12 +14,14 @@ namespace iRLeagueDatabase.DataTransfer.Results
 {
     [DataContract]
     [KnownType(typeof(ResultInfoDTO))]
-    public class ResultRowDataDTO : IMappableDTO
+    public class ResultRowDataDTO : MappableDTO, IMappableDTO
     {
         [DataMember]
-        public int? ResultRowId { get; set; }
+        public long? ResultRowId { get; set; }
         [DataMember]
-        public int FinalPosition { get; set; }
+        public long ResultId { get; set; }
+        //[DataMember]
+        //public int FinalPosition { get; set; }
         [DataMember]
         public int StartPosition { get; set; }
         [DataMember]
@@ -45,10 +47,10 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int Incidents { get; set; }
         [DataMember]
         public RaceStatusEnum Status { get; set; }
-        [DataMember]
-        public int RacePoints { get; set; }
-        [DataMember]
-        public int BonusPoints { get; set; }
+        //[DataMember]
+        //public int RacePoints { get; set; }
+        //[DataMember]
+        //public int BonusPoints { get; set; }
         [DataMember]
         public TimeSpan QualifyingTime { get; set; }
         [DataMember]
@@ -60,7 +62,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int PositionChange { get; set; }
 
-        public object MappingId => ResultRowId;
+        public override object MappingId => new { ResultRowId = ResultRowId.GetValueOrDefault(), ResultId };
 
         public ResultRowDataDTO() { }
     }

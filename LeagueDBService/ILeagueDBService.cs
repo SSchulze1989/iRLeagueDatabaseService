@@ -9,6 +9,7 @@ using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using iRLeagueDatabase.DataTransfer.Results;
+using iRLeagueDatabase.DataTransfer.Messages;
 
 namespace LeagueDBService
 {
@@ -19,6 +20,9 @@ namespace LeagueDBService
     [ServiceKnownType(typeof(ResultDataDTO))]
     public interface ILeagueDBService
     {
+        [OperationContract]
+        GetItemsResponse MessageTest(GetItemsRequest request);
+
         [OperationContract]
         void SetDatabaseName(string databaseName);
         [OperationContract]
@@ -95,6 +99,12 @@ namespace LeagueDBService
 
         [OperationContract]
         StandingsRowDTO[] GetTeamStandings(long seasonId, long? lastSessionId);
+
+        [OperationContract]
+        ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId);
+
+        [OperationContract]
+        void CalculateScoredResults(long sessionId);
 
         [OperationContract]
         void CleanUpSessions();

@@ -13,6 +13,10 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         [DataMember]
         public long? ReviewId { get; set; }
 
-        object IMappableDTO.MappingId => ReviewId;
+        public override object MappingId => ReviewId;
+
+        public override object[] Keys => new object[] { ReviewId };
+
+        //object IMappableDTO.MappingId => ReviewId;
     }
 }

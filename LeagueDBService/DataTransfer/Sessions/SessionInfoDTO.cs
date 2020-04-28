@@ -22,6 +22,10 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// </summary>
         public SessionType SessionType { get; set; }
 
-        object IMappableDTO.MappingId => SessionId;
+        public override object MappingId => SessionId;
+
+        public override object[] Keys => new object[] { SessionId };
+
+        //object IMappableDTO.MappingId => SessionId.GetValueOrDefault();
     }
 }

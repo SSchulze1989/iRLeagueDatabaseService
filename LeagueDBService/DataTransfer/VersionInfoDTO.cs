@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace iRLeagueDatabase.DataTransfer
 {
     [DataContract]
-    public abstract class VersionInfoDTO
+    public abstract class VersionInfoDTO : MappableDTO
     {
         public virtual Type Type { get => this.GetType(); }
 

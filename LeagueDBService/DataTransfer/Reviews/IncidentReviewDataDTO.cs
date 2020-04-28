@@ -37,9 +37,9 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         [DataMember]
         public TimeSpan TimeStamp { get; set; }
         [DataMember]
-        public List<LeagueMemberInfoDTO> InvolvedMembers { get; set; }
+        public ICollection<LeagueMemberInfoDTO> InvolvedMembers { get; set; }
         [DataMember]
-        public List<ReviewCommentDataDTO> Comments { get; set; }
+        public ICollection<ReviewCommentDataDTO> Comments { get; set; }
         //[DataMember]
         //public LeagueMemberInfoDTO MemberAtFault { get; set; }
         //[DataMember]

@@ -13,8 +13,12 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
     public class CommentInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
-        public long CommentId { get; set; }
+        public long? CommentId { get; set; }
 
-        object IMappableDTO.MappingId => CommentId;
+        public override object MappingId => CommentId;
+
+        public override object[] Keys => new object[] { CommentId };
+
+        //object IMappableDTO.MappingId => CommentId;
     }
 }

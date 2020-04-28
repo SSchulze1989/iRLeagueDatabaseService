@@ -27,7 +27,7 @@ namespace iRLeagueDatabase.DataTransfer
         public IEnumerable<ScheduleInfoDTO> Schedules { get; set; }
 
         [DataMember]
-        public virtual List<ScoringDataDTO> Scorings { get; set; }
+        public virtual ICollection<ScoringDataDTO> Scorings { get; set; }
 
         [DataMember]
         public IEnumerable<IncidentReviewInfoDTO> Reviews { get; set; }

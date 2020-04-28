@@ -87,13 +87,18 @@
   <ItemGroup>
     <Compile Include="DataTransfer\IMappableDTO.cs" />
     <Compile Include="DataTransfer\LeagueDTOBase.cs" />
+    <Compile Include="DataTransfer\MappableDTO.cs" />
     <Compile Include="DataTransfer\Members\LeagueMemberDataDTO.cs" />
     <Compile Include="DataTransfer\Members\LeagueMemberInfoDTO.cs" />
     <Compile Include="DataTransfer\Members\TeamDTO.cs" />
+    <Compile Include="DataTransfer\Messages\GetItemsRequest.cs" />
+    <Compile Include="DataTransfer\Messages\GetItemsResponse.cs" />
     <Compile Include="DataTransfer\Results\IRacingResultRowDTO.cs" />
     <Compile Include="DataTransfer\Results\ResultDataDTO.cs" />
     <Compile Include="DataTransfer\Results\ResultInfoDTO.cs" />
     <Compile Include="DataTransfer\Results\ResultRowDataDTO.cs" />
+    <Compile Include="DataTransfer\Results\ScoredResultDataDTO.cs" />
+    <Compile Include="DataTransfer\Results\ScoredResultRowDataDTO.cs" />
     <Compile Include="DataTransfer\Results\ScoringDataDTO.cs" />
     <Compile Include="DataTransfer\Results\ScoringInfoDTO.cs" />
     <Compile Include="DataTransfer\Results\ScoringRuleBaseDTO.cs" />
@@ -115,6 +120,14 @@
     <Compile Include="DataTransfer\VersionInfoDTO.cs" />
     <Compile Include="ILeagueDBService.cs" />
     <Compile Include="AppProfile.cs" />
+    <Compile Include="Mapper\BaseMapper.cs" />
+    <Compile Include="Mapper\DTOMapper.cs" />
+    <Compile Include="Mapper\EntityMapper.cs" />
+    <Compile Include="Mapper\MemberMapper.cs" />
+    <Compile Include="Mapper\ResultsMapper.cs" />
+    <Compile Include="Mapper\ReviewsMapper.cs" />
+    <Compile Include="Mapper\SessionsMapper.cs" />
+    <Compile Include="Mapper\TypeMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LeagueDBService.cs" />
   </ItemGroup>

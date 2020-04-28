@@ -14,6 +14,10 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         [DataMember]
         public long? ScheduleId { get; set; }
 
-        object IMappableDTO.MappingId => ScheduleId;
+        public override object MappingId => ScheduleId;
+
+        public override object[] Keys => new object[] { ScheduleId };
+
+        //object IMappableDTO.MappingId => ScheduleId.GetValueOrDefault();
     }
 }

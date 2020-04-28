@@ -17,6 +17,9 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public SessionInfoDTO Session { get; set; }
 
-        object IMappableDTO.MappingId => ResultId;
+        public override object MappingId => ResultId;
+
+        public override object[] Keys => new object[] { Result };
+        //object IMappableDTO.MappingId => ResultId;
     }
 }

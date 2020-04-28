@@ -1,0 +1,194 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.DataTransfer;
+using System.Runtime.Serialization;
+
+namespace iRLeagueDatabase.Mapper
+{
+    public partial class EntityMapper
+    {
+        private LeagueDbContext DbContext { get; }
+
+        public bool ForceOldVersion { get; set; } = false;
+
+        private IList<TypeMap> TypeMaps { get; } = new List<TypeMap>();
+
+        public EntityMapper(LeagueDbContext dbContext)
+        {
+            DbContext = dbContext;
+            RegisterTypeMaps();
+        }
+
+        private void RegisterTypeMaps()
+        {
+            RegisterBaseTypeMaps();
+            RegisterMemberTypeMaps();
+            RegisterResultsTypeMaps();
+            RegisterReviewsTypeMaps();
+            RegisterSessionsTypeMaps();
+        }
+
+        private TypeMap GetTypeMap(Type sourceType, Type targetType)
+        {
+            if (sourceType == null || targetType == null)
+                throw new Exception("No typemap found.");
+
+            var typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType));
+
+            if (typeMap == null)
+                throw new Exception("No typemap found.");
+
+            return typeMap;
+        }
+
+        public TTarget Map<TTarget>(object source) where TTarget : MappableEntity
+        {
+            if (source == null)
+                return null;
+            TTarget target = null;
+            target = Map(source, target, source.GetType(), typeof(TTarget)) as TTarget;
+
+            return target;
+        }
+
+        public TTarget Map<TSource, TTarget>(TSource source, TTarget target) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            return Map(source, target, typeof(TSource), typeof(TTarget)) as TTarget;
+        }
+
+        public object Map(object source, object target, Type sourceType, Type targetType)
+        {
+            try
+            {
+                var typeMap = GetTypeMap(sourceType, targetType);
+
+                if (target == null)
+                    target = typeMap.Get(source) as MappableEntity;
+
+                typeMap.MapTo(source, target);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return target;
+        }
+
+        private TTarget DefaultGet<TSource, TTarget>(TSource source) where TSource : MappableDTO where TTarget : MappableEntity, new()
+        {
+            if (source == null)
+                return null;
+            TTarget target;
+
+            if (source.MappingId == null)
+                target = new TTarget();
+            else
+                target = DbContext.Set<TTarget>().Find(source.Keys);
+
+            if (target == null)
+                throw new EntityNotFoundException(nameof(TTarget), "Could not find Entity in Database.", source.Keys);
+
+            return target;
+        }
+
+        private bool DefaultCompare<TSource, TTarget>(TSource source, TTarget target) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            return source.MappingId.Equals(target.MappingId);
+        }
+
+        public void RegisterTypeMap<TSource, TTarget>(Func<TSource, TTarget, TTarget> mapFunc) where TSource : MappableDTO where TTarget : MappableEntity, new()
+        {
+            var typeMap = new TypeMap<TSource, TTarget>(DefaultGet<TSource, TTarget>, mapFunc, DefaultCompare);
+            RegisterTypeMap(typeMap);
+        }
+
+        public void RegisterTypeMap<TSource, TTarget>(Func<TSource, TTarget> getFunc, Func<TSource, TTarget, TTarget> mapFunc, Func<TSource, TTarget, bool> compareFunc)
+        {
+            RegisterTypeMap(new TypeMap<TSource, TTarget>(getFunc, mapFunc, compareFunc));
+        }
+
+        public void RegisterTypeMap<TSource, TTarget>(TypeMap<TSource, TTarget> typeMap)
+        {
+            if (TypeMaps.Any(x => x.SourceType.Equals(typeMap.SourceType) && x.TargetType.Equals(typeMap.TargetType)))
+                throw new InvalidOperationException("Can not add typemap. Already defined a typemap configuration for the given Types\nType1: " + typeMap.SourceType.Name + " - Type2: " + typeMap.TargetType.Name + ".");
+
+            TypeMaps.Add(typeMap);
+        }
+
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object> key) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) });
+        }
+
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object> key) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key);
+        }
+
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object[]> keys) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys);
+        }
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            if (targetCollection == null)
+                targetCollection = new List<TTarget>();
+
+            var newTargets = new List<TSource>();
+            var removeEntities = targetCollection.ToList();
+
+            foreach(var source in sourceCollection)
+            {
+                var target = targetCollection.SingleOrDefault(x => x.MappingId.Equals(source.MappingId));
+                
+                if (target == null)
+                    newTargets.Add(source);
+                else
+                {
+                    removeEntities.Remove(target);
+                    target = map(source, target);
+                }
+            }
+
+            foreach(var source in newTargets)
+            {
+                var target = map(source, null);
+                targetCollection.Add(target);
+            }
+
+            foreach(var target in removeEntities)
+            {
+                targetCollection.Remove(target);
+            }
+
+            return targetCollection;
+        }
+
+        public class EntityNotFoundException : Exception
+        {
+            public EntityNotFoundException(string entityName, params object[] keys)
+            {
+                Data.Add("EntityName", entityName);
+                Data.Add("Keys", keys);
+            }
+
+            public EntityNotFoundException(string entityName, string message, params object[] keys) : base(message)
+            {
+                Data.Add("EntityName", entityName);
+                Data.Add("Keys", keys);
+            }
+
+            public EntityNotFoundException(string entityName, string message, Exception innerException, params object[] keys) : base(message, innerException)
+            {
+                Data.Add("EntityName", entityName);
+                Data.Add("Keys", keys);
+            }
+        }
+    }
+}

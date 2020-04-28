@@ -22,12 +22,13 @@ namespace iRLeagueDatabase.Entities.Results
         public override object MappingId => ResultRowId;
 
         [Key, ForeignKey(nameof(Result)), Column(Order = 1)]
-        public long? ResultId { get; set; }
+        public long ResultId { get; set; }
+        [Required]
         public virtual ResultEntity Result { get; set; }
 
         public DateTime? Date => Result?.Session?.Date;
 
-        public int FinalPosition { get; set; }
+        //public int FinalPosition { get; set; }
 
         public int StartPosition { get; set; }
 
@@ -55,14 +56,14 @@ namespace iRLeagueDatabase.Entities.Results
         
         public RaceStatusEnum Status { get; set; }
         
-        public int RacePoints { get; set; }
+        //public int RacePoints { get; set; }
         
-        public int BonusPoints { get; set; }
+        //public int BonusPoints { get; set; }
 
-        public int PenaltyPoints { get; set; }
+        //public int PenaltyPoints { get; set; }
 
-        [NotMapped]
-        public int TotalPoints => RacePoints + BonusPoints - PenaltyPoints;
+        //[NotMapped]
+        //public int TotalPoints => RacePoints + BonusPoints - PenaltyPoints;
 
         public long QualifyingTime { get; set; }
 

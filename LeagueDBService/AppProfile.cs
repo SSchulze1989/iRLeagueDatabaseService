@@ -58,6 +58,16 @@ namespace LeagueDBService
             CreateMap<ResultEntity, ResultInfoDTO>();
             //CreateMap<ResultDataDTO, Result>()
             //    .MapOnlyIfChanged();
+            CreateMap<ResultDataDTO, ScoredResultDataDTO>()
+                .ReverseMap();
+
+            CreateMap<ScoredResultRowEntity, ScoredResultRowDataDTO>()
+                .EqualityComparison((src, dest) => src.ResultRowId == dest.ResultRowId)
+                .IncludeMembers(src => src.ResultRow);
+            CreateMap<ResultRowEntity, ScoredResultRowDataDTO>(MemberList.None);
+
+            CreateMap<ScoringEntity, ScoringDataDTO>();
+            CreateMap<ScoringEntity, ScoringInfoDTO>();
 
             CreateMap<ResultRowEntity, ResultRowDataDTO>();
 
@@ -137,10 +147,17 @@ namespace LeagueDBService
                 //.Include<RaceSessionDataDTO, RaceSessionEntity>();
                 .IncludeAllDerived();
             CreateMap<ScheduleDataDTO, ScheduleEntity>()
+                //.BeforeMap((src, dest, context) =>
+                //{
+                //    if (dest.LastModifiedOn > src.LastModifiedOn)
+                //    {
+                //        context.Mapper.Map(dest.Sessions, src.Sessions);
+                //    }
+                //})
                 .ConstructUsing(source => GetMapping(source, DbContext.Set<ScheduleEntity>()))
+                .MapOnlyIfChanged()
                 .EqualityComparison((src, dest) => src.ScheduleId == dest.ScheduleId)
-                .ForMember(dest => dest.Season, opt => opt.Ignore())
-                .MapOnlyIfChanged();
+                .ForMember(dest => dest.Season, opt => opt.Ignore());
 
             CreateMap<LeagueMemberInfoDTO, LeagueMemberEntity>()
                 .IncludeAllDerived()
@@ -234,9 +251,28 @@ namespace LeagueDBService
     {
         public static IMappingExpression<TSource, TDestination> MapOnlyIfChanged<TSource, TDestination>(this IMappingExpression<TSource, TDestination> map)
         {
-            map.ForAllMembers(source =>
+            map.ForAllMembers(opt =>
             {
-                source.Condition((sourceObject, destObject, sourceProperty, destProperty) =>
+                opt.PreCondition((sourceObject, destObject, context) =>
+                {
+                    if (sourceObject is VersionInfoDTO srcVersion && destObject is Revision destVersion)
+                    {
+                        if (destVersion.LastModifiedOn == null || srcVersion.LastModifiedOn > destVersion.LastModifiedOn)
+                        {
+                            return true;
+                        }
+
+                        if (sourceObject is IMappableDTO mappableDTO && destObject is MappableEntity mappableEntity)
+                        {
+                            if (mappableDTO.MappingId != mappableEntity.MappingId)
+                                return true;
+                        }
+
+                        return false;
+                    }
+                    return true;
+                });
+                opt.Condition((sourceObject, destObject, sourceProperty, destProperty) =>
                 {
                     if (destObject == null)
                         return true;
