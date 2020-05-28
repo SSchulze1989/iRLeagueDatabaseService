@@ -64,6 +64,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
 
         public override object MappingId => new { ResultRowId = ResultRowId.GetValueOrDefault(), ResultId };
 
+        public override object[] Keys => new object[] { ResultRowId, ResultId };
+
         public ResultRowDataDTO() { }
     }
 }

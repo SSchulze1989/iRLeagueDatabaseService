@@ -85,6 +85,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToVersionInfoDTO(source, target);
             target.ScheduleId = source.ScheduleId;
+            target.Name = source.Name;
 
             return target;
         }
@@ -121,7 +122,7 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
             target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
             target.Name = source.Name;
-            target.Sessions =  MapSessionDataDTOCollection(source.Sessions);
+            target.Sessions = source.Sessions.Select(MapTo<SessionDataDTO>).ToList();
 
             return target;
         }
@@ -145,42 +146,46 @@ namespace iRLeagueDatabase.Mapper
                 return MapToSessionBaseEntity(src);
             }, DefaultCompare);
             RegisterTypeMap<RaceSessionDataDTO, RaceSessionEntity>(MapToRaceSessionEntity);
+            RegisterTypeMap<RaceSessionDataDTO, SessionBaseEntity>(GetRaceSessionEntity, (src, trg) => MapToRaceSessionEntity(src, trg as RaceSessionEntity), DefaultCompare);
+            RegisterTypeMap<ScheduleDataDTO, ScheduleEntity>(MapToScheduleEntity);
         }
 
         public SessionBaseEntity GetSessionBaseEntity(SessionInfoDTO source)
         {
-            if (source == null)
-                return null;
-            SessionBaseEntity target;
+            //if (source == null)
+            //    return null;
+            //SessionBaseEntity target;
 
-            if (source is RaceSessionDataDTO raceSession)
-                target = GetRaceSessionEntity(raceSession);
-            else if (source.SessionId == null)
-                target = new SessionBaseEntity();
-            else
-                target = DbContext.Set<SessionBaseEntity>().Find(source.SessionId);
+            //if (source is RaceSessionDataDTO raceSession)
+            //    target = GetRaceSessionEntity(raceSession);
+            //else if (source.SessionId == null)
+            //    target = new SessionBaseEntity();
+            //else
+            //    target = DbContext.Set<SessionBaseEntity>().Find(source.SessionId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(SessionBaseEntity), "Could not find Entity in Database.", source.SessionId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(SessionBaseEntity), "Could not find Entity in Database.", source.SessionId);
 
-            return target;
+            //return target;
+            return DefaultGet<SessionInfoDTO, SessionBaseEntity>(source);
         }
 
         public RaceSessionEntity GetRaceSessionEntity(RaceSessionDataDTO source)
         {
-            if (source == null)
-                return null;
-            RaceSessionEntity target;
+            //if (source == null)
+            //    return null;
+            //RaceSessionEntity target;
 
-            if (source.SessionId == null)
-                target = new RaceSessionEntity();
-            else
-                target = DbContext.Set<RaceSessionEntity>().Find(source.SessionId);
+            //if (source.SessionId == null)
+            //    target = new RaceSessionEntity();
+            //else
+            //    target = DbContext.Set<RaceSessionEntity>().Find(source.SessionId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(RaceSessionEntity), "Could not find Entity in Database.", source.SessionId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(RaceSessionEntity), "Could not find Entity in Database.", source.SessionId);
 
-            return target;
+            //return target;
+            return DefaultGet<RaceSessionDataDTO, RaceSessionEntity>(source);
         }
 
         public SessionBaseEntity MapToSessionBaseEntity(SessionDataDTO source, SessionBaseEntity target = null)
@@ -231,19 +236,20 @@ namespace iRLeagueDatabase.Mapper
 
         public ScheduleEntity GetScheduleEntity(ScheduleInfoDTO source)
         {
-            if (source == null)
-                return null;
-            ScheduleEntity target;
+            //if (source == null)
+            //    return null;
+            //ScheduleEntity target;
 
-            if (source.ScheduleId == null)
-                target = new ScheduleEntity();
-            else
-                target = DbContext.Set<ScheduleEntity>().Find(source.ScheduleId);
-            
-            if (target == null)
-                throw new EntityNotFoundException(nameof(ScheduleEntity), "Could not find Entity in Database.", source.ScheduleId);
+            //if (source.ScheduleId == null)
+            //    target = new ScheduleEntity();
+            //else
+            //    target = DbContext.Set<ScheduleEntity>().Find(source.ScheduleId);
 
-            return target;
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ScheduleEntity), "Could not find Entity in Database.", source.ScheduleId);
+
+            //return target;
+            return DefaultGet<ScheduleInfoDTO, ScheduleEntity>(source);
         }
 
         public ScheduleEntity MapToScheduleEntity(ScheduleDataDTO source, ScheduleEntity target = null)

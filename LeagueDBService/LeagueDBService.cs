@@ -25,8 +25,8 @@ using iRLeagueDatabase.DataTransfer.Messages;
 namespace LeagueDBService
 {
     // HINWEIS: Mit dem Befehl "Umbenennen" im Menü "Umgestalten" können Sie den Klassennamen "Service1" sowohl im Code als auch in der Konfigurationsdatei ändern.
-    [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
-    public class LeagueDBService : ILeagueDBService
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true, InstanceContextMode = InstanceContextMode.PerCall)]
+    public class LeagueDBService : ILeagueDBService, IDisposable
     {
         //AppProfile MapperProfile { get; }
 
@@ -736,6 +736,8 @@ namespace LeagueDBService
             }
         }
 
+
+
         public void CalculateScoredResults(long sessionId)
         {
             IEnumerable<ScoringEntity> scorings;
@@ -747,40 +749,45 @@ namespace LeagueDBService
 
                 foreach(var scoring in scorings)
                 {
-                    scoring.CalculateResults(session.SessionId);
+                    scoring.CalculateResults(session.SessionId, leagueDb);
                 }
                 leagueDb.SaveChanges();
             }
         }
         public ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId)
         {
-            ScoredResultDataDTO ScoredResultData = new ScoredResultDataDTO();
+            ScoredResultDataDTO scoredResultData = new ScoredResultDataDTO();
             using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
-                var scoredResultRowsEntity = leagueDb.Set<ScoredResultRowEntity>().Where(x => x.ResultId == sessionId && x.ScoringId == scoringId).ToArray().AsEnumerable();
+                //var scoredResultRowsEntity = leagueDb.Set<ScoredResultRowEntity>().Where(x => x.ResultId == sessionId && x.ScoringId == scoringId).ToArray().AsEnumerable();
+                var scoredResultEntity = leagueDb.Set<ScoredResultEntity>().Find(sessionId, scoringId);
+
+                var scoredResultRowsEntity = new ScoredResultRowEntity[0];
+                if (scoredResultEntity != null)
+                    scoredResultRowsEntity = scoredResultEntity.FinalResults.ToArray();
                 //var mapper = MapperConfiguration.CreateMapper();
                 var mapper = new DTOMapper();
 
                 //ScoredResultData.Scoring = mapper.Map<ScoringDataDTO>(GetScoring(scoringId));
-                ScoredResultData.Scoring = mapper.MapToScoringInfoDTO(leagueDb.Set<ScoringEntity>().Find(scoringId));
+                scoredResultData.Scoring = mapper.MapToScoringInfoDTO(leagueDb.Set<ScoringEntity>().Find(scoringId));
 
                 var result = leagueDb.Set<ResultEntity>().Find(sessionId);
                 if (result != null)
                 {
                     //mapper.Map(result, ScoredResultData);
-                    var tmp = mapper.MapToResulDataDTO(result, ScoredResultData);
+                    var tmp = mapper.MapToResulDataDTO(result, scoredResultData);
                 }
                 if (scoredResultRowsEntity.Count() > 0)
                 {
                     //ScoredResultData.ScoredResults = mapper.Map<IEnumerable<ScoredResultRowDataDTO>>(scoredResultRowsEntity);
-                    ScoredResultData.ScoredResults = scoredResultRowsEntity.Select(x => mapper.MapToScoredResultRowDataDTO(x, null));
+                    scoredResultData.FinalResults = scoredResultRowsEntity.Select(x => mapper.MapToScoredResultRowDataDTO(x, null)).OrderBy(x => x.FinalPosition);
                 }
                 else
                 {
-                    ScoredResultData.ScoredResults = new ScoredResultRowDataDTO[0];
+                    scoredResultData.FinalResults = new ScoredResultRowDataDTO[0];
                 }
 
-                return ScoredResultData;
+                return scoredResultData;
             }
         }
 
@@ -904,47 +911,296 @@ namespace LeagueDBService
             return null;
         }
 
-        public GetItemsResponse GetFromDatabase(GetItemsRequest requestMsg)
+        public GETItemsResponseMessage DatabaseGET(GETItemsRequestMessage requestMsg)
         {
-            GetItemsResponse responseMsg = new GetItemsResponse();
+            GETItemsResponseMessage responseMsg = new GETItemsResponseMessage();
 
             if (requestMsg == null)
                 return null;
 
-            var dbName = requestMsg.databaseName;
-            var rqType = requestMsg.requestItemType;
-            var requesIds = requestMsg.requestItemIds;
-
-            using (var dbContext = new DbContext(dbName))
+            var searchNames = new string[]
             {
-                var dbSet = dbContext.Set(rqType);
+                "iRLeagueDatabase.DataTransfer.",
+                "iRLeagueDatabase.DataTransfer.Members.",
+                "iRLeagueDatabase.DataTransfer.Results.",
+                "iRLeagueDatabase.DataTransfer.Reviews.",
+                "iRLeagueDatabase.DataTransfer.Sessions."
+            };
+
+
+            var dbName = requestMsg.databaseName;
+            //var rqType = Type.GetType(nSpace + requestMsg.requestItemType);
+            Type rqType = null;
+            foreach (var name in searchNames)
+            {
+                rqType = Type.GetType(name + requestMsg.requestItemType);
+
+                if (rqType != null)
+                    break;
+            }
+            object[][] requestIds = requestMsg.requestItemIds?.Select(x => x.Cast<object>().ToArray()).ToArray();
+
+            using (var dbContext = new LeagueDbContext(dbName))
+            {
                 var mapper = new DTOMapper();
                 responseMsg.databaseName = dbName;
 
-                List<MappableDTO> resultItems = new List<MappableDTO>();
-                foreach (var keys in requesIds)
+                if (rqType.Equals(typeof(ScoredResultDataDTO)))
                 {
-                    var entity = dbSet.Find(keys);
-                    var dto = mapper.MapTo(entity, rqType) as MappableDTO;
+                    responseMsg.items = requestMsg.requestItemIds.Select(x => GetScoredResult(x[0], x[1])).ToArray();
+                }
+                else
+                {
+                    var rqEntityType = mapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(rqType))?.SourceType;
+                    if (rqEntityType == null)
+                        return null;
+
+                    List<MappableDTO> resultItems = new List<MappableDTO>();
+
+                    List<object> entities = new List<object>();
+
+                    if (requestIds != null)
+                    {
+                        foreach (var keys in requestIds)
+                        {
+                            object entity = dbContext.Set(rqEntityType).Find(keys);
+                            if (entity == null)
+                                throw new Exception("Entity not found in Database - Type: " + rqEntityType.Name + " || keys: { " + keys.Select(x => x.ToString()).Aggregate((x, y) => ", ") + " }");
+
+                            entities.Add(entity);
+                        }
+                    }
+                    else
+                    {
+                        entities = dbContext.Set(rqEntityType).ToListAsync().Result;
+                    }
+
+                    foreach (var entity in entities)
+                    {
+                        var dto = mapper.MapTo(entity, rqType) as MappableDTO;
+                        resultItems.Add(dto);
+                    }
+                    responseMsg.items = resultItems.ToArray();
+                }
+            };
+
+            responseMsg.status = "success";
+
+            //GC.Collect();
+            return responseMsg;
+        }
+
+        public ResponseMessage MessageTest(RequestMessage request)
+        {
+            var response = new ResponseMessage()
+            {
+                databaseName = request.databaseName,
+                status = "success"
+            };
+
+            return response;
+        }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~LeagueDBService()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
+
+        public POSTItemsResponseMessage DatabasePOST(POSTItemsRequestMessage requestMsg)
+        {
+            POSTItemsResponseMessage responseMsg = new POSTItemsResponseMessage();
+
+            if (requestMsg == null)
+                return null;
+
+            var searchNames = new string[]
+            {
+                "iRLeagueDatabase.DataTransfer.",
+                "iRLeagueDatabase.DataTransfer.Members.",
+                "iRLeagueDatabase.DataTransfer.Results.",
+                "iRLeagueDatabase.DataTransfer.Reviews.",
+                "iRLeagueDatabase.DataTransfer.Sessions."
+            };
+
+
+            var dbName = requestMsg.databaseName;
+            //var rqType = Type.GetType(nSpace + requestMsg.requestItemType);
+            Type rqType = null;
+            foreach (var name in searchNames)
+            {
+                rqType = Type.GetType(name + requestMsg.requestItemType);
+
+                if (rqType != null)
+                    break;
+            }
+
+            using (var dbContext = new LeagueDbContext(dbName))
+            {
+                var entityMapper = new EntityMapper(dbContext);
+                var dtoMapper = new DTOMapper();
+                responseMsg.databaseName = dbName;
+
+                var rqEntityType = dtoMapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(rqType))?.SourceType;
+                if (rqEntityType == null)
+                    return null;
+
+                var dbSet = dbContext.Set(rqEntityType);
+
+                List<MappableDTO> resultItems = new List<MappableDTO>();
+                foreach (object item in requestMsg.items)
+                {
+                    object entity = dbSet.Create();
+                    entity = entityMapper.MapTo(item, entity, rqType, rqEntityType);
+                    dbSet.Add(entity);
+
+                    dbContext.SaveChanges();
+
+                    var dto = dtoMapper.MapTo(entity, rqType) as MappableDTO;
                     resultItems.Add(dto);
                 }
-                responseMsg.Items = resultItems;
+                responseMsg.items = resultItems.ToArray();
             };
 
             responseMsg.status = "success";
             return responseMsg;
         }
 
-        public GetItemsResponse MessageTest(GetItemsRequest request)
+        public PUTItemsResponseMessage DatabasePUT(PUTItemsRequestMessage requestMsg)
         {
-            var response = new GetItemsResponse()
+            PUTItemsResponseMessage responseMsg = new PUTItemsResponseMessage();
+
+            if (requestMsg == null)
+                return null;
+
+            var searchNames = new string[]
             {
-                databaseName = request.databaseName,
-                status = "success",
-                Items = GetSeasons(request.requestItemIds.Select(x => x.First()).ToArray())
+                "iRLeagueDatabase.DataTransfer.",
+                "iRLeagueDatabase.DataTransfer.Members.",
+                "iRLeagueDatabase.DataTransfer.Results.",
+                "iRLeagueDatabase.DataTransfer.Reviews.",
+                "iRLeagueDatabase.DataTransfer.Sessions."
             };
 
-            return response;
+
+            var dbName = requestMsg.databaseName;
+            //var rqType = Type.GetType(nSpace + requestMsg.requestItemType);
+            Type rqType = null;
+            foreach (var name in searchNames)
+            {
+                rqType = Type.GetType(name + requestMsg.requestItemType);
+
+                if (rqType != null)
+                    break;
+            }
+
+            using (var dbContext = new LeagueDbContext(dbName))
+            {
+                var entityMapper = new EntityMapper(dbContext);
+                var dtoMapper = new DTOMapper();
+                responseMsg.databaseName = dbName;
+
+                var rqEntityType = dtoMapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(rqType))?.SourceType;
+                if (rqEntityType == null)
+                    return null;
+
+                List<MappableDTO> resultItems = new List<MappableDTO>();
+                foreach (object item in requestMsg.items)
+                {
+                    object entity = entityMapper.MapTo(item, null, rqType, rqEntityType);
+                    dbContext.SaveChanges();
+                    var dto = dtoMapper.MapTo(entity, rqType) as MappableDTO;
+                    resultItems.Add(dto);
+                }
+                responseMsg.items = resultItems.ToArray();
+            };
+
+            responseMsg.status = "success";
+            return responseMsg;
         }
+
+        public DELItemsResponseMessage DatabaseDEL(DELItemsRequestMessage requestMsg)
+        {
+            DELItemsResponseMessage responseMsg = new DELItemsResponseMessage();
+            var dbName = requestMsg.databaseName;
+            responseMsg.success = false;
+
+            if (requestMsg == null)
+                return null;
+
+            var requestItemIds = requestMsg.requestItemIds.Select(x => x.Cast<object>().ToArray()).ToArray();
+
+            var searchNames = new string[]
+            {
+                "iRLeagueDatabase.DataTransfer.",
+                "iRLeagueDatabase.DataTransfer.Members.",
+                "iRLeagueDatabase.DataTransfer.Results.",
+                "iRLeagueDatabase.DataTransfer.Reviews.",
+                "iRLeagueDatabase.DataTransfer.Sessions."
+            };
+
+            Type rqType = null;
+            foreach (var name in searchNames)
+            {
+                rqType = Type.GetType(name + requestMsg.requestItemType);
+
+                if (rqType != null)
+                    break;
+            }
+
+            using (var dbContext = new LeagueDbContext(dbName))
+            {
+                var mapper = new DTOMapper();
+                var rqEntityType = mapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(rqType))?.SourceType;
+                if (rqEntityType == null)
+                    throw new Exception("No typemap for " + rqType.Name + " found");
+
+                foreach (var keys in requestItemIds)
+                {
+                    var entity = dbContext.Set(rqEntityType).Find(keys);
+
+                    if (entity != null)
+                    {
+                        dbContext.Set(rqEntityType).Remove(entity);
+                        responseMsg.status = "deleted";
+                        responseMsg.success = true;
+                    }
+                }
+                dbContext.SaveChanges();
+            };
+
+            return responseMsg;
+        }
+        
     }
 }

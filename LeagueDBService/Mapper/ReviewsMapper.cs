@@ -107,19 +107,20 @@ namespace iRLeagueDatabase.Mapper
 
         public IncidentReviewEntity GetReviewEntity(IncidentReviewInfoDTO source)
         {
-            if (source == null)
-                return null;
-            IncidentReviewEntity target;
+            //if (source == null)
+            //    return null;
+            //IncidentReviewEntity target;
 
-            if (source.ReviewId == null)
-                target = new IncidentReviewEntity();
-            else
-                target = DbContext.Set<IncidentReviewEntity>().Find(source.ReviewId);
+            //if (source.ReviewId == null)
+            //    target = new IncidentReviewEntity();
+            //else
+            //    target = DbContext.Set<IncidentReviewEntity>().Find(source.ReviewId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(IncidentReviewEntity), "Could not find Entity in Database.", source.ReviewId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(IncidentReviewEntity), "Could not find Entity in Database.", source.ReviewId);
 
-            return target;
+            //return target;
+            return DefaultGet<IncidentReviewInfoDTO, IncidentReviewEntity>(source);
         }
 
         public IncidentReviewEntity MapToReviewEntity(IncidentReviewDataDTO source, IncidentReviewEntity target = null)
@@ -144,37 +145,39 @@ namespace iRLeagueDatabase.Mapper
 
         public ReviewCommentEntity GetReviewCommentEntity(ReviewCommentDataDTO source)
         {
-            if (source == null)
-                return null;
-            ReviewCommentEntity target;
+            //if (source == null)
+            //    return null;
+            //ReviewCommentEntity target;
 
-            if (source.CommentId == null)
-                target = new ReviewCommentEntity();
-            else
-                target = DbContext.Set<ReviewCommentEntity>().Find(source.CommentId);
-            if (target == null)
-                throw new EntityNotFoundException(nameof(ReviewCommentEntity), "Could not find Entity in Database.", source.CommentId);
+            //if (source.CommentId == null)
+            //    target = new ReviewCommentEntity();
+            //else
+            //    target = DbContext.Set<ReviewCommentEntity>().Find(source.CommentId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ReviewCommentEntity), "Could not find Entity in Database.", source.CommentId);
 
-            return target;
+            //return target;
+            return DefaultGet<ReviewCommentDataDTO, ReviewCommentEntity>(source);
         }
 
         public CommentBaseEntity GetCommentEntity(CommentDataDTO source)
         {
-            if (source == null)
-                return null;
-            CommentBaseEntity target;
+            //if (source == null)
+            //    return null;
+            //CommentBaseEntity target;
 
-            if (source is ReviewCommentDataDTO reviewComment)
-                target = GetReviewCommentEntity(reviewComment);
-            else if (source.CommentId == null)
-                target = new CommentBaseEntity();
-            else
-                target = DbContext.Set<CommentBaseEntity>().Find(source.CommentId);
+            //if (source is ReviewCommentDataDTO reviewComment)
+            //    target = GetReviewCommentEntity(reviewComment);
+            //else if (source.CommentId == null)
+            //    target = new CommentBaseEntity();
+            //else
+            //    target = DbContext.Set<CommentBaseEntity>().Find(source.CommentId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(CommentBaseEntity), "Could not find Entity in Database.", source.CommentId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(CommentBaseEntity), "Could not find Entity in Database.", source.CommentId);
 
-            return target;
+            //return target;
+            return DefaultGet<CommentDataDTO, CommentBaseEntity>(source);
         }
 
         public CommentBaseEntity MapToCommentBaseEntity(CommentDataDTO source, CommentBaseEntity target = null)

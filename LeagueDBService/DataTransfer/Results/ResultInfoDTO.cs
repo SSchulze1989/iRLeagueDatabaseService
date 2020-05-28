@@ -19,7 +19,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
 
         public override object MappingId => ResultId;
 
-        public override object[] Keys => new object[] { Result };
+        public override object[] Keys => new object[] { ResultId };
         //object IMappableDTO.MappingId => ResultId;
     }
 }

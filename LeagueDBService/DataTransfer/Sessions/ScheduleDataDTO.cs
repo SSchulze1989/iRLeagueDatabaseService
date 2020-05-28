@@ -21,8 +21,6 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         //public SeasonInfoDTO Season { get; set; }
         [DataMember]
         public ICollection<SessionDataDTO> Sessions { get; set; } = new List<SessionDataDTO>();
-        [DataMember]
-        public string Name { get; set; }
 
         [DataMember]
         public LeagueMemberInfoDTO CreatedBy { get; set; }

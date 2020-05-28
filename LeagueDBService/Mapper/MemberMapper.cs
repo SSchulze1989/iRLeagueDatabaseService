@@ -57,20 +57,21 @@ namespace iRLeagueDatabase.Mapper
         }
         public LeagueMemberEntity GetMemberEntity(LeagueMemberInfoDTO source)
         {
-            if (source == null)
-                return null;
+            //if (source == null)
+            //    return null;
 
-            LeagueMemberEntity target;
+            //LeagueMemberEntity target;
 
-            if (source.MemberId == null)
-                target = new LeagueMemberEntity();
-            else
-                target = DbContext.Set<LeagueMemberEntity>().Find(source.MemberId);
+            //if (source.MemberId == null)
+            //    target = new LeagueMemberEntity();
+            //else
+            //    target = DbContext.Set<LeagueMemberEntity>().Find(source.MemberId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(LeagueMemberEntity), "Could not find Entity in Database.", source.MemberId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(LeagueMemberEntity), "Could not find Entity in Database.", source.MemberId);
 
-            return target;
+            //return target;
+            return DefaultGet<LeagueMemberInfoDTO, LeagueMemberEntity>(source);
         }
 
         public LeagueMemberEntity MapToMemberEntity(LeagueMemberDataDTO source, LeagueMemberEntity target = null)

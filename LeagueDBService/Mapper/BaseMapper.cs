@@ -107,19 +107,20 @@ namespace iRLeagueDatabase.Mapper
 
         public SeasonEntity GetSeasonEntity(SeasonInfoDTO source)
         {
-            if (source == null)
-                return null;
-            SeasonEntity target;
+            //if (source == null)
+            //    return null;
+            //SeasonEntity target;
 
-            if (source.SeasonId == null)
-                target = new SeasonEntity();
-            else
-                target = DbContext.Seasons.Find(source.SeasonId);
+            //if (source.SeasonId == null)
+            //    target = new SeasonEntity();
+            //else
+            //    target = DbContext.Seasons.Find(source.SeasonId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(SeasonEntity), "Could not find Entity in Database.", source.SeasonId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(SeasonEntity), "Could not find Entity in Database.", source.SeasonId);
 
-            return target;
+            //return target;
+            return DefaultGet<SeasonInfoDTO, SeasonEntity>(source);
         }
         public SeasonEntity MapToSeasonEntity(SeasonInfoDTO source, SeasonEntity target = null)
         {
@@ -150,7 +151,7 @@ namespace iRLeagueDatabase.Mapper
             if (!MapToRevision(source, target))
                 return target;
 
-            MapToSeasonEntity(source, target);
+            target.SeasonName = source.SeasonName;
             target.CreatedBy = GetMemberEntity(source.CreatedBy);
             target.LastModifiedBy = GetMemberEntity(source.LastModifiedBy);
             MapCollection(source.Schedules, target.Schedules, GetScheduleEntity, x => x.MappingId);

@@ -10,8 +10,14 @@ using System.Runtime.CompilerServices;
 using iRLeagueDatabase;
 //using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.Mapper;
+using TestConsole.LeagueDBServiceRef;
+
+using iRLeagueDatabase.Entities.Results;
+using iRLeagueDatabase.DataTransfer.Results;
 
 namespace TestConsole
 {
@@ -19,7 +25,9 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            //var dbContext = new TestDbContext();
+            var dbContext = new LeagueDbContext("TestDatabase");
+
+            var scoring = dbContext.Set<ScoringEntity>().Find(1);
 
             //var Session = new Session()
             //{
@@ -33,16 +41,24 @@ namespace TestConsole
 
             //var session = client.GetModelAsync<SessionModel>(1).Result;
 
-            //Console.ReadKey();
 
-            var dbContext = new LeagueDbContext();
+            ILeagueDBService dbService = new LeagueDBServiceClient();
 
-            var season = dbContext.Set<SeasonEntity>().First();
-            var mapper = new DTOMapper();
+            var dbRequestMsg = new GETItemsRequestMessage()
+            {
+                databaseName = "TestDatabase",
+                userName = "testuser",
+                password = "12345",
+                requestItemIds = new long[][] { new long[] { 1 } },
+                requestItemType = typeof(ScoringDataDTO).FullName,
+                requestResponse = true
+            };
 
-            SeasonDataDTO seasonDto = mapper.MapTo(season, typeof(SeasonDataDTO)) as SeasonDataDTO;
+            var scoringDto = dbService.DatabaseGET(dbRequestMsg).items.First();
 
+            Console.ReadKey();
 
+            //var response = dbService.GetFromDatabase(dbRequestMsg);
         }
 
         static void NotifyDirect(object sender, PropertyChangedEventArgs e)

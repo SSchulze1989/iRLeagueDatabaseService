@@ -14,14 +14,34 @@ using iRLeagueDatabase.DataTransfer.Messages;
 namespace LeagueDBService
 {
     // HINWEIS: Mit dem Befehl "Umbenennen" im Menü "Umgestalten" können Sie den Schnittstellennamen "IService1" sowohl im Code als auch in der Konfigurationsdatei ändern.
-    [ServiceContract]
-    [ServiceKnownType(typeof(RaceSessionDataDTO))]
-    [ServiceKnownType(typeof(LeagueMemberDataDTO))]
-    [ServiceKnownType(typeof(ResultDataDTO))]
+    [ServiceContract,
+        ServiceKnownType(typeof(RaceSessionDataDTO)),
+        ServiceKnownType(typeof(ReviewCommentDataDTO)),
+        ServiceKnownType(typeof(IncidentReviewDataDTO)),
+        ServiceKnownType(typeof(LeagueMemberDataDTO)),
+        ServiceKnownType(typeof(ResultDataDTO)),
+        ServiceKnownType(typeof(RequestMessage)),
+        ServiceKnownType(typeof(ScheduleDataDTO)),
+        ServiceKnownType(typeof(ScoredResultDataDTO)), 
+        ServiceKnownType(typeof(ScoredResultRowDataDTO)), 
+        ServiceKnownType(typeof(ScoringDataDTO)),
+        ServiceKnownType(typeof(ResultRowDataDTO))]
     public interface ILeagueDBService
     {
         [OperationContract]
-        GetItemsResponse MessageTest(GetItemsRequest request);
+        ResponseMessage MessageTest(RequestMessage request);
+
+        [OperationContract]
+        POSTItemsResponseMessage DatabasePOST(POSTItemsRequestMessage requestMsg);
+
+        [OperationContract]
+        GETItemsResponseMessage DatabaseGET(GETItemsRequestMessage requestMsg);
+
+        [OperationContract]
+        PUTItemsResponseMessage DatabasePUT(PUTItemsRequestMessage requestMsg);
+
+        [OperationContract]
+        DELItemsResponseMessage DatabaseDEL(DELItemsRequestMessage requestMsg);
 
         [OperationContract]
         void SetDatabaseName(string databaseName);
@@ -31,77 +51,77 @@ namespace LeagueDBService
         [OperationContract]
         string Test(string name);
 
-        [OperationContract]
-        SeasonDataDTO GetSeason(long seasonId);
+        //[OperationContract]
+        //SeasonDataDTO GetSeason(long seasonId);
 
-        [OperationContract]
-        List<SeasonDataDTO> GetSeasons(long[] seasonIds = null);
+        //[OperationContract]
+        //List<SeasonDataDTO> GetSeasons(long[] seasonIds = null);
 
-        [OperationContract]
-        SeasonDataDTO PutSeason(SeasonDataDTO season);
+        //[OperationContract]
+        //SeasonDataDTO PutSeason(SeasonDataDTO season);
 
-        [OperationContract]
-        LeagueMemberDataDTO GetMember(long memberId);
+        //[OperationContract]
+        //LeagueMemberDataDTO GetMember(long memberId);
 
-        [OperationContract]
-        List<LeagueMemberDataDTO> GetMembers(long[] memberId = null);
+        //[OperationContract]
+        //List<LeagueMemberDataDTO> GetMembers(long[] memberId = null);
 
-        [OperationContract]
-        LeagueMemberDataDTO[] UpdateMemberList(LeagueMemberDataDTO[] members);
+        //[OperationContract]
+        //LeagueMemberDataDTO[] UpdateMemberList(LeagueMemberDataDTO[] members);
 
-        [OperationContract]
-        LeagueMemberDataDTO GetLastMember();
+        //[OperationContract]
+        //LeagueMemberDataDTO GetLastMember();
 
-        [OperationContract]
-        LeagueMemberDataDTO PutMember(LeagueMemberDataDTO member);
+        //[OperationContract]
+        //LeagueMemberDataDTO PutMember(LeagueMemberDataDTO member);
 
-        [OperationContract]
-        IncidentReviewDataDTO GetReview(long reviewId);
+        //[OperationContract]
+        //IncidentReviewDataDTO GetReview(long reviewId);
 
-        [OperationContract]
-        IncidentReviewDataDTO PutReview(IncidentReviewDataDTO review);
+        //[OperationContract]
+        //IncidentReviewDataDTO PutReview(IncidentReviewDataDTO review);
 
-        [OperationContract]
-        SessionDataDTO GetSession(long sessionId);
+        //[OperationContract]
+        //SessionDataDTO GetSession(long sessionId);
 
-        [OperationContract]
-        SessionDataDTO PutSession(SessionDataDTO session);
+        //[OperationContract]
+        //SessionDataDTO PutSession(SessionDataDTO session);
 
-        [OperationContract]
-        CommentDataDTO GetComment(long commentId);
+        //[OperationContract]
+        //CommentDataDTO GetComment(long commentId);
 
-        [OperationContract]
-        CommentDataDTO PutComment(ReviewCommentDataDTO comment);
+        //[OperationContract]
+        //CommentDataDTO PutComment(ReviewCommentDataDTO comment);
 
-        [OperationContract]
-        ScheduleDataDTO GetSchedule(long scheduleId);
+        //[OperationContract]
+        //ScheduleDataDTO GetSchedule(long scheduleId);
 
-        [OperationContract]
-        List<ScheduleDataDTO> GetSchedules(long[] scheduleIds = null);
+        //[OperationContract]
+        //List<ScheduleDataDTO> GetSchedules(long[] scheduleIds = null);
 
-        [OperationContract]
-        ScheduleDataDTO PutSchedule(ScheduleDataDTO schedule);
+        //[OperationContract]
+        //ScheduleDataDTO PutSchedule(ScheduleDataDTO schedule);
 
-        [OperationContract]
-        ResultDataDTO GetResult(long resultId);
+        //[OperationContract]
+        //ResultDataDTO GetResult(long resultId);
 
-        [OperationContract]
-        ResultDataDTO PutResult(ResultDataDTO result);
+        //[OperationContract]
+        //ResultDataDTO PutResult(ResultDataDTO result);
 
-        [OperationContract]
-        ScoringDataDTO GetScoring(long scoringId);
+        //[OperationContract]
+        //ScoringDataDTO GetScoring(long scoringId);
 
-        [OperationContract]
-        ScoringDataDTO PutScoring(ScoringDataDTO scoring);
+        //[OperationContract]
+        //ScoringDataDTO PutScoring(ScoringDataDTO scoring);
 
-        [OperationContract]
-        StandingsRowDTO[] GetSeasonStandings(long seasonId, long? lastSessionId);
+        //[OperationContract]
+        //StandingsRowDTO[] GetSeasonStandings(long seasonId, long? lastSessionId);
 
-        [OperationContract]
-        StandingsRowDTO[] GetTeamStandings(long seasonId, long? lastSessionId);
+        //[OperationContract]
+        //StandingsRowDTO[] GetTeamStandings(long seasonId, long? lastSessionId);
 
-        [OperationContract]
-        ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId);
+        //[OperationContract]
+        //ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId);
 
         [OperationContract]
         void CalculateScoredResults(long sessionId);

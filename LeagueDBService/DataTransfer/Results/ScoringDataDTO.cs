@@ -26,7 +26,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int AverageRaceNr { get; set; }
         [DataMember]
-        public virtual ICollection<SessionInfoDTO> Sessions { get; set; }
+        public virtual SessionInfoDTO[] Sessions { get; set; }
         [DataMember]
         public long SeasonId { get; set; }
         [DataMember]
@@ -40,12 +40,17 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string MultiScoringFactors { get; set; }
         [DataMember]
-        public virtual ICollection<ScoringInfoDTO> MultiScoringResults { get; set; }
+        public virtual ScoringInfoDTO[] MultiScoringResults { get; set; }
+        [DataMember]
+        public virtual ResultInfoDTO[] Results { get; set; }
 
         [DataMember]
         public LeagueMemberInfoDTO CreatedBy { get; set; }
         [DataMember]
         public LeagueMemberInfoDTO LastModifiedBy { get; set; }
+
+        [DataMember]
+        public ScheduleInfoDTO ConnectedSchedule { get; set; }
 
         public ScoringDataDTO() { }
     }

@@ -19,6 +19,8 @@ namespace iRLeagueDatabase.Mapper
     {
         private IList<TypeMap> TypeMaps { get; } = new List<TypeMap>();
 
+        public IEnumerable<TypeMap> GetTypeMaps() => TypeMaps;
+
         public DTOMapper()
         {
             RegisterTypeMaps();
@@ -26,13 +28,16 @@ namespace iRLeagueDatabase.Mapper
 
         public void RegisterTypeMaps()
         {
-
+            RegisterBaseTypeMaps();
+            RegisterMemberTypeMaps();
+            RegisterResultsTypeMaps();
+            RegisterReviewsTypeMaps();
+            RegisterSessionsTypeMaps();
         }
 
         public TTarget MapTo<TTarget>(MappableEntity source) where TTarget : MappableDTO, new()
         {
-            var target = new TTarget();
-            return MapTo(source, target);
+            return MapTo(source, targetType: typeof(TTarget)) as TTarget;
         }
         public TTarget MapTo<TTarget, TSource>(TSource source, TTarget target) where TTarget : MappableDTO where TSource : MappableEntity
         {
@@ -53,6 +58,9 @@ namespace iRLeagueDatabase.Mapper
                 throw new Exception("No typemap found.");
 
             var typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType));
+
+            if (typeMap == null)
+                typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType.BaseType) && x.TargetType.Equals(targetType));
 
             if (typeMap == null)
                 throw new Exception("No typemap found.");
@@ -105,7 +113,7 @@ namespace iRLeagueDatabase.Mapper
                 var typeMap = GetTypeMap(sourceType, targetType);
 
                 if (target == null)
-                    target = typeMap.Get(source) as MappableEntity;
+                    target = typeMap.Get(source) as MappableDTO;
 
                 typeMap.MapTo(source, target);
             }

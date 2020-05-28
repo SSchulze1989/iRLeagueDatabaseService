@@ -23,7 +23,7 @@ namespace iRLeagueDatabase
 
         private readonly OrphansToHandle OrphansToHandle;
 
-        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False;")
+        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False;")
         {
         }
 
@@ -37,6 +37,10 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ResultEntity, SessionBaseEntity>(x => x.Session);
             OrphansToHandle.Add<ResultEntity, RaceSessionEntity>(x => x.Session as RaceSessionEntity);
             OrphansToHandle.Add<ResultRowEntity, ResultEntity>(x => x.Result);
+            OrphansToHandle.Add<ScoredResultEntity, ResultEntity>(x => x.Result);
+            OrphansToHandle.Add<ScoredResultEntity, ScoringEntity>(x => x.Scoring);
+            OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
+            OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -83,6 +87,12 @@ namespace iRLeagueDatabase
                     rm.ToTable("Scoring_Session");
                 });
             modelBuilder.Entity<ScoringEntity>()
+                .HasRequired(r => r.Season)
+                .WithMany(m => m.Scorings);
+            //modelBuilder.Entity<ScoringEntity>()
+            //    .HasMany(r => r.Results)
+            //    .WithMany(m => m.Session.Scorings);
+            modelBuilder.Entity<ScoringEntity>()
                 .HasMany(r => r.MultiScoringResults)
                 .WithMany()
                 .Map(rm =>
@@ -91,20 +101,27 @@ namespace iRLeagueDatabase
                     rm.MapRightKey("ScoringChildId");
                     rm.ToTable("MultiScoringMap");
                 });
-            modelBuilder.Entity<ScoredResultRowEntity>()
-                .ToTable("ScoredResultRowEntities");
+            modelBuilder.Entity<ScoringEntity>()
+                .HasOptional(r => r.ConnectedSchedule)
+                .WithOptionalDependent(r => r.ConnectedScoring);
+            //modelBuilder.Entity<ScoredResultRowEntity>()
+            //    .ToTable("ScoredResultRowEntities");
 
-                
+            modelBuilder.Entity<ScoredResultEntity>()
+                .ToTable("ScoredResultEntities");
         }
 
         public override int SaveChanges()
         {
+            //while (!HandleOrphans()) { }
             HandleOrphans();
             return base.SaveChanges();
         }
 
-        private void HandleOrphans()
+        private bool HandleOrphans()
         {
+            bool allOrphansHandled = true;
+
             var objectContext = ((IObjectContextAdapter)this).ObjectContext;
 
             objectContext.DetectChanges();
@@ -119,10 +136,16 @@ namespace iRLeagueDatabase
 
                     if (entityToDelete != null)
                     {
-                        objectContext.DeleteObject(entityToDelete);
+                        if (!(this.Entry(entityToDelete).State == EntityState.Deleted))
+                        {
+                            objectContext.DeleteObject(entityToDelete);
+                            allOrphansHandled = false;
+                        }
                     }
                 }
             }
+
+            return allOrphansHandled;
         }
 
         private object IdentifyEntityToDelete(ObjectContext objectContext, ObjectStateEntry deletedThing)

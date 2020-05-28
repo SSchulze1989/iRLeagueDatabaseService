@@ -77,6 +77,7 @@ namespace iRLeagueDatabase.Mapper
             target.PositionChange = source.PositionChange;
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.ResultRowId = source.ResultRowId;
+            target.ResultId = source.ResultId;
             target.StartPosition = source.StartPosition;
             target.Status = source.Status;
 
@@ -130,11 +131,13 @@ namespace iRLeagueDatabase.Mapper
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
             target.MultiScoringFactors = source.MultiScoringFactors;
-            target.MultiScoringResults = source.MultiScoringResults.Select(x => MapToScoringInfoDTO(x)).ToList();
+            target.MultiScoringResults = source.MultiScoringResults.Select(x => MapToScoringInfoDTO(x)).ToArray();
             target.Name = source.Name;
             target.Season = MapToSeasonInfoDTO(source.Season);
-            target.SeasonId = source.SeasonId;
-            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToList();
+            //target.SeasonId = source.SeasonId;
+            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
+            target.Results = source.Results.Select(x => MapToResultInfoDTO(x)).ToArray();
+            target.ConnectedSchedule = MapToScheduleInfoDTO(source.ConnectedSchedule);
 
             return target;
         }
@@ -151,19 +154,20 @@ namespace iRLeagueDatabase.Mapper
 
         public ResultEntity GetResultEntity(ResultInfoDTO source)
         {
-            if (source == null)
-                return null;
-            ResultEntity target;
+            //if (source == null)
+            //    return null;
+            //ResultEntity target;
 
-            if (source.ResultId == null)
-                target = new ResultEntity();
-            else
-                target = DbContext.Set<ResultEntity>().Find(source.ResultId);
-            
-            if (target == null)
-                throw new EntityNotFoundException(nameof(ResultEntity), "Could not find Entity in Database.", source.ResultId);
+            //if (source.ResultId == null)
+            //    target = new ResultEntity();
+            //else
+            //    target = DbContext.Set<ResultEntity>().Find(source.ResultId);
 
-            return target;
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ResultEntity), "Could not find Entity in Database.", source.ResultId);
+
+            //return target;
+            return DefaultGet<ResultInfoDTO, ResultEntity>(source);
         }
 
         public ResultEntity MapToResultEntity(ResultDataDTO source, ResultEntity target = null)
@@ -187,36 +191,38 @@ namespace iRLeagueDatabase.Mapper
 
         public ResultRowEntity GetResultRowEntity(ResultRowDataDTO source)
         {
-            if (source == null)
-                return null;
-            ResultRowEntity target;
+            //if (source == null)
+            //    return null;
+            //ResultRowEntity target;
 
-            if (source.ResultRowId == null)
-                target = new ResultRowEntity();
-            else
-                target = DbContext.Set<ResultRowEntity>().Find(source.ResultRowId, source.ResultId);
+            //if (source.ResultRowId == null)
+            //    target = new ResultRowEntity();
+            //else
+            //    target = DbContext.Set<ResultRowEntity>().Find(source.ResultRowId, source.ResultId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(ResultRowEntity), "Could not find Entity in Database.", source.ResultRowId, source.ResultId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ResultRowEntity), "Could not find Entity in Database.", source.ResultRowId, source.ResultId);
 
-            return target;
+            //return target;
+            return DefaultGet<ResultRowDataDTO, ResultRowEntity>(source);
         }
 
         public ScoredResultRowEntity GetScoredResultRowEntity(ScoredResultRowDataDTO source)
         {
-            if (source == null)
-                return null;
-            ScoredResultRowEntity target;
+            //if (source == null)
+            //    return null;
+            //ScoredResultRowEntity target;
 
-            if (source.ResultRowId == null)
-                target = new ScoredResultRowEntity();
-            else
-                target = DbContext.Set<ScoredResultRowEntity>().Find(source.ResultRowId, source.ResultId, source.ScoringId);
+            //if (source.ResultRowId == null)
+            //    target = new ScoredResultRowEntity();
+            //else
+            //    target = DbContext.Set<ScoredResultRowEntity>().Find(source.ResultRowId, source.ResultId, source.ScoringId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(ScoredResultRowEntity), "Could not find Entity in Database.", source.ResultRowId, source.ResultId, source.ScoringId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ScoredResultRowEntity), "Could not find Entity in Database.", source.ResultRowId, source.ResultId, source.ScoringId);
 
-            return target;
+            //return target;
+            return DefaultGet<ScoredResultRowDataDTO, ScoredResultRowEntity>(source);
         }
 
         public ResultRowEntity MapToResultRowEntity(ResultRowDataDTO source, ResultRowEntity target = null)
@@ -243,25 +249,27 @@ namespace iRLeagueDatabase.Mapper
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.StartPosition = source.StartPosition;
             target.Status = source.Status;
+            target.Result = GetResultEntity(new ResultInfoDTO() { ResultId = source.ResultId });
 
             return target;
         }
 
         public ScoringEntity GetScoringEntity(ScoringInfoDTO source)
         {
-            if (source == null)
-                return null;
-            ScoringEntity target;
+            //if (source == null)
+            //    return null;
+            //ScoringEntity target;
 
-            if (source.ScoringId == null)
-                target = new ScoringEntity();
-            else
-                target = DbContext.Set<ScoringEntity>().Find(source.ScoringId);
+            //if (source.ScoringId == null)
+            //    target = new ScoringEntity();
+            //else
+            //    target = DbContext.Set<ScoringEntity>().Find(source.ScoringId);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(ScoringEntity), "Could not find Entity in Database.", source.ScoringId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ScoringEntity), "Could not find Entity in Database.", source.ScoringId);
 
-            return target;
+            //return target;
+            return DefaultGet<ScoringInfoDTO, ScoringEntity>(source);
         }
 
         public ScoringEntity MapToScoringEntity(ScoringDataDTO source, ScoringEntity target = null)
@@ -287,6 +295,7 @@ namespace iRLeagueDatabase.Mapper
             target.Name = source.Name;
             target.Season = GetSeasonEntity(source.Season);
             MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
+            target.ConnectedSchedule = GetScheduleEntity(source.ConnectedSchedule);
 
             return target;
         }

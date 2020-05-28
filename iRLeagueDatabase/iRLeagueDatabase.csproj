@@ -56,34 +56,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
-    <Compile Include="Migrations\202002172138422_InitialCreate.cs" />
-    <Compile Include="Migrations\202002172138422_InitialCreate.designer.cs">
-      <DependentUpon>202002172138422_InitialCreate.cs</DependentUpon>
+    <Compile Include="Entities\Results\StandingsRowEntity.cs" />
+    <Compile Include="Migrations\202005250852388_InitialCreate.cs" />
+    <Compile Include="Migrations\202005250852388_InitialCreate.designer.cs">
+      <DependentUpon>202005250852388_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202002180825596_CascadeDeleteResult.cs" />
-    <Compile Include="Migrations\202002180825596_CascadeDeleteResult.designer.cs">
-      <DependentUpon>202002180825596_CascadeDeleteResult.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202002182237492_UpdateScoringModel.cs" />
-    <Compile Include="Migrations\202002182237492_UpdateScoringModel.designer.cs">
-      <DependentUpon>202002182237492_UpdateScoringModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202002190545406_ChangeKeyType.cs" />
-    <Compile Include="Migrations\202002190545406_ChangeKeyType.designer.cs">
-      <DependentUpon>202002190545406_ChangeKeyType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202002262259581_Add_ScoredResultsRow_Table.cs" />
-    <Compile Include="Migrations\202002262259581_Add_ScoredResultsRow_Table.designer.cs">
-      <DependentUpon>202002262259581_Add_ScoredResultsRow_Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202002272315555_AddSessionScoringNavProp.cs" />
-    <Compile Include="Migrations\202002272315555_AddSessionScoringNavProp.designer.cs">
-      <DependentUpon>202002272315555_AddSessionScoringNavProp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202004101940099_AddTotalPointsCol_ScoredResultRow.cs" />
-    <Compile Include="Migrations\202004101940099_AddTotalPointsCol_ScoredResultRow.designer.cs">
-      <DependentUpon>202004101940099_AddTotalPointsCol_ScoredResultRow.cs</DependentUpon>
+    <Compile Include="Migrations\202005251731075_ChangeScoredResultType.cs" />
+    <Compile Include="Migrations\202005251731075_ChangeScoredResultType.designer.cs">
+      <DependentUpon>202005251731075_ChangeScoredResultType.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -119,26 +101,11 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202002172138422_InitialCreate.resx">
-      <DependentUpon>202002172138422_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005250852388_InitialCreate.resx">
+      <DependentUpon>202005250852388_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002180825596_CascadeDeleteResult.resx">
-      <DependentUpon>202002180825596_CascadeDeleteResult.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002182237492_UpdateScoringModel.resx">
-      <DependentUpon>202002182237492_UpdateScoringModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002190545406_ChangeKeyType.resx">
-      <DependentUpon>202002190545406_ChangeKeyType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002262259581_Add_ScoredResultsRow_Table.resx">
-      <DependentUpon>202002262259581_Add_ScoredResultsRow_Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202002272315555_AddSessionScoringNavProp.resx">
-      <DependentUpon>202002272315555_AddSessionScoringNavProp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202004101940099_AddTotalPointsCol_ScoredResultRow.resx">
-      <DependentUpon>202004101940099_AddTotalPointsCol_ScoredResultRow.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005251731075_ChangeScoredResultType.resx">
+      <DependentUpon>202005251731075_ChangeScoredResultType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

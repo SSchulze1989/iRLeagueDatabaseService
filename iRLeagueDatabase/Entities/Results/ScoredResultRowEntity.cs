@@ -17,11 +17,13 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual ResultRowEntity ResultRow { get; set; }
         [NotMapped]
         public override object MappingId => new { ScoringId, ResultRowId };
-
-        [Key, ForeignKey(nameof(Scoring)), Column(Order =2)]
+        [Key, ForeignKey(nameof(ScoredResult)), Column(Order = 2)]
+        public long ScoredResultId { get; set; }
+        [Key, ForeignKey(nameof(ScoredResult)), Column(Order = 3)]
         public long ScoringId { get; set; }
         [Required]
-        public virtual ScoringEntity Scoring { get; set; }
+        //public virtual ScoringEntity Scoring { get; set; }
+        public virtual ScoredResultEntity ScoredResult { get; set; }
         public int RacePoints { get; set; }
         public int BonusPoints { get; set; }
         public int PenaltyPoints { get; set; }

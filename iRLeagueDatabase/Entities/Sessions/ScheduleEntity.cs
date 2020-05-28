@@ -8,6 +8,8 @@ using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using iRLeagueDatabase.Entities.Results;
+
 namespace iRLeagueDatabase.Entities.Sessions
 {
     public class ScheduleEntity : Revision
@@ -27,6 +29,8 @@ namespace iRLeagueDatabase.Entities.Sessions
 
         //[InverseProperty(nameof(SessionBaseEntity.Schedule))]
         public virtual List<SessionBaseEntity> Sessions { get; set; } = new List<SessionBaseEntity>();
+
+        public virtual ScoringEntity ConnectedScoring { get; set; }
 
         public ScheduleEntity() { }
 

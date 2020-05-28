@@ -19,12 +19,12 @@ namespace iRLeagueRESTService.Controllers
             return true;
         }
 
-        [HttpGet]
-        public SeasonDataDTO GetSeason(long id)
-        {
-            ILeagueDBService dbService = new LeagueDBService.LeagueDBService();
+        //[HttpGet]
+        //public SeasonDataDTO GetSeason(long id)
+        //{
+        //    ILeagueDBService dbService = new LeagueDBService.LeagueDBService();
 
-            return dbService.GetSeason(id);
-        }
+        //    return dbService.GetSeason(id);
+        //}
     }
 }

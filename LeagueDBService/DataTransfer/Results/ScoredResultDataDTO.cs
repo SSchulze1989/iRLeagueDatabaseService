@@ -19,6 +19,6 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;
         [DataMember]
-        public IEnumerable<ScoredResultRowDataDTO> ScoredResults { get; set; }
+        public IEnumerable<ScoredResultRowDataDTO> FinalResults { get; set; }
     }
 }

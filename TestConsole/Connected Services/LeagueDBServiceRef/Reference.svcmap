@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="15dceff4-0543-4d14-a745-82ff95a0bba6" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="3188b015-b3cc-4679-8f23-5d258883805f" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -22,17 +22,18 @@
     <MetadataSource Address="http://144.91.113.195:5051/Service.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Service99.xsd" MetadataType="Schema" ID="9730c447-09b1-494f-960b-7ab6793a6154" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd5" />
-    <MetadataFile FileName="Service11.disco" MetadataType="Disco" ID="26ee10e1-cdf7-45df-804c-e1b84c53d65e" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?disco" />
-    <MetadataFile FileName="Service910.xsd" MetadataType="Schema" ID="448e7707-9364-4b2e-9379-e2e89284a3f7" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd8" />
-    <MetadataFile FileName="Service911.xsd" MetadataType="Schema" ID="c7e1ae29-a313-4ca4-a000-198fce9ea492" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd0" />
-    <MetadataFile FileName="Service912.xsd" MetadataType="Schema" ID="a055ca4e-da6b-48e2-bc37-edca64ee098c" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd6" />
-    <MetadataFile FileName="Service913.xsd" MetadataType="Schema" ID="bdad57c8-287b-4095-8850-d60a975db825" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd1" />
-    <MetadataFile FileName="Service914.xsd" MetadataType="Schema" ID="8e14e37e-fc80-4ef8-8720-3c1098715e7b" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd7" />
-    <MetadataFile FileName="Service915.xsd" MetadataType="Schema" ID="98fb4774-c8f9-4029-8f3e-657f457a929c" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd3" />
-    <MetadataFile FileName="Service916.xsd" MetadataType="Schema" ID="5ca089f3-6e59-411d-8316-898ec7c0ccfe" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd4" />
-    <MetadataFile FileName="Service917.xsd" MetadataType="Schema" ID="cc3f810b-0b5a-487b-a477-a2f318976b0d" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd2" />
-    <MetadataFile FileName="LeagueDBService11.wsdl" MetadataType="Wsdl" ID="5a4be391-6974-48a2-9c41-6fb0594664d8" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?wsdl" />
+    <MetadataFile FileName="Service.xsd" MetadataType="Schema" ID="d0b94db0-277e-40fd-98d8-8dde89b865c4" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd5" />
+    <MetadataFile FileName="Service.disco" MetadataType="Disco" ID="17e5990c-7260-4f23-9dce-f6942b54fad9" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?disco" />
+    <MetadataFile FileName="Service1.xsd" MetadataType="Schema" ID="7e704c24-e38c-4f1b-a2d4-21e85f3edda7" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd8" />
+    <MetadataFile FileName="Service2.xsd" MetadataType="Schema" ID="5f1057d4-c917-4b3d-96fb-c3e31a70f60f" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd0" />
+    <MetadataFile FileName="Service3.xsd" MetadataType="Schema" ID="95c59a83-a613-4c69-af07-520792d70558" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd6" />
+    <MetadataFile FileName="Service4.xsd" MetadataType="Schema" ID="3cf2b2a7-48c5-4668-be8e-fb9833ba7591" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd1" />
+    <MetadataFile FileName="Service5.xsd" MetadataType="Schema" ID="2ed93345-e4e3-490d-a540-f83bf974e723" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd7" />
+    <MetadataFile FileName="Service6.xsd" MetadataType="Schema" ID="9e5bee6c-47a7-4220-916b-fd0eb2a8c00a" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd3" />
+    <MetadataFile FileName="Service7.xsd" MetadataType="Schema" ID="664ba40c-b34b-4dd4-b723-0d701712dee1" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd4" />
+    <MetadataFile FileName="LeagueDBService.wsdl" MetadataType="Wsdl" ID="855b0f32-f8d4-41ea-82f7-87744773a28f" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?wsdl" />
+    <MetadataFile FileName="Service8.xsd" MetadataType="Schema" ID="af5f6177-444a-4770-81bc-b68fb7e4d548" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd2" />
+    <MetadataFile FileName="Service9.xsd" MetadataType="Schema" ID="fa80ae65-2d36-4700-873f-99d2a7968fbe" SourceId="1" SourceUrl="http://144.91.113.195:5051/Service.svc?xsd=xsd9" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

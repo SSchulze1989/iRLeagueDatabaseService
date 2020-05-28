@@ -33,12 +33,15 @@ namespace iRLeagueDatabase.Mapper
             RegisterSessionsTypeMaps();
         }
 
-        private TypeMap GetTypeMap(Type sourceType, Type targetType)
+        public TypeMap GetTypeMap(Type sourceType, Type targetType)
         {
             if (sourceType == null || targetType == null)
                 throw new Exception("No typemap found.");
 
             var typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType));
+
+            if(typeMap == null)
+                typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType.BaseType));
 
             if (typeMap == null)
                 throw new Exception("No typemap found.");
@@ -46,22 +49,32 @@ namespace iRLeagueDatabase.Mapper
             return typeMap;
         }
 
-        public TTarget Map<TTarget>(object source) where TTarget : MappableEntity
+        public object MapTo(object source, Type targetType)
+        {
+            return MapTo(source, null, source.GetType(), targetType);
+        }
+
+        public object MapTo(object source, object target)
+        {
+            return MapTo(source, target, source.GetType(), target.GetType());
+        }
+
+        public TTarget MapTo<TTarget>(object source) where TTarget : MappableEntity
         {
             if (source == null)
                 return null;
             TTarget target = null;
-            target = Map(source, target, source.GetType(), typeof(TTarget)) as TTarget;
+            target = MapTo(source, target, source.GetType(), typeof(TTarget)) as TTarget;
 
             return target;
         }
 
-        public TTarget Map<TSource, TTarget>(TSource source, TTarget target) where TSource : MappableDTO where TTarget : MappableEntity
+        public TTarget MapTo<TSource, TTarget>(TSource source, TTarget target) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return Map(source, target, typeof(TSource), typeof(TTarget)) as TTarget;
+            return MapTo(source, target, typeof(TSource), typeof(TTarget)) as TTarget;
         }
 
-        public object Map(object source, object target, Type sourceType, Type targetType)
+        public object MapTo(object source, object target, Type sourceType, Type targetType)
         {
             try
             {
@@ -87,12 +100,15 @@ namespace iRLeagueDatabase.Mapper
             TTarget target;
 
             if (source.MappingId == null)
-                target = new TTarget();
+            {
+                target = DbContext.Set<TTarget>().Create(); 
+                //DbContext.SaveChanges();
+            }
             else
                 target = DbContext.Set<TTarget>().Find(source.Keys);
 
-            if (target == null)
-                throw new EntityNotFoundException(nameof(TTarget), "Could not find Entity in Database.", source.Keys);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(TTarget), "Could not find Entity in Database.", source.Keys);
 
             return target;
         }
@@ -141,7 +157,7 @@ namespace iRLeagueDatabase.Mapper
                 targetCollection = new List<TTarget>();
 
             var newTargets = new List<TSource>();
-            var removeEntities = targetCollection.ToList();
+            //var removeEntities = targetCollection.ToList();
 
             foreach(var source in sourceCollection)
             {
@@ -151,7 +167,7 @@ namespace iRLeagueDatabase.Mapper
                     newTargets.Add(source);
                 else
                 {
-                    removeEntities.Remove(target);
+                    //removeEntities.Remove(target);
                     target = map(source, target);
                 }
             }
@@ -162,10 +178,10 @@ namespace iRLeagueDatabase.Mapper
                 targetCollection.Add(target);
             }
 
-            foreach(var target in removeEntities)
-            {
-                targetCollection.Remove(target);
-            }
+            //foreach(var target in removeEntities)
+            //{
+            //    targetCollection.Remove(target);
+            //}
 
             return targetCollection;
         }
