@@ -260,5 +260,11 @@ namespace iRLeagueDatabase.Entities.Results
 
             return scoredResultRows;
         }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            ScoredResults.ForEach(x => x.Delete(dbContext));
+            base.Delete(dbContext);
+        }
     }
 }

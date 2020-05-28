@@ -46,5 +46,12 @@ namespace iRLeagueDatabase.Entities
             //Scorings = new List<ScoringEntity>();
             //Reviews = new List<IncidentReviewEntity>();
         }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            Schedules.ForEach(x => x.Delete(dbContext));
+            Scorings.ForEach(x => x.Delete(dbContext));
+            base.Delete(dbContext);
+        }
     }
 }

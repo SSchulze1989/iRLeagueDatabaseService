@@ -38,5 +38,11 @@ namespace iRLeagueDatabase.Entities.Sessions
         {
             ScheduleId = scheduleId;
         }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            Sessions.ForEach(x => x.Delete(dbContext));
+            base.Delete(dbContext);
+        }
     }
 }

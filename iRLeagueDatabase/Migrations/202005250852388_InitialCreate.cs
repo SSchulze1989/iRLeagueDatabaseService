@@ -65,7 +65,7 @@
                 .ForeignKey("dbo.ScheduleEntities", t => t.ConnectedSchedule_ScheduleId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.CreatedBy_MemberId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.LastModifiedBy_MemberId)
-                .ForeignKey("dbo.SeasonEntities", t => t.Season_SeasonId, cascadeDelete: false)
+                .ForeignKey("dbo.SeasonEntities", t => t.Season_SeasonId, cascadeDelete: true)
                 .Index(t => t.ConnectedSchedule_ScheduleId)
                 .Index(t => t.CreatedBy_MemberId)
                 .Index(t => t.LastModifiedBy_MemberId)
@@ -87,7 +87,7 @@
                 .PrimaryKey(t => t.ScheduleId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.CreatedBy_MemberId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.LastModifiedBy_MemberId)
-                .ForeignKey("dbo.SeasonEntities", t => t.Season_SeasonId, cascadeDelete: false)
+                .ForeignKey("dbo.SeasonEntities", t => t.Season_SeasonId, cascadeDelete: true)
                 .Index(t => t.CreatedBy_MemberId)
                 .Index(t => t.LastModifiedBy_MemberId)
                 .Index(t => t.Season_SeasonId);
@@ -141,7 +141,7 @@
                 .PrimaryKey(t => t.ResultId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.CreatedBy_MemberId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.LastModifiedBy_MemberId)
-                .ForeignKey("dbo.SessionBaseEntities", t => t.ResultId, cascadeDelete: false)
+                .ForeignKey("dbo.SessionBaseEntities", t => t.ResultId, cascadeDelete: true)
                 .Index(t => t.ResultId)
                 .Index(t => t.CreatedBy_MemberId)
                 .Index(t => t.LastModifiedBy_MemberId);
@@ -174,7 +174,7 @@
                     })
                 .PrimaryKey(t => new { t.ResultRowId, t.ResultId })
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.Member_MemberId)
-                .ForeignKey("dbo.ResultEntities", t => t.ResultId, cascadeDelete: false)
+                .ForeignKey("dbo.ResultEntities", t => t.ResultId, cascadeDelete: true)
                 .Index(t => t.ResultId)
                 .Index(t => t.Member_MemberId);
             
@@ -202,7 +202,7 @@
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.CreatedBy_MemberId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.LastModifiedBy_MemberId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.MemberAtFault_MemberId)
-                .ForeignKey("dbo.ResultEntities", t => t.Result_ResultId, cascadeDelete: false)
+                .ForeignKey("dbo.ResultEntities", t => t.Result_ResultId, cascadeDelete: true)
                 .Index(t => t.Author_MemberId)
                 .Index(t => t.CreatedBy_MemberId)
                 .Index(t => t.LastModifiedBy_MemberId)
@@ -254,7 +254,7 @@
                         TotalPoints = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ResultRowId, t.ResultId, t.ScoredResultId, t.ScoringId })
-                .ForeignKey("dbo.ResultRowEntities", t => new { t.ResultRowId, t.ResultId }, cascadeDelete: false)
+                .ForeignKey("dbo.ResultRowEntities", t => new { t.ResultRowId, t.ResultId }, cascadeDelete: true)
                 .ForeignKey("dbo.ScoredResultEntities", t => new { t.ScoredResultId, t.ScoringId }, cascadeDelete: false)
                 .ForeignKey("dbo.ScoringEntities", t => t.ScoringId, cascadeDelete: false)
                 .Index(t => new { t.ResultRowId, t.ResultId })
@@ -271,7 +271,7 @@
                 .PrimaryKey(t => new { t.ResultId, t.ScoringId })
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.FastestLapDriver_MemberId)
                 .ForeignKey("dbo.ScoringEntities", t => t.ScoringId, cascadeDelete: false)
-                .ForeignKey("dbo.SessionBaseEntities", t => t.ResultId, cascadeDelete: false)
+                .ForeignKey("dbo.SessionBaseEntities", t => t.ResultId, cascadeDelete: true)
                 .Index(t => t.ResultId)
                 .Index(t => t.ScoringId)
                 .Index(t => t.FastestLapDriver_MemberId);
@@ -284,8 +284,8 @@
                         MemberRefId = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ReviewRefId, t.MemberRefId })
-                .ForeignKey("dbo.IncidentReviewEntities", t => t.ReviewRefId, cascadeDelete: false)
-                .ForeignKey("dbo.LeagueMemberEntities", t => t.MemberRefId, cascadeDelete: false)
+                .ForeignKey("dbo.IncidentReviewEntities", t => t.ReviewRefId, cascadeDelete: true)
+                .ForeignKey("dbo.LeagueMemberEntities", t => t.MemberRefId, cascadeDelete: true)
                 .Index(t => t.ReviewRefId)
                 .Index(t => t.MemberRefId);
             
@@ -297,8 +297,8 @@
                         ScoringChildId = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ScoringParentId, t.ScoringChildId })
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringParentId)
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringChildId)
+                .ForeignKey("dbo.ScoringEntities", t => t.ScoringParentId, cascadeDelete: true)
+                .ForeignKey("dbo.ScoringEntities", t => t.ScoringChildId, cascadeDelete: true)
                 .Index(t => t.ScoringParentId)
                 .Index(t => t.ScoringChildId);
             
@@ -310,8 +310,8 @@
                         SessionRefId = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ScoringRefId, t.SessionRefId })
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringRefId, cascadeDelete: false)
-                .ForeignKey("dbo.SessionBaseEntities", t => t.SessionRefId, cascadeDelete: false)
+                .ForeignKey("dbo.ScoringEntities", t => t.ScoringRefId, cascadeDelete: true)
+                .ForeignKey("dbo.SessionBaseEntities", t => t.SessionRefId, cascadeDelete: true)
                 .Index(t => t.ScoringRefId)
                 .Index(t => t.SessionRefId);
             

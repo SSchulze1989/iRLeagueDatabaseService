@@ -41,13 +41,24 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual List<ResultRowEntity> RawResults { get; set; }
 
         public virtual List<IncidentReviewEntity> Reviews { get; set; } = new List<IncidentReviewEntity>();
- 
+
+        [InverseProperty(nameof(ScoredResultEntity.Result))]
+        public ScoredResultEntity ScoredResult { get; set; }
+
         //public List<ResultRow> FinalResults { get; set; }
 
         public ResultEntity()
         {
             RawResults = new List<ResultRowEntity>();
             //FinalResults = new List<ResultRow>();
+        }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            RawResults.ForEach(x => x.Delete(dbContext));
+            Reviews.ForEach(x => x.Delete(dbContext));
+            ScoredResult.Delete(dbContext);
+            base.Delete(dbContext);
         }
     }
 }

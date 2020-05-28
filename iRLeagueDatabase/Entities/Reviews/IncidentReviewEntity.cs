@@ -64,5 +64,11 @@ namespace iRLeagueDatabase.Entities.Reviews
         {
             //Author = author;
         }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            Comments.ForEach(x => x.Delete(dbContext));
+            base.Delete(dbContext);
+        }
     }
 }

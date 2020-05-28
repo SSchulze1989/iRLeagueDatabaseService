@@ -7,6 +7,8 @@ using System.Data.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using iRLeagueDatabase;
+
 namespace iRLeagueDatabase.Entities
 {
     //[NotMapped]
@@ -14,5 +16,10 @@ namespace iRLeagueDatabase.Entities
     {
         [NotMapped]
         public virtual object MappingId { get; } = null;
+
+        public virtual void Delete(LeagueDbContext dbContext)
+        {
+            dbContext.Set(this.GetType()).Remove(this);
+        }
     }
 }

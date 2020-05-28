@@ -29,5 +29,11 @@ namespace iRLeagueDatabase.Entities.Results
         public long FastestAvgLap { get; set; }
         [InverseProperty(nameof(ScoredResultRowEntity.ScoredResult))]
         public virtual List<ScoredResultRowEntity> FinalResults { get; set; } = new List<ScoredResultRowEntity>();
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            FinalResults.ForEach(x => x.Delete(dbContext));
+            base.Delete(dbContext);
+        }
     }
 }

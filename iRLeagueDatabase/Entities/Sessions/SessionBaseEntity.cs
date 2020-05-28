@@ -78,5 +78,12 @@ namespace iRLeagueDatabase.Entities.Sessions
             SessionType = SessionType.Undefined;
             Date = DateTime.Now;
         }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            SessionResult.Delete(dbContext);
+            Scorings.ForEach(x => x.Sessions.Remove(this));
+            base.Delete(dbContext);
+        }
     }
 }
