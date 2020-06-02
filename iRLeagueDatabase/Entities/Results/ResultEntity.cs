@@ -43,7 +43,10 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual List<IncidentReviewEntity> Reviews { get; set; } = new List<IncidentReviewEntity>();
 
         [InverseProperty(nameof(ScoredResultEntity.Result))]
-        public ScoredResultEntity ScoredResult { get; set; }
+        public virtual List<ScoredResultEntity> ScoredResults { get; set; }
+
+        [NotMapped]
+        public IEnumerable<Members.LeagueMemberEntity> DriverList => RawResults.Select(x => x.Member).Distinct();
 
         //public List<ResultRow> FinalResults { get; set; }
 
@@ -55,9 +58,9 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            RawResults.ForEach(x => x.Delete(dbContext));
-            Reviews.ForEach(x => x.Delete(dbContext));
-            ScoredResult.Delete(dbContext);
+            RawResults.ToList().ForEach(x => x.Delete(dbContext));
+            Reviews.ToList().ForEach(x => x.Delete(dbContext));
+            ScoredResults.ToList().ForEach(x =>  x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

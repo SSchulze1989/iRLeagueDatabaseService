@@ -1187,11 +1187,12 @@ namespace LeagueDBService
 
                 foreach (var keys in requestItemIds)
                 {
-                    var entity = dbContext.Set(rqEntityType).Find(keys);
+                    var entity = dbContext.Set(rqEntityType).Find(keys) as MappableEntity;
 
                     if (entity != null)
                     {
-                        dbContext.Set(rqEntityType).Remove(entity);
+                        //dbContext.Set(rqEntityType).Remove(entity);
+                        entity.Delete(dbContext);
                         responseMsg.status = "deleted";
                         responseMsg.success = true;
                     }

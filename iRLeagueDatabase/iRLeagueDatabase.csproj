@@ -57,14 +57,11 @@
   <ItemGroup>
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
+    <Compile Include="Entities\Results\StandingsEntity.cs" />
     <Compile Include="Entities\Results\StandingsRowEntity.cs" />
-    <Compile Include="Migrations\202005250852388_InitialCreate.cs" />
-    <Compile Include="Migrations\202005250852388_InitialCreate.designer.cs">
-      <DependentUpon>202005250852388_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202005251731075_ChangeScoredResultType.cs" />
-    <Compile Include="Migrations\202005251731075_ChangeScoredResultType.designer.cs">
-      <DependentUpon>202005251731075_ChangeScoredResultType.cs</DependentUpon>
+    <Compile Include="Migrations\202005282120066_InitialCreate.cs" />
+    <Compile Include="Migrations\202005282120066_InitialCreate.designer.cs">
+      <DependentUpon>202005282120066_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -100,11 +97,8 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202005250852388_InitialCreate.resx">
-      <DependentUpon>202005250852388_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202005251731075_ChangeScoredResultType.resx">
-      <DependentUpon>202005251731075_ChangeScoredResultType.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005282120066_InitialCreate.resx">
+      <DependentUpon>202005282120066_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

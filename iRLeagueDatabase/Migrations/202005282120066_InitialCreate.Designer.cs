@@ -7,13 +7,13 @@ namespace iRLeagueDatabase.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class ChangeScoredResultType : IMigrationMetadata
+    public sealed partial class InitialCreate : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeScoredResultType));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
         
         string IMigrationMetadata.Id
         {
-            get { return "202005251731075_ChangeScoredResultType"; }
+            get { return "202005282120066_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

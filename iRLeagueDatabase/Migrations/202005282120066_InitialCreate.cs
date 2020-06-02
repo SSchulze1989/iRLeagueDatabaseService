@@ -122,7 +122,7 @@
                 .PrimaryKey(t => t.SessionId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.CreatedBy_MemberId)
                 .ForeignKey("dbo.LeagueMemberEntities", t => t.LastModifiedBy_MemberId)
-                .ForeignKey("dbo.ScheduleEntities", t => t.Schedule_ScheduleId, cascadeDelete: false)
+                .ForeignKey("dbo.ScheduleEntities", t => t.Schedule_ScheduleId, cascadeDelete: true)
                 .Index(t => t.CreatedBy_MemberId)
                 .Index(t => t.LastModifiedBy_MemberId)
                 .Index(t => t.Schedule_ScheduleId);
@@ -177,6 +177,52 @@
                 .ForeignKey("dbo.ResultEntities", t => t.ResultId, cascadeDelete: true)
                 .Index(t => t.ResultId)
                 .Index(t => t.Member_MemberId);
+            
+            CreateTable(
+                "dbo.ScoredResultRowEntities",
+                c => new
+                    {
+                        ResultRowId = c.Long(nullable: false),
+                        ResultId = c.Long(nullable: false),
+                        ScoredResultId = c.Long(nullable: false),
+                        ScoringId = c.Long(nullable: false),
+                        RacePoints = c.Int(nullable: false),
+                        BonusPoints = c.Int(nullable: false),
+                        PenaltyPoints = c.Int(nullable: false),
+                        FinalPosition = c.Int(nullable: false),
+                        FinalPositionChange = c.Int(nullable: false),
+                        TotalPoints = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => new { t.ResultRowId, t.ResultId, t.ScoredResultId, t.ScoringId })
+                .ForeignKey("dbo.ScoredResultEntities", t => new { t.ScoredResultId, t.ScoringId }, cascadeDelete: false)
+                .ForeignKey("dbo.ResultRowEntities", t => new { t.ResultRowId, t.ResultId }, cascadeDelete: true)
+                .Index(t => new { t.ResultRowId, t.ResultId })
+                .Index(t => new { t.ScoredResultId, t.ScoringId });
+            
+            CreateTable(
+                "dbo.ScoredResultEntities",
+                c => new
+                    {
+                        ResultId = c.Long(nullable: false),
+                        ScoringId = c.Long(nullable: false),
+                        FastestLap = c.Long(nullable: false),
+                        FastestQualyLap = c.Long(nullable: false),
+                        FastestAvgLap = c.Long(nullable: false),
+                        FastestAvgLapDriver_MemberId = c.Long(),
+                        FastestLapDriver_MemberId = c.Long(),
+                        FastestQualyLapDriver_MemberId = c.Long(),
+                    })
+                .PrimaryKey(t => new { t.ResultId, t.ScoringId })
+                .ForeignKey("dbo.LeagueMemberEntities", t => t.FastestAvgLapDriver_MemberId)
+                .ForeignKey("dbo.LeagueMemberEntities", t => t.FastestLapDriver_MemberId)
+                .ForeignKey("dbo.LeagueMemberEntities", t => t.FastestQualyLapDriver_MemberId)
+                .ForeignKey("dbo.ResultEntities", t => t.ResultId, cascadeDelete: true)
+                .ForeignKey("dbo.ScoringEntities", t => t.ScoringId, cascadeDelete: false)
+                .Index(t => t.ResultId)
+                .Index(t => t.ScoringId)
+                .Index(t => t.FastestAvgLapDriver_MemberId)
+                .Index(t => t.FastestLapDriver_MemberId)
+                .Index(t => t.FastestQualyLapDriver_MemberId);
             
             CreateTable(
                 "dbo.IncidentReviewEntities",
@@ -239,44 +285,6 @@
                 .Index(t => t.MemberAtFault_MemberId);
             
             CreateTable(
-                "dbo.ScoredResultRowEntities",
-                c => new
-                    {
-                        ResultRowId = c.Long(nullable: false),
-                        ResultId = c.Long(nullable: false),
-                        ScoredResultId = c.Long(nullable: false),
-                        ScoringId = c.Long(nullable: false),
-                        RacePoints = c.Int(nullable: false),
-                        BonusPoints = c.Int(nullable: false),
-                        PenaltyPoints = c.Int(nullable: false),
-                        FinalPosition = c.Int(nullable: false),
-                        FinalPositionChange = c.Int(nullable: false),
-                        TotalPoints = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => new { t.ResultRowId, t.ResultId, t.ScoredResultId, t.ScoringId })
-                .ForeignKey("dbo.ResultRowEntities", t => new { t.ResultRowId, t.ResultId }, cascadeDelete: true)
-                .ForeignKey("dbo.ScoredResultEntities", t => new { t.ScoredResultId, t.ScoringId }, cascadeDelete: false)
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringId, cascadeDelete: false)
-                .Index(t => new { t.ResultRowId, t.ResultId })
-                .Index(t => new { t.ScoredResultId, t.ScoringId });
-            
-            CreateTable(
-                "dbo.ScoredResultEntities",
-                c => new
-                    {
-                        ResultId = c.Long(nullable: false),
-                        ScoringId = c.Long(nullable: false),
-                        FastestLapDriver_MemberId = c.Long(),
-                    })
-                .PrimaryKey(t => new { t.ResultId, t.ScoringId })
-                .ForeignKey("dbo.LeagueMemberEntities", t => t.FastestLapDriver_MemberId)
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringId, cascadeDelete: false)
-                .ForeignKey("dbo.SessionBaseEntities", t => t.ResultId, cascadeDelete: true)
-                .Index(t => t.ResultId)
-                .Index(t => t.ScoringId)
-                .Index(t => t.FastestLapDriver_MemberId);
-            
-            CreateTable(
                 "dbo.IncidentReview_LeagueMember",
                 c => new
                     {
@@ -297,8 +305,8 @@
                         ScoringChildId = c.Long(nullable: false),
                     })
                 .PrimaryKey(t => new { t.ScoringParentId, t.ScoringChildId })
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringParentId, cascadeDelete: true)
-                .ForeignKey("dbo.ScoringEntities", t => t.ScoringChildId, cascadeDelete: true)
+                .ForeignKey("dbo.ScoringEntities", t => t.ScoringParentId)
+                .ForeignKey("dbo.ScoringEntities", t => t.ScoringChildId)
                 .Index(t => t.ScoringParentId)
                 .Index(t => t.ScoringChildId);
             
@@ -311,7 +319,7 @@
                     })
                 .PrimaryKey(t => new { t.ScoringRefId, t.SessionRefId })
                 .ForeignKey("dbo.ScoringEntities", t => t.ScoringRefId, cascadeDelete: true)
-                .ForeignKey("dbo.SessionBaseEntities", t => t.SessionRefId, cascadeDelete: true)
+                .ForeignKey("dbo.SessionBaseEntities", t => t.SessionRefId, cascadeDelete: false)
                 .Index(t => t.ScoringRefId)
                 .Index(t => t.SessionRefId);
             
@@ -324,18 +332,14 @@
             DropForeignKey("dbo.Scoring_Session", "SessionRefId", "dbo.SessionBaseEntities");
             DropForeignKey("dbo.Scoring_Session", "ScoringRefId", "dbo.ScoringEntities");
             DropForeignKey("dbo.ScoringEntities", "Season_SeasonId", "dbo.SeasonEntities");
-            DropForeignKey("dbo.ScoredResultRowEntities", "ScoringId", "dbo.ScoringEntities");
-            DropForeignKey("dbo.ScoredResultEntities", "ResultId", "dbo.SessionBaseEntities");
             DropForeignKey("dbo.ScoredResultEntities", "ScoringId", "dbo.ScoringEntities");
-            DropForeignKey("dbo.ScoredResultRowEntities", new[] { "ScoredResultId", "ScoringId" }, "dbo.ScoredResultEntities");
-            DropForeignKey("dbo.ScoredResultEntities", "FastestLapDriver_MemberId", "dbo.LeagueMemberEntities");
-            DropForeignKey("dbo.ScoredResultRowEntities", new[] { "ResultRowId", "ResultId" }, "dbo.ResultRowEntities");
             DropForeignKey("dbo.MultiScoringMap", "ScoringChildId", "dbo.ScoringEntities");
             DropForeignKey("dbo.MultiScoringMap", "ScoringParentId", "dbo.ScoringEntities");
             DropForeignKey("dbo.ScoringEntities", "LastModifiedBy_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.ScoringEntities", "CreatedBy_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.ScoringEntities", "ConnectedSchedule_ScheduleId", "dbo.ScheduleEntities");
             DropForeignKey("dbo.ResultEntities", "ResultId", "dbo.SessionBaseEntities");
+            DropForeignKey("dbo.ScoredResultEntities", "ResultId", "dbo.ResultEntities");
             DropForeignKey("dbo.IncidentReviewEntities", "Result_ResultId", "dbo.ResultEntities");
             DropForeignKey("dbo.IncidentReviewEntities", "MemberAtFault_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.IncidentReviewEntities", "LastModifiedBy_MemberId", "dbo.LeagueMemberEntities");
@@ -349,6 +353,11 @@
             DropForeignKey("dbo.ReviewCommentEntities", "Author_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.IncidentReviewEntities", "Author_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.ResultRowEntities", "ResultId", "dbo.ResultEntities");
+            DropForeignKey("dbo.ScoredResultRowEntities", new[] { "ResultRowId", "ResultId" }, "dbo.ResultRowEntities");
+            DropForeignKey("dbo.ScoredResultRowEntities", new[] { "ScoredResultId", "ScoringId" }, "dbo.ScoredResultEntities");
+            DropForeignKey("dbo.ScoredResultEntities", "FastestQualyLapDriver_MemberId", "dbo.LeagueMemberEntities");
+            DropForeignKey("dbo.ScoredResultEntities", "FastestLapDriver_MemberId", "dbo.LeagueMemberEntities");
+            DropForeignKey("dbo.ScoredResultEntities", "FastestAvgLapDriver_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.ResultRowEntities", "Member_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.ResultEntities", "LastModifiedBy_MemberId", "dbo.LeagueMemberEntities");
             DropForeignKey("dbo.ResultEntities", "CreatedBy_MemberId", "dbo.LeagueMemberEntities");
@@ -365,11 +374,6 @@
             DropIndex("dbo.MultiScoringMap", new[] { "ScoringParentId" });
             DropIndex("dbo.IncidentReview_LeagueMember", new[] { "MemberRefId" });
             DropIndex("dbo.IncidentReview_LeagueMember", new[] { "ReviewRefId" });
-            DropIndex("dbo.ScoredResultEntities", new[] { "FastestLapDriver_MemberId" });
-            DropIndex("dbo.ScoredResultEntities", new[] { "ScoringId" });
-            DropIndex("dbo.ScoredResultEntities", new[] { "ResultId" });
-            DropIndex("dbo.ScoredResultRowEntities", new[] { "ScoredResultId", "ScoringId" });
-            DropIndex("dbo.ScoredResultRowEntities", new[] { "ResultRowId", "ResultId" });
             DropIndex("dbo.ReviewCommentEntities", new[] { "MemberAtFault_MemberId" });
             DropIndex("dbo.ReviewCommentEntities", new[] { "LastModifiedBy_MemberId" });
             DropIndex("dbo.ReviewCommentEntities", new[] { "CreatedBy_MemberId" });
@@ -380,6 +384,13 @@
             DropIndex("dbo.IncidentReviewEntities", new[] { "LastModifiedBy_MemberId" });
             DropIndex("dbo.IncidentReviewEntities", new[] { "CreatedBy_MemberId" });
             DropIndex("dbo.IncidentReviewEntities", new[] { "Author_MemberId" });
+            DropIndex("dbo.ScoredResultEntities", new[] { "FastestQualyLapDriver_MemberId" });
+            DropIndex("dbo.ScoredResultEntities", new[] { "FastestLapDriver_MemberId" });
+            DropIndex("dbo.ScoredResultEntities", new[] { "FastestAvgLapDriver_MemberId" });
+            DropIndex("dbo.ScoredResultEntities", new[] { "ScoringId" });
+            DropIndex("dbo.ScoredResultEntities", new[] { "ResultId" });
+            DropIndex("dbo.ScoredResultRowEntities", new[] { "ScoredResultId", "ScoringId" });
+            DropIndex("dbo.ScoredResultRowEntities", new[] { "ResultRowId", "ResultId" });
             DropIndex("dbo.ResultRowEntities", new[] { "Member_MemberId" });
             DropIndex("dbo.ResultRowEntities", new[] { "ResultId" });
             DropIndex("dbo.ResultEntities", new[] { "LastModifiedBy_MemberId" });
@@ -401,10 +412,10 @@
             DropTable("dbo.Scoring_Session");
             DropTable("dbo.MultiScoringMap");
             DropTable("dbo.IncidentReview_LeagueMember");
-            DropTable("dbo.ScoredResultEntities");
-            DropTable("dbo.ScoredResultRowEntities");
             DropTable("dbo.ReviewCommentEntities");
             DropTable("dbo.IncidentReviewEntities");
+            DropTable("dbo.ScoredResultEntities");
+            DropTable("dbo.ScoredResultRowEntities");
             DropTable("dbo.ResultRowEntities");
             DropTable("dbo.ResultEntities");
             DropTable("dbo.SessionBaseEntities");

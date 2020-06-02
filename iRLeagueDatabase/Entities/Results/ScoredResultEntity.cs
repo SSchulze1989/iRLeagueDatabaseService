@@ -32,7 +32,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            FinalResults.ForEach(x => x.Delete(dbContext));
+            FinalResults.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

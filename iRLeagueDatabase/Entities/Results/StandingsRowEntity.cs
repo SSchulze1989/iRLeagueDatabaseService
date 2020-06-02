@@ -40,5 +40,34 @@ namespace iRLeagueDatabase.Entities.Results
         public int Incidents { get; set; }
         public int IncidentsChange { get; set; }
         public int PositionChange { get; set; }
+
+        public StandingsRowEntity()
+        {
+            CarClass = "";
+            ClassId = 0;
+            CompletedLaps = 0;
+            CompletedLapsChange = 0;
+            DroppedResults = 0;
+            FastestLaps = 0;
+            Incidents = 0;
+            IncidentsChange = 0;
+            LastPosition = 0;
+            LeadLaps = 0;
+            LeadLapsChange = 0;
+            PenaltyPoints = 0;
+            PenaltyPointsChange = 0;
+            PolePositions = 0;
+            Position = 0;
+            PositionChange = 0;
+            RacePoints = 0;
+            RacePointsChange = 0;
+            Races = 0;
+            Top10 = 0;
+            Top3 = 0;
+            Top5 = 0;
+            TotalPoints = 0;
+            TotalPointsChange = 0;
+            Wins = 0;
+        }
     }
 }

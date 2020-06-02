@@ -76,13 +76,13 @@ namespace iRLeagueDatabase.Entities.Results
         public int PositionChange { get; set; }
 
         [InverseProperty(nameof(ScoredResultRowEntity.ResultRow))]
-        public List<ScoredResultRowEntity> ScoredResultRows { get; set; }
+        public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
 
         public ResultRowEntity() { }
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            ScoredResultRows.ForEach(x =>  x.Delete(dbContext));
+            ScoredResultRows.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }
