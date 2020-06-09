@@ -25,7 +25,9 @@ namespace LeagueDBService
         ServiceKnownType(typeof(ScoredResultDataDTO)), 
         ServiceKnownType(typeof(ScoredResultRowDataDTO)), 
         ServiceKnownType(typeof(ScoringDataDTO)),
-        ServiceKnownType(typeof(ResultRowDataDTO))]
+        ServiceKnownType(typeof(ResultRowDataDTO)),
+        ServiceKnownType(typeof(StandingsDataDTO)),
+        ServiceKnownType(typeof(StandingsRowDataDTO))]
     public interface ILeagueDBService
     {
         [OperationContract]

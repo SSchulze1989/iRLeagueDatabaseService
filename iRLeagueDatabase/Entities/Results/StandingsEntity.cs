@@ -10,6 +10,8 @@ namespace iRLeagueDatabase.Entities.Results
 {
     public class StandingsEntity : MappableEntity
     {
+        public ScoringEntity Scoring { get; set; }
+        public override object MappingId => new long[] { Scoring.ScoringId };
         public virtual List<StandingsRowEntity> StandingsRows { get; set; }
         public virtual LeagueMemberEntity MostWinsDriver { get; set; }
         public virtual LeagueMemberEntity MostPolesDriver { get; set; }
@@ -20,6 +22,37 @@ namespace iRLeagueDatabase.Entities.Results
         {
             StandingsRows = new List<StandingsRowEntity>();
         }
+
+        public void Calculate()
+        {
+            if (StandingsRows != null && StandingsRows.Count >= 0)
+            {
+                MostWinsDriver = StandingsRows.MaxBy(x => x.Wins).Member;
+                MostPolesDriver = StandingsRows.MaxBy(x => x.PolePositions).Member;
+                CleanestDriver = StandingsRows.MinBy(x => x.Incidents).Member;
+                MostPenaltiesDriver = StandingsRows.MaxBy(x => x.PenaltyPoints).Member;
+            }
+        }
+
+        //public StandingsEntity CalculateChanges(StandingsEntity previous)
+        //{
+        //    if (this. Scoring.ScoringId != previous.Scoring.ScoringId)
+        //    {
+        //        throw new InvalidOperationException("Scoring Entities of calculated Standings do not match. Can not calculate changes between different Scoring tables!");
+        //    }
+
+        //    StandingsEntity result = new StandingsEntity()
+        //    {
+        //        Scoring = this.Scoring,
+        //        MostWinsDriver = this.MostWinsDriver,
+        //        MostPolesDriver = this.MostPolesDriver,
+        //        CleanestDriver = this.CleanestDriver,
+        //        MostPenaltiesDriver = this.MostPenaltiesDriver,
+        //        StandingsRows = this.StandingsRows.Diff(previous.StandingsRows).ToList()
+        //    };
+
+        //    return result;
+        //}
 
         public override void Delete(LeagueDbContext dbContext)
         {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
+using AutoMapper.Configuration.Annotations;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -138,6 +139,65 @@ namespace iRLeagueDatabase.Mapper
             target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
             target.Results = source.Results.Select(x => MapToResultInfoDTO(x)).ToArray();
             target.ConnectedSchedule = MapToScheduleInfoDTO(source.ConnectedSchedule);
+
+            return target;
+        }
+
+        public StandingsDataDTO MapToStandingsDataDTO(StandingsEntity source, StandingsDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new StandingsDataDTO();
+
+            target.CleanestDriver = MapToMemberInfoDTO(source.CleanestDriver);
+            target.MostPenaltiesDriver = MapToMemberInfoDTO(source.MostPenaltiesDriver);
+            target.MostPolesDriver = MapToMemberInfoDTO(source.MostPolesDriver);
+            target.MostWinsDriver = MapToMemberInfoDTO(source.MostWinsDriver);
+            target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.StandingsRows = source.StandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
+
+            return target;
+        }
+
+        public StandingsRowDataDTO MapToStandingsRowDataDTO(StandingsRowEntity source, StandingsRowDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new StandingsRowDataDTO();
+
+            target.CarClass = source.CarClass;
+            target.ClassId = source.ClassId;
+            target.CompletedLaps = source.CompletedLaps;
+            target.CompletedLapsChange = source.CompletedLapsChange;
+            target.DroppedResults = source.DroppedResults;
+            target.FastestLaps = source.FastestLaps;
+            target.FastestLapsChange = source.FastestLapsChange;
+            target.Incidents = source.Incidents;
+            target.IncidentsChange = source.IncidentsChange;
+            target.LastPosition = source.LastPosition;
+            target.LeadLaps = source.LeadLaps;
+            target.LeadLapsChange = source.LeadLapsChange;
+            target.Member = MapToMemberInfoDTO(source.Member);
+            target.PenaltyPoints = source.PenaltyPoints;
+            target.PenaltyPointsChange = source.PenaltyPointsChange;
+            target.PolePositions = source.PolePositions;
+            target.PolePositionsChange = source.PolePositionsChange;
+            target.Position = source.Position;
+            target.PositionChange = source.PositionChange;
+            target.RacePoints = source.RacePoints;
+            target.RacePointsChange = source.RacePointsChange;
+            target.Races = source.Races;
+            target.RacesCounted = source.RacesCounted;
+            target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.Top10 = source.Top10;
+            target.Top3 = source.Top3;
+            target.Top5 = source.Top5;
+            target.TotalPoints = source.TotalPoints;
+            target.TotalPointsChange = source.TotalPointsChange;
+            target.Wins = source.Wins;
+            target.WinsChange = source.WinsChange;
 
             return target;
         }

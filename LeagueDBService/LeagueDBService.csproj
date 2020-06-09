@@ -64,7 +64,7 @@
     </Reference>
     <Reference Include="Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\iRLeagueManager\LeagueDBService\bin\Debug\Communication.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\VisualStudio\iRLeagueManager\iRLeagueManager\bin\Debug\Communication.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
@@ -111,6 +111,8 @@
     <Compile Include="DataTransfer\Results\ScoringInfoDTO.cs" />
     <Compile Include="DataTransfer\Results\ScoringRuleBaseDTO.cs" />
     <Compile Include="DataTransfer\Results\StandardScoringRuleDTO.cs" />
+    <Compile Include="DataTransfer\Results\StandingsDataDTO.cs" />
+    <Compile Include="DataTransfer\Results\StandingsRowDataDTO.cs" />
     <Compile Include="DataTransfer\Results\StandingsRowDTO.cs" />
     <Compile Include="DataTransfer\Reviews\CommentDataDTO.cs" />
     <Compile Include="DataTransfer\Reviews\CommentInfoDTO.cs" />

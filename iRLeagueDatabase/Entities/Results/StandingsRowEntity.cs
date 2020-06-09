@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class StandingsRowEntity : MappableEntity 
-    {   
+    [NotMapped]
+    public class StandingsRowEntity : Revision
+    {
+        public ScoringEntity Scoring { get; set; }
+        public override object MappingId => new long[] { Scoring.ScoringId, Member.MemberId };
         public int Position { get; set; }
         public int LastPosition { get; set; }
         //[ForeignKey(nameof(Member))]
@@ -32,8 +36,11 @@ namespace iRLeagueDatabase.Entities.Results
         public int LeadLaps { get; set; }
         public int LeadLapsChange { get; set; }
         public int FastestLaps { get; set; }
+        public int FastestLapsChange { get; set; }
         public int PolePositions { get; set; }
+        public int PolePositionsChange { get; set; }
         public int Wins { get; set; }
+        public int WinsChange { get; set; }
         public int Top3 { get; set; }
         public int Top5 { get; set; }
         public int Top10 { get; set; }
@@ -68,6 +75,87 @@ namespace iRLeagueDatabase.Entities.Results
             TotalPoints = 0;
             TotalPointsChange = 0;
             Wins = 0;
+        }
+
+        public StandingsRowEntity AddRows(ScoredResultRowEntity resultRow, bool countStats = true,  bool countPoints = true)
+        {
+            return AddRows(new ScoredResultRowEntity[] { resultRow }, countStats, countPoints);
+        }
+
+        public StandingsRowEntity AddRows(IEnumerable<ScoredResultRowEntity> resultRows, bool countStats = true, bool countPoints = true)
+        {
+            foreach (var scoredResultRow in resultRows)
+            {
+                if (countStats)
+                {
+                    if (Scoring != scoredResultRow.ScoredResult.Scoring)
+                        throw new InvalidOperationException("Scoring Entities of combining Standingsrows do not match. Can not combine rows from different Scoring tables!");
+
+                    this.CompletedLaps += scoredResultRow.ResultRow.CompletedLaps;
+                    this.Incidents += scoredResultRow.ResultRow.Incidents;
+                    this.PenaltyPoints += scoredResultRow.PenaltyPoints;
+                    this.PolePositions += (scoredResultRow.ResultRow.StartPosition == 1) ? 1 : 0;
+                    this.Top10 += (scoredResultRow.FinalPosition <= 10) ? 1 : 0;
+                    this.Top5 += (scoredResultRow.FinalPosition <= 5) ? 1 : 0;
+                    this.Top3 += (scoredResultRow.FinalPosition <= 3) ? 1 : 0;
+                    this.Wins += (scoredResultRow.FinalPosition == 1) ? 1 : 0;
+                    this.FastestLaps += (scoredResultRow.ScoredResult.FastestLapDriver.MemberId == this.Member.MemberId) ? 1 : 0;
+                }
+                if (countPoints)
+                {
+                    this.RacePoints += scoredResultRow.RacePoints;
+                    this.TotalPoints += scoredResultRow.TotalPoints;
+                }
+            }
+
+            return this;
+        }
+
+        public StandingsRowEntity Diff(StandingsRowEntity compare)
+        {
+            var source = this;
+
+            if (compare == null)
+                return source;
+
+            if (source.Scoring != compare.Scoring)
+                throw new InvalidOperationException("Scoring Entities of combining Standingsrows do not match. Can not combine rows from different Scoring tables!");
+
+            StandingsRowEntity standingsRow = new StandingsRowEntity()
+            {
+                CarClass = source.CarClass,
+                ClassId = source.ClassId,
+                CompletedLaps = source.CompletedLaps,
+                CompletedLapsChange = source.CompletedLaps - compare.CompletedLaps,
+                Incidents = source.Incidents,
+                IncidentsChange = source.Incidents - compare.Incidents,
+                DroppedResults = source.DroppedResults,
+                FastestLaps = source.FastestLaps,
+                FastestLapsChange = source.FastestLaps - compare.FastestLaps,
+                LastPosition = compare.Position,
+                LeadLaps = source.LeadLaps,
+                LeadLapsChange = source.LeadLaps - compare.LeadLaps,
+                Member = source.Member,
+                PenaltyPoints = source.PenaltyPoints,
+                PenaltyPointsChange = source.PenaltyPoints - compare.PenaltyPoints,
+                Position = source.Position,
+                PositionChange = source.Position - compare.Position,
+                PolePositions = source.PolePositions,
+                PolePositionsChange = source.PolePositions - compare.PolePositions,
+                RacePoints = source.RacePoints,
+                RacePointsChange = source.RacePoints - compare.RacePoints,
+                Races = source.Races,
+                RacesCounted = source.RacesCounted,
+                Top10 = source.Top10,
+                Top3 = source.Top3,
+                Top5 = source.Top5,
+                TotalPoints = source.TotalPoints,
+                TotalPointsChange = source.TotalPoints - compare.TotalPoints,
+                Wins = source.Wins,
+                WinsChange = source.Wins - compare.Wins
+            };
+
+            return standingsRow;
         }
     }
 }
