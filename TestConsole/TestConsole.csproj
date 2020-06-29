@@ -124,6 +124,9 @@
     <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.GETItemsResponseMessage.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.MappableDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.POSTItemsResponseMessage.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

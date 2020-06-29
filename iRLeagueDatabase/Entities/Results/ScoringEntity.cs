@@ -64,41 +64,73 @@ namespace iRLeagueDatabase.Entities.Results
 
         public StandingsEntity GetSeasonStandings()
         {
-            var session = Sessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
+            var allSessions = Sessions.ToList();
+
+            if (MultiScoringResults != null && MultiScoringResults.Count > 0)
+            {
+                foreach(var msc in MultiScoringResults)
+                {
+                    allSessions.AddRange(msc.Sessions);
+                }
+            }
+
+            var session = allSessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
             if (session == null)
                 return null;
 
-            return GetSeasonStandings(session.SessionId);
+            return GetSeasonStandings(session, allSessions.Count - DropWeeks);
         }
 
-        public StandingsEntity GetSeasonStandings(long sessionId)
+        public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession, int maxRacesCount = -1)
         {
-            var currentSession = Sessions.SingleOrDefault(x => x.SessionId == sessionId);
 
-            if (currentSession == null)
-                currentSession = Sessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
+            //var currentSession = Sessions.SingleOrDefault(x => x.SessionId == sessionId);
+
+            //if (currentSession == null)
+            //    currentSession = Sessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
 
             if (currentSession == null)
                 return null;
 
-            var previousSessions = Sessions.Where(x => x.Date < currentSession.Date).OrderBy(x => x.Date);
-            var previousResults = previousSessions.Where(x => x.SessionResult != null).Select(x => x.SessionResult);
-            var previousScoredResults = ScoredResults;
+            if (maxRacesCount == -1)
+                maxRacesCount = Sessions.Count - maxRacesCount;
+
+            //var previousSessions = Sessions.Where(x => x.Date < currentSession.Date);
+            //var previousResults = previousSessions.Where(x => x.SessionResult != null).Select(x => x.SessionResult);
+            
+            var allScoredResults = ScoredResults.ToList();
+            var previousScoredResults = allScoredResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
+
+            if (MultiScoringResults != null && MultiScoringResults.Count > 0)
+            {
+                foreach (var msc in MultiScoringResults)
+                {
+                    previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result.Session.Date < currentSession.Date));
+                    allScoredResults.AddRange(msc.ScoredResults);
+                }
+            }
 
             var currentResult = currentSession.SessionResult;
-            var currentScoredResult = ScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
+            var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
 
             StandingsEntity standings = new StandingsEntity()
             {
                 Scoring = this,
             };
 
-            var previousStandingsRows = previousScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(Sessions.Count - DropWeeks, true);
-            var allScoredResults = previousScoredResults.ToList();
-            allScoredResults.Add(currentScoredResult);
-            var currentStandingsRows = allScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(Sessions.Count - DropWeeks, true);
+            var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
+            //previousScoredRows.ForEach(x => x.ResultRow = x.ResultRow);
+            var previousStandingsRows = previousScoredRows.AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            //var previousStandingsRows = previousScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
-            standings.StandingsRows = currentStandingsRows.Diff(previousStandingsRows).ToList();
+            allScoredResults = previousScoredResults.ToList();
+            allScoredResults.Add(currentScoredResult);
+            var currentStandingsRows = allScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
+
+            standings.StandingsRows = currentStandingsRows.Diff(previousStandingsRows).OrderBy(x => -x.TotalPoints).ToList();
+            standings.StandingsRows.ForEach(x => x.Scoring = this);
             standings.Calculate();
 
             return standings;
@@ -235,11 +267,12 @@ namespace iRLeagueDatabase.Entities.Results
             foreach (var resultRow in resultRows)
             {
                 ScoredResultRowEntity scoredResultRow;
-                if (scoredResultRows.Exists(x => x.ResultRow == resultRow)) {
+                if (scoredResultRows.Exists(x => x.ResultRow == resultRow)) 
+                {
                     scoredResultRow = scoredResultRows.Single(x => x.ResultRow == resultRow);
                 }
-
-                else {
+                else 
+                {
                     scoredResultRow = new ScoredResultRowEntity()
                     {
                         ResultRow = resultRow,
@@ -247,7 +280,6 @@ namespace iRLeagueDatabase.Entities.Results
                     };
                     scoredResultRows.Add(scoredResultRow);
                 }
-                scoredResultRows.Add(scoredResultRow);
 
                 scoredResultRow.RacePoints = basePoints.ContainsKey(resultRow.FinishPosition) ? basePoints[resultRow.FinishPosition] : 0;
                 scoredResultRow.BonusPoints = bonusPoints.ContainsKey(resultRow.FinishPosition) ? bonusPoints[resultRow.FinishPosition] : 0;
@@ -255,17 +287,30 @@ namespace iRLeagueDatabase.Entities.Results
                 scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
             }
 
-            scoredResultRows = scoredResultRows.OrderBy(x => -x.TotalPoints).ToList();
+            //var droppedRows = scoredResultRows.Where(x => x.ResultRow.CompletedLaps == 0).ToList();
+            //scoredResultRows = scoredResultRows.Except(droppedRows).ToList();
+            //dbContext.Set<ScoredResultRowEntity>().RemoveRange(droppedRows.Where(x => dbContext.Entry(x).State != System.Data.Entity.EntityState.Detached));
+
+            scoredResultRows = scoredResultRows.OrderBy(x => x.PenaltyPoints).OrderBy(x => -x.TotalPoints).ToList();
             //scoredResultRows.Select((x, i) => new { Item = x, Index = i }).ToList().ForEach(x =>
             //{
             //    x.Item.FinalPosition = x.Index + 1;
             //    x.Item.FinalPositionChange = x.Item.ResultRow.StartPosition - x.Item.FinalPosition;
             //});
+            ScoredResultRowEntity previousRow = null;
             for(int i = 0; i < scoredResultRows.Count(); i++)
             {
                 var row = scoredResultRows.ElementAt(i);
-                row.FinalPosition = i + 1;
+                if (previousRow != null && row.TotalPoints == previousRow.TotalPoints && row.PenaltyPoints == previousRow.PenaltyPoints)
+                {
+                    row.FinalPosition = previousRow.FinalPosition;
+                }
+                else
+                {
+                    row.FinalPosition = i + 1;
+                }
                 row.FinalPositionChange = row.ResultRow.StartPosition - row.FinalPosition;
+                previousRow = row;
             }
 
             var fastestLapRow = scoredResultRows.MinBy(x => x.ResultRow.FastestLapTime);
@@ -315,7 +360,7 @@ namespace iRLeagueDatabase.Entities.Results
         }
         public static StandingsRowEntity AggregateResults<T>(this IEnumerable<T> source, int maxRacesCount = 0, bool canDropPenaltyRace = true) where T : ScoredResultRowEntity
         {
-            source = source.OrderBy(x => x.ResultRow.Date).ThenBy(x => -x.TotalPoints);
+            source = source.OrderBy(x => x.ResultRow.Date).OrderBy(x => -x.TotalPoints);
 
             if (!canDropPenaltyRace)
             {
@@ -324,14 +369,14 @@ namespace iRLeagueDatabase.Entities.Results
 
             var standingsRow = new StandingsRowEntity
             {
-                Scoring = source.First().ScoredResult.Scoring,
+                //Scoring = source.First().ScoredResult.Scoring,
                 Member = source.First().ResultRow.Member,
                 ClassId = source.Last().ResultRow.ClassId,
                 CarClass = source.Last().ResultRow.CarClass
             };
 
-            standingsRow.AddRows(source.Take(maxRacesCount).ToArray(), countPoints: true);
             standingsRow.AddRows(source.Skip(maxRacesCount).ToArray(), countPoints: false);
+            standingsRow.AddRows(source.Take(maxRacesCount).ToArray(), countPoints: true);
 
             return standingsRow;
         }
@@ -383,7 +428,15 @@ namespace iRLeagueDatabase.Entities.Results
     {
         public static T MaxBy<T, TSelect>(this IEnumerable<T> source, Func<T, TSelect> selector) where TSelect : IComparable
         {
-            return source.Aggregate((x, y) => selector(x).CompareTo(selector(y)) >= 0 ? x : y);
+            T maxValue = source.FirstOrDefault();
+            foreach(var value in source)
+            {
+                var temp = selector(value).CompareTo(selector(maxValue)) >= 0;
+                if (temp)
+                    maxValue = value;
+            }
+            //return source.Aggregate((x, y) => selector(x).CompareTo(selector(y)) >= 0 ? x : y);
+            return maxValue;
         }
 
         public static T MinBy<T, TSelect>(this IEnumerable<T> source, Func<T, TSelect> selector) where TSelect : IComparable

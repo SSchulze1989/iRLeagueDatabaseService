@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
     <Compile Include="Entities\Results\StandingsEntity.cs" />
@@ -62,6 +63,22 @@
     <Compile Include="Migrations\202005282120066_InitialCreate.cs" />
     <Compile Include="Migrations\202005282120066_InitialCreate.designer.cs">
       <DependentUpon>202005282120066_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006160107304_Remove_CompositeKeys.cs" />
+    <Compile Include="Migrations\202006160107304_Remove_CompositeKeys.designer.cs">
+      <DependentUpon>202006160107304_Remove_CompositeKeys.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006160207388_Restor_CompositeKey_ScoredResult.cs" />
+    <Compile Include="Migrations\202006160207388_Restor_CompositeKey_ScoredResult.designer.cs">
+      <DependentUpon>202006160207388_Restor_CompositeKey_ScoredResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006160854005_Added_AddPenalty_Table.cs" />
+    <Compile Include="Migrations\202006160854005_Added_AddPenalty_Table.designer.cs">
+      <DependentUpon>202006160854005_Added_AddPenalty_Table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006262132586_AddResultEntity_Revision.cs" />
+    <Compile Include="Migrations\202006262132586_AddResultEntity_Revision.designer.cs">
+      <DependentUpon>202006262132586_AddResultEntity_Revision.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -99,6 +116,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202005282120066_InitialCreate.resx">
       <DependentUpon>202005282120066_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006160107304_Remove_CompositeKeys.resx">
+      <DependentUpon>202006160107304_Remove_CompositeKeys.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006160207388_Restor_CompositeKey_ScoredResult.resx">
+      <DependentUpon>202006160207388_Restor_CompositeKey_ScoredResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006160854005_Added_AddPenalty_Table.resx">
+      <DependentUpon>202006160854005_Added_AddPenalty_Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006262132586_AddResultEntity_Revision.resx">
+      <DependentUpon>202006262132586_AddResultEntity_Revision.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -14,7 +14,7 @@ using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.Mapper;
-using TestConsole.LeagueDBServiceRef;
+//using TestConsole.LeagueDBServiceRef;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
@@ -25,9 +25,22 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            var dbContext = new LeagueDbContext("TestDatabase");
+            using (var dbContext = new LeagueDbContext("TestDatabase"))
+            {
 
-            var scoring = dbContext.Set<ScoringEntity>().Find(1);
+                var init = dbContext.Set<SeasonEntity>().First();
+
+                var test = dbContext.Set<ScoredResultEntity>().ToList();
+
+                var mapper = new DTOMapper();
+
+                var testDto = mapper.MapTo<ScoredResultDataDTO>(test.First());
+
+                Console.Read();
+            }
+            //var scoring = dbContext.Set<ScoringEntity>().Find(1);
+
+            //var test = scoring.GetSeasonStandings();
 
             //var Session = new Session()
             //{
@@ -42,19 +55,19 @@ namespace TestConsole
             //var session = client.GetModelAsync<SessionModel>(1).Result;
 
 
-            ILeagueDBService dbService = new LeagueDBServiceClient();
+            //ILeagueDBService dbService = new LeagueDBServiceClient();
 
-            var dbRequestMsg = new GETItemsRequestMessage()
-            {
-                databaseName = "TestDatabase",
-                userName = "testuser",
-                password = "12345",
-                requestItemIds = new long[][] { new long[] { 1 } },
-                requestItemType = typeof(ScoringDataDTO).FullName,
-                requestResponse = true
-            };
+            //var dbService = new LeagueDBService.LeagueDBService();
 
-            var scoringDto = dbService.DatabaseGET(dbRequestMsg).items.First();
+            //var dbRequestMsg = new iRLeagueDatabase.DataTransfer.Messages.GETItemsRequestMessage()
+            //{
+            //    databaseName = "TestDatabase",
+            //    userName = "testuser",
+            //    password = "12345",
+            //    requestItemIds = new long[][] { new long[] { 1 } },
+            //    requestItemType = typeof(iRLeagueDatabase.DataTransfer.Results.StandingsDataDTO).Name,
+            //    requestResponse = true
+            //};
 
             Console.ReadKey();
 

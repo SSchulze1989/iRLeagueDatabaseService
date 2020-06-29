@@ -11,8 +11,12 @@ using iRLeagueDatabase.Entities.Sessions;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoredResultEntity : MappableEntity
+    public class ScoredResultEntity : Revision
     {
+        //[Key]
+        //public long ScoredResultId { get; set; }
+        [NotMapped]
+        public override object MappingId => new { ResultId, ScoringId };
         [Key, Column(Order = 0)]
         public long ResultId { get; set; }
         [ForeignKey(nameof(ResultId))]

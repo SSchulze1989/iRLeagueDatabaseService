@@ -88,8 +88,8 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 if (countStats)
                 {
-                    if (Scoring != scoredResultRow.ScoredResult.Scoring)
-                        throw new InvalidOperationException("Scoring Entities of combining Standingsrows do not match. Can not combine rows from different Scoring tables!");
+                    //if (Scoring != scoredResultRow.ScoredResult.Scoring)
+                    //    throw new InvalidOperationException("Scoring Entities of combining Standingsrows do not match. Can not combine rows from different Scoring tables!");
 
                     this.CompletedLaps += scoredResultRow.ResultRow.CompletedLaps;
                     this.Incidents += scoredResultRow.ResultRow.Incidents;
@@ -100,11 +100,13 @@ namespace iRLeagueDatabase.Entities.Results
                     this.Top3 += (scoredResultRow.FinalPosition <= 3) ? 1 : 0;
                     this.Wins += (scoredResultRow.FinalPosition == 1) ? 1 : 0;
                     this.FastestLaps += (scoredResultRow.ScoredResult.FastestLapDriver.MemberId == this.Member.MemberId) ? 1 : 0;
+                    this.Races += 1;
                 }
                 if (countPoints)
                 {
-                    this.RacePoints += scoredResultRow.RacePoints;
-                    this.TotalPoints += scoredResultRow.TotalPoints;
+                    this.RacePoints += scoredResultRow.RacePoints+scoredResultRow.BonusPoints;
+                    this.TotalPoints = RacePoints - PenaltyPoints;
+                    this.RacesCounted += 1;
                 }
             }
 
@@ -123,6 +125,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             StandingsRowEntity standingsRow = new StandingsRowEntity()
             {
+                Scoring = source.Scoring,
                 CarClass = source.CarClass,
                 ClassId = source.ClassId,
                 CompletedLaps = source.CompletedLaps,

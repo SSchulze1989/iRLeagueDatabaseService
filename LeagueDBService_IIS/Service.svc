@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="LeagueDBService.LeagueDBService" %>
+﻿<%@ ServiceHost Language="C#" Debug="false" Service="LeagueDBService.LeagueDBService" %>

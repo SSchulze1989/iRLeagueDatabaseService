@@ -11,6 +11,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class ScoredResultRowDataDTO : ResultRowDataDTO
     {
         [DataMember]
+        public long? ScoredResultRowId { get; set; }
+        [DataMember]
         public long? ScoringId { get; set; }
         [DataMember]
         public int RacePoints { get; set; }
@@ -23,6 +25,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int FinalPositionChange { get; set; }
 
-        public override object MappingId => new { ScoringId, ResultRowId };
+        public override object MappingId => ScoredResultRowId;
+
+        public override object[] Keys => new object[] { ScoredResultRowId };
     }
 }

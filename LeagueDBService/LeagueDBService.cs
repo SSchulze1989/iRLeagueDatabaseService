@@ -760,32 +760,59 @@ namespace LeagueDBService
             using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
                 //var scoredResultRowsEntity = leagueDb.Set<ScoredResultRowEntity>().Where(x => x.ResultId == sessionId && x.ScoringId == scoringId).ToArray().AsEnumerable();
-                var scoredResultEntity = leagueDb.Set<ScoredResultEntity>().Find(sessionId, scoringId);
+                //var scoredResultEntity = leagueDb.Set<ScoredResultEntity>().Find(sessionId, scoringId);
+                var scoredResultEntity = leagueDb.Set<ScoredResultEntity>()
+                    //.AsNoTracking()
+                    .Include(x => x.Result)
+                    .Include(x => x.Result.RawResults)
+                    .Include(x => x.FinalResults)
+                    .Include(x => x.FinalResults.Select(y => y.ResultRow))
+                    .Include(x => x.Result.RawResults.Select(y => y.Member))
+                    .Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
+                    .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                    .FirstOrDefault(x => x.ResultId == sessionId && x.ScoringId == scoringId);
 
-                var scoredResultRowsEntity = new ScoredResultRowEntity[0];
-                if (scoredResultEntity != null)
-                    scoredResultRowsEntity = scoredResultEntity.FinalResults.ToArray();
-                //var mapper = MapperConfiguration.CreateMapper();
+                if (scoredResultEntity == null)
+                    return new ScoredResultDataDTO() 
+                    {
+                        ResultId = sessionId, 
+                        Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    };
+
                 var mapper = new DTOMapper();
+                scoredResultData = mapper.MapTo<ScoredResultDataDTO>(scoredResultEntity);
+                //var scoredResultRowsEntity = new List<ScoredResultRowEntity>();
+                //if (scoredResultEntity != null)
+                //    scoredResultRowsEntity = scoredResultEntity.FinalResults.ToList();
+                ////var mapper = MapperConfiguration.CreateMapper();
+                //var mapper = new DTOMapper();
 
-                //ScoredResultData.Scoring = mapper.Map<ScoringDataDTO>(GetScoring(scoringId));
-                scoredResultData.Scoring = mapper.MapToScoringInfoDTO(leagueDb.Set<ScoringEntity>().Find(scoringId));
+                ////ScoredResultData.Scoring = mapper.Map<ScoringDataDTO>(GetScoring(scoringId));
+                //if (scoredResultEntity == null)
+                //    scoredResultData.Scoring = mapper.MapToScoringInfoDTO(leagueDb.Set<ScoringEntity>().Find(scoringId));
+                //else
+                //    scoredResultData.Scoring = mapper.MapToScoringInfoDTO(scoredResultEntity.Scoring);
 
-                var result = leagueDb.Set<ResultEntity>().Find(sessionId);
-                if (result != null)
-                {
-                    //mapper.Map(result, ScoredResultData);
-                    var tmp = mapper.MapToResulDataDTO(result, scoredResultData);
-                }
-                if (scoredResultRowsEntity.Count() > 0)
-                {
-                    //ScoredResultData.ScoredResults = mapper.Map<IEnumerable<ScoredResultRowDataDTO>>(scoredResultRowsEntity);
-                    scoredResultData.FinalResults = scoredResultRowsEntity.Select(x => mapper.MapToScoredResultRowDataDTO(x, null)).OrderBy(x => x.FinalPosition);
-                }
-                else
-                {
-                    scoredResultData.FinalResults = new ScoredResultRowDataDTO[0];
-                }
+                //ResultEntity result;
+                //if (scoredResultEntity == null)
+                //    result = leagueDb.Set<ResultEntity>().Find(sessionId);
+                //else
+                //    result = scoredResultEntity.Result;
+
+                //if (result != null)
+                //{
+                //    //mapper.Map(result, ScoredResultData);
+                //    var tmp = mapper.MapToResulDataDTO(result, scoredResultData);
+                //}
+                //if (scoredResultRowsEntity.Count() > 0)
+                //{
+                //    //ScoredResultData.ScoredResults = mapper.Map<IEnumerable<ScoredResultRowDataDTO>>(scoredResultRowsEntity);
+                //    scoredResultData.FinalResults = scoredResultRowsEntity.Select(x => mapper.MapToScoredResultRowDataDTO(x, null)).OrderBy(x => x.FinalPosition).ToList();
+                //}
+                //else
+                //{
+                //    scoredResultData.FinalResults = new ScoredResultRowDataDTO[0];
+                //}
 
                 return scoredResultData;
             }
@@ -949,6 +976,36 @@ namespace LeagueDBService
                 {
                     responseMsg.items = requestMsg.requestItemIds.Select(x => GetScoredResult(x[0], x[1])).ToArray();
                 }
+                else if (rqType.Equals(typeof(StandingsDataDTO)))
+                {
+                    List<StandingsDataDTO> responseItems = new List<StandingsDataDTO>();
+                    foreach (var itemIdArray in requestIds)
+                    {
+                        var itemId = (long)itemIdArray[0];
+                        var scoring = dbContext.Set<ScoringEntity>()
+                            //.AsNoTracking()
+                            //.Include(x => x.Results)
+                            //.Include(x => x.Results.Select(y => y.RawResults))
+                            //.Include(x => x.Results.Select(y => y.RawResults.Select(z => z.Member)))
+                            .Include(x => x.ScoredResults)
+                            .Include(x => x.ScoredResults.Select(y => y.FinalResults))
+                            .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow)))
+                            .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
+                            .Include(x => x.MultiScoringResults)
+                            //.Include(x => x.MultiScoringResults.Select(y => y.Results))
+                            //.Include(x => x.MultiScoringResults.Select(y => y.Results.Select(z => z.RawResults)))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults)))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow))))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
+                            .SingleOrDefault(x => x.ScoringId == itemId);
+                        if (scoring != null)
+                        {
+                            responseItems.Add(mapper.MapTo<StandingsDataDTO>(scoring.GetSeasonStandings()));
+                        }
+                    }
+                    responseMsg.items = responseItems.ToArray();
+                }
                 else
                 {
                     var rqEntityType = mapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(rqType))?.SourceType;
@@ -1078,11 +1135,15 @@ namespace LeagueDBService
                 var dbSet = dbContext.Set(rqEntityType);
 
                 List<MappableDTO> resultItems = new List<MappableDTO>();
-                foreach (object item in requestMsg.items)
+                foreach (var item in requestMsg.items)
                 {
-                    object entity = dbSet.Create();
-                    entity = entityMapper.MapTo(item, entity, rqType, rqEntityType);
-                    dbSet.Add(entity);
+                    object entity = dbSet.Find(item.Keys);
+                    if (entity == null)
+                    {
+                        entity = dbSet.Create();
+                        dbSet.Add(entity);
+                    }
+                    entityMapper.MapTo(item, entity, rqType, rqEntityType);
 
                     dbContext.SaveChanges();
 

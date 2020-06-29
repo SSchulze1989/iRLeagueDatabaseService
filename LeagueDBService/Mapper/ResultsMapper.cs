@@ -17,9 +17,13 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ResultEntity, ResultInfoDTO>(MapToResultInfoDTO);
             RegisterTypeMap<ResultEntity, ResultDataDTO>(MapToResulDataDTO);
             RegisterTypeMap<ResultRowEntity, ResultRowDataDTO>(MapToResultRowDataDTO);
+            RegisterTypeMap<ScoredResultEntity, ScoredResultDataDTO>(MapToScoredResultDataDTO);
             RegisterTypeMap<ScoredResultRowEntity, ScoredResultRowDataDTO>(MapToScoredResultRowDataDTO);
             RegisterTypeMap<ScoringEntity, ScoringInfoDTO>(MapToScoringInfoDTO);
             RegisterTypeMap<ScoringEntity, ScoringDataDTO>(MapToScoringDataDTO);
+            RegisterTypeMap<StandingsEntity, StandingsDataDTO>(MapToStandingsDataDTO);
+            RegisterTypeMap<StandingsRowEntity, StandingsRowDataDTO>(MapToStandingsRowDataDTO);
+            RegisterTypeMap<AddPenaltyEntity, AddPenaltyDTO>(MapToPenaltyDTO);
         }
 
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
@@ -85,7 +89,21 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
-        public ScoredResultRowDataDTO MapToScoredResultRowDataDTO(ScoredResultRowEntity source, ScoredResultRowDataDTO target)
+        public ScoredResultDataDTO MapToScoredResultDataDTO(ScoredResultEntity source, ScoredResultDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new ScoredResultDataDTO();
+
+            MapToResulDataDTO(source.Result, target);
+            target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.FinalResults = source.FinalResults.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
+
+            return target;
+        }
+
+        public ScoredResultRowDataDTO MapToScoredResultRowDataDTO(ScoredResultRowEntity source, ScoredResultRowDataDTO target = null)
         {
             if (source == null)
                 return null;
@@ -93,6 +111,7 @@ namespace iRLeagueDatabase.Mapper
                 target = new ScoredResultRowDataDTO();
 
             MapToResultRowDataDTO(source.ResultRow, target);
+            target.ScoredResultRowId = source.ScoredResultRowId;
             target.BonusPoints = source.BonusPoints;
             target.FinalPosition = source.FinalPosition;
             target.FinalPositionChange = source.FinalPositionChange;
@@ -201,6 +220,19 @@ namespace iRLeagueDatabase.Mapper
 
             return target;
         }
+
+        public AddPenaltyDTO MapToPenaltyDTO(AddPenaltyEntity source, AddPenaltyDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new AddPenaltyDTO();
+
+            target.ScoredResultRowId = source.ScoredResultRowId;
+            target.PenaltyPoints = source.PenaltyPoints;
+
+            return target;
+        }
     }
 
     public partial class EntityMapper
@@ -210,6 +242,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ResultDataDTO, ResultEntity>(MapToResultEntity);
             RegisterTypeMap<ScoringDataDTO, ScoringEntity>(MapToScoringEntity);
             RegisterTypeMap<ResultRowDataDTO, ResultRowEntity>(MapToResultRowEntity);
+            RegisterTypeMap<AddPenaltyDTO, AddPenaltyEntity>(MapToPenaltyEntity);
         }
 
         public ResultEntity GetResultEntity(ResultInfoDTO source)
@@ -373,6 +406,27 @@ namespace iRLeagueDatabase.Mapper
             target.FinalPositionChange = source.FinalPositionChange;
             target.PenaltyPoints = source.PenaltyPoints;
             target.RacePoints = source.RacePoints;
+
+            return target;
+        }
+
+        public AddPenaltyEntity GetPenaltyEntity(AddPenaltyDTO source)
+        {
+            if (source == null)
+                return null;
+
+            return DefaultGet<AddPenaltyDTO, AddPenaltyEntity>(source);
+        }
+
+        public AddPenaltyEntity MapToPenaltyEntity(AddPenaltyDTO source, AddPenaltyEntity target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = GetPenaltyEntity(source);
+
+            target.ScoredResultRow = GetScoredResultRowEntity(new ScoredResultRowDataDTO() { ScoredResultRowId = source.ScoredResultRowId });
+            target.PenaltyPoints = source.PenaltyPoints;
 
             return target;
         }

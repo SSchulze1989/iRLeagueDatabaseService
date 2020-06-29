@@ -10,11 +10,13 @@ namespace iRLeagueDatabase.DataTransfer.Results
     [DataContract]
     public class ScoredResultDataDTO : ResultDataDTO, IMappableDTO
     {
+        //[DataMember]
+        //public long? ScoredResultId { get; set; }
         [DataMember]
         public ScoringInfoDTO Scoring { get; set; }
-        public override object MappingId => new { ResultId = ResultId.GetValueOrDefault(), ScoringId = Scoring.ScoringId.GetValueOrDefault() };
+        public override object MappingId => new long[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
 
-        public override object[] Keys => new object[] { ResultId, Scoring.ScoringId };
+        public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
 
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;

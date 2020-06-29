@@ -18,10 +18,11 @@ namespace iRLeagueDatabase.Entities.Results
     {
         [Key, Column(Order = 0), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ResultRowId { get; set; }
-
+        [NotMapped]
         public override object MappingId => ResultRowId;
 
-        [Key, ForeignKey(nameof(Result)), Column(Order = 1)]
+        //[Key, ForeignKey(nameof(Result)), Column(Order = 1)]
+        [ForeignKey(nameof(Result))]
         public long ResultId { get; set; }
         [Required]
         public virtual ResultEntity Result { get; set; }

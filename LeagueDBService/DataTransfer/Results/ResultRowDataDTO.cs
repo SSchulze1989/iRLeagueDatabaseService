@@ -62,9 +62,10 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int PositionChange { get; set; }
 
-        public override object MappingId => new { ResultRowId = ResultRowId.GetValueOrDefault(), ResultId };
+        public override object MappingId => ResultRowId;
 
-        public override object[] Keys => new object[] { ResultRowId, ResultId };
+        //public override object[] Keys => new object[] { ResultRowId, ResultId };
+        public override object[] Keys => new object[] { ResultRowId };
 
         public ResultRowDataDTO() { }
     }
