@@ -35,8 +35,8 @@ namespace iRLeagueDatabase.Entities.Results
 
         public int FinishPosition { get; set; }
 
-        //[ForeignKey(nameof(Member))]
-        //public int MemberId { get; set; }
+        [ForeignKey(nameof(Member))]
+        public long MemberId { get; set; }
         public virtual LeagueMemberEntity Member { get; set; }
         
         public int CarNumber { get; set; }

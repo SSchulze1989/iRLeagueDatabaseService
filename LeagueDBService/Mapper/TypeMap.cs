@@ -41,6 +41,9 @@ namespace iRLeagueDatabase.Mapper
 
     public class TypeMapException<TSource, TTarget> : Exception
     {
+        public Type SourceType { get; }
+        public Type TargetType { get; }
+
         public TypeMapException() : this(null)
         {
         }
@@ -51,6 +54,8 @@ namespace iRLeagueDatabase.Mapper
 
         public TypeMapException(string message, Exception innerException) : base(message, innerException)
         {
+            SourceType = typeof(TSource);
+            TargetType = typeof(TTarget);
             Data.Add("Source Type", typeof(TSource));
             Data.Add("Target Type", typeof(TTarget));
         }

@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace iRLeagueDatabase.DataTransfer.Results
 {
     [DataContract]
-    public class ScoredResultDataDTO : ResultDataDTO, IMappableDTO
+    public class ScoredResultDataDTO : ResultInfoDTO, IMappableDTO
     {
         //[DataMember]
         //public long? ScoredResultId { get; set; }

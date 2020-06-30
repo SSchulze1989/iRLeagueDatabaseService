@@ -761,15 +761,14 @@ namespace LeagueDBService
             {
                 //var scoredResultRowsEntity = leagueDb.Set<ScoredResultRowEntity>().Where(x => x.ResultId == sessionId && x.ScoringId == scoringId).ToArray().AsEnumerable();
                 //var scoredResultEntity = leagueDb.Set<ScoredResultEntity>().Find(sessionId, scoringId);
+                leagueDb.Configuration.LazyLoadingEnabled = false;
                 var scoredResultEntity = leagueDb.Set<ScoredResultEntity>()
                     //.AsNoTracking()
-                    .Include(x => x.Result)
-                    .Include(x => x.Result.RawResults)
-                    .Include(x => x.FinalResults)
-                    .Include(x => x.FinalResults.Select(y => y.ResultRow))
-                    .Include(x => x.Result.RawResults.Select(y => y.Member))
-                    .Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
-                    .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                    //.Include(x => x.Result.Session)
+                    //.Include(x => x.Scoring)
+                    //.Include(x => x.Result.RawResults.Select(y => y.Member))
+                    //.Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
+                    //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
                     .FirstOrDefault(x => x.ResultId == sessionId && x.ScoringId == scoringId);
 
                 if (scoredResultEntity == null)
@@ -778,6 +777,11 @@ namespace LeagueDBService
                         ResultId = sessionId, 
                         Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
                     };
+
+                leagueDb.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
+                leagueDb.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
+                leagueDb.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
+                    .Include(x => x.ResultRow.Member).Load();
 
                 var mapper = new DTOMapper();
                 scoredResultData = mapper.MapTo<ScoredResultDataDTO>(scoredResultEntity);
@@ -978,30 +982,35 @@ namespace LeagueDBService
                 }
                 else if (rqType.Equals(typeof(StandingsDataDTO)))
                 {
+                    dbContext.Configuration.LazyLoadingEnabled = false;
                     List<StandingsDataDTO> responseItems = new List<StandingsDataDTO>();
                     foreach (var itemIdArray in requestIds)
                     {
                         var itemId = (long)itemIdArray[0];
+                        //var scoring = dbContext.Set<ScoringEntity>()
+                        //    .Include(x => x.Sessions)
+                        //    .Include(x => x.MultiScoringResults.Select(y => y.Sessions))
+                        //    .SingleOrDefault(x => x.ScoringId == itemId);
+                        //var scoredResults = dbContext.Set<ScoredResultEntity>().Where(x => x.ScoringId == scoring.ScoringId || scoring.MultiScoringResults.Any(y => y.ScoringId == x.ScoringId));
+                        //var scoredResultRows = dbContext.Set<ScoredResultRowEntity>().Where(x => scoredResults.Any(y => x.ScoredResultId == y.ResultId && y.ScoringId == y.ScoringId));
+                        //var results = dbContext.Set<ResultEntity>().Where(x => scoredResults.Any(y => y.ResultId == x.ResultId));
+                        //var resultRows = dbContext.Set<ResultRowEntity>().Where(x => results.Any(y => y.ResultId == x.ResultId));
+                        ////var sessions = dbContext.Set<SessionBaseEntity>().Where(x => results.Any(y => y.ResultId == x.SessionId));
+                        //dbContext.Set<LeagueMemberEntity>().Where(x => resultRows.Any(y => y.MemberId == x.MemberId));
                         var scoring = dbContext.Set<ScoringEntity>()
-                            //.AsNoTracking()
-                            //.Include(x => x.Results)
-                            //.Include(x => x.Results.Select(y => y.RawResults))
-                            //.Include(x => x.Results.Select(y => y.RawResults.Select(z => z.Member)))
-                            .Include(x => x.ScoredResults)
-                            .Include(x => x.ScoredResults.Select(y => y.FinalResults))
-                            .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow)))
+                            .Include(x => x.Sessions.Select(y => y.SessionResult))
                             .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
-                            .Include(x => x.MultiScoringResults)
-                            //.Include(x => x.MultiScoringResults.Select(y => y.Results))
-                            //.Include(x => x.MultiScoringResults.Select(y => y.Results.Select(z => z.RawResults)))
-                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults))
-                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults)))
-                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow))))
+                            .Include(x => x.MultiScoringResults.Select(y => y.Sessions.Select(z => z.SessionResult)))
+                            //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
                             .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
-                            .SingleOrDefault(x => x.ScoringId == itemId);
+                            .FirstOrDefault(x => x.ScoringId == itemId);
+
+
                         if (scoring != null)
                         {
-                            responseItems.Add(mapper.MapTo<StandingsDataDTO>(scoring.GetSeasonStandings()));
+
+                            var standings = scoring.GetSeasonStandings();
+                            responseItems.Add(mapper.MapTo<StandingsDataDTO>(standings));
                         }
                     }
                     responseMsg.items = responseItems.ToArray();

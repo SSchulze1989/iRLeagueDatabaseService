@@ -96,7 +96,7 @@ namespace iRLeagueDatabase.Mapper
             if (target == null)
                 target = new ScoredResultDataDTO();
 
-            MapToResulDataDTO(source.Result, target);
+            MapToResultInfoDTO(source.Result, target);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
             target.FinalResults = source.FinalResults.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
 

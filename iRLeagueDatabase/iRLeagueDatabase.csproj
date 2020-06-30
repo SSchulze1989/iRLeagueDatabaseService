@@ -80,6 +80,10 @@
     <Compile Include="Migrations\202006262132586_AddResultEntity_Revision.designer.cs">
       <DependentUpon>202006262132586_AddResultEntity_Revision.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202006291914197_AddFKey_MemberId_ResultRow.cs" />
+    <Compile Include="Migrations\202006291914197_AddFKey_MemberId_ResultRow.designer.cs">
+      <DependentUpon>202006291914197_AddFKey_MemberId_ResultRow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -128,6 +132,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006262132586_AddResultEntity_Revision.resx">
       <DependentUpon>202006262132586_AddResultEntity_Revision.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006291914197_AddFKey_MemberId_ResultRow.resx">
+      <DependentUpon>202006291914197_AddFKey_MemberId_ResultRow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
