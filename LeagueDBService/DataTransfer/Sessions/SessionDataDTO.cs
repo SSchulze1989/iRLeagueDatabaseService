@@ -17,7 +17,7 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
     [Serializable()]
     [DataContract]
     [KnownType(typeof(SeasonInfoDTO))]
-    //[KnownType(typeof(RaceSessionDataDTO))]
+    [KnownType(typeof(RaceSessionDataDTO))]
     public class SessionDataDTO : SessionInfoDTO
     {
         //[DataMember]

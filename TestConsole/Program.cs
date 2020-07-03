@@ -19,6 +19,8 @@ using iRLeagueDatabase.Mapper;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.Entities.Members;
+using System.Net.Http;
+using iRLeagueDatabase.DataTransfer.Messages;
 
 namespace TestConsole
 {
@@ -26,10 +28,42 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            using (var dbContext = new LeagueDbContext("TestDatabase"))
+            using (var client = new HttpClient())
             {
+                client.BaseAddress = new Uri("https://localhost:44369/api");
 
-                var init = dbContext.Set<SeasonEntity>().First();
+                var request = new GETItemsRequestMessage()
+                {
+                    userName = "TestUser",
+                    password = "12345",
+                    databaseName = "TestDatabase",
+                    requestItemIds = new long[][] { new long[] { 1 } },
+                    requestItemType = "SessionDataDTO",
+                    requestResponse = true
+                };
+
+                var responseTask = client.PostAsXmlAsync("https://localhost:44369/api/Home", request);
+
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadAsAsync<GETItemsResponseMessage>();
+                    readTask.Wait();
+
+                    var resultItems = readTask.Result.items;
+                    Console.WriteLine(resultItems.Select(x => x as SessionDataDTO).First().SessionId);
+                }
+            }
+
+            Console.Read();
+
+
+                //using (var dbContext = new LeagueDbContext("TestDatabase"))
+                ////{
+
+                //var init = dbContext.Set<SeasonEntity>().First();
 
                 //var test = dbContext.Set<ScoredResultEntity>()
                 //    .Include(x => x.Result)
@@ -46,8 +80,8 @@ namespace TestConsole
                 //    .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
                 //    .First();
 
-                var scoringId = 3;
-                dbContext.Configuration.LazyLoadingEnabled = false;
+                //var scoringId = 3;
+                //dbContext.Configuration.LazyLoadingEnabled = false;
 
                 //var scoredResults = dbContext.Set<ScoredResultEntity>().Where(x => x.ScoringId == scoringId);
                 //scoredResults.Load();
@@ -62,61 +96,61 @@ namespace TestConsole
                 //dbContext.Set<ScoringEntity>();
                 //dbContext.Seasons.Load();
 
-                var standingsTest = dbContext.Set<ScoringEntity>()
-                            .Include(x => x.Sessions)
-                            .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
-                            .Include(x => x.MultiScoringResults)
-                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults))
-                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
-                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
-                            .FirstOrDefault(x => x.ScoringId == scoringId);
+                //var standingsTest = dbContext.Set<ScoringEntity>()
+                //            .Include(x => x.Sessions)
+                //            .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
+                //            .Include(x => x.MultiScoringResults)
+                //            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults))
+                //            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
+                //            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
+                //            .FirstOrDefault(x => x.ScoringId == scoringId);
 
-                var mapper = new DTOMapper();
+                //    var mapper = new DTOMapper();
 
-                //var testDto = mapper.MapTo<ScoredResultDataDTO>(test);
+                //    //var testDto = mapper.MapTo<ScoredResultDataDTO>(test);
 
-                //testDto = mapper.MapTo<ScoredResultDataDTO>(test);
+                //    //testDto = mapper.MapTo<ScoredResultDataDTO>(test);
 
-                var testStanding = standingsTest.GetSeasonStandings();
+                //    var testStanding = standingsTest.GetSeasonStandings();
 
-                testStanding = standingsTest.GetSeasonStandings();
+                //    testStanding = standingsTest.GetSeasonStandings();
 
-                var testStandingDto = mapper.MapTo<StandingsDataDTO>(testStanding);
+                //    var testStandingDto = mapper.MapTo<StandingsDataDTO>(testStanding);
 
-                Console.Read();
-            }
-            //var scoring = dbContext.Set<ScoringEntity>().Find(1);
+                //    Console.Read();
+                //}
+                //var scoring = dbContext.Set<ScoringEntity>().Find(1);
 
-            //var test = scoring.GetSeasonStandings();
+                //var test = scoring.GetSeasonStandings();
 
-            //var Session = new Session()
-            //{
-            //    Result = new Result()
-            //};
-            ////dbContext.Sessions.Add(Session);
-            ////dbContext.SaveChanges();
-            //Session = dbContext.Sessions.Find(2);
+                //var Session = new Session()
+                //{
+                //    Result = new Result()
+                //};
+                ////dbContext.Sessions.Add(Session);
+                ////dbContext.SaveChanges();
+                //Session = dbContext.Sessions.Find(2);
 
-            //var client = new LeagueContext();
+                //var client = new LeagueContext();
 
-            //var session = client.GetModelAsync<SessionModel>(1).Result;
+                //var session = client.GetModelAsync<SessionModel>(1).Result;
 
 
-            //ILeagueDBService dbService = new LeagueDBServiceClient();
+                //ILeagueDBService dbService = new LeagueDBServiceClient();
 
-            //var dbService = new LeagueDBService.LeagueDBService();
+                //var dbService = new LeagueDBService.LeagueDBService();
 
-            //var dbRequestMsg = new iRLeagueDatabase.DataTransfer.Messages.GETItemsRequestMessage()
-            //{
-            //    databaseName = "TestDatabase",
-            //    userName = "testuser",
-            //    password = "12345",
-            //    requestItemIds = new long[][] { new long[] { 1 } },
-            //    requestItemType = typeof(iRLeagueDatabase.DataTransfer.Results.StandingsDataDTO).Name,
-            //    requestResponse = true
-            //};
+                //var dbRequestMsg = new iRLeagueDatabase.DataTransfer.Messages.GETItemsRequestMessage()
+                //{
+                //    databaseName = "TestDatabase",
+                //    userName = "testuser",
+                //    password = "12345",
+                //    requestItemIds = new long[][] { new long[] { 1 } },
+                //    requestItemType = typeof(iRLeagueDatabase.DataTransfer.Results.StandingsDataDTO).Name,
+                //    requestResponse = true
+                //};
 
-            Console.ReadKey();
+                //Console.ReadKey();
 
             //var response = dbService.GetFromDatabase(dbRequestMsg);
         }

@@ -17,7 +17,7 @@ namespace iRLeagueRESTService
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
-                defaults: new { controller = "Home", id = RouteParameter.Optional }
+                defaults: new { controller = "Values", id = RouteParameter.Optional, requestType = RouteParameter.Optional }
             );
         }
     }

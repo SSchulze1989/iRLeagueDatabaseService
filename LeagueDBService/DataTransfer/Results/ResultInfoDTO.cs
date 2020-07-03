@@ -10,6 +10,8 @@ using iRLeagueDatabase.DataTransfer.Sessions;
 namespace iRLeagueDatabase.DataTransfer.Results
 {
     [DataContract]
+    [KnownType(typeof(ResultDataDTO))]
+    [KnownType(typeof(ScoredResultDataDTO))]
     public class ResultInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]

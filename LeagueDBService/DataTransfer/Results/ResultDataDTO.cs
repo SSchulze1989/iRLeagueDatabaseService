@@ -17,6 +17,7 @@ using iRLeagueDatabase.DataTransfer.Sessions;
 namespace iRLeagueDatabase.DataTransfer.Results
 {
     [DataContract]
+    [KnownType(typeof(ScoredResultDataDTO))]
     public class ResultDataDTO : ResultInfoDTO, IMappableDTO
     {
         public override Type Type => typeof(ResultDataDTO);

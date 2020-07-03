@@ -10,7 +10,7 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
 {
     [DataContract]
     [KnownType(typeof(VersionInfoDTO))]
-    //[KnownType(typeof(SessionDataDTO))]
+    [KnownType(typeof(SessionDataDTO))]
     public class SessionInfoDTO : VersionInfoDTO, IMappableDTO
     {
         [DataMember]
