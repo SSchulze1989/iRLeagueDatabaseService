@@ -41,7 +41,7 @@ namespace iRLeagueDatabase.Entities.Results
             set => sessions = value;
         }
         [NotMapped]
-        public virtual IEnumerable<ResultEntity> Results => Sessions.Select(x => x.SessionResult);
+        public virtual IEnumerable<ResultEntity> Results => Sessions?.Select(x => x.SessionResult);
 
         //[ForeignKey(nameof(Season))]
         //public long SeasonId { get; set; }
@@ -241,7 +241,7 @@ namespace iRLeagueDatabase.Entities.Results
                 return null;
 
             //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
-            var scoredResult = ScoredResults.SingleOrDefault(x => x.Result.ResultId == session.SessionId);
+            var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
             if (scoredResult == null)
             {
                 scoredResult = new ScoredResultEntity()
@@ -267,9 +267,9 @@ namespace iRLeagueDatabase.Entities.Results
             foreach (var resultRow in resultRows)
             {
                 ScoredResultRowEntity scoredResultRow;
-                if (scoredResultRows.Exists(x => x.ResultRow == resultRow)) 
+                if (scoredResultRows.Exists(x => x.ResultRowId == resultRow.ResultRowId)) 
                 {
-                    scoredResultRow = scoredResultRows.Single(x => x.ResultRow == resultRow);
+                    scoredResultRow = scoredResultRows.Single(x => x.ResultRowId == resultRow.ResultRowId);
                 }
                 else 
                 {

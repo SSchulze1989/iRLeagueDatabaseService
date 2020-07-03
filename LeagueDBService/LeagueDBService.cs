@@ -745,12 +745,23 @@ namespace LeagueDBService
 
             using (var leagueDb = new LeagueDbContext(DatabaseName))
             {
-                var session = leagueDb.Set<SessionBaseEntity>().Find(sessionId);
+                leagueDb.Configuration.LazyLoadingEnabled = false;
+                var session = leagueDb.Set<SessionBaseEntity>()
+                    //.Include(x => x.SessionResult.RawResults.Select(y => y.Member))
+                    //.Include(x => x.SessionResult.ScoredResults)
+                    .Include(x => x.Scorings.Select(y => y.ScoredResults))
+                    .SingleOrDefault(x => x.SessionId == sessionId);
+                var entry = leagueDb.Entry(session);
+
                 scorings = session.Scorings;
 
                 foreach(var scoring in scorings)
                 {
-                    scoring.CalculateResults(session.SessionId, leagueDb);
+                    entry.Reference(x => x.SessionResult).Query()
+                        .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.AddPenalty)))
+                        .Include(x => x.RawResults.Select(y => y.Member))
+                        .Load();
+                    scoring.CalculateResults(session, leagueDb);
                 }
                 leagueDb.SaveChanges();
             }
@@ -782,6 +793,7 @@ namespace LeagueDBService
                 leagueDb.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
                 leagueDb.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
                 leagueDb.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
+                    .Include(x => x.AddPenalty)
                     .Include(x => x.ResultRow.Member).Load();
 
                 var mapper = new DTOMapper();
@@ -1004,6 +1016,7 @@ namespace LeagueDBService
                             .Include(x => x.MultiScoringResults.Select(y => y.Sessions.Select(z => z.SessionResult)))
                             //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
                             .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.AddPenalty))))
                             .FirstOrDefault(x => x.ScoringId == itemId);
 
 
