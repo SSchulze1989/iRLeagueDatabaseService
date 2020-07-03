@@ -32,7 +32,7 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual LeagueMemberEntity FastestAvgLapDriver { get; set; }
         public long FastestAvgLap { get; set; }
         [InverseProperty(nameof(ScoredResultRowEntity.ScoredResult))]
-        public virtual List<ScoredResultRowEntity> FinalResults { get; set; } = new List<ScoredResultRowEntity>();
+        public virtual List<ScoredResultRowEntity> FinalResults { get; set; }
 
         public override void Delete(LeagueDbContext dbContext)
         {
