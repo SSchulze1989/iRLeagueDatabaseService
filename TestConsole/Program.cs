@@ -18,6 +18,7 @@ using iRLeagueDatabase.Mapper;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
+using iRLeagueDatabase.Entities.Members;
 
 namespace TestConsole
 {
@@ -30,11 +31,57 @@ namespace TestConsole
 
                 var init = dbContext.Set<SeasonEntity>().First();
 
-                var test = dbContext.Set<ScoredResultEntity>().ToList();
+                //var test = dbContext.Set<ScoredResultEntity>()
+                //    .Include(x => x.Result)
+                //    .Include(x => x.Result.Session)
+                //    .Include(x => x.Result.Session.Schedule.Season)
+                //    .Include(x => x.FastestAvgLapDriver)
+                //    .Include(x => x.FastestLapDriver)
+                //    .Include(x => x.FastestQualyLapDriver)
+                //    .Include(x => x.Result.RawResults)
+                //    .Include(x => x.Result.RawResults.Select(y => y.Member))
+                //    //.Include(x => x.Scoring)
+                //    .Include(x => x.FinalResults)
+                //    .Include(x => x.FinalResults.Select(y => y.ResultRow))
+                //    .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                //    .First();
+
+                var scoringId = 3;
+                dbContext.Configuration.LazyLoadingEnabled = false;
+
+                //var scoredResults = dbContext.Set<ScoredResultEntity>().Where(x => x.ScoringId == scoringId);
+                //scoredResults.Load();
+                //var scoredResultRows = dbContext.Set<ScoredResultRowEntity>().Where(x => scoredResults.Any(y => x.ScoredResultId == y.ResultId && y.ScoringId == y.ScoringId));
+                //scoredResultRows.Load();
+                //var results = dbContext.Set<ResultEntity>().Where(x => scoredResults.Any(y => y.ResultId == x.ResultId));
+                //results.Load();
+                //var resultRows = dbContext.Set<ResultRowEntity>().Where(x => results.Any(y => y.ResultId == x.ResultId));
+                //resultRows.Load();
+                //dbContext.Set<LeagueMemberEntity>().Where(x => resultRows.Any(y => y.MemberId == x.MemberId)).Load();
+                //dbContext.Set<SessionBaseEntity>().Load();
+                //dbContext.Set<ScoringEntity>();
+                //dbContext.Seasons.Load();
+
+                var standingsTest = dbContext.Set<ScoringEntity>()
+                            .Include(x => x.Sessions)
+                            .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
+                            .Include(x => x.MultiScoringResults)
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
+                            .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
+                            .FirstOrDefault(x => x.ScoringId == scoringId);
 
                 var mapper = new DTOMapper();
 
-                var testDto = mapper.MapTo<ScoredResultDataDTO>(test.First());
+                //var testDto = mapper.MapTo<ScoredResultDataDTO>(test);
+
+                //testDto = mapper.MapTo<ScoredResultDataDTO>(test);
+
+                var testStanding = standingsTest.GetSeasonStandings();
+
+                testStanding = standingsTest.GetSeasonStandings();
+
+                var testStandingDto = mapper.MapTo<StandingsDataDTO>(testStanding);
 
                 Console.Read();
             }
