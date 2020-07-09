@@ -44,10 +44,10 @@ namespace iRLeagueDatabase.Mapper
                 target = new SessionDataDTO();
 
             MapToSessionInfoDTO(source, target);
-            target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Date = source.Date.GetValueOrDefault();
             target.Duration = source.Duration;
-            target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
             target.LocationId = source.LocationId;
             target.Schedule = MapToScheduleInfoDTO(source.Schedule);
             target.SessionResult = MapToResultInfoDTO(source.SessionResult);
@@ -119,8 +119,8 @@ namespace iRLeagueDatabase.Mapper
                 target = new ScheduleDataDTO();
 
             MapToScheduleInfoDTO(source, target);
-            target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
-            target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Name = source.Name;
             target.Sessions = source.Sessions.Select(MapTo<SessionDataDTO>).ToList();
 
@@ -199,10 +199,10 @@ namespace iRLeagueDatabase.Mapper
                 return target;
 
             target.SessionType = source.SessionType;
-            target.CreatedBy = GetMemberEntity(source.CreatedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Date = source.Date;
             target.Duration = source.Duration;
-            target.LastModifiedBy = GetMemberEntity(source.LastModifiedBy);
             target.LocationId = source.LocationId;
             //target.Schedule = GetScheduleEntity(source.Schedule);
             target.SessionResult = GetResultEntity(source.SessionResult);
@@ -262,8 +262,8 @@ namespace iRLeagueDatabase.Mapper
             if (!MapToRevision(source, target))
                 return target;
 
-            target.CreatedBy = GetMemberEntity(source.CreatedBy);
-            target.LastModifiedBy = GetMemberEntity(source.LastModifiedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Name = source.Name;
             MapCollection(source.Sessions, target.Sessions, (src, trg) =>
             {

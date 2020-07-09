@@ -22,38 +22,26 @@ using iRLeagueDatabase.Entities.Members;
 using System.Net.Http;
 using iRLeagueDatabase.DataTransfer.Messages;
 
+
 namespace TestConsole
 {
     class Program
     {
         static void Main(string[] args)
         {
-            using (var client = new HttpClient())
+            using (var context = new LeagueDbContext("TestDatabase"))
             {
-                client.BaseAddress = new Uri("https://localhost:44369/api");
+                var user = context.Users.First();
 
-                var request = new GETItemsRequestMessage()
+                Console.WriteLine("Passwort:");
+                string pw = null;
+
+                while (pw != "x")
                 {
-                    userName = "TestUser",
-                    password = "12345",
-                    databaseName = "TestDatabase",
-                    requestItemIds = new long[][] { new long[] { 1 } },
-                    requestItemType = "SessionDataDTO",
-                    requestResponse = true
-                };
+                    pw = Console.ReadLine();
+                    var pwBytes = Encoding.UTF8.GetBytes(pw);
 
-                var responseTask = client.PostAsXmlAsync("https://localhost:44369/api/Home", request);
-
-                responseTask.Wait();
-
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readTask = result.Content.ReadAsAsync<GETItemsResponseMessage>();
-                    readTask.Wait();
-
-                    var resultItems = readTask.Result.items;
-                    Console.WriteLine(resultItems.Select(x => x as SessionDataDTO).First().SessionId);
+                    Console.WriteLine(user.CheckCredentials(pwBytes));
                 }
             }
 

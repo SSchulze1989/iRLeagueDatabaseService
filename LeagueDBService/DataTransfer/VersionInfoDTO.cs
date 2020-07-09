@@ -16,6 +16,9 @@ namespace iRLeagueDatabase.DataTransfer
         public DateTime? CreatedOn { get; set; } = null;
         [DataMember]
         public DateTime? LastModifiedOn { get; set; } = null;
+        [DataMember]
+        public long? CreatedByUserId { get; set; }
+        public long? LastModifiedByUserId { get; set; }
 
         [DataMember]
         public int Version { get; set; }

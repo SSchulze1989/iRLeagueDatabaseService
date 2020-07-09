@@ -62,9 +62,8 @@
     <Reference Include="AutoMapper.Extensions.ExpressionMapping, Version=3.0.5.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.Extensions.ExpressionMapping.3.0.5\lib\net461\AutoMapper.Extensions.ExpressionMapping.dll</HintPath>
     </Reference>
-    <Reference Include="Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Documents\VisualStudio\iRLeagueManager\iRLeagueManager\bin\Debug\Communication.dll</HintPath>
+    <Reference Include="Communication">
+      <HintPath>..\..\iRLeagueManager\Communication\bin\Debug\Communication.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
@@ -90,6 +89,7 @@
     <Compile Include="DataTransfer\MappableDTO.cs" />
     <Compile Include="DataTransfer\Members\LeagueMemberDataDTO.cs" />
     <Compile Include="DataTransfer\Members\LeagueMemberInfoDTO.cs" />
+    <Compile Include="DataTransfer\Members\LeagueUserDTO.cs" />
     <Compile Include="DataTransfer\Members\TeamDTO.cs" />
     <Compile Include="DataTransfer\Messages\DELItemsRequestMessage.cs" />
     <Compile Include="DataTransfer\Messages\DELItemsResponseMessage.cs" />
@@ -141,6 +141,8 @@
     <Compile Include="Mapper\TypeMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LeagueDBService.cs" />
+    <Compile Include="User\AuthenticationResult.cs" />
+    <Compile Include="User\ICustomAuthenticationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

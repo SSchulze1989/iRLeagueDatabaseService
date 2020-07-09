@@ -47,6 +47,22 @@ namespace iRLeagueDatabase.Mapper
 
             return target;
         }
+
+        public LeagueUserDTO MapToLeagueUserDTO(LeagueUserEntity source, LeagueUserDTO target = null)
+        {
+            if (source == null)
+                return null;
+
+            if (target == null)
+                target = new LeagueUserDTO();
+
+            target.AdminId = source.AdminId;
+            target.AdminRights = source.AdminRights;
+            target.Member = MapToMemberInfoDTO(source.Member);
+            target.UserName = source.UserName;
+
+            return target;
+        }
     }
 
     public partial class EntityMapper

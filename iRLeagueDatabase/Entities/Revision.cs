@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Entities
@@ -15,7 +16,11 @@ namespace iRLeagueDatabase.Entities
 
         public int Version { get; set; }
 
-        public LeagueMemberEntity CreatedBy { get; set; }
-        public LeagueMemberEntity LastModifiedBy { get; set; }
+        [ForeignKey(nameof(CreatedBy))]
+        public long? CreatedByUserId { get; set; }
+        public LeagueUserEntity CreatedBy { get; set; }
+        [ForeignKey(nameof(LastModifiedBy))]
+        public long? LastModifiedByUserId { get; set; }
+        public LeagueUserEntity LastModifiedBy { get; set; }
     } 
 }

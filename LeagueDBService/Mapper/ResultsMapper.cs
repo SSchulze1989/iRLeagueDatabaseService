@@ -48,8 +48,8 @@ namespace iRLeagueDatabase.Mapper
                 target = new ResultDataDTO();
 
             MapToResultInfoDTO(source, target);
-            target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
-            target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.RawResults = source.RawResults.Select(x => MapToResultRowDataDTO(x)).ToList();
             target.ResultId = source.ResultId;
             target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x));
@@ -146,10 +146,10 @@ namespace iRLeagueDatabase.Mapper
             target.AverageRaceNr = source.AverageRaceNr;
             target.BasePoints = source.BasePoints;
             target.BonusPoints = source.BonusPoints;
-            target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
-            target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
             target.MultiScoringFactors = source.MultiScoringFactors;
             target.MultiScoringResults = source.MultiScoringResults.Select(x => MapToScoringInfoDTO(x)).ToArray();
             target.Name = source.Name;
@@ -273,8 +273,8 @@ namespace iRLeagueDatabase.Mapper
             if (!MapToRevision(source, target))
                 return target;
 
-            target.CreatedBy = GetMemberEntity(source.CreatedBy);
-            target.LastModifiedBy = GetMemberEntity(source.LastModifiedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId });
             MapCollection(source.Reviews, target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.Session = GetSessionBaseEntity(source.Session);
@@ -379,10 +379,10 @@ namespace iRLeagueDatabase.Mapper
             target.AverageRaceNr = source.AverageRaceNr;
             target.BasePoints = source.BasePoints;
             target.BonusPoints = source.BonusPoints;
-            target.CreatedBy = GetMemberEntity(source.CreatedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
-            target.LastModifiedBy = GetMemberEntity(source.LastModifiedBy);
             target.MultiScoringFactors = source.MultiScoringFactors;
             MapCollection(source.MultiScoringResults, target.MultiScoringResults, GetScoringEntity, x => x.ScoringId);
             target.Name = source.Name;

@@ -247,7 +247,8 @@ namespace iRLeagueDatabase.Entities.Results
                 scoredResult = new ScoredResultEntity()
                 {
                     Result = session.SessionResult,
-                    Scoring = this
+                    Scoring = this,
+                    FinalResults = new List<ScoredResultRowEntity>(),
                 };
                 ScoredResults.Add(scoredResult);
             }

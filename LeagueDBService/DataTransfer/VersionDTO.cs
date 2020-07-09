@@ -12,8 +12,8 @@ namespace iRLeagueDatabase.DataTransfer
     public abstract class VersionDTO : VersionInfoDTO
     {        
         [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
+        public long? CreatedByUserId { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
+        public long? LastModifiedByUserId { get; set; }
     }
 }

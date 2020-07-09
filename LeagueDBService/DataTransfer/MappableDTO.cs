@@ -69,6 +69,7 @@ namespace iRLeagueDatabase.DataTransfer
         KnownType(typeof(AddPenaltyDTO))]
     public abstract class MappableDTO
     {
+        public bool IsReadOnly { get; set; }
         public virtual object MappingId { get; } = null;
         public abstract object[] Keys { get; }
     }

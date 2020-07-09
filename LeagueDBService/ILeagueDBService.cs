@@ -10,6 +10,7 @@ using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Messages;
+using iRLeagueDatabase.User;
 
 namespace LeagueDBService
 {
@@ -28,9 +29,13 @@ namespace LeagueDBService
         ServiceKnownType(typeof(ResultRowDataDTO)),
         ServiceKnownType(typeof(StandingsDataDTO)),
         ServiceKnownType(typeof(StandingsRowDataDTO)),
-        ServiceKnownType(typeof(AddPenaltyDTO))]
+        ServiceKnownType(typeof(AddPenaltyDTO)),
+        ServiceKnownType(typeof(AuthenticationResult))]
     public interface ILeagueDBService
     {
+        [OperationContract]
+        AuthenticationResult AuthenticateUser(string userName, byte[] password, string databaseName);
+
         [OperationContract]
         ResponseMessage MessageTest(RequestMessage request);
 
@@ -48,11 +53,11 @@ namespace LeagueDBService
 
         [OperationContract]
         void SetDatabaseName(string databaseName);
-        [OperationContract]
-        string TestDB();
+        //[OperationContract]
+        //string TestDB();
 
-        [OperationContract]
-        string Test(string name);
+        //[OperationContract]
+        //string Test(string name);
 
         //[OperationContract]
         //SeasonDataDTO GetSeason(long seasonId);

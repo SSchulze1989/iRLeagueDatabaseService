@@ -18,6 +18,7 @@ using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Mapper;
 using System.Data.Entity;
 using iRLeagueDatabase.DataTransfer.Messages;
+using iRLeagueDatabase.User;
 using System.Runtime.CompilerServices;
 //using AutoMapper;
 //using AutoMapper.Collection;
@@ -34,6 +35,12 @@ namespace LeagueDBService
         //MapperConfiguration MapperConfiguration { get; set; }
 
         private string DatabaseName { get; set; }
+
+        public bool Authenticated { get; private set; }
+
+        public IClientUser AuthenticatedUser { get; private set; }
+
+        private string TestString { get; set; }
 
         public LeagueDBService()
         {
@@ -74,7 +81,9 @@ namespace LeagueDBService
 
         public string Test(string name)
         {
-            return "Hallo " + name + "!";
+            string oldName = TestString;
+            TestString = name;
+            return "Old: " + oldName + "; New: " + TestString;
         }
 
         public string TestDB()
@@ -85,6 +94,58 @@ namespace LeagueDBService
                 result = leagueDb.Seasons.First().SeasonName;
             }
             return result;
+        }
+
+        public LeagueUserDTO CreateUser(string userName, byte[] password, string databaseName)
+        {
+            using (var context = new LeagueDbContext(databaseName))
+            {
+                var mapper = new DTOMapper();
+
+                if (context.Users.Any(x => x.UserName == userName))
+                    return null;
+
+                var newUser = context.Users.Create();
+                newUser.UserName = userName;
+                newUser.SetPassword(null, password);
+                newUser.AdminRights = 0;
+                context.Users.Add(newUser);
+                context.SaveChanges();
+
+                return mapper.MapToLeagueUserDTO(newUser);
+            }
+        }
+
+        public AuthenticationResult AuthenticateUser(string userName, byte[] password, string databaseName)
+        {
+            using (var context = new LeagueDbContext(databaseName))
+            {
+                var user = context.Set<LeagueUserEntity>().SingleOrDefault(x => x.UserName == userName);
+                var result = new AuthenticationResult();
+                var mapper = new DTOMapper();
+
+                if (user != null)
+                {
+                    if (user.CheckCredentials(password))
+                    {
+                        result.AuthenticatedUser = mapper.MapToLeagueUserDTO(user);
+                        result.IsAuthenticated = true;
+                        result.Status = "Success";
+                    }
+                    else
+                    {
+                        result.IsAuthenticated = false;
+                        result.Status = "Wrong credentials";
+                    }
+                }
+                else
+                {
+                    result.IsAuthenticated = false;
+                    result.Status = "User not found";
+                }
+
+                return result;
+            }
         }
 
         public LeagueMemberDataDTO GetMember(long memberId)
@@ -748,7 +809,7 @@ namespace LeagueDBService
                 leagueDb.Configuration.LazyLoadingEnabled = false;
                 var session = leagueDb.Set<SessionBaseEntity>()
                     //.Include(x => x.SessionResult.RawResults.Select(y => y.Member))
-                    //.Include(x => x.SessionResult.ScoredResults)
+                    //.Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.AddPenalty)))
                     .Include(x => x.Scorings.Select(y => y.ScoredResults))
                     .SingleOrDefault(x => x.SessionId == sessionId);
                 var entry = leagueDb.Entry(session);
@@ -1066,7 +1127,19 @@ namespace LeagueDBService
 
             responseMsg.status = "success";
 
-            //GC.Collect();
+            foreach (var item in responseMsg.items)
+            {
+                if (!Authenticated)
+                {
+                    item.IsReadOnly = true;
+                }
+                else
+                {
+                    item.IsReadOnly = false;
+                }
+            }
+
+            GC.Collect();
             return responseMsg;
         }
 
@@ -1177,6 +1250,20 @@ namespace LeagueDBService
             };
 
             responseMsg.status = "success";
+
+            foreach (var item in responseMsg.items)
+            {
+                if (!Authenticated)
+                {
+                    item.IsReadOnly = true;
+                }
+                else
+                {
+                    item.IsReadOnly = false;
+                }
+            }
+
+            GC.Collect();
             return responseMsg;
         }
 
@@ -1230,6 +1317,20 @@ namespace LeagueDBService
             };
 
             responseMsg.status = "success";
+
+            foreach (var item in responseMsg.items)
+            {
+                if (!Authenticated)
+                {
+                    item.IsReadOnly = true;
+                }
+                else
+                {
+                    item.IsReadOnly = false;
+                }
+            }
+
+            GC.Collect();
             return responseMsg;
         }
 
@@ -1284,6 +1385,7 @@ namespace LeagueDBService
                 dbContext.SaveChanges();
             };
 
+            GC.Collect();
             return responseMsg;
         }
         

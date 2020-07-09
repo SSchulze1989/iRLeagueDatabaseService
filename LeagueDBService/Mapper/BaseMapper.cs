@@ -36,8 +36,8 @@ namespace iRLeagueDatabase.Mapper
                 return null;
 
             MapToVersionInfoDTO(source, target);
-            target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
-            target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
+            target.CreatedByUserId = target.CreatedByUserId;
+            target.LastModifiedByUserId = target.LastModifiedByUserId;
             return target;
         }
 
@@ -63,8 +63,8 @@ namespace iRLeagueDatabase.Mapper
                 target = new SeasonDataDTO();
 
             MapToSeasonInfoDTO(source, target);
-            target.CreatedBy = MapToMemberInfoDTO(source.CreatedBy);
-            target.LastModifiedBy = MapToMemberInfoDTO(source.LastModifiedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Results = source.Results?.Select(x => MapToResultInfoDTO(x)).ToList();
             target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y));
             target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToList();
@@ -152,8 +152,8 @@ namespace iRLeagueDatabase.Mapper
                 return target;
 
             target.SeasonName = source.SeasonName;
-            target.CreatedBy = GetMemberEntity(source.CreatedBy);
-            target.LastModifiedBy = GetMemberEntity(source.LastModifiedBy);
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
             MapCollection(source.Schedules, target.Schedules, GetScheduleEntity, x => x.MappingId);
             MapCollection(source.Scorings, target.Scorings, MapToScoringEntity, x => x.ScoringId);
             target.SeasonName = source.SeasonName;

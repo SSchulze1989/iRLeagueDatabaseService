@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Members\IClientUser.cs" />
+    <Compile Include="Entities\Members\LeagueUserEntity.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
@@ -83,6 +85,14 @@
     <Compile Include="Migrations\202006291914197_AddFKey_MemberId_ResultRow.cs" />
     <Compile Include="Migrations\202006291914197_AddFKey_MemberId_ResultRow.designer.cs">
       <DependentUpon>202006291914197_AddFKey_MemberId_ResultRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007041729200_AddLeagueUserTable.cs" />
+    <Compile Include="Migrations\202007041729200_AddLeagueUserTable.designer.cs">
+      <DependentUpon>202007041729200_AddLeagueUserTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007041806436_ChangeRevisionToLeagueUser.cs" />
+    <Compile Include="Migrations\202007041806436_ChangeRevisionToLeagueUser.designer.cs">
+      <DependentUpon>202007041806436_ChangeRevisionToLeagueUser.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -135,6 +145,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202006291914197_AddFKey_MemberId_ResultRow.resx">
       <DependentUpon>202006291914197_AddFKey_MemberId_ResultRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007041729200_AddLeagueUserTable.resx">
+      <DependentUpon>202007041729200_AddLeagueUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007041806436_ChangeRevisionToLeagueUser.resx">
+      <DependentUpon>202007041806436_ChangeRevisionToLeagueUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
