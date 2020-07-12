@@ -12,6 +12,8 @@ namespace iRLeagueDatabase.DataTransfer
     public interface IMappableDTO
     {
         //[IgnoreDataMember]
+        bool IsReadOnly { get; set; }
         object MappingId { get; }
+        object[] Keys { get; }
     }
 }

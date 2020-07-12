@@ -21,11 +21,14 @@ using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
+using iRLeagueRESTService.Filters;
 
 namespace iRLeagueRESTService.Controllers
 {
     [KnownType(typeof(RaceSessionDataDTO))]
     [KnownType(typeof(SessionDataDTO))]
+    [IdentityBasicAuthentication]
+    [Authorize]
     public class HomeController : ApiController
     {
         //[HttpPost]
@@ -69,7 +72,7 @@ namespace iRLeagueRESTService.Controllers
             //var season = (SeasonDataDTO)GetFromDatabase("TestDatabase", typeof(SeasonDataDTO), new long[][] { new long[] { id } }).First();
             //return season.SeasonName;
         }
-
+        
         [HttpGet]
         public IHttpActionResult GetEntry([FromUri] string[] requestIds, [FromUri] string requestType, [FromUri] string databaseName)
         {
