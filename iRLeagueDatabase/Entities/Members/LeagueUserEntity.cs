@@ -10,12 +10,14 @@ using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Members
 {
-    public class LeagueUserEntity : MappableEntity, IClientUser
+    public class LeagueUserEntity : MappableEntity//, IClientUser
     {
         [Key]
         public long AdminId { get; set; }
 
-        public string UserName { get; set; }
+        public string UserIdentityId { get; set; }
+
+        //public string UserName { get; set; }
 
         public override object MappingId => AdminId;
 

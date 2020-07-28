@@ -31,11 +31,22 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual ScoredResultEntity ScoredResult { get; set; }
         public int RacePoints { get; set; }
         public int BonusPoints { get; set; }
-        public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }
+        //public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }
+        public int PenaltyPoints { get; set; }
         [InverseProperty(nameof(AddPenaltyEntity.ScoredResultRow))]
         public virtual AddPenaltyEntity AddPenalty {get; set;}
+        [InverseProperty(nameof(ReviewPenaltyEntity.ScoredResultRow))]
+        public virtual List<ReviewPenaltyEntity> ReviewPenalties { get; set; }
         public int FinalPosition { get; set; }
         public int FinalPositionChange { get; set; }
         public int TotalPoints { get; set; }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            if (ReviewPenalties != null)
+                ReviewPenalties.ToList().ForEach(x => x.Delete(dbContext));
+
+            base.Delete(dbContext);
+        }
     }
 }

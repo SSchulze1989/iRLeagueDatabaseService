@@ -24,6 +24,9 @@ namespace iRLeagueRESTService.Data
     {
         private LeagueDbContext DbContext { get; }
 
+        public string UserName { get; set; }
+        public string UserId { get; set; }
+
         public ModelDataProvider()
         {
             DbContext = new LeagueDbContext();
@@ -32,6 +35,16 @@ namespace iRLeagueRESTService.Data
         public ModelDataProvider(LeagueDbContext context)
         {
             DbContext = context;
+        }
+
+        public ModelDataProvider(LeagueDbContext context, string userName) : this(context)
+        {
+            UserName = userName;
+        }
+
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId)  : this(context, userName)
+        {
+            UserId = userId;
         }
 
         public void Dispose()
@@ -67,8 +80,9 @@ namespace iRLeagueRESTService.Data
             }
             else if (requestType.Equals(typeof(StandingsDataDTO)))
             {
-                var scoringIds = requestIds.Select(x => x[0]).ToArray();
-                items = GetStandings(scoringIds).Cast<TModelDTO>().ToArray();
+                //var scoringIds = requestIds.Select(x => x[0]).ToArray();
+                //var sessionIds = requestIds.Select(x => x.Count() > 0 ? x[1] : 0).ToArray();
+                items = GetStandings(requestIds).Cast<TModelDTO>().ToArray();
             }
             else
             {
@@ -86,10 +100,10 @@ namespace iRLeagueRESTService.Data
                     foreach (var keys in requestKeys)
                     {
                         object entity = DbContext.Set(rqEntityType).Find(keys);
-                        if (entity == null)
-                            throw new Exception("Entity not found in Database - Type: " + rqEntityType.Name + " || keys: { " + keys.Select(x => x.ToString()).Aggregate((x, y) => ", ") + " }");
-
-                        entities.Add(entity);
+                        //if (entity == null)
+                            //throw new Exception("Entity not found in Database - Type: " + rqEntityType.Name + " || keys: { " + keys.Select(x => x.ToString()).Aggregate((x, y) => ", ") + " }");
+                        if (entity != null)
+                            entities.Add(entity);
                     }
                 }
                 else
@@ -136,7 +150,7 @@ namespace iRLeagueRESTService.Data
                 "iRLeagueDatabase.DataTransfer.Sessions."
             };
 
-            var entityMapper = new EntityMapper(DbContext);
+            var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };
             var dtoMapper = new DTOMapper();
 
             var rqEntityType = dtoMapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
@@ -182,7 +196,7 @@ namespace iRLeagueRESTService.Data
         {
             TModelDTO[] items = data;
             
-            var entityMapper = new EntityMapper(DbContext);
+            var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };
             var dtoMapper = new DTOMapper();
 
             var rqEntityType = dtoMapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
@@ -193,7 +207,14 @@ namespace iRLeagueRESTService.Data
             foreach (object item in items)
             {
                 object entity = entityMapper.MapTo(item, null, requestType, rqEntityType);
-                DbContext.SaveChanges();
+                try
+                {
+                    DbContext.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
                 var dto = dtoMapper.MapTo(entity, requestType) as TModelDTO;
                 resultItems.Add(dto);
             }
@@ -223,8 +244,8 @@ namespace iRLeagueRESTService.Data
             var rqEntityType = mapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
             if (rqEntityType == null)
                 throw new Exception("No typemap for " + requestType.Name + " found");
-
-            foreach (var keys in requestIds)
+            var requestKeys = requestIds.Select(x => x.Cast<object>().ToArray()).ToArray();
+            foreach (var keys in requestKeys)
             {
                 var entity = DbContext.Set(rqEntityType).Find(keys) as MappableEntity;
 
@@ -276,13 +297,20 @@ namespace iRLeagueRESTService.Data
 
         private StandingsDataDTO[] GetStandings(long[] scoringIds)
         {
+            return GetStandings(scoringIds.Select(x => new long[] { x }).ToArray());
+        }
+
+        private StandingsDataDTO[] GetStandings(long[][] requestIds)
+        {
             var mapper = new DTOMapper();
 
             DbContext.Configuration.LazyLoadingEnabled = false;
             List<StandingsDataDTO> responseItems = new List<StandingsDataDTO>();
-            foreach (var scoringId in scoringIds)
+            foreach (var requestId in requestIds)
             {
-                var getItemId = scoringId;
+
+                var scoringId = requestId[0];
+                var sessionId = requestId.Count() > 1 ? requestId[1] : 0;
                 //var scoring = dbContext.Set<ScoringEntity>()
                 //    .Include(x => x.Sessions)
                 //    .Include(x => x.MultiScoringResults.Select(y => y.Sessions))
@@ -300,14 +328,19 @@ namespace iRLeagueRESTService.Data
                     //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
                     .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
                     .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.AddPenalty))))
-                    .FirstOrDefault(x => x.ScoringId == getItemId);
+                    .FirstOrDefault(x => x.ScoringId == scoringId);
 
 
                 if (scoring != null)
                 {
-
-                    var standings = scoring.GetSeasonStandings();
-                    responseItems.Add(mapper.MapTo<StandingsDataDTO>(standings));
+                    StandingsEntity standings;
+                    if (sessionId == 0)
+                        standings = scoring.GetSeasonStandings();
+                    else
+                        standings = scoring.GetSeasonStandings(scoring.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId));
+                    var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
+                    standingsDTO.SessionId = sessionId;
+                    responseItems.Add(standingsDTO);
                 }
             }
             DbContext.Configuration.LazyLoadingEnabled = true;
@@ -319,5 +352,8 @@ namespace iRLeagueRESTService.Data
     public class ModelDataProvider : ModelDataProvider<MappableDTO>, IModelDataProvider
     {
         public ModelDataProvider(LeagueDbContext context) : base(context) { }
+
+        public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName) { }
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId) { }
     }
 }

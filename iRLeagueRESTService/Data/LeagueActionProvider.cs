@@ -36,7 +36,9 @@ namespace iRLeagueRESTService.Data
             var sessions = DbContext.Set<SessionBaseEntity>()
                 .Include(x => x.Scorings.Select(y => y.ScoredResults))
                 .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.AddPenalty)))
+                .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.ReviewPenalties)))
                 .Include(x => x.SessionResult.RawResults.Select(y => y.Member))
+                .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes))
                 .Where(x => sessionIds.Contains(x.SessionId));
 
             foreach (var session in sessions)

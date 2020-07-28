@@ -63,6 +63,9 @@ namespace iRLeagueDatabase.Entities.Sessions
         /// </summary>
         public virtual ResultEntity SessionResult { get; set; }
 
+        [InverseProperty(nameof(IncidentReviewEntity.Session))]
+        public virtual List<IncidentReviewEntity> Reviews { get; set; }
+
         //[InverseProperty(nameof(IncidentReview.Session))]
         //public virtual List<IncidentReview> Reviews { get; set; }
 

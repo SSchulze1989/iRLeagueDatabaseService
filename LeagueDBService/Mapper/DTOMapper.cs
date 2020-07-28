@@ -13,10 +13,14 @@ using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueManager.Enums;
 
+using iRLeagueUserDatabase;
+
 namespace iRLeagueDatabase.Mapper
 {
     public partial class DTOMapper
     {
+        private UsersDbContext UserDbContext { get; }
+
         private IList<TypeMap> TypeMaps { get; } = new List<TypeMap>();
 
         public IEnumerable<TypeMap> GetTypeMaps() => TypeMaps;
@@ -55,7 +59,7 @@ namespace iRLeagueDatabase.Mapper
         private TypeMap GetTypeMap(Type sourceType, Type targetType)
         {
             if (sourceType == null || targetType == null)
-                throw new Exception("No typemap found.");
+                throw new Exception("No typemap found. Type was null.");
 
             var typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType));
 
@@ -63,7 +67,7 @@ namespace iRLeagueDatabase.Mapper
                 typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType.BaseType) && x.TargetType.Equals(targetType));
 
             if (typeMap == null)
-                throw new Exception("No typemap found.");
+                throw new Exception("No typemap found. SourceType: " + sourceType.Name + " - TargetType: " + targetType.Name);
 
             return typeMap;
         }

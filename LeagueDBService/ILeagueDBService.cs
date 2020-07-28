@@ -10,6 +10,7 @@ using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Messages;
+using iRLeagueDatabase.DataTransfer.User;
 using iRLeagueDatabase.User;
 
 namespace LeagueDBService
@@ -30,11 +31,14 @@ namespace LeagueDBService
         ServiceKnownType(typeof(StandingsDataDTO)),
         ServiceKnownType(typeof(StandingsRowDataDTO)),
         ServiceKnownType(typeof(AddPenaltyDTO)),
-        ServiceKnownType(typeof(AuthenticationResult))]
+        ServiceKnownType(typeof(UserDTO)),
+        ServiceKnownType(typeof(UserProfileDTO)),
+        ServiceKnownType(typeof(AuthenticationResult)),
+        ServiceKnownType(typeof(AddUserDTO))]
     public interface ILeagueDBService
     {
-        [OperationContract]
-        AuthenticationResult AuthenticateUser(string userName, byte[] password, string databaseName);
+        //[OperationContract]
+        //AuthenticationResult AuthenticateUser(string userName, byte[] password, string databaseName);
 
         [OperationContract]
         ResponseMessage MessageTest(RequestMessage request);

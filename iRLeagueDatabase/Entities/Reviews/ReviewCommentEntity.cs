@@ -15,14 +15,21 @@ namespace iRLeagueDatabase.Entities.Reviews
     [Serializable]
     public class ReviewCommentEntity : CommentBaseEntity
     {
-        public VoteEnum Vote { get; set; }
-
         [ForeignKey(nameof(Review))]
-        public long? ReviewId { get; set; }
-        public IncidentReviewEntity Review { get; set; }
-
-        public LeagueMemberEntity MemberAtFault { get; set; }
+        public long ReviewId { get; set; }
+        public virtual IncidentReviewEntity Review { get; set; }
+        
+        [InverseProperty(nameof(CommentReviewVoteEntity.ReviewComment))]
+        public virtual List<CommentReviewVoteEntity> CommentReviewVotes { get; set; }
 
         public ReviewCommentEntity () { }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            if (CommentReviewVotes != null)
+                CommentReviewVotes.ToList().ForEach(x => x.Delete(dbContext));
+
+            base.Delete(dbContext);
+        }
     }
 }

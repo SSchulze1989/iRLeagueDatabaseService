@@ -40,6 +40,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string MultiScoringFactors { get; set; }
         [DataMember]
+        public bool IsMultiScoring { get; set; }
+        [DataMember]
         public virtual ScoringInfoDTO[] MultiScoringResults { get; set; }
         [DataMember]
         public virtual ResultInfoDTO[] Results { get; set; }

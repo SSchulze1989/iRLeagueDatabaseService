@@ -14,6 +14,10 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
     {
         [DataMember]
         public long? CommentId { get; set; }
+        [DataMember]
+        public string AuthorName { get; set; }
+        [DataMember]
+        public string AuthorUserId { get; set; }
 
         public override object MappingId => CommentId;
 

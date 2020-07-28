@@ -10,6 +10,7 @@ namespace iRLeagueDatabase.Entities.Results
 {
     public class StandingsEntity : MappableEntity
     {
+        public ScoringTableEntity ScoringTable { get; set; }
         public ScoringEntity Scoring { get; set; }
         public override object MappingId => new long[] { Scoring.ScoringId };
         public virtual List<StandingsRowEntity> StandingsRows { get; set; }

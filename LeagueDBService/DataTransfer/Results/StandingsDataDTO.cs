@@ -12,6 +12,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
     {
         public ScoringInfoDTO Scoring { get; set; }
         public override object MappingId => new long[] { Scoring.ScoringId.GetValueOrDefault() };
+        public long? SessionId { get; set; }
         public override object[] Keys => new object[] { Scoring.ScoringId.GetValueOrDefault() };
         public virtual StandingsRowDataDTO[] StandingsRows { get; set; }
         public virtual LeagueMemberInfoDTO MostWinsDriver { get; set; }

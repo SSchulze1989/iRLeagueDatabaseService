@@ -29,7 +29,11 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         [DataMember]
         public SessionInfoDTO Session { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO Author { get; set; }
+        public string IncidentKind { get; set; }
+        [DataMember]
+        public string FullDescription { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO Author { get; set; }
         [DataMember]
         public int OnLap { get; set; }
         [DataMember]
@@ -40,6 +44,8 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         public ICollection<LeagueMemberInfoDTO> InvolvedMembers { get; set; }
         [DataMember]
         public ICollection<ReviewCommentDataDTO> Comments { get; set; }
+        [DataMember]
+        public ReviewVoteDataDTO[] AcceptedReviewVotes { get; set; }
         //[DataMember]
         //public LeagueMemberInfoDTO MemberAtFault { get; set; }
         //[DataMember]

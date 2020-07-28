@@ -10,7 +10,7 @@ EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "LeagueDBService_IIS", "LeagueDBService_IIS\", "{EAEDF277-8F6A-4125-8137-621E3997DC0A}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
-		ProjectReferences = "{aaac06db-63ac-4002-9f30-2ac330f64b33}|iRLeagueDatabase.dll;{c7b2eeaa-632c-4519-89ad-56377afcd1a0}|LeagueDBService.dll;"
+		ProjectReferences = "{aaac06db-63ac-4002-9f30-2ac330f64b33}|iRLeagueDatabase.dll;{c7b2eeaa-632c-4519-89ad-56377afcd1a0}|LeagueDBService.dll;{E80E0176-8BBB-4AB6-B528-314352267B12}|iRLeagueUserDatabase.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_53769"
 		Debug.AspNetCompiler.PhysicalPath = "LeagueDBService_IIS\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53769\"
@@ -32,6 +32,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRLeagueRESTService", "iRLeagueRESTService\iRLeagueRESTService.csproj", "{212F1B36-18F3-4128-A735-C27A9C7D8AD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{6D5EE632-6FBE-4F80-92B2-EB6953E56CE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRLeagueUserDatabase", "iRLeagueUserDatabase\iRLeagueUserDatabase.csproj", "{E80E0176-8BBB-4AB6-B528-314352267B12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{6D5EE632-6FBE-4F80-92B2-EB6953E56CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D5EE632-6FBE-4F80-92B2-EB6953E56CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D5EE632-6FBE-4F80-92B2-EB6953E56CE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E80E0176-8BBB-4AB6-B528-314352267B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E80E0176-8BBB-4AB6-B528-314352267B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E80E0176-8BBB-4AB6-B528-314352267B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E80E0176-8BBB-4AB6-B528-314352267B12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

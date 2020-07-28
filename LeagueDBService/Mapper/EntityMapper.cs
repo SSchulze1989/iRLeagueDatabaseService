@@ -13,6 +13,8 @@ namespace iRLeagueDatabase.Mapper
     public partial class EntityMapper
     {
         private LeagueDbContext DbContext { get; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
 
         public bool ForceOldVersion { get; set; } = false;
 
@@ -76,6 +78,9 @@ namespace iRLeagueDatabase.Mapper
 
         public object MapTo(object source, object target, Type sourceType, Type targetType)
         {
+            if (source == null)
+                return null;
+
             try
             {
                 var typeMap = GetTypeMap(sourceType, targetType);
@@ -137,51 +142,63 @@ namespace iRLeagueDatabase.Mapper
             TypeMaps.Add(typeMap);
         }
 
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object> key) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) });
+            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) }, removeFromCollection, removeFromDatabase);
         }
 
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object> key) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key);
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key, removeFromCollection, removeFromDatabase);
         }
 
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object[]> keys) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys);
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys, removeFromCollection, removeFromDatabase);
         }
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
+            //if (sourceCollection == null)
+            //{
+            //    targetCollection = null;
+            //    return targetCollection;
+            //}
+
             if (targetCollection == null)
                 targetCollection = new List<TTarget>();
 
-            var newTargets = new List<TSource>();
-            //var removeEntities = targetCollection.ToList();
+            var newTargetsList = new List<TSource>();
+            var removeEntitiesList = targetCollection.ToList();
 
             foreach(var source in sourceCollection)
             {
                 var target = targetCollection.SingleOrDefault(x => x.MappingId.Equals(source.MappingId));
                 
                 if (target == null)
-                    newTargets.Add(source);
+                    newTargetsList.Add(source);
                 else
                 {
-                    //removeEntities.Remove(target);
+                    removeEntitiesList.Remove(target);
                     target = map(source, target);
                 }
             }
 
-            foreach(var source in newTargets)
+            foreach(var source in newTargetsList)
             {
                 var target = map(source, null);
                 targetCollection.Add(target);
             }
 
-            //foreach(var target in removeEntities)
-            //{
-            //    targetCollection.Remove(target);
-            //}
+            if (removeFromCollection)
+            {
+                foreach (var target in removeEntitiesList)
+                {
+                    targetCollection.Remove(target);
+
+                    if (removeFromDatabase)
+                        target.Delete(DbContext);
+                }
+            }
 
             return targetCollection;
         }

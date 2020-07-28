@@ -16,15 +16,19 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
     public class CommentDataDTO : CommentInfoDTO
     {
         public override Type Type => typeof(CommentDataDTO);
-
         //[DataMember]
         //public int CommentId { get; set; }
         [DataMember]
         public DateTime? Date { get; set; } = null;
-        [DataMember]
-        public LeagueMemberInfoDTO Author { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO Author { get; set; }
         [DataMember]
         public string Text { get; set; }
+
+        [DataMember]
+        public CommentInfoDTO ReplyTo { get; set; }
+        [DataMember]
+        public CommentDataDTO[] Replies { get; set; }
 
         //[DataMember]
         //public LeagueMemberInfoDTO CreatedBy { get; set; }

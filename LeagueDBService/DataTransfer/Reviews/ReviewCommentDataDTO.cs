@@ -17,11 +17,9 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
     public class ReviewCommentDataDTO : CommentDataDTO
     {
         [DataMember]
-        public VoteEnum Vote { get; set; }
-        //[DataMember]
-        //public IncidentReviewInfoDTO Review { get; set; }
+        public IncidentReviewInfoDTO Review { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO MemberAtFault { get; set; }
+        public ReviewVoteDataDTO[] CommentReviewVotes { get; set; }
 
         public ReviewCommentDataDTO () { }
     }

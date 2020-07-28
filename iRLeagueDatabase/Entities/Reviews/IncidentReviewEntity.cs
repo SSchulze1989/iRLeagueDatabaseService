@@ -24,16 +24,22 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public override object MappingId => ReviewId;
 
-        public virtual ResultEntity Result { get; set; }
+        //public virtual ResultEntity Result { get; set; }
 
-        //[ForeignKey(nameof(Session))]
-        //public int SessionId { get; set; }
+        [ForeignKey(nameof(Session))]
+        public long SessionId { get; set; }
         //public virtual SessionBaseEntity Session { get; set; }
-        public SessionBaseEntity Session => Result.Session;
+        public virtual SessionBaseEntity Session { get; set; }
 
         //[ForeignKey(nameof(Author))]
         //public int AuthorId { get; set; }
-        public virtual LeagueMemberEntity Author { get; set; }
+        //public virtual LeagueMemberEntity Author { get; set; }
+        public string AuthorUserId { get; set; }
+        public string AuthorName { get; set; }
+
+        public string IncidentKind { get; set; }
+
+        public string FullDescription { get; set; }
 
         public int OnLap { get; set; }
         
@@ -46,13 +52,10 @@ namespace iRLeagueDatabase.Entities.Reviews
         [InverseProperty(nameof(ReviewCommentEntity.Review))]
         public virtual List<ReviewCommentEntity> Comments { get; set; }
 
-        //[ForeignKey(nameof(MemberAtFault))]
-        //public int MeberAtFaultId { get; set; }
-        public virtual LeagueMemberEntity MemberAtFault { get; set; }
+        [InverseProperty(nameof(AcceptedReviewVoteEntity.IncidentReview))]
+        public virtual List<AcceptedReviewVoteEntity> AcceptedReviewVotes { get; set; }
 
-        public VoteEnum VoteResult { get; set; }
-
-        public VoteState VoteState { get; set; }
+        //public VoteState VoteState { get; set; }
 
         public IncidentReviewEntity()
         {
@@ -67,7 +70,12 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            Comments.ToList().ForEach(x => x.Delete(dbContext));
+            if (Comments != null && Comments.Count() > 0)
+                Comments.ToList().ForEach(x => x.Delete(dbContext));
+
+            if (AcceptedReviewVotes != null)
+                AcceptedReviewVotes.ToList().ForEach(x => x.Delete(dbContext));
+
             base.Delete(dbContext);
         }
     }

@@ -43,10 +43,10 @@ namespace iRLeagueDatabase.DataTransfer
 
         //public ScoringDataDTO MainScoring { get; set; }
 
-        [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
-        [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO CreatedBy { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO LastModifiedBy { get; set; }
 
         public SeasonDataDTO() { }
     }

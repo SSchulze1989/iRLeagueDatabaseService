@@ -51,6 +51,7 @@ namespace iRLeagueDatabase.Mapper
             target.LocationId = source.LocationId;
             target.Schedule = MapToScheduleInfoDTO(source.Schedule);
             target.SessionResult = MapToResultInfoDTO(source.SessionResult);
+            target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x)).ToArray();
 
             return target;
         }
@@ -70,7 +71,7 @@ namespace iRLeagueDatabase.Mapper
             target.PracticeLength = source.PracticeLength;
             target.QualyAttached = source.QualyAttached;
             target.QualyLength = source.QualyLength;
-            target.RaceId = source.RaceId;
+            //target.RaceId = source.RaceId;
             target.RaceLength = source.RaceLength;
                 
             return target;
@@ -206,6 +207,7 @@ namespace iRLeagueDatabase.Mapper
             target.LocationId = source.LocationId;
             //target.Schedule = GetScheduleEntity(source.Schedule);
             target.SessionResult = GetResultEntity(source.SessionResult);
+            //MapCollection(source.Reviews, target.Reviews, (src, trg) => GetReviewEntity(src), src => src.ReviewId);
 
             return target;
         }
@@ -228,7 +230,7 @@ namespace iRLeagueDatabase.Mapper
             target.PracticeLength = source.PracticeLength;
             target.QualyAttached = source.QualyAttached;
             target.QualyLength = source.QualyLength;
-            target.RaceId = source.RaceId;
+            //target.RaceId = source.RaceId;
             target.RaceLength = source.RaceLength;
 
             return target;

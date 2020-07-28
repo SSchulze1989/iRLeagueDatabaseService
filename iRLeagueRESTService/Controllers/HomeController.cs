@@ -31,11 +31,8 @@ namespace iRLeagueRESTService.Controllers
     [Authorize]
     public class HomeController : ApiController
     {
-        //[HttpPost]
-        //public bool AddSeason()
-        //{
-        //    return true;
-        //}
+        private string TestUserName => System.Environment.GetEnvironmentVariable("IRLEAGUE_TESTUSER_NAME");
+        private string TestUserPassword => System.Environment.GetEnvironmentVariable("IRLEAGUE_TESTUSER_PASSWORD");
 
         public string Get()
         {
@@ -46,31 +43,15 @@ namespace iRLeagueRESTService.Controllers
         {
             ILeagueDBService dbService = new LeagueDBService.LeagueDBService();
 
-            //using (var context = new LeagueDbContext("TestDatabase"))
-            //{
-            //    context.Configuration.LazyLoadingEnabled = false;
-            //    var season = context.Seasons
-            //        .Include(x => x.Schedules)
-            //        .Include(x => x.Scorings)
-            //        .SingleOrDefault(x => x.SeasonId == id);
-
-            //    var mapper = new DTOMapper();
-            //    var seasonDTO = mapper.MapTo<SeasonDataDTO>(season);
-
-            //    return seasonDTO.SeasonName;
-            //}
-
             return (dbService.DatabaseGET(new GETItemsRequestMessage()
             {
-                userName = "TestUser",
-                password = "12345",
+                userName = TestUserName,
+                password = TestUserPassword,
                 databaseName = "TestDatabase",
                 requestItemIds = new long[][] { new long[] { requestId } },
                 requestItemType = requestType,
                 requestResponse = true
             }).items.FirstOrDefault() as MappableDTO);
-            //var season = (SeasonDataDTO)GetFromDatabase("TestDatabase", typeof(SeasonDataDTO), new long[][] { new long[] { id } }).First();
-            //return season.SeasonName;
         }
         
         [HttpGet]
@@ -86,8 +67,8 @@ namespace iRLeagueRESTService.Controllers
                 var request = new GETItemsRequestMessage
                 {
                     databaseName = databaseName,
-                    password = "12345",
-                    userName = "TestUser",
+                    password = TestUserPassword,
+                    userName = TestUserName,
                     requestItemIds = requestIdValues,
                     requestItemType = requestType,
                     requestResponse = true
@@ -110,8 +91,8 @@ namespace iRLeagueRESTService.Controllers
                 var request = new PUTItemsRequestMessage
                 {
                     databaseName = databaseName,
-                    password = "12345",
-                    userName = "TestUser",
+                    password = TestUserPassword,
+                    userName = TestUserName,
                     requestItemType = requestType,
                     requestResponse = true,
                     items = items
@@ -128,8 +109,8 @@ namespace iRLeagueRESTService.Controllers
                 var request = new POSTItemsRequestMessage
                 {
                     databaseName = databaseName,
-                    password = "12345",
-                    userName = "TestUser",
+                    password = TestUserPassword,
+                    userName = TestUserName,
                     requestItemType = requestType,
                     requestResponse = true,
                     items = items
@@ -151,8 +132,8 @@ namespace iRLeagueRESTService.Controllers
                 var request = new DELItemsRequestMessage
                 {
                     databaseName = databaseName,
-                    password = "12345",
-                    userName = "TestUser",
+                    password = TestUserName,
+                    userName = TestUserPassword,
                     requestItemIds = requestIdValues,
                     requestItemType = requestType,
                     requestResponse = true

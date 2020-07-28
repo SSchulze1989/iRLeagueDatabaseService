@@ -27,6 +27,10 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedOn = source.CreatedOn;
             target.LastModifiedOn = source.LastModifiedOn;
             target.Version = source.Version;
+            target.CreatedByUserId = source.CreatedByUserId;
+            target.CreatedByUserName = source.CreatedByUserName;
+            target.LastModifiedByUserId = source.LastModifiedByUserId;
+            target.LastModifiedByUserName = source.LastModifiedByUserName;
             return target;
         }
 
@@ -95,10 +99,23 @@ namespace iRLeagueDatabase.Mapper
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
 
+            if (target.CreatedOn == null)
+            {
+                if (source.CreatedOn != null)
+                    target.CreatedOn = source.CreatedOn;
+                else
+                    target.CreatedOn = DateTime.Now;
+
+                target.CreatedByUserId = UserId;
+                target.CreatedByUserName = UserName;
+            }
             if (target.LastModifiedOn == null || source.LastModifiedOn >= target.LastModifiedOn || ForceOldVersion)
             {
-                target.CreatedOn = source.CreatedOn;
+                //target.CreatedOn = source.CreatedOn;
                 target.LastModifiedOn = source.LastModifiedOn;
+                target.LastModifiedByUserName = UserName;
+                target.LastModifiedByUserId = UserId;
+
                 return true;
             }
             else

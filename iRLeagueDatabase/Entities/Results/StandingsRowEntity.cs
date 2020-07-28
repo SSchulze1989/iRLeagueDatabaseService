@@ -13,6 +13,7 @@ namespace iRLeagueDatabase.Entities.Results
     [NotMapped]
     public class StandingsRowEntity : Revision
     {
+        public ScoringTableEntity ScoringTable { get; set; }
         public ScoringEntity Scoring { get; set; }
         public override object MappingId => new long[] { Scoring.ScoringId, Member.MemberId };
         public int Position { get; set; }
@@ -142,7 +143,8 @@ namespace iRLeagueDatabase.Entities.Results
                 PenaltyPoints = source.PenaltyPoints,
                 PenaltyPointsChange = source.PenaltyPoints - compare.PenaltyPoints,
                 Position = source.Position,
-                PositionChange = source.Position - compare.Position,
+                //PositionChange = source.Position - compare.Position,
+                PositionChange = compare.Position - source.Position,
                 PolePositions = source.PolePositions,
                 PolePositionsChange = source.PolePositions - compare.PolePositions,
                 RacePoints = source.RacePoints,

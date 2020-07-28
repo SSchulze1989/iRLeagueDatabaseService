@@ -40,7 +40,8 @@ namespace iRLeagueDatabase.Entities.Results
         [InverseProperty(nameof(ResultRowEntity.Result))]
         public virtual List<ResultRowEntity> RawResults { get; set; }
 
-        public virtual List<IncidentReviewEntity> Reviews { get; set; } = new List<IncidentReviewEntity>();
+        [NotMapped]
+        public List<IncidentReviewEntity> Reviews => Session?.Reviews;
 
         [InverseProperty(nameof(ScoredResultEntity.Result))]
         public virtual List<ScoredResultEntity> ScoredResults { get; set; }

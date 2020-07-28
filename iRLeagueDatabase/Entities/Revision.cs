@@ -16,11 +16,9 @@ namespace iRLeagueDatabase.Entities
 
         public int Version { get; set; }
 
-        [ForeignKey(nameof(CreatedBy))]
-        public long? CreatedByUserId { get; set; }
-        public LeagueUserEntity CreatedBy { get; set; }
-        [ForeignKey(nameof(LastModifiedBy))]
-        public long? LastModifiedByUserId { get; set; }
-        public LeagueUserEntity LastModifiedBy { get; set; }
+        public string CreatedByUserId { get; set; }
+        public string CreatedByUserName { get; set; }
+        public string LastModifiedByUserId { get; set; }
+        public string LastModifiedByUserName { get; set; }
     } 
 }

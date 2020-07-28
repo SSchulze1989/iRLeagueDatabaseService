@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using iRLeagueManager.Enums;
 using iRLeagueDatabase.Entities.Sessions;
+using iRLeagueDatabase.Entities.Reviews;
 
 using iRLeagueDatabase;
 
@@ -23,6 +24,7 @@ namespace iRLeagueDatabase.Entities.Results
         public override object MappingId => ScoringId;
         public int DropWeeks { get; set; }
         public int AverageRaceNr { get; set; }
+        public bool IsMultiScoring { get; set; }
 
         public List<SessionBaseEntity> sessions;
         public virtual List<SessionBaseEntity> Sessions
@@ -62,9 +64,22 @@ namespace iRLeagueDatabase.Entities.Results
         { 
         }
 
+        /// <summary>
+        /// Get all sessions, including sessions from Multiscoring
+        /// </summary>
+        /// <returns></returns>
+        public List<SessionBaseEntity> GetAllSessions()
+        {
+            if (IsMultiScoring && MultiScoringResults != null && MultiScoringResults.Count > 0)
+            {
+                return MultiScoringResults.Where(x => x.Sessions != null).SelectMany(x => x.Sessions).ToList();
+            }
+            return Sessions;
+        }
+
         public StandingsEntity GetSeasonStandings()
         {
-            var allSessions = Sessions.ToList();
+            var allSessions = GetAllSessions();
 
             if (MultiScoringResults != null && MultiScoringResults.Count > 0)
             {
@@ -79,6 +94,12 @@ namespace iRLeagueDatabase.Entities.Results
                 return null;
 
             return GetSeasonStandings(session, allSessions.Count - DropWeeks);
+        }
+
+        public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession)
+        {
+            var allSessions = GetAllSessions();
+            return GetSeasonStandings(currentSession, allSessions.Count - DropWeeks);
         }
 
         public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession, int maxRacesCount = -1)
@@ -253,6 +274,19 @@ namespace iRLeagueDatabase.Entities.Results
                 ScoredResults.Add(scoredResult);
             }
 
+            var reviewVotes = new List<AcceptedReviewVoteEntity>();
+
+            if (session.Reviews != null)
+            {
+                foreach(var review in session.Reviews)
+                {
+                    if (review.AcceptedReviewVotes != null && review.AcceptedReviewVotes.Count > 0)
+                    {
+                        reviewVotes.AddRange(review.AcceptedReviewVotes);
+                    }
+                }
+            }
+
             //dbContext.SaveChanges();
 
             var scoredResultRows = scoredResult.FinalResults;
@@ -262,8 +296,6 @@ namespace iRLeagueDatabase.Entities.Results
             IDictionary<int, int> bonusPoints = new Dictionary<int, int>();
             if (BonusPoints != "")
                 bonusPoints = BonusPoints.Split(' ').Select(x => new { Item = int.Parse(x.Split(':').Last()), Index = int.Parse(x.Split(':').First().TrimStart(new char[] { 'p' })) }).ToDictionary(x => x.Index, x => x.Item);
-
-
 
             foreach (var resultRow in resultRows)
             {
@@ -282,9 +314,35 @@ namespace iRLeagueDatabase.Entities.Results
                     scoredResultRows.Add(scoredResultRow);
                 }
 
+                var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
+                if (scoredResultRow.ReviewPenalties != null)
+                {
+                    var removePenalty = scoredResultRow.ReviewPenalties.ToList();
+                    foreach (var reviewVote in scoredResultRowReviewVotes)
+                    {
+                        var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.ReviewId == reviewVote.ReviewId);
+                        if (reviewPenalty == null)
+                        {
+                            reviewPenalty = new ReviewPenaltyEntity()
+                            {
+                                Review = reviewVote.IncidentReview,
+                                ScoredResultRow = scoredResultRow
+                            };
+                            scoredResultRow.ReviewPenalties.Add(reviewPenalty);
+                        }
+                        else
+                        {
+                            removePenalty.Remove(reviewPenalty);
+                        }
+                        reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote.Vote);
+                    }
+                    removePenalty.ForEach(x => x.Delete(dbContext));
+                    //dbContext.SaveChanges();
+                }
+
                 scoredResultRow.RacePoints = basePoints.ContainsKey(resultRow.FinishPosition) ? basePoints[resultRow.FinishPosition] : 0;
                 scoredResultRow.BonusPoints = bonusPoints.ContainsKey(resultRow.FinishPosition) ? bonusPoints[resultRow.FinishPosition] : 0;
-                scoredResultRow.PenaltyPoints = 0;
+                scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
                 scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
             }
 
@@ -327,6 +385,44 @@ namespace iRLeagueDatabase.Entities.Results
             scoredResult.FastestQualyLapDriver = fastestQualyLapRow.ResultRow.Member;
 
             return scoredResultRows;
+        }
+
+        private int GetReviewPenaltyPoints(VoteEnum vote)
+        {
+            switch (vote)
+            {
+                case VoteEnum.Kat0:
+                    return 0;
+                case VoteEnum.Kat1:
+                    return 1;
+                case VoteEnum.Kat2:
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
+
+        private int GetPenaltyPoints(ScoredResultRowEntity scoredResultRow)
+        {
+            if (scoredResultRow == null)
+                return 0;
+
+            int penaltyPoints = 0;
+
+            if (scoredResultRow.AddPenalty != null)
+            {
+                penaltyPoints += scoredResultRow.AddPenalty.PenaltyPoints;
+            }
+
+            if (scoredResultRow.ReviewPenalties != null)
+            {
+                foreach(var reviewPenalty in scoredResultRow.ReviewPenalties)
+                {
+                    penaltyPoints += reviewPenalty.PenaltyPoints;
+                }
+            }
+
+            return penaltyPoints;
         }
 
         public override void Delete(LeagueDbContext dbContext)

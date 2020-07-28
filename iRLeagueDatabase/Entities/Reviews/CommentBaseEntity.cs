@@ -20,15 +20,33 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public DateTime? Date { get; set; }
 
+        public string AuthorUserId { get; set; }
         //[ForeignKey(nameof(Author))]
         //public int AuthorId { get; set; }
-        public LeagueMemberEntity Author { get; set; }
+        //public LeagueMemberEntity Author { get; set; }
+
+        public string AuthorName { get; set; }
 
         public string Text { get; set; }
+
+        [ForeignKey(nameof(ReplyTo))]
+        public long? ReplyToCommentId { get; set; }
+        public virtual CommentBaseEntity ReplyTo { get; set; }
+
+        [InverseProperty(nameof(CommentBaseEntity.ReplyTo))]
+        public virtual List<CommentBaseEntity> Replies { get; set; }
 
         public CommentBaseEntity()
         {
             Date = DateTime.Now;
+        }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            if (Replies != null)
+                Replies.ToList().ForEach(x => x.Delete(dbContext));
+
+            base.Delete(dbContext);
         }
     }
 }

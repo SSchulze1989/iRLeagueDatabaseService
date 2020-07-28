@@ -59,7 +59,6 @@ namespace iRLeagueDatabase.Mapper
             target.AdminId = source.AdminId;
             target.AdminRights = source.AdminRights;
             target.Member = MapToMemberInfoDTO(source.Member);
-            target.UserName = source.UserName;
 
             return target;
         }

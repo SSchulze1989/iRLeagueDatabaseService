@@ -2,10 +2,12 @@
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueUserDatabase
 {
     public class UsersDbContext : IdentityDbContext<IdentityUser>
     {
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
+
         static UsersDbContext()
         {
             Database.SetInitializer(new Initializer());
@@ -20,7 +22,7 @@ namespace iRLeagueRESTService.Data
 
                 role = context.Roles.FirstAsync().Result;
 
-                IdentityUser user = new IdentityUser("Administrator");
+                IdentityUser user = new IdentityUser(System.Environment.GetEnvironmentVariable("IRLEAGUE_ADMIN_NAME"));
                 user.Roles.Add(new IdentityUserRole { RoleId = role.Id, UserId = user.Id });
                 user.Claims.Add(new IdentityUserClaim
                 {
@@ -28,7 +30,7 @@ namespace iRLeagueRESTService.Data
                     ClaimValue = "true"
                 });
 
-                user.PasswordHash = new PasswordHasher().HashPassword("admin");
+                user.PasswordHash = new PasswordHasher().HashPassword(System.Environment.GetEnvironmentVariable("IRLEAGUE_ADMIN_PASSWORD"));
                 context.Users.Add(user);
                 context.SaveChanges();
                 base.Seed(context);

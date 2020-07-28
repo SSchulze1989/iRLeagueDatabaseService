@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Data.Entity;
 using System.Runtime.Serialization;
+using Microsoft.AspNet.Identity;
 
 using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer;
@@ -31,16 +32,18 @@ namespace iRLeagueRESTService.Controllers
 
             var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-
+            MappableDTO data;
             using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
             {
-                var data = modelDataProvider.Get(requestTypeType, requestIdValue);
-                return Ok(data);
+                data = modelDataProvider.Get(requestTypeType, requestIdValue);
             }
+            //GC.Collect();
+            return Ok(data);
         }
 
         [HttpGet]
         [ActionName("GetArray")]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
             if (requestType == null || leagueName == null)
@@ -62,51 +65,53 @@ namespace iRLeagueRESTService.Controllers
 
             var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
+            MappableDTO[] data;
             using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
             {
-                var data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
-                return Ok(data);
+                data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
             }
+            //GC.Collect();
+            return Ok(data);
         }
 
-        [HttpPost]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        [ActionName("Post")]
-        public IHttpActionResult PostModel([FromBody] MappableDTO data, string requestType, string leagueName)
-        {
-            if (leagueName == null)
-            {
-                return BadRequest("Parameter leagueName can not be null");
-            }
+        //[HttpPost]
+        ////[Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        //[ActionName("Post")]
+        //public IHttpActionResult PostModel([FromBody] MappableDTO data, string requestType, string leagueName)
+        //{
+        //    if (leagueName == null)
+        //    {
+        //        return BadRequest("Parameter leagueName can not be null");
+        //    }
 
-            if (data == null)
-            {
-                return null;
-            }
+        //    if (data == null)
+        //    {
+        //        return null;
+        //    }
 
-            Type requestTypeType;
-            if (requestType == null)
-            {
-                requestTypeType = data.GetType();
-            }
-            else
-            {
-                requestTypeType = GetRequestType(requestType);
-            }
+        //    Type requestTypeType;
+        //    if (requestType == null)
+        //    {
+        //        requestTypeType = data.GetType();
+        //    }
+        //    else
+        //    {
+        //        requestTypeType = GetRequestType(requestType);
+        //    }
 
-            if (requestTypeType == null)
-            {
-                return BadRequest("Could not identify request type");
-            }
+        //    if (requestTypeType == null)
+        //    {
+        //        return BadRequest("Could not identify request type");
+        //    }
 
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+        //    var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
-            {
-                data = modelDataProvider.Post(requestTypeType, data);
-                return Ok(data);
-            }
-        }
+        //    using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+        //    {
+        //        data = modelDataProvider.Post(requestTypeType, data);
+        //        return Ok(data);
+        //    }
+        //}
 
         [HttpPost]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
@@ -143,56 +148,57 @@ namespace iRLeagueRESTService.Controllers
 
             var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
             {
                 data = modelDataProvider.PostArray(requestTypeType, data);
-                return Ok(data);
             }
+            //GC.Collect();
+            return Ok(data);
         }
 
-        [HttpPut]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        [ActionName("Put")]
-        public IHttpActionResult PutModel([FromBody] MappableDTO data, string requestType, string leagueName)
-        {
-            if (leagueName == null)
-            {
-                return BadRequest("Parameter leagueName can not be null");
-            }
+        //[HttpPut]
+        ////[Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        //[ActionName("Put")]
+        //public IHttpActionResult PutModel([FromBody] MappableDTO data, string requestType, string leagueName)
+        //{
+        //    if (leagueName == null)
+        //    {
+        //        return BadRequest("Parameter leagueName can not be null");
+        //    }
 
-            if (data == null)
-            {
-                return null;
-            }
+        //    if (data == null)
+        //    {
+        //        return null;
+        //    }
 
-            Type requestTypeType;
-            if (requestType == null)
-            {
-                requestTypeType = data.GetType();
-            }
-            else
-            {
-                requestTypeType = GetRequestType(requestType);
-            }
+        //    Type requestTypeType;
+        //    if (requestType == null)
+        //    {
+        //        requestTypeType = data.GetType();
+        //    }
+        //    else
+        //    {
+        //        requestTypeType = GetRequestType(requestType);
+        //    }
 
-            if (requestTypeType == null)
-            {
-                return BadRequest("Could not identify request type");
-            }
+        //    if (requestTypeType == null)
+        //    {
+        //        return BadRequest("Could not identify request type");
+        //    }
 
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+        //    var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
-            {
-                data = modelDataProvider.Put(requestTypeType, data);
-                return Ok(data);
-            }
-        }
+        //    using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+        //    {
+        //        data = modelDataProvider.Put(requestTypeType, data);
+        //        return Ok(data);
+        //    }
+        //}
 
         [HttpPut]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         [ActionName("PutArray")]
-        public IHttpActionResult PutModels([FromBody] MappableDTO[] data, string requestType, string leagueName)
+        public IHttpActionResult PutModels([FromBody] MappableDTO[] data, [FromUri] string requestType, [FromUri] string leagueName)
         {
             if (leagueName == null)
             {
@@ -201,8 +207,10 @@ namespace iRLeagueRESTService.Controllers
 
             if (data == null)
             {
-                return null;
+                return Ok(data);
             }
+
+            //return Ok();
 
             if (data.Count() == 0)
                 return Ok(new MappableDTO[0]);
@@ -224,36 +232,37 @@ namespace iRLeagueRESTService.Controllers
 
             var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
             {
                 data = modelDataProvider.PutArray(requestTypeType, data);
-                return Ok(data);
             }
+            //GC.Collect();
+            return Ok(data);
         }
 
-        [HttpDelete]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        [ActionName("Delete")]
-        public IHttpActionResult DeleteModel(string requestId, string requestType, string leagueName)
-        {
-            if (requestId == null || requestType == null || leagueName == null)
-            {
-                return BadRequest("Parameters can not be null!");
-            }
+        //[HttpDelete]
+        ////[Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        //[ActionName("Delete")]
+        //public IHttpActionResult DeleteModel(string requestId, string requestType, string leagueName)
+        //{
+        //    if (requestId == null || requestType == null || leagueName == null)
+        //    {
+        //        return BadRequest("Parameters can not be null!");
+        //    }
 
-            long[] requestIdValue = GetIdFromString(requestId);
+        //    long[] requestIdValue = GetIdFromString(requestId);
 
-            Type requestTypeType = GetRequestType(requestType);
+        //    Type requestTypeType = GetRequestType(requestType);
 
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+        //    var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
 
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
-            {
-                var data = modelDataProvider.Delete(requestTypeType, requestIdValue);
-                return Ok(data);
-            }
-        }
+        //    using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+        //    {
+        //        var data = modelDataProvider.Delete(requestTypeType, requestIdValue);
+        //        return Ok(data);
+        //    }
+        //}
 
         [HttpDelete]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
@@ -270,17 +279,27 @@ namespace iRLeagueRESTService.Controllers
                 return BadRequest("Request ids can not be empty");
             }
 
-            long[][] requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+            long[][] requestIdValues;
+            if (requestIds != null && requestIds.Count() > 0)
+            {
+                requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+            }
+            else
+            {
+                requestIdValues = null;
+            }
 
             Type requestTypeType = GetRequestType(requestType);
 
             var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
+            bool data;
             using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
             {
-                var data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
-                return Ok(data);
+                data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
             }
+            //GC.Collect();
+            return Ok(data);
         }
 
         private LeagueDbContext CreateDbContext(string datbaseName)

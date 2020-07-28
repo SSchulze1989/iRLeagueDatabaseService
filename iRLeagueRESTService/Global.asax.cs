@@ -12,7 +12,7 @@ namespace iRLeagueRESTService
     public class WebApiApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
-        {
+        { 
             AreaRegistration.RegisterAllAreas();
             //GlobalConfiguration.Configure(WebApiConfig.Register);
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -20,6 +20,15 @@ namespace iRLeagueRESTService
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalConfiguration.Configuration.EnsureInitialized();
+
+            using (var context = new iRLeagueUserDatabase.UsersDbContext())
+            {
+                var user = context.Users.First();
+            }
+            using (var context = new iRLeagueDatabase.LeagueDbContext())
+            {
+                var season = context.Seasons.First();
+            }
         }
     }
 }

@@ -60,13 +60,11 @@ namespace iRLeagueDatabase
                 {
                     rm.MapLeftKey("ReviewRefId");
                     rm.MapRightKey("MemberRefId");
-                    rm.ToTable("IncidentReview_LeagueMember");
+                    rm.ToTable("IncidentReview_InvolvedLeagueMember");
                 });
-            modelBuilder.Entity<IncidentReviewEntity>()
-                .HasOptional(r => r.MemberAtFault);
                 //.WithMany(r => r.Reviews);
             modelBuilder.Entity<IncidentReviewEntity>()
-                .HasRequired(r => r.Result)
+                .HasRequired(r => r.Session)
                 .WithMany(r => r.Reviews);
 
             modelBuilder.Entity<SessionBaseEntity>()

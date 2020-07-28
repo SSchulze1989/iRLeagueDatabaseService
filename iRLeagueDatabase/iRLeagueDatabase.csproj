@@ -58,10 +58,15 @@
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Members\LeagueUserEntity.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
+    <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
+    <Compile Include="Entities\Results\ScoringTableEntity.cs" />
     <Compile Include="Entities\Results\StandingsEntity.cs" />
     <Compile Include="Entities\Results\StandingsRowEntity.cs" />
+    <Compile Include="Entities\Reviews\AcceptedReviewVoteEntity.cs" />
+    <Compile Include="Entities\Reviews\CommentReviewVoteEntity.cs" />
+    <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Migrations\202005282120066_InitialCreate.cs" />
     <Compile Include="Migrations\202005282120066_InitialCreate.designer.cs">
       <DependentUpon>202005282120066_InitialCreate.cs</DependentUpon>
@@ -93,6 +98,62 @@
     <Compile Include="Migrations\202007041806436_ChangeRevisionToLeagueUser.cs" />
     <Compile Include="Migrations\202007041806436_ChangeRevisionToLeagueUser.designer.cs">
       <DependentUpon>202007041806436_ChangeRevisionToLeagueUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007132319238_AddUserIdentityId.cs" />
+    <Compile Include="Migrations\202007132319238_AddUserIdentityId.designer.cs">
+      <DependentUpon>202007132319238_AddUserIdentityId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007132348159_ChangeVersionUserIdentityToName.cs" />
+    <Compile Include="Migrations\202007132348159_ChangeVersionUserIdentityToName.designer.cs">
+      <DependentUpon>202007132348159_ChangeVersionUserIdentityToName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007140018036_ChangeCommentAuthorUserIdentityToName.cs" />
+    <Compile Include="Migrations\202007140018036_ChangeCommentAuthorUserIdentityToName.designer.cs">
+      <DependentUpon>202007140018036_ChangeCommentAuthorUserIdentityToName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007152122588_AddIsMultiScoringProperty.cs" />
+    <Compile Include="Migrations\202007152122588_AddIsMultiScoringProperty.designer.cs">
+      <DependentUpon>202007152122588_AddIsMultiScoringProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007160937284_MoveReviewsToSession.cs" />
+    <Compile Include="Migrations\202007160937284_MoveReviewsToSession.designer.cs">
+      <DependentUpon>202007160937284_MoveReviewsToSession.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007170731073_ChangeToMultipleVotesPerReview.cs" />
+    <Compile Include="Migrations\202007170731073_ChangeToMultipleVotesPerReview.designer.cs">
+      <DependentUpon>202007170731073_ChangeToMultipleVotesPerReview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007170939125_ChangeIncidentReviewAuthorIdentityToName.cs" />
+    <Compile Include="Migrations\202007170939125_ChangeIncidentReviewAuthorIdentityToName.designer.cs">
+      <DependentUpon>202007170939125_ChangeIncidentReviewAuthorIdentityToName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007171025019_AddIncidentReviewDescription.cs" />
+    <Compile Include="Migrations\202007171025019_AddIncidentReviewDescription.designer.cs">
+      <DependentUpon>202007171025019_AddIncidentReviewDescription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007171447325_AddCommentReplyProperty.cs" />
+    <Compile Include="Migrations\202007171447325_AddCommentReplyProperty.designer.cs">
+      <DependentUpon>202007171447325_AddCommentReplyProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007221336212_RevertUserIdentityLeagueUser.cs" />
+    <Compile Include="Migrations\202007221336212_RevertUserIdentityLeagueUser.designer.cs">
+      <DependentUpon>202007221336212_RevertUserIdentityLeagueUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007221341354_RemoveRevisionUserIdentity.cs" />
+    <Compile Include="Migrations\202007221341354_RemoveRevisionUserIdentity.designer.cs">
+      <DependentUpon>202007221341354_RemoveRevisionUserIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007221421431_AddRevisionUserIdentityUserId.cs" />
+    <Compile Include="Migrations\202007221421431_AddRevisionUserIdentityUserId.designer.cs">
+      <DependentUpon>202007221421431_AddRevisionUserIdentityUserId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007231259325_AddForeignKeySessionIncidentReview.cs" />
+    <Compile Include="Migrations\202007231259325_AddForeignKeySessionIncidentReview.designer.cs">
+      <DependentUpon>202007231259325_AddForeignKeySessionIncidentReview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202007241248548_AddReviewPenalty.cs" />
+    <Compile Include="Migrations\202007241248548_AddReviewPenalty.designer.cs">
+      <DependentUpon>202007241248548_AddReviewPenalty.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -151,6 +212,48 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007041806436_ChangeRevisionToLeagueUser.resx">
       <DependentUpon>202007041806436_ChangeRevisionToLeagueUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007132319238_AddUserIdentityId.resx">
+      <DependentUpon>202007132319238_AddUserIdentityId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007132348159_ChangeVersionUserIdentityToName.resx">
+      <DependentUpon>202007132348159_ChangeVersionUserIdentityToName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007140018036_ChangeCommentAuthorUserIdentityToName.resx">
+      <DependentUpon>202007140018036_ChangeCommentAuthorUserIdentityToName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007152122588_AddIsMultiScoringProperty.resx">
+      <DependentUpon>202007152122588_AddIsMultiScoringProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007160937284_MoveReviewsToSession.resx">
+      <DependentUpon>202007160937284_MoveReviewsToSession.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007170731073_ChangeToMultipleVotesPerReview.resx">
+      <DependentUpon>202007170731073_ChangeToMultipleVotesPerReview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007170939125_ChangeIncidentReviewAuthorIdentityToName.resx">
+      <DependentUpon>202007170939125_ChangeIncidentReviewAuthorIdentityToName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007171025019_AddIncidentReviewDescription.resx">
+      <DependentUpon>202007171025019_AddIncidentReviewDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007171447325_AddCommentReplyProperty.resx">
+      <DependentUpon>202007171447325_AddCommentReplyProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007221336212_RevertUserIdentityLeagueUser.resx">
+      <DependentUpon>202007221336212_RevertUserIdentityLeagueUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007221341354_RemoveRevisionUserIdentity.resx">
+      <DependentUpon>202007221341354_RemoveRevisionUserIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007221421431_AddRevisionUserIdentityUserId.resx">
+      <DependentUpon>202007221421431_AddRevisionUserIdentityUserId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007231259325_AddForeignKeySessionIncidentReview.resx">
+      <DependentUpon>202007231259325_AddForeignKeySessionIncidentReview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202007241248548_AddReviewPenalty.resx">
+      <DependentUpon>202007241248548_AddReviewPenalty.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

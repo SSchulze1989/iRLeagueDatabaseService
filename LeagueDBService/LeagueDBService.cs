@@ -96,57 +96,57 @@ namespace LeagueDBService
             return result;
         }
 
-        public LeagueUserDTO CreateUser(string userName, byte[] password, string databaseName)
-        {
-            using (var context = new LeagueDbContext(databaseName))
-            {
-                var mapper = new DTOMapper();
+        //public LeagueUserDTO CreateUser(string userName, byte[] password, string databaseName)
+        //{
+        //    using (var context = new LeagueDbContext(databaseName))
+        //    {
+        //        var mapper = new DTOMapper();
 
-                if (context.Users.Any(x => x.UserName == userName))
-                    return null;
+        //        if (context.Users.Any(x => x.UserName == userName))
+        //            return null;
 
-                var newUser = context.Users.Create();
-                newUser.UserName = userName;
-                newUser.SetPassword(null, password);
-                newUser.AdminRights = 0;
-                context.Users.Add(newUser);
-                context.SaveChanges();
+        //        var newUser = context.Users.Create();
+        //        newUser.UserName = userName;
+        //        newUser.SetPassword(null, password);
+        //        newUser.AdminRights = 0;
+        //        context.Users.Add(newUser);
+        //        context.SaveChanges();
 
-                return mapper.MapToLeagueUserDTO(newUser);
-            }
-        }
+        //        return mapper.MapToLeagueUserDTO(newUser);
+        //    }
+        //}
 
-        public AuthenticationResult AuthenticateUser(string userName, byte[] password, string databaseName)
-        {
-            using (var context = new LeagueDbContext(databaseName))
-            {
-                var user = context.Set<LeagueUserEntity>().SingleOrDefault(x => x.UserName == userName);
-                var result = new AuthenticationResult();
-                var mapper = new DTOMapper();
+        //public AuthenticationResult AuthenticateUser(string userName, byte[] password, string databaseName)
+        //{
+        //    using (var context = new LeagueDbContext(databaseName))
+        //    {
+        //        var user = context.Set<LeagueUserEntity>().SingleOrDefault(x => x.UserName == userName);
+        //        var result = new AuthenticationResult();
+        //        var mapper = new DTOMapper();
 
-                if (user != null)
-                {
-                    if (user.CheckCredentials(password))
-                    {
-                        result.AuthenticatedUser = mapper.MapToLeagueUserDTO(user);
-                        result.IsAuthenticated = true;
-                        result.Status = "Success";
-                    }
-                    else
-                    {
-                        result.IsAuthenticated = false;
-                        result.Status = "Wrong credentials";
-                    }
-                }
-                else
-                {
-                    result.IsAuthenticated = false;
-                    result.Status = "User not found";
-                }
+        //        if (user != null)
+        //        {
+        //            if (user.CheckCredentials(password))
+        //            {
+        //                result.AuthenticatedUser = mapper.MapToLeagueUserDTO(user);
+        //                result.IsAuthenticated = true;
+        //                result.Status = "Success";
+        //            }
+        //            else
+        //            {
+        //                result.IsAuthenticated = false;
+        //                result.Status = "Wrong credentials";
+        //            }
+        //        }
+        //        else
+        //        {
+        //            result.IsAuthenticated = false;
+        //            result.Status = "User not found";
+        //        }
 
-                return result;
-            }
-        }
+        //        return result;
+        //    }
+        //}
 
         public LeagueMemberDataDTO GetMember(long memberId)
         {

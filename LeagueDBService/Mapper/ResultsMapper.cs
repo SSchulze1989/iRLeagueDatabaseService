@@ -152,12 +152,47 @@ namespace iRLeagueDatabase.Mapper
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.MultiScoringFactors = source.MultiScoringFactors;
             target.MultiScoringResults = source.MultiScoringResults.Select(x => MapToScoringInfoDTO(x)).ToArray();
+            target.IsMultiScoring = source.IsMultiScoring;
             target.Name = source.Name;
             target.Season = MapToSeasonInfoDTO(source.Season);
             //target.SeasonId = source.SeasonId;
-            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
+            target.Sessions = ((source.IsMultiScoring) ? source.GetAllSessions() :  source.Sessions).Select(x => MapToSessionInfoDTO(x)).ToArray();
             target.Results = source.Results.Select(x => MapToResultInfoDTO(x)).ToArray();
             target.ConnectedSchedule = MapToScheduleInfoDTO(source.ConnectedSchedule);
+
+            return target;
+        }
+
+        public ScoringTableInfoDTO MapToScoringTableInfoDTO(ScoringTableEntity source, ScoringTableInfoDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new ScoringTableInfoDTO();
+
+            MapToVersionInfoDTO(source, target);
+
+            target.ScoringTableId = source.ScoringTableId;
+            target.Name = source.Name;
+
+            return target;
+        }
+
+        public ScoringTableDataDTO MapToScoringTableDataDTO(ScoringTableEntity source, ScoringTableDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new ScoringTableDataDTO();
+
+            MapToScoringTableInfoDTO(source, target);
+
+            target.AverageRaceNr = source.AverageRaceNr;
+            target.DropWeeks = source.DropWeeks;
+            target.ScoringFactors = source.ScoringFactors;
+            target.Scorings = source.Scorings.Select(x => MapToScoringInfoDTO(x)).ToArray();
+            target.Season = MapToSeasonInfoDTO(source.Season);
+            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
 
             return target;
         }
@@ -384,11 +419,40 @@ namespace iRLeagueDatabase.Mapper
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.MultiScoringFactors = source.MultiScoringFactors;
-            MapCollection(source.MultiScoringResults, target.MultiScoringResults, GetScoringEntity, x => x.ScoringId);
+            //MapCollection(source.MultiScoringResults, target.MultiScoringResults, GetScoringEntity, x => x.ScoringId);
             target.Name = source.Name;
             target.Season = GetSeasonEntity(source.Season);
-            MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
+            target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults.Count > 0;
+            if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults.Count() > 0))
+                target.Sessions.Clear();
+            else
+                MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
+
             target.ConnectedSchedule = GetScheduleEntity(source.ConnectedSchedule);
+
+            return target;
+        }
+
+        public ScoringTableEntity GetScoringTableEntity(ScoringTableInfoDTO source)
+        {
+            return DefaultGet<ScoringTableInfoDTO, ScoringTableEntity>(source);
+        }
+
+        public ScoringTableEntity MapToScoringTableEntity(ScoringTableDataDTO source, ScoringTableEntity target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = GetScoringTableEntity(source);
+
+            if (MapToRevision(source, target) == false)
+                return target;
+
+            target.DropWeeks = source.DropWeeks;
+            target.Name = source.Name;
+            target.ScoringFactors = source.ScoringFactors;
+            MapCollection(source.Scorings, target.Scorings, GetScoringEntity, x => x.Keys, removeFromCollection: true);
+            target.Season = GetSeasonEntity(source.Season);
 
             return target;
         }

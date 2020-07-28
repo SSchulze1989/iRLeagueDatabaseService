@@ -111,6 +111,8 @@
     <Compile Include="DataTransfer\Results\ScoringDataDTO.cs" />
     <Compile Include="DataTransfer\Results\ScoringInfoDTO.cs" />
     <Compile Include="DataTransfer\Results\ScoringRuleBaseDTO.cs" />
+    <Compile Include="DataTransfer\Results\ScoringTableDTO.cs" />
+    <Compile Include="DataTransfer\Results\ScoringTableInfoDTO.cs" />
     <Compile Include="DataTransfer\Results\StandardScoringRuleDTO.cs" />
     <Compile Include="DataTransfer\Results\StandingsDataDTO.cs" />
     <Compile Include="DataTransfer\Results\StandingsRowDataDTO.cs" />
@@ -120,7 +122,11 @@
     <Compile Include="DataTransfer\Reviews\IncidentReviewDataDTO.cs" />
     <Compile Include="DataTransfer\Reviews\IncidentReviewInfoDTO.cs" />
     <Compile Include="DataTransfer\Reviews\ReviewCommentDataDTO.cs" />
+    <Compile Include="DataTransfer\Reviews\ReviewVoteDataDTO.cs" />
     <Compile Include="DataTransfer\Sessions\RaceSessionDataDTO.cs" />
+    <Compile Include="DataTransfer\User\AddUserDTO.cs" />
+    <Compile Include="DataTransfer\User\UserDataDTO.cs" />
+    <Compile Include="DataTransfer\User\UserProfileDTO.cs" />
     <Compile Include="DataTransfer\VersionDTO.cs" />
     <Compile Include="DataTransfer\SeasonDataDTO.cs" />
     <Compile Include="DataTransfer\SeasonInfoDTO.cs" />
@@ -154,6 +160,10 @@
     <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
       <Name>iRLeagueDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\iRLeagueUserDatabase\iRLeagueUserDatabase.csproj">
+      <Project>{e80e0176-8bbb-4ab6-b528-314352267b12}</Project>
+      <Name>iRLeagueUserDatabase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

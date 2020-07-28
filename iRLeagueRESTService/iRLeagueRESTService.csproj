@@ -170,16 +170,13 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\ActionController.cs" />
     <Compile Include="Controllers\ModelController.cs" />
-    <Compile Include="Data\CustomUserStore.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Data\CustomIdentityRole.cs" />
     <Compile Include="Data\ILeagueActionProvider.cs" />
     <Compile Include="Data\IModelDataProvider.cs" />
     <Compile Include="Data\LeagueActionProvider.cs" />
     <Compile Include="Data\ModelDataProvider.cs" />
-    <Compile Include="Data\UsersDbContext.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\HttpAuthenticationChallengeContextExtensions.cs" />
@@ -279,6 +276,10 @@
     <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
       <Name>iRLeagueDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\iRLeagueUserDatabase\iRLeagueUserDatabase.csproj">
+      <Project>{e80e0176-8bbb-4ab6-b528-314352267b12}</Project>
+      <Name>iRLeagueUserDatabase</Name>
     </ProjectReference>
     <ProjectReference Include="..\LeagueDBService\LeagueDBService.csproj">
       <Project>{c7b2eeaa-632c-4519-89ad-56377afcd1a0}</Project>

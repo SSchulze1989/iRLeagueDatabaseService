@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using iRLeagueManager.Enums;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Members;
+using iRLeagueDatabase.DataTransfer.Reviews;
 
 namespace iRLeagueDatabase.DataTransfer.Sessions
 {
@@ -28,6 +29,9 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
 
         [DataMember]
         public ResultInfoDTO SessionResult { get; set; }
+
+        [DataMember]
+        public IncidentReviewInfoDTO[] Reviews { get; set; }
 
         [DataMember]
         /// <summary>
