@@ -135,6 +135,19 @@ namespace iRLeagueDatabase.Mapper
 
         public IncidentReviewEntity GetReviewEntity(IncidentReviewInfoDTO source)
         {
+            //if (source == null)
+            //    return null;
+            //IncidentReviewEntity target;
+
+            //if (source.ReviewId == null)
+            //    target = new IncidentReviewEntity();
+            //else
+            //    target = DbContext.Set<IncidentReviewEntity>().Find(source.ReviewId);
+
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(IncidentReviewEntity), "Could not find Entity in Database.", source.ReviewId);
+
+            //return target;
             return DefaultGet<IncidentReviewInfoDTO, IncidentReviewEntity>(source);
         }
 
@@ -154,17 +167,11 @@ namespace iRLeagueDatabase.Mapper
             target.IncidentKind = source.IncidentKind;
             target.FullDescription = source.FullDescription;
             target.AuthorName = source.AuthorName;
-            if (target.Comments == null)
-                target.Comments = new List<ReviewCommentEntity>();
             MapCollection(source.Comments, target.Comments, MapToReviewCommentEntity, x => x.CommentId);
             target.Corner = source.Corner;
-            if (target.InvolvedMembers == null)
-                target.InvolvedMembers = new List<Entities.Members.LeagueMemberEntity>();
             MapCollection(source.InvolvedMembers, target.InvolvedMembers, GetMemberEntity, x => x.MemberId, removeFromCollection: true);
             target.OnLap = source.OnLap;
             target.TimeStamp = source.TimeStamp;
-            if (target.AcceptedReviewVotes == null)
-                target.AcceptedReviewVotes = new List<AcceptedReviewVoteEntity>();
             MapCollection(source.AcceptedReviewVotes, target.AcceptedReviewVotes, MapToAcceptedReviewVoteEntity, x => x.ReviewVoteId, removeFromCollection: true, removeFromDatabase: true);
 
             return target;
@@ -172,6 +179,18 @@ namespace iRLeagueDatabase.Mapper
 
         public ReviewCommentEntity GetReviewCommentEntity(ReviewCommentDataDTO source)
         {
+            //if (source == null)
+            //    return null;
+            //ReviewCommentEntity target;
+
+            //if (source.CommentId == null)
+            //    target = new ReviewCommentEntity();
+            //else
+            //    target = DbContext.Set<ReviewCommentEntity>().Find(source.CommentId);
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(ReviewCommentEntity), "Could not find Entity in Database.", source.CommentId);
+
+            //return target;
             return DefaultGet<ReviewCommentDataDTO, ReviewCommentEntity>(source);
         }
 
@@ -231,8 +250,6 @@ namespace iRLeagueDatabase.Mapper
             target.Date = source.Date;
             target.Text = source.Text;
             target.ReplyTo = GetCommentEntity(source.ReplyTo);
-            if (target.Replies == null)
-                target.Replies = new List<CommentBaseEntity>();
             MapCollection(source.Replies, target.Replies, MapToCommentBaseEntity, x => x.Keys);
 
             return target;
@@ -250,10 +267,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToCommentBaseEntity(source, target);
             target.Review = GetReviewEntity(source.Review);
-            if (target.CommentReviewVotes == null)
-                target.CommentReviewVotes = new List<CommentReviewVoteEntity>();
             MapCollection(source.CommentReviewVotes, target.CommentReviewVotes, MapToCommentReviewVoteEntity, x => x.Keys, removeFromCollection: true, removeFromDatabase: true);
-            //target.CommentReviewVotes.ForEach(x => x.ReviewComment = target);
 
             return target;
         }

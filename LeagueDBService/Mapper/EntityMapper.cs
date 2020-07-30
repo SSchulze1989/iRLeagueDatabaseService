@@ -71,27 +71,11 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
-        /// <summary>
-        /// Map a Source DTO to a database Entity
-        /// </summary>
-        /// <typeparam name="TSource">DTO type of Mapping Source</typeparam>
-        /// <typeparam name="TTarget">Entity type of Mapping Target</typeparam>
-        /// <param name="source">Mapping Source</param>
-        /// <param name="target">Mapping Target - if Target is null the entity is retrieved from the database through the mapping Id</param>
-        /// <returns></returns>
         public TTarget MapTo<TSource, TTarget>(TSource source, TTarget target) where TSource : MappableDTO where TTarget : MappableEntity
         {
             return MapTo(source, target, typeof(TSource), typeof(TTarget)) as TTarget;
         }
 
-        /// <summary>
-        /// Map a Source DTO to a database Entity
-        /// </summary>
-        /// <param name="source">Mapping Source</param>
-        /// <param name="target">Mapping Target - if Target is null the entity is retrieved from the database through the mapping Id</param>
-        /// <param name="sourceType">DTO type of Mapping Source</param>
-        /// <param name="targetType">Entity type of Mapping Target</param>
-        /// <returns>Mapped database Entity</returns>
         public object MapTo(object source, object target, Type sourceType, Type targetType)
         {
             if (source == null)
@@ -114,14 +98,6 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
-        /// <summary>
-        /// Default method for getting an entity from the database as a mapping target.
-        /// If mapping Id on the source is null, a new entity is created.
-        /// </summary>
-        /// <typeparam name="TSource">Source type for mapping</typeparam>
-        /// <typeparam name="TTarget">Target type for mapping</typeparam>
-        /// <param name="source">Mapping source that contains the Id of the mapping target</param>
-        /// <returns></returns>
         private TTarget DefaultGet<TSource, TTarget>(TSource source) where TSource : MappableDTO where TTarget : MappableEntity, new()
         {
             if (source == null)
@@ -130,10 +106,14 @@ namespace iRLeagueDatabase.Mapper
 
             if (source.MappingId == null)
             {
-                target = DbContext.Set<TTarget>().Create();
+                target = DbContext.Set<TTarget>().Create(); 
+                //DbContext.SaveChanges();
             }
             else
                 target = DbContext.Set<TTarget>().Find(source.Keys);
+
+            //if (target == null)
+            //    throw new EntityNotFoundException(nameof(TTarget), "Could not find Entity in Database.", source.Keys);
 
             return target;
         }
@@ -164,17 +144,17 @@ namespace iRLeagueDatabase.Mapper
 
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) }, removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase);
+            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) }, removeFromCollection, removeFromDatabase);
         }
 
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key, removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase);
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key, removeFromCollection, removeFromDatabase);
         }
 
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys, removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase);
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys, removeFromCollection, removeFromDatabase);
         }
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
