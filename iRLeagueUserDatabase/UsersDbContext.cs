@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace iRLeagueUserDatabase
 {
+    [DbConfigurationType(typeof(iRLeagueDatabase.LeagueDbConfiguration))]
     public class UsersDbContext : IdentityDbContext<IdentityUser>
     {
         public virtual DbSet<UserProfile> UserProfiles { get; set; }

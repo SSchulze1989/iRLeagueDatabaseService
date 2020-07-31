@@ -75,6 +75,12 @@
       <DependentUpon>202007182346125_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
+      <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
+      <Name>iRLeagueDatabase</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

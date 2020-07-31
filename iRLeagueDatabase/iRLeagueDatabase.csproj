@@ -67,6 +67,7 @@
     <Compile Include="Entities\Reviews\AcceptedReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\CommentReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
+    <Compile Include="LeagueDbConfiguration.cs" />
     <Compile Include="Migrations\202005282120066_InitialCreate.cs" />
     <Compile Include="Migrations\202005282120066_InitialCreate.designer.cs">
       <DependentUpon>202005282120066_InitialCreate.cs</DependentUpon>
