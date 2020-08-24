@@ -98,6 +98,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToResultInfoDTO(source.Result, target);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.ScoringName = source.Scoring.Name;
             target.FinalResults = source.FinalResults.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
 
             return target;
@@ -422,13 +423,19 @@ namespace iRLeagueDatabase.Mapper
             //MapCollection(source.MultiScoringResults, target.MultiScoringResults, GetScoringEntity, x => x.ScoringId);
             target.Name = source.Name;
             target.Season = GetSeasonEntity(source.Season);
-            target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults.Count > 0;
-            if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults.Count() > 0))
+            target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults?.Count > 0;
+            if (target.Sessions == null)
+                target.Sessions = new List<Entities.Sessions.SessionBaseEntity>();
+            if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults?.Count() > 0))
                 target.Sessions.Clear();
             else
                 MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
 
             target.ConnectedSchedule = GetScheduleEntity(source.ConnectedSchedule);
+            if (target.ConnectedSchedule != null)
+            {
+                target.Sessions = target.ConnectedSchedule.Sessions;
+            }
 
             return target;
         }

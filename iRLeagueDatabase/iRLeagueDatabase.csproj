@@ -156,6 +156,10 @@
     <Compile Include="Migrations\202007241248548_AddReviewPenalty.designer.cs">
       <DependentUpon>202007241248548_AddReviewPenalty.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008231228275_ChangeConnectedScoringToMultiple.cs" />
+    <Compile Include="Migrations\202008231228275_ChangeConnectedScoringToMultiple.designer.cs">
+      <DependentUpon>202008231228275_ChangeConnectedScoringToMultiple.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -255,6 +259,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007241248548_AddReviewPenalty.resx">
       <DependentUpon>202007241248548_AddReviewPenalty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008231228275_ChangeConnectedScoringToMultiple.resx">
+      <DependentUpon>202008231228275_ChangeConnectedScoringToMultiple.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

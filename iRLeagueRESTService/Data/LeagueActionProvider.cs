@@ -49,6 +49,15 @@ namespace iRLeagueRESTService.Data
                 {
                     scoring.CalculateResults(session, DbContext);
                 }
+
+                foreach (var scoredResult in session.SessionResult.ScoredResults.ToList())
+                {
+                    if (!session.Scorings.Contains(scoredResult.Scoring))
+                    {
+                        scoredResult.Delete(DbContext);
+                        session.SessionResult.ScoredResults.Remove(scoredResult);
+                    }
+                }
             }
 
             DbContext.SaveChanges();

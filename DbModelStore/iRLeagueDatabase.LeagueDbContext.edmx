@@ -70,7 +70,7 @@
           <Property Name="CreatedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="ConnectedScoring" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Target" ToRole="ScoringEntity_ConnectedSchedule_Source" />
+          <NavigationProperty Name="ConnectedScorings" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Target" ToRole="ScoringEntity_ConnectedSchedule_Source" />
           <NavigationProperty Name="Season" Relationship="Self.SeasonEntity_Schedules" FromRole="SeasonEntity_Schedules_Target" ToRole="SeasonEntity_Schedules_Source" />
           <NavigationProperty Name="Sessions" Relationship="Self.SessionBaseEntity_Schedule" FromRole="SessionBaseEntity_Schedule_Target" ToRole="SessionBaseEntity_Schedule_Source" />
         </EntityType>
@@ -572,8 +572,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="ScoringEntity_ConnectedSchedule">
+          <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="*" />
           <End Role="ScoringEntity_ConnectedSchedule_Target" Type="Self.ScheduleEntity" Multiplicity="0..1" />
-          <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="0..1" />
         </Association>
         <Association Name="ScoringEntity_MultiScoringResults">
           <End Role="ScoringEntity_MultiScoringResults_Source" Type="Self.ScoringEntity" Multiplicity="*" />
@@ -727,8 +727,8 @@
             <End Role="SessionBaseEntity_SessionResult_Target" EntitySet="ResultEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ConnectedSchedule" Association="Self.ScoringEntity_ConnectedSchedule">
-            <End Role="ScoringEntity_ConnectedSchedule_Target" EntitySet="ScheduleEntities" />
             <End Role="ScoringEntity_ConnectedSchedule_Source" EntitySet="ScoringEntities" />
+            <End Role="ScoringEntity_ConnectedSchedule_Target" EntitySet="ScheduleEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_MultiScoringResults" Association="Self.ScoringEntity_MultiScoringResults">
             <End Role="ScoringEntity_MultiScoringResults_Source" EntitySet="ScoringEntities" />

@@ -31,14 +31,15 @@ namespace iRLeagueDatabase.Entities.Results
         {
             get
             {
-                if (ConnectedSchedule != null)
-                {
-                    return ConnectedSchedule.Sessions;
-                }
-                else
-                {
-                    return sessions;
-                }
+                //if (ConnectedSchedule != null)
+                //{
+                //    sessions = ConnectedSchedule.Sessions;
+                //}
+                //else
+                //{
+                //    return sessions?.Distinct().ToList();
+                //}
+                return sessions;
             }
             set => sessions = value;
         }
@@ -126,7 +127,7 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 foreach (var msc in MultiScoringResults)
                 {
-                    previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result.Session.Date < currentSession.Date));
+                    previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result?.Session.Date < currentSession.Date));
                     allScoredResults.AddRange(msc.ScoredResults);
                 }
             }

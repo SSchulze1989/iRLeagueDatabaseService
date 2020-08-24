@@ -102,7 +102,7 @@ namespace iRLeagueDatabase
                 });
             modelBuilder.Entity<ScoringEntity>()
                 .HasOptional(r => r.ConnectedSchedule)
-                .WithOptionalDependent(r => r.ConnectedScoring);
+                .WithMany(m => m.ConnectedScorings);
             //modelBuilder.Entity<ScoredResultRowEntity>()
             //    .ToTable("ScoredResultRowEntities");
 
