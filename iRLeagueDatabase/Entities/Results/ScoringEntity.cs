@@ -249,6 +249,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public IEnumerable<ScoredResultRowEntity> CalculateResults(long sessionId, LeagueDbContext dbContext)
         {
+            UpdateSessionList();
             if (!Sessions.Any(x => x.SessionId == sessionId))
                 return null;
 
@@ -257,8 +258,17 @@ namespace iRLeagueDatabase.Entities.Results
             return CalculateResults(session, dbContext);
         }
 
+        private void UpdateSessionList()
+        {
+            if (ConnectedSchedule != null)
+            {
+                Sessions = ConnectedSchedule.Sessions;
+            }
+        }
+
         public IEnumerable<ScoredResultRowEntity> CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         {
+            UpdateSessionList();
             if (session == null || session.SessionResult == null)
                 return null;
 

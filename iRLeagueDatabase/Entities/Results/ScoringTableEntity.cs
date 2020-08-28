@@ -57,6 +57,20 @@ namespace iRLeagueDatabase.Entities.Results
             return GetSeasonStandings(session, allSessions.Count - DropWeeks);
         }
 
+        private List<KeyValuePair<ScoringEntity, float>> GetScoringFactors()
+        {
+            //Get floating point values from ';' separated string - default to 1 if value can not be parsed.
+            var scoringFactorValues = ScoringFactors.Split(';').Select(x => float.TryParse(x, out float res) ? res : (float)1);
+
+            //Create list of key value pairs { Scoring, ScoringFactor} - default to 1 if factor is not in List.
+            var pairs = Scorings
+                .Select((x, i) => 
+                    new KeyValuePair<ScoringEntity, float>(x, (i < scoringFactorValues.Count()) ? scoringFactorValues.ElementAt(i) : (float)1))
+                .ToList();
+
+            return pairs;
+        }
+
         public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession)
         {
             var allSessions = GetAllSessions();
@@ -71,17 +85,17 @@ namespace iRLeagueDatabase.Entities.Results
             if (maxRacesCount == -1)
                 maxRacesCount = Sessions.Count() - maxRacesCount;
 
-            var allScoredResults = Scorings.SelectMany(x => x.ScoredResults).ToList();
+            var allScoredResults = Scorings?.SelectMany(x => x.ScoredResults).ToList();
             var previousScoredResults = allScoredResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
 
-            if (Scorings != null && Scorings.Count > 0)
-            {
-                foreach (var msc in Scorings)
-                {
-                    previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result.Session.Date < currentSession.Date));
-                    allScoredResults.AddRange(msc.ScoredResults);
-                }
-            }
+            //if (Scorings != null && Scorings.Count > 0)
+            //{
+            //    foreach (var msc in Scorings)
+            //    {
+            //        previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result.Session.Date < currentSession.Date));
+            //        allScoredResults.AddRange(msc.ScoredResults);
+            //    }
+            //}
 
             var currentResult = currentSession.SessionResult;
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);

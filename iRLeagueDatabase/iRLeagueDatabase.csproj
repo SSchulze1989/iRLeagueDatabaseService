@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Members\IClientUser.cs" />
-    <Compile Include="Entities\Members\LeagueUserEntity.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
@@ -160,6 +159,18 @@
     <Compile Include="Migrations\202008231228275_ChangeConnectedScoringToMultiple.designer.cs">
       <DependentUpon>202008231228275_ChangeConnectedScoringToMultiple.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008271538365_AddTeamAndScoringEntities.cs" />
+    <Compile Include="Migrations\202008271538365_AddTeamAndScoringEntities.designer.cs">
+      <DependentUpon>202008271538365_AddTeamAndScoringEntities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008271953334_RemoveLeagueUserTable.cs" />
+    <Compile Include="Migrations\202008271953334_RemoveLeagueUserTable.designer.cs">
+      <DependentUpon>202008271953334_RemoveLeagueUserTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008281822375_ChangeScoringTableToScoringMap.cs" />
+    <Compile Include="Migrations\202008281822375_ChangeScoringTableToScoringMap.designer.cs">
+      <DependentUpon>202008281822375_ChangeScoringTableToScoringMap.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -262,6 +273,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008231228275_ChangeConnectedScoringToMultiple.resx">
       <DependentUpon>202008231228275_ChangeConnectedScoringToMultiple.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008271538365_AddTeamAndScoringEntities.resx">
+      <DependentUpon>202008271538365_AddTeamAndScoringEntities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008271953334_RemoveLeagueUserTable.resx">
+      <DependentUpon>202008271953334_RemoveLeagueUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008281822375_ChangeScoringTableToScoringMap.resx">
+      <DependentUpon>202008281822375_ChangeScoringTableToScoringMap.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
