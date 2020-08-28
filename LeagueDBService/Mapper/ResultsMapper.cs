@@ -24,6 +24,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<StandingsEntity, StandingsDataDTO>(MapToStandingsDataDTO);
             RegisterTypeMap<StandingsRowEntity, StandingsRowDataDTO>(MapToStandingsRowDataDTO);
             RegisterTypeMap<AddPenaltyEntity, AddPenaltyDTO>(MapToPenaltyDTO);
+            
         }
 
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
@@ -458,6 +459,8 @@ namespace iRLeagueDatabase.Mapper
             target.DropWeeks = source.DropWeeks;
             target.Name = source.Name;
             target.ScoringFactors = source.ScoringFactors;
+            if (target.Scorings == null)
+                target.Scorings = new List<ScoringEntity>();
             MapCollection(source.Scorings, target.Scorings, GetScoringEntity, x => x.Keys, removeFromCollection: true);
             target.Season = GetSeasonEntity(source.Season);
 
