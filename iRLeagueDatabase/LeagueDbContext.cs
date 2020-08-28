@@ -19,7 +19,7 @@ namespace iRLeagueDatabase
     public class LeagueDbContext : DbContext
     {
         public virtual DbSet<SeasonEntity> Seasons { get; set; }
-        public virtual DbSet<LeagueUserEntity> Users { get; set; }
+        //public virtual DbSet<LeagueUserEntity> Users { get; set; }
         public virtual DbSet<LeagueMemberEntity> Members { get; set; }
 
         private readonly OrphansToHandle OrphansToHandle;
@@ -105,8 +105,15 @@ namespace iRLeagueDatabase
                 .WithMany(m => m.ConnectedScorings);
             //modelBuilder.Entity<ScoredResultRowEntity>()
             //    .ToTable("ScoredResultRowEntities");
-
-            modelBuilder.Entity<LeagueUserEntity>();
+            modelBuilder.Entity<ScoringTableEntity>()
+                .HasMany(r => r.Scorings)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ScoringTableRefId");
+                    rm.MapRightKey("ScoringRefId");
+                    rm.ToTable("ScoringTableMap");
+                });
 
             modelBuilder.Entity<ScoredResultEntity>()
                 .ToTable("ScoredResultEntities");
