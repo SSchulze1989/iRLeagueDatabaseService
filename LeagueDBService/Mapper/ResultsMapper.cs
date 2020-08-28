@@ -21,6 +21,8 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ScoredResultRowEntity, ScoredResultRowDataDTO>(MapToScoredResultRowDataDTO);
             RegisterTypeMap<ScoringEntity, ScoringInfoDTO>(MapToScoringInfoDTO);
             RegisterTypeMap<ScoringEntity, ScoringDataDTO>(MapToScoringDataDTO);
+            RegisterTypeMap<ScoringTableEntity, ScoringTableInfoDTO>(MapToScoringTableInfoDTO);
+            RegisterTypeMap<ScoringTableEntity, ScoringTableDataDTO>(MapToScoringTableDataDTO);
             RegisterTypeMap<StandingsEntity, StandingsDataDTO>(MapToStandingsDataDTO);
             RegisterTypeMap<StandingsRowEntity, StandingsRowDataDTO>(MapToStandingsRowDataDTO);
             RegisterTypeMap<AddPenaltyEntity, AddPenaltyDTO>(MapToPenaltyDTO);
@@ -280,6 +282,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ScoringDataDTO, ScoringEntity>(MapToScoringEntity);
             RegisterTypeMap<ResultRowDataDTO, ResultRowEntity>(MapToResultRowEntity);
             RegisterTypeMap<AddPenaltyDTO, AddPenaltyEntity>(MapToPenaltyEntity);
+            RegisterTypeMap<ScoringTableDataDTO, ScoringTableEntity>(MapToScoringTableEntity);
         }
 
         public ResultEntity GetResultEntity(ResultInfoDTO source)
