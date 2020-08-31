@@ -213,6 +213,7 @@ namespace iRLeagueDatabase.Mapper
             target.MostPolesDriver = MapToMemberInfoDTO(source.MostPolesDriver);
             target.MostWinsDriver = MapToMemberInfoDTO(source.MostWinsDriver);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.ScoringTableId = source.ScoringTable.ScoringTableId;
             target.StandingsRows = source.StandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
 
             return target;
@@ -465,7 +466,6 @@ namespace iRLeagueDatabase.Mapper
             if (target.Scorings == null)
                 target.Scorings = new List<ScoringEntity>();
             MapCollection(source.Scorings, target.Scorings, GetScoringEntity, x => x.Keys, removeFromCollection: true);
-            target.Season = GetSeasonEntity(source.Season);
 
             return target;
         }
