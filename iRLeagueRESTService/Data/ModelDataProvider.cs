@@ -11,7 +11,6 @@ using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.Entities;
-using LeagueDBService;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
@@ -75,7 +74,7 @@ namespace iRLeagueRESTService.Data
 
             if (requestType.Equals(typeof(ScoredResultDataDTO)))
             {
-                var leagueService = new LeagueDBService.LeagueDBService();
+                //var leagueService = new LeagueDBService.LeagueDBService();
                 items = requestIds.Select(x => GetScoredResult(x[0], x[1])).Cast<TModelDTO>().ToArray();
             }
             else if (requestType.Equals(typeof(StandingsDataDTO)))

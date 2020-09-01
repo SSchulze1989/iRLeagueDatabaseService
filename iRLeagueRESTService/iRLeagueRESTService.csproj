@@ -46,6 +46,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Users\simon\Documents\VisualStudio\iRLeagueManager\iRLeagueManager\bin\Debug\Communication.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -184,6 +188,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Mapper\BaseMapper.cs" />
+    <Compile Include="Mapper\DTOMapper.cs" />
+    <Compile Include="Mapper\EntityMapper.cs" />
+    <Compile Include="Mapper\MemberMapper.cs" />
+    <Compile Include="Mapper\ResultsMapper.cs" />
+    <Compile Include="Mapper\ReviewsMapper.cs" />
+    <Compile Include="Mapper\SessionsMapper.cs" />
+    <Compile Include="Mapper\TypeMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Results\AddChallengeOnUnauthorizedResult.cs" />
     <Compile Include="Results\AuthenticationFailureResult.cs" />
@@ -281,10 +293,6 @@
     <ProjectReference Include="..\iRLeagueUserDatabase\iRLeagueUserDatabase.csproj">
       <Project>{e80e0176-8bbb-4ab6-b528-314352267b12}</Project>
       <Name>iRLeagueUserDatabase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LeagueDBService\LeagueDBService.csproj">
-      <Project>{c7b2eeaa-632c-4519-89ad-56377afcd1a0}</Project>
-      <Name>LeagueDBService</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

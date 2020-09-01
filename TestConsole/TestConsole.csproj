@@ -114,10 +114,6 @@
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
       <Name>iRLeagueDatabase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LeagueDBService\LeagueDBService.csproj">
-      <Project>{c7b2eeaa-632c-4519-89ad-56377afcd1a0}</Project>
-      <Name>LeagueDBService</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
