@@ -57,9 +57,12 @@
             <PropertyRef Name="ScoringId" />
           </Key>
           <Property Name="ScoringId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScoringKind" Type="Self.ScoringKindEnum" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropWeeks" Type="Int32" Nullable="false" />
           <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
+          <Property Name="MaxResultsPerGroup" Type="Int32" Nullable="false" />
+          <Property Name="TakeGroupAverage" Type="Boolean" Nullable="false" />
           <Property Name="IsMultiScoring" Type="Boolean" Nullable="false" />
           <Property Name="BasePoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BonusPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -313,6 +316,7 @@
             <PropertyRef Name="ScoringTableId" />
           </Key>
           <Property Name="ScoringTableId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScoringKind" Type="Self.ScoringKindEnum" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropWeeks" Type="Int32" Nullable="false" />
           <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
@@ -327,6 +331,11 @@
           <NavigationProperty Name="Scorings" Relationship="Self.ScoringTableEntity_Scorings" FromRole="ScoringTableEntity_Scorings_Source" ToRole="ScoringTableEntity_Scorings_Target" />
           <NavigationProperty Name="Season" Relationship="Self.ScoringTableEntity_Season" FromRole="ScoringTableEntity_Season_Source" ToRole="ScoringTableEntity_Season_Target" />
         </EntityType>
+        <EnumType Name="ScoringKindEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.ScoringKindEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="Member" Value="0" />
+          <Member Name="Team" Value="1" />
+          <Member Name="Custom" Value="3" />
+        </EnumType>
         <EnumType Name="SessionType" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.SessionType, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="Undefined" Value="0" />
           <Member Name="Practice" Value="1" />
@@ -853,9 +862,12 @@
             <EntityTypeMapping TypeName="iRLeagueDatabase.ScoringEntity">
               <MappingFragment StoreEntitySet="ScoringEntity">
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <ScalarProperty Name="ScoringKind" ColumnName="ScoringKind" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
                 <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
+                <ScalarProperty Name="MaxResultsPerGroup" ColumnName="MaxResultsPerGroup" />
+                <ScalarProperty Name="TakeGroupAverage" ColumnName="TakeGroupAverage" />
                 <ScalarProperty Name="IsMultiScoring" ColumnName="IsMultiScoring" />
                 <ScalarProperty Name="BasePoints" ColumnName="BasePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
@@ -1107,6 +1119,7 @@
             <EntityTypeMapping TypeName="iRLeagueDatabase.ScoringTableEntity">
               <MappingFragment StoreEntitySet="ScoringTableEntity">
                 <ScalarProperty Name="ScoringTableId" ColumnName="ScoringTableId" />
+                <ScalarProperty Name="ScoringKind" ColumnName="ScoringKind" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
                 <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
@@ -1287,9 +1300,12 @@
             <PropertyRef Name="ScoringId" />
           </Key>
           <Property Name="ScoringId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScoringKind" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropWeeks" Type="int" Nullable="false" />
           <Property Name="AverageRaceNr" Type="int" Nullable="false" />
+          <Property Name="MaxResultsPerGroup" Type="int" Nullable="false" />
+          <Property Name="TakeGroupAverage" Type="bit" Nullable="false" />
           <Property Name="IsMultiScoring" Type="bit" Nullable="false" />
           <Property Name="BasePoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="BonusPoints" Type="nvarchar(max)" Nullable="true" />
@@ -1504,6 +1520,7 @@
             <PropertyRef Name="ScoringTableId" />
           </Key>
           <Property Name="ScoringTableId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScoringKind" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropWeeks" Type="int" Nullable="false" />
           <Property Name="AverageRaceNr" Type="int" Nullable="false" />

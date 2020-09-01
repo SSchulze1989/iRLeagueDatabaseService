@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Communication">
-      <HintPath>..\..\..\..\Documents\VisualStudio\iRLeagueManager\Communication\bin\Debug\Communication.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -171,6 +168,10 @@
     <Compile Include="Migrations\202008281822375_ChangeScoringTableToScoringMap.designer.cs">
       <DependentUpon>202008281822375_ChangeScoringTableToScoringMap.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009011732503_AddScoringKindProperty.cs" />
+    <Compile Include="Migrations\202009011732503_AddScoringKindProperty.designer.cs">
+      <DependentUpon>202009011732503_AddScoringKindProperty.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -283,6 +284,15 @@
     <EmbeddedResource Include="Migrations\202008281822375_ChangeScoringTableToScoringMap.resx">
       <DependentUpon>202008281822375_ChangeScoringTableToScoringMap.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009011732503_AddScoringKindProperty.resx">
+      <DependentUpon>202009011732503_AddScoringKindProperty.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Users\simon\Documents\VisualStudio\iRLeagueManager\Communication\Communication.csproj">
+      <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

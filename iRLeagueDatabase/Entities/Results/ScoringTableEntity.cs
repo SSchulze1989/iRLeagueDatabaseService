@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using iRLeagueDatabase.Entities.Sessions;
+using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -13,6 +14,7 @@ namespace iRLeagueDatabase.Entities.Results
     {
         [Key]
         public long ScoringTableId { get; set; }
+        public ScoringKindEnum ScoringKind { get; set; }
         public override object MappingId => ScoringTableId;
         public string Name { get; set; }
         public int DropWeeks { get; set; }

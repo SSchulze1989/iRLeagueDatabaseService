@@ -20,10 +20,13 @@ namespace iRLeagueDatabase.Entities.Results
     {
         [Key]
         public long ScoringId { get; set; }
+        public ScoringKindEnum ScoringKind { get; set; }
         public string Name { get; set; }
         public override object MappingId => ScoringId;
         public int DropWeeks { get; set; }
         public int AverageRaceNr { get; set; }
+        public int MaxResultsPerGroup { get; set; }
+        public bool TakeGroupAverage { get; set; }
         public bool IsMultiScoring { get; set; }
 
         public List<SessionBaseEntity> sessions;
