@@ -162,21 +162,30 @@ namespace iRLeagueDatabase.Mapper
             TypeMaps.Add(typeMap);
         }
 
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, 
+            Func<TSource, TTarget, TTarget> map, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false) 
+            where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) }, removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase);
+            return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) }, 
+                removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase, autoAddMissing: autoAddMissing);
         }
 
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, 
+            Func<TSource, TTarget> get, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false) 
+            where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key, removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase);
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key, 
+                removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase, autoAddMissing: autoAddMissing);
         }
 
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget> get, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, 
+            Func<TSource, TTarget> get, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false) 
+            where TSource : MappableDTO where TTarget : MappableEntity
         {
-            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys, removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase);
+            return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys, 
+                removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase, autoAddMissing: autoAddMissing);
         }
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false) where TSource : MappableDTO where TTarget : MappableEntity
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false) where TSource : MappableDTO where TTarget : MappableEntity
         {
             //if (sourceCollection == null)
             //{
@@ -205,7 +214,18 @@ namespace iRLeagueDatabase.Mapper
 
             foreach(var source in newTargetsList)
             {
-                var target = map(source, null);
+                var dbSet = DbContext.Set(typeof(TTarget));
+                var target = dbSet.Find(source.Keys) as TTarget;
+                
+                if (target == null)
+                {
+                    if (autoAddMissing)
+                        target = dbSet.Create() as TTarget;
+                    else
+                        continue;
+                }
+
+                target = map(source, target);
                 targetCollection.Add(target);
             }
 

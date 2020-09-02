@@ -289,7 +289,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Users\simon\Documents\VisualStudio\iRLeagueManager\Communication\Communication.csproj">
+    <ProjectReference Include="..\..\Users\simon\source\repos\iRLeagueManager\Communication\Communication.csproj">
       <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
       <Name>Communication</Name>
     </ProjectReference>

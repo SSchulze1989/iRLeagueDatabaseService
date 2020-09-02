@@ -14,14 +14,12 @@ using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueDatabase.DataTransfer.Sessions;
-using iRLeagueDatabase.Mapper;
 //using TestConsole.LeagueDBServiceRef;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.Entities.Members;
 using System.Net.Http;
-using iRLeagueDatabase.DataTransfer.Messages;
 using System.Security.Principal;
 
 namespace TestConsole

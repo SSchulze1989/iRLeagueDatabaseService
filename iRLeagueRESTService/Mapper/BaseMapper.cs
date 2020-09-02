@@ -180,7 +180,7 @@ namespace iRLeagueDatabase.Mapper
             MapCollection(source.Scorings, target.Scorings, MapToScoringEntity, x => x.ScoringId);
             if (target.ScoringTables == null)
                 target.ScoringTables = new List<Entities.Results.ScoringTableEntity>();
-            MapCollection(source.ScoringTables, target.ScoringTables, MapToScoringTableEntity, x => x.ScoringTableId);
+            MapCollection(source.ScoringTables, target.ScoringTables, MapToScoringTableEntity, x => x.ScoringTableId, autoAddMissing: true);
             target.SeasonName = source.SeasonName;
             target.Version = source.Version;
 
