@@ -153,13 +153,14 @@ namespace iRLeagueDatabase.Mapper
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
-            target.MultiScoringFactors = source.MultiScoringFactors;
-            target.MultiScoringResults = source.MultiScoringResults.Select(x => MapToScoringInfoDTO(x)).ToArray();
-            target.IsMultiScoring = source.IsMultiScoring;
+            //target.MultiScoringFactors = source.MultiScoringFactors;
+            //target.MultiScoringResults = source.MultiScoringResults.Select(x => MapToScoringInfoDTO(x)).ToArray();
+            //target.IsMultiScoring = source.IsMultiScoring;
             target.Name = source.Name;
             target.Season = MapToSeasonInfoDTO(source.Season);
             //target.SeasonId = source.SeasonId;
-            target.Sessions = ((source.IsMultiScoring) ? source.GetAllSessions() :  source.Sessions).Select(x => MapToSessionInfoDTO(x)).ToArray();
+            //target.Sessions = ((source.IsMultiScoring) ? source.GetAllSessions() :  source.Sessions).Select(x => MapToSessionInfoDTO(x)).ToArray();
+            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
             target.Results = source.Results.Select(x => MapToResultInfoDTO(x)).ToArray();
             target.ConnectedSchedule = MapToScheduleInfoDTO(source.ConnectedSchedule);
 
@@ -423,15 +424,15 @@ namespace iRLeagueDatabase.Mapper
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
-            target.MultiScoringFactors = source.MultiScoringFactors;
+            //target.MultiScoringFactors = source.MultiScoringFactors;
             //MapCollection(source.MultiScoringResults, target.MultiScoringResults, GetScoringEntity, x => x.ScoringId);
             target.Name = source.Name;
             target.Season = GetSeasonEntity(source.Season);
-            target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults?.Count > 0;
+            //target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults?.Count > 0;
             if (target.Sessions == null)
                 target.Sessions = new List<Entities.Sessions.SessionBaseEntity>();
-            if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults?.Count() > 0))
-                target.Sessions.Clear();
+            //if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults?.Count() > 0))
+            //    target.Sessions.Clear();
             else
                 MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
 

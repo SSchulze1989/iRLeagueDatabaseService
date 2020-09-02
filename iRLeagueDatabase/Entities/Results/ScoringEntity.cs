@@ -27,7 +27,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int AverageRaceNr { get; set; }
         public int MaxResultsPerGroup { get; set; }
         public bool TakeGroupAverage { get; set; }
-        public bool IsMultiScoring { get; set; }
+        //public bool IsMultiScoring { get; set; }
 
         public List<SessionBaseEntity> sessions;
         public virtual List<SessionBaseEntity> Sessions
@@ -56,8 +56,8 @@ namespace iRLeagueDatabase.Entities.Results
         public string BasePoints { get; set; }
         public string BonusPoints { get; set; }
         public string IncPenaltyPoints { get; set; }
-        public string MultiScoringFactors { get; set; }
-        public virtual List<ScoringEntity> MultiScoringResults { get; set; }
+        //public string MultiScoringFactors { get; set; }
+        //public virtual List<ScoringEntity> MultiScoringResults { get; set; }
         //public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
         [InverseProperty(nameof(ScoredResultEntity.Scoring))]
         public virtual List<ScoredResultEntity> ScoredResults { get; set; }
@@ -74,10 +74,10 @@ namespace iRLeagueDatabase.Entities.Results
         /// <returns></returns>
         public List<SessionBaseEntity> GetAllSessions()
         {
-            if (IsMultiScoring && MultiScoringResults != null && MultiScoringResults.Count > 0)
-            {
-                return MultiScoringResults.Where(x => x.Sessions != null).SelectMany(x => x.Sessions).ToList();
-            }
+            //if (IsMultiScoring && MultiScoringResults != null && MultiScoringResults.Count > 0)
+            //{
+            //    return MultiScoringResults.Where(x => x.Sessions != null).SelectMany(x => x.Sessions).ToList();
+            //}
             return Sessions;
         }
 
@@ -85,13 +85,13 @@ namespace iRLeagueDatabase.Entities.Results
         {
             var allSessions = GetAllSessions();
 
-            if (MultiScoringResults != null && MultiScoringResults.Count > 0)
-            {
-                foreach(var msc in MultiScoringResults)
-                {
-                    allSessions.AddRange(msc.Sessions);
-                }
-            }
+            //if (MultiScoringResults != null && MultiScoringResults.Count > 0)
+            //{
+            //    foreach(var msc in MultiScoringResults)
+            //    {
+            //        allSessions.AddRange(msc.Sessions);
+            //    }
+            //}
 
             var session = allSessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
             if (session == null)
@@ -106,6 +106,13 @@ namespace iRLeagueDatabase.Entities.Results
             return GetSeasonStandings(currentSession, allSessions.Count - DropWeeks);
         }
 
+        /// <summary>
+        /// Remove after testing
+        /// </summary>
+        /// <param name="currentSession"></param>
+        /// <param name="maxRacesCount"></param>
+        /// <returns></returns>
+        [Obsolete]
         public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession, int maxRacesCount = -1)
         {
 
@@ -126,14 +133,14 @@ namespace iRLeagueDatabase.Entities.Results
             var allScoredResults = ScoredResults.ToList();
             var previousScoredResults = allScoredResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
 
-            if (MultiScoringResults != null && MultiScoringResults.Count > 0)
-            {
-                foreach (var msc in MultiScoringResults)
-                {
-                    previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result?.Session.Date < currentSession.Date));
-                    allScoredResults.AddRange(msc.ScoredResults);
-                }
-            }
+            //if (MultiScoringResults != null && MultiScoringResults.Count > 0)
+            //{
+            //    foreach (var msc in MultiScoringResults)
+            //    {
+            //        previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result?.Session.Date < currentSession.Date));
+            //        allScoredResults.AddRange(msc.ScoredResults);
+            //    }
+            //}
 
             var currentResult = currentSession.SessionResult;
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);

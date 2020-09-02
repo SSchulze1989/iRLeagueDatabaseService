@@ -91,15 +91,15 @@ namespace iRLeagueDatabase
             //modelBuilder.Entity<ScoringEntity>()
             //    .HasMany(r => r.Results)
             //    .WithMany(m => m.Session.Scorings);
-            modelBuilder.Entity<ScoringEntity>()
-                .HasMany(r => r.MultiScoringResults)
-                .WithMany()
-                .Map(rm =>
-                {
-                    rm.MapLeftKey("ScoringParentId");
-                    rm.MapRightKey("ScoringChildId");
-                    rm.ToTable("MultiScoringMap");
-                });
+            //modelBuilder.Entity<ScoringEntity>()
+            //    .HasMany(r => r.MultiScoringResults)
+            //    .WithMany()
+            //    .Map(rm =>
+            //    {
+            //        rm.MapLeftKey("ScoringParentId");
+            //        rm.MapRightKey("ScoringChildId");
+            //        rm.ToTable("MultiScoringMap");
+            //    });
             modelBuilder.Entity<ScoringEntity>()
                 .HasOptional(r => r.ConnectedSchedule)
                 .WithMany(m => m.ConnectedScorings);

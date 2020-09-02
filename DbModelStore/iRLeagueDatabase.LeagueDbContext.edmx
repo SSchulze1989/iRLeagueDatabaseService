@@ -63,11 +63,9 @@
           <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
           <Property Name="MaxResultsPerGroup" Type="Int32" Nullable="false" />
           <Property Name="TakeGroupAverage" Type="Boolean" Nullable="false" />
-          <Property Name="IsMultiScoring" Type="Boolean" Nullable="false" />
           <Property Name="BasePoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BonusPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IncPenaltyPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="MultiScoringFactors" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -76,7 +74,6 @@
           <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ConnectedSchedule" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Source" ToRole="ScoringEntity_ConnectedSchedule_Target" />
-          <NavigationProperty Name="MultiScoringResults" Relationship="Self.ScoringEntity_MultiScoringResults" FromRole="ScoringEntity_MultiScoringResults_Source" ToRole="ScoringEntity_MultiScoringResults_Target" />
           <NavigationProperty Name="ScoredResults" Relationship="Self.ScoringEntity_ScoredResults" FromRole="ScoringEntity_ScoredResults_Source" ToRole="ScoringEntity_ScoredResults_Target" />
           <NavigationProperty Name="Season" Relationship="Self.ScoringEntity_Season" FromRole="ScoringEntity_Season_Source" ToRole="ScoringEntity_Season_Target" />
           <NavigationProperty Name="Sessions" Relationship="Self.ScoringEntity_Sessions" FromRole="ScoringEntity_Sessions_Source" ToRole="ScoringEntity_Sessions_Target" />
@@ -616,10 +613,6 @@
           <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="*" />
           <End Role="ScoringEntity_ConnectedSchedule_Target" Type="Self.ScheduleEntity" Multiplicity="0..1" />
         </Association>
-        <Association Name="ScoringEntity_MultiScoringResults">
-          <End Role="ScoringEntity_MultiScoringResults_Source" Type="Self.ScoringEntity" Multiplicity="*" />
-          <End Role="ScoringEntity_MultiScoringResults_Target" Type="Self.ScoringEntity" Multiplicity="*" />
-        </Association>
         <Association Name="ScoringEntity_ScoredResults">
           <End Role="ScoringEntity_ScoredResults_Source" Type="Self.ScoringEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -774,10 +767,6 @@
             <End Role="ScoringEntity_ConnectedSchedule_Source" EntitySet="ScoringEntities" />
             <End Role="ScoringEntity_ConnectedSchedule_Target" EntitySet="ScheduleEntities" />
           </AssociationSet>
-          <AssociationSet Name="ScoringEntity_MultiScoringResults" Association="Self.ScoringEntity_MultiScoringResults">
-            <End Role="ScoringEntity_MultiScoringResults_Source" EntitySet="ScoringEntities" />
-            <End Role="ScoringEntity_MultiScoringResults_Target" EntitySet="ScoringEntities" />
-          </AssociationSet>
           <AssociationSet Name="ScoringEntity_ScoredResults" Association="Self.ScoringEntity_ScoredResults">
             <End Role="ScoringEntity_ScoredResults_Source" EntitySet="ScoringEntities" />
             <End Role="ScoringEntity_ScoredResults_Target" EntitySet="ScoredResultEntities" />
@@ -868,11 +857,9 @@
                 <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
                 <ScalarProperty Name="MaxResultsPerGroup" ColumnName="MaxResultsPerGroup" />
                 <ScalarProperty Name="TakeGroupAverage" ColumnName="TakeGroupAverage" />
-                <ScalarProperty Name="IsMultiScoring" ColumnName="IsMultiScoring" />
                 <ScalarProperty Name="BasePoints" ColumnName="BasePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
                 <ScalarProperty Name="IncPenaltyPoints" ColumnName="IncPenaltyPoints" />
-                <ScalarProperty Name="MultiScoringFactors" ColumnName="MultiScoringFactors" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1189,14 +1176,6 @@
             </EndProperty>
             <Condition IsNull="false" ColumnName="ConnectedSchedule_ScheduleId" />
           </AssociationSetMapping>
-          <AssociationSetMapping Name="ScoringEntity_MultiScoringResults" TypeName="iRLeagueDatabase.ScoringEntity_MultiScoringResults" StoreEntitySet="ScoringEntityScoringEntity">
-            <EndProperty Name="ScoringEntity_MultiScoringResults_Source">
-              <ScalarProperty Name="ScoringId" ColumnName="ScoringParentId" />
-            </EndProperty>
-            <EndProperty Name="ScoringEntity_MultiScoringResults_Target">
-              <ScalarProperty Name="ScoringId" ColumnName="ScoringChildId" />
-            </EndProperty>
-          </AssociationSetMapping>
           <AssociationSetMapping Name="ScoringEntity_Season" TypeName="iRLeagueDatabase.ScoringEntity_Season" StoreEntitySet="ScoringEntity">
             <EndProperty Name="ScoringEntity_Season_Target">
               <ScalarProperty Name="SeasonId" ColumnName="Season_SeasonId" />
@@ -1306,11 +1285,9 @@
           <Property Name="AverageRaceNr" Type="int" Nullable="false" />
           <Property Name="MaxResultsPerGroup" Type="int" Nullable="false" />
           <Property Name="TakeGroupAverage" Type="bit" Nullable="false" />
-          <Property Name="IsMultiScoring" Type="bit" Nullable="false" />
           <Property Name="BasePoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="BonusPoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="IncPenaltyPoints" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="MultiScoringFactors" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -1541,14 +1518,6 @@
           </Key>
           <Property Name="ReviewRefId" Type="bigint" customannotation:Index="{ Name: IX_ReviewRefId, Order: 0 }" Nullable="false" />
           <Property Name="MemberRefId" Type="bigint" customannotation:Index="{ Name: IX_MemberRefId, Order: 0 }" Nullable="false" />
-        </EntityType>
-        <EntityType Name="ScoringEntityScoringEntity">
-          <Key>
-            <PropertyRef Name="ScoringParentId" />
-            <PropertyRef Name="ScoringChildId" />
-          </Key>
-          <Property Name="ScoringParentId" Type="bigint" customannotation:Index="{ Name: IX_ScoringParentId, Order: 0 }" Nullable="false" />
-          <Property Name="ScoringChildId" Type="bigint" customannotation:Index="{ Name: IX_ScoringChildId, Order: 0 }" Nullable="false" />
         </EntityType>
         <EntityType Name="ScoringEntitySessionBaseEntity">
           <Key>
@@ -1890,30 +1859,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="ScoringEntity_MultiScoringResults_Source">
-          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1" />
-          <End Role="ScoringEntityScoringEntity" Type="Self.ScoringEntityScoringEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ScoringEntity">
-              <PropertyRef Name="ScoringId" />
-            </Principal>
-            <Dependent Role="ScoringEntityScoringEntity">
-              <PropertyRef Name="ScoringParentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ScoringEntity_MultiScoringResults_Target">
-          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1" />
-          <End Role="ScoringEntityScoringEntity" Type="Self.ScoringEntityScoringEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ScoringEntity">
-              <PropertyRef Name="ScoringId" />
-            </Principal>
-            <Dependent Role="ScoringEntityScoringEntity">
-              <PropertyRef Name="ScoringChildId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="ScoringEntity_ScoredResults">
           <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -2057,7 +2002,6 @@
           <EntitySet Name="ScoredResultEntity" EntityType="Self.ScoredResultEntity" Schema="dbo" Table="ScoredResultEntities" />
           <EntitySet Name="ScoringTableEntity" EntityType="Self.ScoringTableEntity" Schema="dbo" Table="ScoringTableEntities" />
           <EntitySet Name="IncidentReviewEntityLeagueMemberEntity" EntityType="Self.IncidentReviewEntityLeagueMemberEntity" Schema="dbo" Table="IncidentReview_InvolvedLeagueMember" />
-          <EntitySet Name="ScoringEntityScoringEntity" EntityType="Self.ScoringEntityScoringEntity" Schema="dbo" Table="MultiScoringMap" />
           <EntitySet Name="ScoringEntitySessionBaseEntity" EntityType="Self.ScoringEntitySessionBaseEntity" Schema="dbo" Table="Scoring_Session" />
           <EntitySet Name="ScoringTableEntityScoringEntity" EntityType="Self.ScoringTableEntityScoringEntity" Schema="dbo" Table="ScoringTableMap" />
           <AssociationSet Name="TeamEntity_Members" Association="Self.TeamEntity_Members">
@@ -2155,14 +2099,6 @@
           <AssociationSet Name="ScoringEntity_ConnectedSchedule" Association="Self.ScoringEntity_ConnectedSchedule">
             <End Role="ScheduleEntity" EntitySet="ScheduleEntity" />
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
-          </AssociationSet>
-          <AssociationSet Name="ScoringEntity_MultiScoringResults_Source" Association="Self.ScoringEntity_MultiScoringResults_Source">
-            <End Role="ScoringEntity" EntitySet="ScoringEntity" />
-            <End Role="ScoringEntityScoringEntity" EntitySet="ScoringEntityScoringEntity" />
-          </AssociationSet>
-          <AssociationSet Name="ScoringEntity_MultiScoringResults_Target" Association="Self.ScoringEntity_MultiScoringResults_Target">
-            <End Role="ScoringEntity" EntitySet="ScoringEntity" />
-            <End Role="ScoringEntityScoringEntity" EntitySet="ScoringEntityScoringEntity" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ScoredResults" Association="Self.ScoringEntity_ScoredResults">
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
