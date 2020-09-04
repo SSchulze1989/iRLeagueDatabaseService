@@ -313,9 +313,11 @@ namespace iRLeagueDatabase.Entities.Results
             var scoredResultRows = scoredResult.FinalResults;
             var resultRows = session.SessionResult.RawResults;
 
-            IDictionary<int, int> basePoints = BasePoints.Split(' ').Select((x, i) => new { Item = int.Parse(x), Index = i }).ToDictionary(x => x.Index + 1, x => x.Item);
+            IDictionary<int, int> basePoints = new Dictionary<int, int>();
+            if (BasePoints != "" && BasePoints != null)
+                basePoints = BasePoints.Split(' ').Select((x, i) => new { Item = int.Parse(x), Index = i }).ToDictionary(x => x.Index + 1, x => x.Item);
             IDictionary<int, int> bonusPoints = new Dictionary<int, int>();
-            if (BonusPoints != "")
+            if (BonusPoints != "" && BonusPoints != null)
                 bonusPoints = BonusPoints.Split(' ').Select(x => new { Item = int.Parse(x.Split(':').Last()), Index = int.Parse(x.Split(':').First().TrimStart(new char[] { 'p' })) }).ToDictionary(x => x.Index, x => x.Item);
 
             foreach (var resultRow in resultRows)
