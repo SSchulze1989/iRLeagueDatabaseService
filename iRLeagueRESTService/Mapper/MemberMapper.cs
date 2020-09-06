@@ -15,6 +15,7 @@ namespace iRLeagueDatabase.Mapper
         {
             RegisterTypeMap<LeagueMemberEntity, LeagueMemberInfoDTO>(MapToMemberInfoDTO);
             RegisterTypeMap<LeagueMemberEntity, LeagueMemberDataDTO>(MapToMemberDataDTO);
+            RegisterTypeMap<TeamEntity, TeamDataDTO>(MapToTeamDataDTO);
         }
 
         public LeagueMemberInfoDTO MapToMemberInfoDTO(LeagueMemberEntity source, LeagueMemberInfoDTO target = null)
@@ -44,24 +45,30 @@ namespace iRLeagueDatabase.Mapper
             target.IRacingId = source.IRacingId;
             target.Lastname = source.Lastname;
             target.MemberId = source.MemberId;
+            target.TeamId = source.TeamId;
 
             return target;
         }
 
-        //public LeagueUserDTO MapToLeagueUserDTO(LeagueUserEntity source, LeagueUserDTO target = null)
-        //{
-        //    if (source == null)
-        //        return null;
+        public TeamDataDTO MapToTeamDataDTO(TeamEntity source, TeamDataDTO target = null)
+        {
+            if (source == null)
+                return null;
 
-        //    if (target == null)
-        //        target = new LeagueUserDTO();
+            if (target == null)
+                target = new TeamDataDTO();
 
-        //    target.AdminId = source.AdminId;
-        //    target.AdminRights = source.AdminRights;
-        //    target.Member = MapToMemberInfoDTO(source.Member);
+            MapToVersionInfoDTO(source, target);
 
-        //    return target;
-        //}
+            target.Name = source.Name;
+            target.Profile = source.Profile;
+            target.TeamColor = source.TeamColor;
+            target.TeamHomepage = source.TeamHomepage;
+            target.TeamId = source.TeamId;
+            target.MemberIds = source.Members.Select(x => x.MemberId).ToArray();
+
+            return target;
+        }
     }
 
     public partial class EntityMapper
@@ -69,23 +76,10 @@ namespace iRLeagueDatabase.Mapper
         private void RegisterMemberTypeMaps()
         {
             RegisterTypeMap<LeagueMemberDataDTO, LeagueMemberEntity>(MapToMemberEntity);
+            RegisterTypeMap<TeamDataDTO, TeamEntity>(MapToTeamEntity);
         }
         public LeagueMemberEntity GetMemberEntity(LeagueMemberInfoDTO source)
         {
-            //if (source == null)
-            //    return null;
-
-            //LeagueMemberEntity target;
-
-            //if (source.MemberId == null)
-            //    target = new LeagueMemberEntity();
-            //else
-            //    target = DbContext.Set<LeagueMemberEntity>().Find(source.MemberId);
-
-            //if (target == null)
-            //    throw new EntityNotFoundException(nameof(LeagueMemberEntity), "Could not find Entity in Database.", source.MemberId);
-
-            //return target;
             return DefaultGet<LeagueMemberInfoDTO, LeagueMemberEntity>(source);
         }
 
@@ -101,6 +95,29 @@ namespace iRLeagueDatabase.Mapper
             target.Firstname = source.Firstname;
             target.IRacingId = source.IRacingId;
             target.Lastname = source.Lastname;
+
+            return target;
+        }
+
+        public TeamEntity MapToTeamEntity(TeamDataDTO source, TeamEntity target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = DefaultGet<TeamEntity>(source.Keys);
+
+            if (MapToRevision(source, target) == false)
+                return target;
+
+            target.Name = source.Name;
+            target.Profile = source.Profile;
+            target.TeamColor = source.TeamColor;
+            target.TeamHomepage = source.TeamHomepage;
+            if (target.Members == null)
+                target.Members = new List<LeagueMemberEntity>();
+            MapCollection(source.MemberIds
+                .Select(x => new LeagueMemberInfoDTO() { MemberId = x }), target.Members, GetMemberEntity, x => x.Keys, 
+                removeFromCollection: true);
 
             return target;
         }

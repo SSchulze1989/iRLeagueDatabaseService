@@ -38,7 +38,7 @@ namespace iRLeagueDatabase.Mapper
         public TypeMap GetTypeMap(Type sourceType, Type targetType)
         {
             if (sourceType == null || targetType == null)
-                throw new Exception("No typemap found.");
+                throw new Exception("No typemap found. Mapping types are null!");
 
             var typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType));
 
@@ -46,7 +46,7 @@ namespace iRLeagueDatabase.Mapper
                 typeMap = TypeMaps.SingleOrDefault(x => x.SourceType.Equals(sourceType) && x.TargetType.Equals(targetType.BaseType));
 
             if (typeMap == null)
-                throw new Exception("No typemap found.");
+                throw new Exception($"No typemap found. Source: {sourceType} | Target: {targetType}");
 
             return typeMap;
         }
@@ -136,6 +136,11 @@ namespace iRLeagueDatabase.Mapper
                 target = DbContext.Set<TTarget>().Find(source.Keys);
 
             return target;
+        }
+
+        private TTarget DefaultGet<TTarget>(object[] keys) where TTarget : MappableEntity, new()
+        {
+            return DbContext.Set<TTarget>().Find(keys);
         }
 
         private bool DefaultCompare<TSource, TTarget>(TSource source, TTarget target) where TSource : MappableDTO where TTarget : MappableEntity
