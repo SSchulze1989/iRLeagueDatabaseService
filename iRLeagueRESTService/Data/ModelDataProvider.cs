@@ -285,7 +285,13 @@ namespace iRLeagueRESTService.Data
             DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
             DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
                 .Include(x => x.AddPenalty)
-                .Include(x => x.ResultRow.Member).Load();
+                .Include(x => x.ResultRow.Member.Team).Load();
+
+            if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
+            {
+                DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
+                    .Include(x => x.ScoredResultRows).Load();
+            } 
 
             var mapper = new DTOMapper();
             scoredResultData = mapper.MapTo<ScoredResultDataDTO>(scoredResultEntity);

@@ -57,9 +57,11 @@
     <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
+    <Compile Include="Entities\Results\ScoredTeamResultRowEntity.cs" />
     <Compile Include="Entities\Results\ScoringTableEntity.cs" />
     <Compile Include="Entities\Results\StandingsEntity.cs" />
     <Compile Include="Entities\Results\StandingsRowEntity.cs" />
+    <Compile Include="Entities\Results\ScoredTeamResultEntity.cs" />
     <Compile Include="Entities\Reviews\AcceptedReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\CommentReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
@@ -175,6 +177,18 @@
     <Compile Include="Migrations\202009022006210_RemoveMultiScoringType.cs" />
     <Compile Include="Migrations\202009022006210_RemoveMultiScoringType.designer.cs">
       <DependentUpon>202009022006210_RemoveMultiScoringType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009070641296_AddScoredTeamResults.cs" />
+    <Compile Include="Migrations\202009070641296_AddScoredTeamResults.designer.cs">
+      <DependentUpon>202009070641296_AddScoredTeamResults.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009090710205_ChangeScoredTeamResultRowsGroupManyToMany.cs" />
+    <Compile Include="Migrations\202009090710205_ChangeScoredTeamResultRowsGroupManyToMany.designer.cs">
+      <DependentUpon>202009090710205_ChangeScoredTeamResultRowsGroupManyToMany.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009090721553_RemoveScoredResultFromTeamResultRow.cs" />
+    <Compile Include="Migrations\202009090721553_RemoveScoredResultFromTeamResultRow.designer.cs">
+      <DependentUpon>202009090721553_RemoveScoredResultFromTeamResultRow.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -293,6 +307,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009022006210_RemoveMultiScoringType.resx">
       <DependentUpon>202009022006210_RemoveMultiScoringType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009070641296_AddScoredTeamResults.resx">
+      <DependentUpon>202009070641296_AddScoredTeamResults.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009090710205_ChangeScoredTeamResultRowsGroupManyToMany.resx">
+      <DependentUpon>202009090710205_ChangeScoredTeamResultRowsGroupManyToMany.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009090721553_RemoveScoredResultFromTeamResultRow.resx">
+      <DependentUpon>202009090721553_RemoveScoredResultFromTeamResultRow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -37,7 +37,8 @@ namespace iRLeagueRESTService.Data
                 .Include(x => x.Scorings.Select(y => y.ScoredResults))
                 .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.AddPenalty)))
                 .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.ReviewPenalties)))
-                .Include(x => x.SessionResult.RawResults.Select(y => y.Member))
+                //.Include(x => x.SessionResult.ScoredResults.Select(y => ((ScoredTeamResultEntity)y).TeamResults.Select(z => z.ScoredResultRows)))
+                .Include(x => x.SessionResult.RawResults.Select(y => y.Member.Team))
                 .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes))
                 .Where(x => sessionIds.Contains(x.SessionId));
 
@@ -52,7 +53,7 @@ namespace iRLeagueRESTService.Data
 
                 foreach (var scoredResult in session.SessionResult.ScoredResults.ToList())
                 {
-                    if (!session.Scorings.Contains(scoredResult.Scoring))
+                    if (scoredResult != null && !session.Scorings.Contains(scoredResult.Scoring))
                     {
                         scoredResult.Delete(DbContext);
                         session.SessionResult.ScoredResults.Remove(scoredResult);

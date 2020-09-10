@@ -24,11 +24,11 @@ namespace iRLeagueDatabase
 
         private readonly OrphansToHandle OrphansToHandle;
 
-        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False;")
+        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets=True;")
         {
         }
 
-        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog="+dbName+ "; Integrated Security = True; Pooling=False;" : "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False;")
+        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog="+dbName+ "; Integrated Security = True; Pooling=False; MultipleActiveResultSets=True;" : "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets=True;")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
             OrphansToHandle = new OrphansToHandle();
@@ -117,6 +117,16 @@ namespace iRLeagueDatabase
 
             modelBuilder.Entity<ScoredResultEntity>()
                 .ToTable("ScoredResultEntities");
+
+            modelBuilder.Entity<ScoredTeamResultRowEntity>()
+                .HasMany(r => r.ScoredResultRows)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ScoredTeamResultRowRefId");
+                    rm.MapRightKey("ScoredResultRowRefId");
+                    rm.ToTable("ScoredTeamResultRowsGroup");
+                });
         }
 
         public override int SaveChanges()

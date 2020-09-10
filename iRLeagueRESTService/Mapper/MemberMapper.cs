@@ -45,7 +45,8 @@ namespace iRLeagueDatabase.Mapper
             target.IRacingId = source.IRacingId;
             target.Lastname = source.Lastname;
             target.MemberId = source.MemberId;
-            target.TeamId = source.TeamId;
+            //target.TeamId = source.TeamId;
+            target.Team = MapToTeamDataDTO(source.Team);
 
             return target;
         }
@@ -95,6 +96,7 @@ namespace iRLeagueDatabase.Mapper
             target.Firstname = source.Firstname;
             target.IRacingId = source.IRacingId;
             target.Lastname = source.Lastname;
+            target.Team = DefaultGet<TeamDataDTO, TeamEntity>(source.Team);
 
             return target;
         }

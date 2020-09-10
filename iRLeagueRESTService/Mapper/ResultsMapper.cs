@@ -25,7 +25,8 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<StandingsEntity, StandingsDataDTO>(MapToStandingsDataDTO);
             RegisterTypeMap<StandingsRowEntity, StandingsRowDataDTO>(MapToStandingsRowDataDTO);
             RegisterTypeMap<AddPenaltyEntity, AddPenaltyDTO>(MapToPenaltyDTO);
-            
+            RegisterTypeMap<ScoredTeamResultEntity, ScoredTeamResultDataDTO>(MapToScoredTeamResultDataDTO);
+            RegisterTypeMap<ScoredTeamResultEntity, ScoredResultDataDTO>(src => new ScoredTeamResultDataDTO(), (src, trg) => MapToScoredTeamResultDataDTO(src, trg as ScoredTeamResultDataDTO), DefaultCompare);        
         }
 
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
@@ -87,6 +88,7 @@ namespace iRLeagueDatabase.Mapper
             target.ResultId = source.ResultId;
             target.StartPosition = source.StartPosition;
             target.Status = source.Status;
+            target.TeamName = source.Member.Team?.Name;
 
             return target;
         }
@@ -158,6 +160,9 @@ namespace iRLeagueDatabase.Mapper
             target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
             target.Results = source.Results.Select(x => MapToResultInfoDTO(x)).ToArray();
             target.ConnectedSchedule = MapToScheduleInfoDTO(source.ConnectedSchedule);
+            target.ScoringKind = source.ScoringKind;
+            target.MaxResultsPerGroup = source.MaxResultsPerGroup;
+            target.TakeGroupAverage = source.TakeGroupAverage;
 
             return target;
         }
@@ -265,6 +270,40 @@ namespace iRLeagueDatabase.Mapper
 
             target.ScoredResultRowId = source.ScoredResultRowId;
             target.PenaltyPoints = source.PenaltyPoints;
+
+            return target;
+        }
+
+        public ScoredTeamResultDataDTO MapToScoredTeamResultDataDTO(ScoredTeamResultEntity source, ScoredTeamResultDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new ScoredTeamResultDataDTO();
+
+            MapToScoredResultDataDTO(source, target);
+            target.TeamResults = source.TeamResults?.Select(x => MapToScoredTeamResultRowDataDTO(x)).ToArray();
+
+            return target;
+        }
+
+        public ScoredTeamResultRowDataDTO MapToScoredTeamResultRowDataDTO(ScoredTeamResultRowEntity source, ScoredTeamResultRowDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new ScoredTeamResultRowDataDTO();
+
+            //MapToResultRowDataDTO(source.ResultRow, target);
+            target.ScoredResultRowId = source.ScoredResultRowId;
+            target.BonusPoints = source.BonusPoints;
+            target.FinalPosition = source.FinalPosition;
+            target.FinalPositionChange = source.FinalPositionChange;
+            target.PenaltyPoints = source.PenaltyPoints;
+            target.RacePoints = source.RacePoints;
+            target.ScoringId = source.ScoringId;
+            target.TeamId = source.TeamId;
+            target.ScoredResultRows = source.ScoredResultRows.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
 
             return target;
         }
@@ -424,12 +463,14 @@ namespace iRLeagueDatabase.Mapper
                 target.Sessions = new List<Entities.Sessions.SessionBaseEntity>();
             else
                 MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
-
             target.ConnectedSchedule = GetScheduleEntity(source.ConnectedSchedule);
             if (target.ConnectedSchedule != null)
             {
                 target.Sessions = target.ConnectedSchedule.Sessions;
             }
+            target.ScoringKind = source.ScoringKind;
+            target.MaxResultsPerGroup = source.MaxResultsPerGroup;
+            target.TakeGroupAverage = source.TakeGroupAverage;
 
             return target;
         }
