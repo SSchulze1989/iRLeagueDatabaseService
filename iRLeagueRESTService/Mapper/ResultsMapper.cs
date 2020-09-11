@@ -303,6 +303,8 @@ namespace iRLeagueDatabase.Mapper
             target.RacePoints = source.RacePoints;
             target.ScoringId = source.ScoringId;
             target.TeamId = source.TeamId;
+            target.FastestLapTime = TimeSpanConverter.Convert(source.FastestLapTime);
+            target.AvgLapTime = TimeSpanConverter.Convert(source.AvgLapTime);
             target.ScoredResultRows = source.ScoredResultRows.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
 
             return target;

@@ -165,7 +165,8 @@ namespace iRLeagueDatabase.Mapper
             target.TimeStamp = source.TimeStamp;
             if (target.AcceptedReviewVotes == null)
                 target.AcceptedReviewVotes = new List<AcceptedReviewVoteEntity>();
-            MapCollection(source.AcceptedReviewVotes, target.AcceptedReviewVotes, MapToAcceptedReviewVoteEntity, x => x.ReviewVoteId, removeFromCollection: true, removeFromDatabase: true);
+            MapCollection(source.AcceptedReviewVotes, target.AcceptedReviewVotes, MapToAcceptedReviewVoteEntity, x => x.ReviewVoteId, 
+                removeFromCollection: true, removeFromDatabase: true, autoAddMissing: true);
 
             return target;
         }
