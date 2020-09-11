@@ -24,11 +24,13 @@ namespace iRLeagueDatabase
 
         private readonly OrphansToHandle OrphansToHandle;
 
-        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets=True;")
+        private static bool AllowMultipleResultSets = true;
+
+        public LeagueDbContext() : this($"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets};")
         {
         }
 
-        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog="+dbName+ "; Integrated Security = True; Pooling=False; MultipleActiveResultSets=True;" : "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets=True;")
+        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? $"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog={dbName}; Integrated Security = True; Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets};" : $"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets};")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
             OrphansToHandle = new OrphansToHandle();

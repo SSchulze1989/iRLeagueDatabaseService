@@ -282,7 +282,7 @@ namespace iRLeagueDatabase.Mapper
                 target = new ScoredTeamResultDataDTO();
 
             MapToScoredResultDataDTO(source, target);
-            target.TeamResults = source.TeamResults?.Select(x => MapToScoredTeamResultRowDataDTO(x)).ToArray();
+            target.TeamResults = source.TeamResults != null ? source.TeamResults.Select(x => MapToScoredTeamResultRowDataDTO(x)).ToArray() : new ScoredTeamResultRowDataDTO[0];
 
             return target;
         }
