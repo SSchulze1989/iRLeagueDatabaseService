@@ -470,7 +470,13 @@ namespace iRLeagueDatabase.Entities.Results
                         teamResultRow = new ScoredTeamResultRowEntity();
                         scoredTeamResult.TeamResults.Add(teamResultRow);
                     }
+                    teamResultRow.RemoveAllRows();
                     teamGroup.AggregateTeamResults(maxRacesCount: MaxResultsPerGroup, teamResultRow);
+                    if (teamResultRow.ScoredResultRows.Count > 0)
+                    {
+                        teamResultRow.AvgLapTime = teamResultRow.ScoredResultRows.Select(x => x.ResultRow.AvgLapTime).Sum() / teamResultRow.ScoredResultRows.Count();
+                        teamResultRow.FastestLapTime = teamResultRow.ScoredResultRows.Select(x => x.ResultRow.FastestLapTime).Min();
+                    }
                 }
 
                 var scoredTeamResultRows = scoredTeamResult.TeamResults.OrderByDescending(x => x.TotalPoints);

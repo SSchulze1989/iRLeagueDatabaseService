@@ -148,7 +148,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ReviewId" Type="Int64" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="Int64" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <NavigationProperty Name="IncidentReview" Relationship="Self.IncidentReviewEntity_AcceptedReviewVotes" FromRole="IncidentReviewEntity_AcceptedReviewVotes_Target" ToRole="IncidentReviewEntity_AcceptedReviewVotes_Source" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.AcceptedReviewVoteEntity_MemberAtFault" FromRole="AcceptedReviewVoteEntity_MemberAtFault_Source" ToRole="AcceptedReviewVoteEntity_MemberAtFault_Target" />
@@ -164,7 +164,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CommentId" Type="Int64" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="Int64" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.CommentReviewVoteEntity_MemberAtFault" FromRole="CommentReviewVoteEntity_MemberAtFault_Source" ToRole="CommentReviewVoteEntity_MemberAtFault_Target" />
           <NavigationProperty Name="ReviewComment" Relationship="Self.ReviewCommentEntity_CommentReviewVotes" FromRole="ReviewCommentEntity_CommentReviewVotes_Target" ToRole="ReviewCommentEntity_CommentReviewVotes_Source" />
@@ -311,6 +311,8 @@
           <Property Name="FinalPosition" Type="Int32" Nullable="false" />
           <Property Name="FinalPositionChange" Type="Int32" Nullable="false" />
           <Property Name="TotalPoints" Type="Int32" Nullable="false" />
+          <Property Name="AvgLapTime" Type="Int64" Nullable="false" />
+          <Property Name="FastestLapTime" Type="Int64" Nullable="false" />
           <NavigationProperty Name="ScoredResultRows" Relationship="Self.ScoredTeamResultRowEntity_ScoredResultRows" FromRole="ScoredTeamResultRowEntity_ScoredResultRows_Source" ToRole="ScoredTeamResultRowEntity_ScoredResultRows_Target" />
           <NavigationProperty Name="ScoredTeamResult" Relationship="Self.ScoredTeamResultEntity_TeamResults" FromRole="ScoredTeamResultEntity_TeamResults_Target" ToRole="ScoredTeamResultEntity_TeamResults_Source" />
           <NavigationProperty Name="Team" Relationship="Self.ScoredTeamResultRowEntity_Team" FromRole="ScoredTeamResultRowEntity_Team_Source" ToRole="ScoredTeamResultRowEntity_Team_Target" />
@@ -388,9 +390,7 @@
         </Association>
         <Association Name="AcceptedReviewVoteEntity_MemberAtFault">
           <End Role="AcceptedReviewVoteEntity_MemberAtFault_Source" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
-          <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="AcceptedReviewVoteEntity_MemberAtFault_Target">
               <PropertyRef Name="MemberId" />
@@ -416,9 +416,7 @@
         </Association>
         <Association Name="CommentReviewVoteEntity_MemberAtFault">
           <End Role="CommentReviewVoteEntity_MemberAtFault_Source" Type="Self.CommentReviewVoteEntity" Multiplicity="*" />
-          <End Role="CommentReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="CommentReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="CommentReviewVoteEntity_MemberAtFault_Target">
               <PropertyRef Name="MemberId" />
@@ -1197,6 +1195,8 @@
                 <ScalarProperty Name="FinalPosition" ColumnName="FinalPosition" />
                 <ScalarProperty Name="FinalPositionChange" ColumnName="FinalPositionChange" />
                 <ScalarProperty Name="TotalPoints" ColumnName="TotalPoints" />
+                <ScalarProperty Name="AvgLapTime" ColumnName="AvgLapTime" />
+                <ScalarProperty Name="FastestLapTime" ColumnName="FastestLapTime" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1475,7 +1475,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ReviewId" Type="bigint" customannotation:Index="{ Name: IX_ReviewId, Order: 0 }" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="CommentBaseEntity">
@@ -1504,7 +1504,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CommentId" Type="bigint" customannotation:Index="{ Name: IX_CommentId, Order: 0 }" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ResultEntity">
@@ -1613,6 +1613,8 @@
           <Property Name="FinalPosition" Type="int" Nullable="false" />
           <Property Name="FinalPositionChange" Type="int" Nullable="false" />
           <Property Name="TotalPoints" Type="int" Nullable="false" />
+          <Property Name="AvgLapTime" Type="bigint" Nullable="false" />
+          <Property Name="FastestLapTime" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="ScoringTableEntity">
           <Key>
@@ -1678,9 +1680,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="AcceptedReviewVoteEntity_MemberAtFault">
-          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <End Role="AcceptedReviewVoteEntity" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LeagueMemberEntity">
@@ -1706,9 +1706,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="CommentReviewVoteEntity_MemberAtFault">
-          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <End Role="CommentReviewVoteEntity" Type="Self.CommentReviewVoteEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LeagueMemberEntity">

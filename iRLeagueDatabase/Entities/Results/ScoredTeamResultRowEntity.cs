@@ -46,6 +46,8 @@ namespace iRLeagueDatabase.Entities.Results
         public int FinalPosition { get; set; }
         public int FinalPositionChange { get; set; }
         public int TotalPoints { get; set; }
+        public long AvgLapTime { get; set; }
+        public long FastestLapTime { get; set; }
 
         public override void Delete(LeagueDbContext dbContext)
         {
