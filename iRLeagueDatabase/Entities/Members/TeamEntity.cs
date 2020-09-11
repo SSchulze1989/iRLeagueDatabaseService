@@ -22,5 +22,14 @@ namespace iRLeagueDatabase.Entities.Members
         public string Profile { get; set; }
         public string TeamColor { get; set; }
         public string TeamHomepage { get; set; }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            foreach(var member in Members)
+            {
+                member.Team = null;
+            }
+            base.Delete(dbContext);
+        }
     }
 }
