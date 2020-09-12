@@ -474,6 +474,9 @@ namespace iRLeagueDatabase.Entities.Results
                     teamGroup.AggregateTeamResults(maxRacesCount: MaxResultsPerGroup, teamResultRow);
                     if (teamResultRow.ScoredResultRows.Count > 0)
                     {
+                        teamResultRow.Date = scoredResultRows.First().ResultRow.Date;
+                        teamResultRow.ClassId = scoredResultRows.First().ResultRow.ClassId;
+                        teamResultRow.CarClass = scoredResultRows.First().ResultRow.CarClass;
                         teamResultRow.AvgLapTime = teamResultRow.ScoredResultRows.Select(x => x.ResultRow.AvgLapTime).Sum() / teamResultRow.ScoredResultRows.Count();
                         teamResultRow.FastestLapTime = teamResultRow.ScoredResultRows.Select(x => x.ResultRow.FastestLapTime).Min();
                     }
@@ -535,7 +538,7 @@ namespace iRLeagueDatabase.Entities.Results
         }
     }
 
-    public static class ScoredResultExtensions
+    public static partial class ScoredResultExtensions
     {
         public static IEnumerable<StandingsRowEntity> Diff<T>(this IEnumerable<T> source, IEnumerable<T> compare) where T : StandingsRowEntity
         {

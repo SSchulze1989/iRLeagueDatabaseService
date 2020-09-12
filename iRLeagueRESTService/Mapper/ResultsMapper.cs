@@ -310,6 +310,34 @@ namespace iRLeagueDatabase.Mapper
 
             return target;
         }
+
+        public TeamStandingsDataDTO MapToTeamStandingsDTO(TeamStandingsEntity source, TeamStandingsDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new TeamStandingsDataDTO();
+
+            MapToStandingsDataDTO(source, target);
+            target.StandingsRows = source.StandingsRows.Select(x => MapToTeamStandingsRowDTO((TeamStandingsRowEntity)x)).ToArray();
+
+            return target;
+        }
+
+        public TeamStandingsRowDataDTO MapToTeamStandingsRowDTO(TeamStandingsRowEntity source, TeamStandingsRowDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new TeamStandingsRowDataDTO();
+
+            MapToStandingsRowDataDTO(source, target);
+
+            target.TeamId = source.Team.TeamId;
+            target.DriverStandingsRows = source.DriverStandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
+
+            return target;
+        }
     }
 
     public partial class EntityMapper

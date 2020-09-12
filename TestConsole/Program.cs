@@ -35,7 +35,7 @@ namespace TestConsole
 
                 //table.Scorings.AddRange(scoring);
                 //table.ScoringFactors = "1;1";
-                var standings = table.GetSeasonStandings();
+                var standings = table.GetSeasonStandings(context);
 
                 foreach (var row in standings.StandingsRows)
                 {
