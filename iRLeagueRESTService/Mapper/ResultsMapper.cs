@@ -194,6 +194,7 @@ namespace iRLeagueDatabase.Mapper
             target.AverageRaceNr = source.AverageRaceNr;
             target.DropWeeks = source.DropWeeks;
             target.ScoringFactors = source.ScoringFactors;
+            target.ScoringKind = source.ScoringKind;
             target.Scorings = source.Scorings.Select(x => MapToScoringInfoDTO(x)).ToArray();
             target.Season = MapToSeasonInfoDTO(source.Season);
             target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
@@ -494,6 +495,8 @@ namespace iRLeagueDatabase.Mapper
 
             target.DropWeeks = source.DropWeeks;
             target.Name = source.Name;
+            target.ScoringKind = source.ScoringKind;
+            target.AverageRaceNr = source.AverageRaceNr;
             target.ScoringFactors = source.ScoringFactors;
             if (target.Scorings == null)
                 target.Scorings = new List<ScoringEntity>();
