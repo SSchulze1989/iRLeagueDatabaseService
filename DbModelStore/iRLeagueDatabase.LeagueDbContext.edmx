@@ -305,6 +305,9 @@
           <Property Name="ScoredResultId" Type="Int64" Nullable="false" />
           <Property Name="ScoringId" Type="Int64" Nullable="false" />
           <Property Name="TeamId" Type="Int64" Nullable="false" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="ClassId" Type="Int32" Nullable="false" />
+          <Property Name="CarClass" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="RacePoints" Type="Int32" Nullable="false" />
           <Property Name="BonusPoints" Type="Int32" Nullable="false" />
           <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
@@ -1189,6 +1192,9 @@
                 <ScalarProperty Name="ScoredResultId" ColumnName="ScoredResultId" />
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
                 <ScalarProperty Name="TeamId" ColumnName="TeamId" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ClassId" ColumnName="ClassId" />
+                <ScalarProperty Name="CarClass" ColumnName="CarClass" />
                 <ScalarProperty Name="RacePoints" ColumnName="RacePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
                 <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
@@ -1607,6 +1613,9 @@
           <Property Name="ScoredResultId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 0 }" Nullable="false" />
           <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 1 }" Nullable="false" />
           <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="true" />
+          <Property Name="ClassId" Type="int" Nullable="false" />
+          <Property Name="CarClass" Type="nvarchar(max)" Nullable="true" />
           <Property Name="RacePoints" Type="int" Nullable="false" />
           <Property Name="BonusPoints" Type="int" Nullable="false" />
           <Property Name="PenaltyPoints" Type="int" Nullable="false" />
