@@ -192,6 +192,14 @@
     <Compile Include="Migrations\202009090721553_RemoveScoredResultFromTeamResultRow.designer.cs">
       <DependentUpon>202009090721553_RemoveScoredResultFromTeamResultRow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009121138468_AddDropRacesOptionToScoringTable.cs" />
+    <Compile Include="Migrations\202009121138468_AddDropRacesOptionToScoringTable.designer.cs">
+      <DependentUpon>202009121138468_AddDropRacesOptionToScoringTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009122102428_AddExternalScoringSource.cs" />
+    <Compile Include="Migrations\202009122102428_AddExternalScoringSource.designer.cs">
+      <DependentUpon>202009122102428_AddExternalScoringSource.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -318,6 +326,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009090721553_RemoveScoredResultFromTeamResultRow.resx">
       <DependentUpon>202009090721553_RemoveScoredResultFromTeamResultRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009121138468_AddDropRacesOptionToScoringTable.resx">
+      <DependentUpon>202009121138468_AddDropRacesOptionToScoringTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009122102428_AddExternalScoringSource.resx">
+      <DependentUpon>202009122102428_AddExternalScoringSource.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -320,6 +320,7 @@ namespace iRLeagueRESTService.Data
                     .Where(x => x.ScoringTableId == scoringTableId)
                     .Include(x => x.Scorings.Select(y => y.Sessions.Select(z => z.SessionResult)))
                     .Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
+                    .Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                     .FirstOrDefault();
 
                 if (scoringTable != null)

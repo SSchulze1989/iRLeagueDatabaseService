@@ -24,6 +24,7 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual SeasonEntity Season { get; set; }
         public string ScoringFactors { get; set; }
         public DropRacesOption DropRacesOption { get; set; }
+        public int ResultsPerRaceCount { get; set; }
         public virtual List<ScoringEntity> Scorings { get; set; }
         [NotMapped]
         public IEnumerable<SessionBaseEntity> Sessions => Scorings?.SelectMany(x => x.Sessions);
@@ -136,14 +137,14 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 dbContext.Entry(scoredTeamResult).Collection(x => x.TeamResults).Query()
                     .Include(x => x.Team)
-                    .Include(x => x.ScoredResultRows).Load();
+                    .Include(x => x.ScoredResultRows.Select(y => y.ScoredResult)).Load();
             }
 
             var currentResult = currentSession.SessionResult;
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
             dbContext.Entry(currentScoredResult).Collection(x => x.TeamResults).Query()
                 .Include(x => x.Team)
-                .Include(x => x.ScoredResultRows).Load();
+                .Include(x => x.ScoredResultRows.Select(y => y.ScoredResult)).Load();
 
             TeamStandingsEntity teamStandings = new TeamStandingsEntity()
             {
@@ -151,37 +152,118 @@ namespace iRLeagueDatabase.Entities.Results
             };
 
             var previousScoredRows = previousScoredResults.SelectMany(x => x.TeamResults).ToList();
-            var previousStandingsRows = previousScoredRows.AggregateByTeam(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
-            previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
+            IEnumerable<TeamStandingsRowEntity> previousStandingsRows;
+            IEnumerable<TeamStandingsRowEntity> currentStandingsRows;
 
-            allScoredResults = previousScoredResults.ToList();
-            allScoredResults.Add(currentScoredResult);
-            var currentStandingsRows = allScoredResults.SelectMany(x => x.TeamResults).AggregateByTeam(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            if (DropRacesOption == DropRacesOption.PerDriverResults)
+            {
+
+                var allScoredDriverResults = Scorings?.SelectMany(x => x.GetResultsFromSource()).ToList();
+
+                var previousScoredDriverResults = allScoredDriverResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
+
+                var currentDriverResult = currentSession.SessionResult;
+                var currentScoredDriverResult = allScoredDriverResults.SingleOrDefault(x => x.Result.Session == currentSession);
+            
+                var previousScoredDriverRows = previousScoredDriverResults.SelectMany(x => x.FinalResults);
+                previousStandingsRows = previousScoredRows.AggregateByTeam(maxRacesCount, true, DropRacesOption, ResultsPerRaceCount, previousScoredDriverRows)
+                    .OrderBy(x => -x.TotalPoints);
+
+                allScoredDriverResults = previousScoredDriverResults.ToList();
+                allScoredDriverResults.Add(currentScoredDriverResult);
+                allScoredResults = previousScoredResults.ToList();
+                allScoredResults.Add(currentScoredResult);
+
+                var allScoredDriverRows = allScoredDriverResults.SelectMany(x => x.FinalResults);
+                currentStandingsRows = allScoredResults.SelectMany(x => x.TeamResults).AggregateByTeam(maxRacesCount, true, DropRacesOption, ResultsPerRaceCount, allScoredDriverRows)
+                    .OrderBy(x => -x.TotalPoints);
+            }
+            else
+            {
+                previousStandingsRows = previousScoredRows.AggregateByTeam(maxRacesCount, true, DropRacesOption, ResultsPerRaceCount).OrderBy(x => -x.TotalPoints);
+
+                allScoredResults = previousScoredResults.ToList();
+                allScoredResults.Add(currentScoredResult);
+
+                currentStandingsRows = allScoredResults.SelectMany(x => x.TeamResults).AggregateByTeam(maxRacesCount, true, DropRacesOption, ResultsPerRaceCount).OrderBy(x => -x.TotalPoints);
+            }
+
+            previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
             currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
             teamStandings.StandingsRows = currentStandingsRows.Diff(previousStandingsRows).OrderBy(x => -x.TotalPoints).ToList();
+            teamStandings.StandingsRows = currentStandingsRows.OrderBy(x => -x.TotalPoints).Cast<StandingsRowEntity>().ToList();
             teamStandings.StandingsRows.ForEach(x => x.ScoringTable = this);
             //teamStandings.Calculate();
 
             return teamStandings;
         }
+
+        private IEnumerable<ScoredResultRowEntity> GetDroppedRaces(IEnumerable<ScoredResultRowEntity> source, int maxRacesCount = 0, bool canDropPenaltyRace = true)
+        {
+            source = source.OrderBy(x => x.ResultRow.Date).OrderBy(x => -x.TotalPoints);
+
+            if (!canDropPenaltyRace)
+            {
+                source = source.OrderBy(x => !(x.PenaltyPoints != 0));
+            }
+
+            return source.Skip(maxRacesCount);
+        }
     }
 
     public static partial class ScoredResultExtensions
     {
-        public static IEnumerable<TeamStandingsRowEntity> AggregateByTeam<T>(this IEnumerable<T> source, int maxRacesCount = -1, bool canDropPenaltyRace = true) where T : ScoredTeamResultRowEntity
+        public static IEnumerable<TeamStandingsRowEntity> AggregateByTeam<T>(this IEnumerable<T> source, int maxRacesCount = -1, bool canDropPenaltyRace = true, 
+            DropRacesOption dropRacesOption = DropRacesOption.PerTeamResults, int resultsPerRace = 0, IEnumerable<ScoredResultRowEntity> allScoredResultRows = null) where T : ScoredTeamResultRowEntity
         {
             var teamStandingsRows = new List<TeamStandingsRowEntity>();
             var teams = source.Select(x => x.Team).Distinct();
 
             foreach (var team in teams)
             {
-                var teamResultRows = source.Where(x => x.Team == team).OrderBy(x => x.Date).OrderBy(x => -x.TotalPoints).Take(maxRacesCount).ToList();
-                var teamDriverResultRows = teamResultRows.SelectMany(x => x.ScoredResultRows);
+                IEnumerable<T> teamResultRows = source.Where(x => x.Team == team).OrderBy(x => x.Date).OrderBy(x => -x.TotalPoints);
+                if (dropRacesOption == DropRacesOption.PerTeamResults)
+                    teamResultRows = teamResultRows.Take(maxRacesCount);
 
-                var teamDriverStandingsRows = teamDriverResultRows.AggregateByDriver();
+                var teamDriverResultRows = teamResultRows.SelectMany(x => x.ScoredResultRows);
+                if (dropRacesOption == DropRacesOption.PerDriverResults)
+                {
+                    if (allScoredResultRows != null)
+                        teamDriverResultRows = allScoredResultRows.Where(x => team.Members.Contains(x.ResultRow.Member));
+
+                    List<ScoredResultRowEntity> excludeResultRows = new List<ScoredResultRowEntity>();
+                    var drivers= teamDriverResultRows.GroupBy(x => x.ResultRow.Member);
+                    foreach (var driver in drivers)
+                    {
+                        var driverResultRows = driver.OrderBy(x => x.ResultRow.Date).OrderBy(x => -x.ResultRow.Interval).OrderBy(x => -x.TotalPoints);
+
+                        if (!canDropPenaltyRace)
+                        {
+                            driverResultRows = driverResultRows.OrderBy(x => !(x.PenaltyPoints != 0));
+                        }
+
+                        excludeResultRows.AddRange(driverResultRows.Skip(maxRacesCount));
+                        //excludeResultRows.AddRange(driverResultRows.Where(x => x.TotalPoints < 0));
+                    }
+                    teamDriverResultRows = teamDriverResultRows.Except(excludeResultRows);
+
+                    var groupedDriverResultRows = teamDriverResultRows.GroupBy(x => x.ScoredResult);
+                    excludeResultRows = new List<ScoredResultRowEntity>();
+                    
+                    foreach (var result in groupedDriverResultRows)
+                    {
+                        var dropTeamResults = result.OrderBy(x => -x.TotalPoints).Skip(resultsPerRace);
+                        excludeResultRows.AddRange(dropTeamResults);
+                    }
+                    
+                    teamDriverResultRows = teamDriverResultRows.Except(excludeResultRows);
+                }
+
+                var teamDriverStandingsRows = teamDriverResultRows.AggregateByDriver(maxRacesCount: 100);
 
                 var teamStandingsRow = teamDriverResultRows.AggregateTeamDriverResults();
+                teamStandingsRow.DriverStandingsRows = teamDriverStandingsRows.ToList();
                 teamStandingsRows.Add(teamStandingsRow);
             }
 

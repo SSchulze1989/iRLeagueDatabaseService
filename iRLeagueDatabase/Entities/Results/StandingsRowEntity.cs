@@ -48,6 +48,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int Incidents { get; set; }
         public int IncidentsChange { get; set; }
         public int PositionChange { get; set; }
+        public virtual List<ScoredResultRowEntity> CountedResults { get; set; }
 
         public StandingsRowEntity()
         {
@@ -76,6 +77,7 @@ namespace iRLeagueDatabase.Entities.Results
             TotalPoints = 0;
             TotalPointsChange = 0;
             Wins = 0;
+            CountedResults = new List<ScoredResultRowEntity>();
         }
 
         public StandingsRowEntity AddRows(ScoredResultRowEntity resultRow, bool countStats = true,  bool countPoints = true)
@@ -100,7 +102,7 @@ namespace iRLeagueDatabase.Entities.Results
                     this.Top5 += (scoredResultRow.FinalPosition <= 5) ? 1 : 0;
                     this.Top3 += (scoredResultRow.FinalPosition <= 3) ? 1 : 0;
                     this.Wins += (scoredResultRow.FinalPosition == 1) ? 1 : 0;
-                    this.FastestLaps += (scoredResultRow.ScoredResult.FastestLapDriver.MemberId == this.Member.MemberId) ? 1 : 0;
+                    this.FastestLaps += (scoredResultRow.ScoredResult?.FastestLapDriver.MemberId == this.Member.MemberId) ? 1 : 0;
                     this.Races += 1;
                 }
                 if (countPoints)
@@ -108,6 +110,7 @@ namespace iRLeagueDatabase.Entities.Results
                     this.RacePoints += scoredResultRow.RacePoints+scoredResultRow.BonusPoints;
                     this.TotalPoints = RacePoints - PenaltyPoints;
                     this.RacesCounted += 1;
+                    this.CountedResults.Add(scoredResultRow);
                 }
             }
 
@@ -157,7 +160,8 @@ namespace iRLeagueDatabase.Entities.Results
                 TotalPoints = source.TotalPoints,
                 TotalPointsChange = source.TotalPoints - compare.TotalPoints,
                 Wins = source.Wins,
-                WinsChange = source.Wins - compare.Wins
+                WinsChange = source.Wins - compare.Wins,
+                CountedResults = source.CountedResults
             };
 
             return standingsRow;

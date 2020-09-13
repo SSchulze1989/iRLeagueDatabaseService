@@ -28,6 +28,11 @@ namespace iRLeagueDatabase.Entities.Results
         public int AverageRaceNr { get; set; }
         public int MaxResultsPerGroup { get; set; }
         public bool TakeGroupAverage { get; set; }
+
+        [ForeignKey(nameof(ExtScoringSource))]
+        public long? ExtScoringSourceId { get; set; }
+        public virtual ScoringEntity ExtScoringSource { get; set; }
+        public bool TakeResultsFromExtSource { get; set; }
         //public bool IsMultiScoring { get; set; }
 
         public List<SessionBaseEntity> sessions;
@@ -348,105 +353,114 @@ namespace iRLeagueDatabase.Entities.Results
 
             //dbContext.SaveChanges();
 
-            var scoredResultRows = scoredResult.FinalResults;
-            var resultRows = session.SessionResult.RawResults;
-
-            IDictionary<int, int> basePoints = new Dictionary<int, int>();
-            if (BasePoints != "" && BasePoints != null)
-                basePoints = BasePoints.Split(' ').Select((x, i) => new { Item = int.Parse(x), Index = i }).ToDictionary(x => x.Index + 1, x => x.Item);
-            IDictionary<int, int> bonusPoints = new Dictionary<int, int>();
-            if (BonusPoints != "" && BonusPoints != null)
-                bonusPoints = BonusPoints.Split(' ').Select(x => new { Item = int.Parse(x.Split(':').Last()), Index = int.Parse(x.Split(':').First().TrimStart(new char[] { 'p' })) }).ToDictionary(x => x.Index, x => x.Item);
-
-            foreach (var resultRow in resultRows)
+            List<ScoredResultRowEntity> scoredResultRows = scoredResult.FinalResults;
+            if (TakeResultsFromExtSource && ExtScoringSource != null)
             {
-                ScoredResultRowEntity scoredResultRow;
-                if (scoredResultRows.Exists(x => x.ResultRowId == resultRow.ResultRowId)) 
-                {
-                    scoredResultRow = scoredResultRows.Single(x => x.ResultRowId == resultRow.ResultRowId);
-                }
-                else 
-                {
-                    scoredResultRow = new ScoredResultRowEntity()
-                    {
-                        ResultRow = resultRow,
-                        ReviewPenalties = new List<ReviewPenaltyEntity>()
-                        //Scoring = this,
-                    };
-                    scoredResultRows.Add(scoredResultRow);
-                }
+                var extScoredResult = ExtScoringSource.ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
+                if (extScoredResult != null)
+                    scoredResultRows = extScoredResult.FinalResults;
+            }
+            else
+            {
+                var resultRows = session.SessionResult.RawResults;
 
-                var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
-                if (scoredResultRow.ReviewPenalties != null)
+                IDictionary<int, int> basePoints = new Dictionary<int, int>();
+                if (BasePoints != "" && BasePoints != null)
+                    basePoints = BasePoints.Split(' ').Select((x, i) => new { Item = int.Parse(x), Index = i }).ToDictionary(x => x.Index + 1, x => x.Item);
+                IDictionary<int, int> bonusPoints = new Dictionary<int, int>();
+                if (BonusPoints != "" && BonusPoints != null)
+                    bonusPoints = BonusPoints.Split(' ').Select(x => new { Item = int.Parse(x.Split(':').Last()), Index = int.Parse(x.Split(':').First().TrimStart(new char[] { 'p' })) }).ToDictionary(x => x.Index, x => x.Item);
+
+                foreach (var resultRow in resultRows)
                 {
-                    var removePenalty = scoredResultRow.ReviewPenalties.ToList();
-                    foreach (var reviewVote in scoredResultRowReviewVotes)
+                    ScoredResultRowEntity scoredResultRow;
+                    if (scoredResultRows.Exists(x => x.ResultRowId == resultRow.ResultRowId))
                     {
-                        var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.ReviewId == reviewVote.ReviewId);
-                        if (reviewPenalty == null)
-                        {
-                            reviewPenalty = new ReviewPenaltyEntity()
-                            {
-                                Review = reviewVote.IncidentReview,
-                                ScoredResultRow = scoredResultRow
-                            };
-                            scoredResultRow.ReviewPenalties.Add(reviewPenalty);
-                        }
-                        else
-                        {
-                            removePenalty.Remove(reviewPenalty);
-                        }
-                        reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote.Vote);
+                        scoredResultRow = scoredResultRows.Single(x => x.ResultRowId == resultRow.ResultRowId);
                     }
-                    removePenalty.ForEach(x => x.Delete(dbContext));
-                    //dbContext.SaveChanges();
+                    else
+                    {
+                        scoredResultRow = new ScoredResultRowEntity()
+                        {
+                            ResultRow = resultRow,
+                            ReviewPenalties = new List<ReviewPenaltyEntity>()
+                            //Scoring = this,
+                        };
+                        scoredResultRows.Add(scoredResultRow);
+                    }
+
+                    var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
+                    if (scoredResultRow.ReviewPenalties != null)
+                    {
+                        var removePenalty = scoredResultRow.ReviewPenalties.ToList();
+                        foreach (var reviewVote in scoredResultRowReviewVotes)
+                        {
+                            var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.ReviewId == reviewVote.ReviewId);
+                            if (reviewPenalty == null)
+                            {
+                                reviewPenalty = new ReviewPenaltyEntity()
+                                {
+                                    Review = reviewVote.IncidentReview,
+                                    ScoredResultRow = scoredResultRow
+                                };
+                                scoredResultRow.ReviewPenalties.Add(reviewPenalty);
+                            }
+                            else
+                            {
+                                removePenalty.Remove(reviewPenalty);
+                            }
+                            reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote.Vote);
+                        }
+                        removePenalty.ForEach(x => x.Delete(dbContext));
+                        //dbContext.SaveChanges();
+                    }
+
+                    scoredResultRow.RacePoints = basePoints.ContainsKey(resultRow.FinishPosition) ? basePoints[resultRow.FinishPosition] : 0;
+                    scoredResultRow.BonusPoints = bonusPoints.ContainsKey(resultRow.FinishPosition) ? bonusPoints[resultRow.FinishPosition] : 0;
+                    scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
+                    scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 
-                scoredResultRow.RacePoints = basePoints.ContainsKey(resultRow.FinishPosition) ? basePoints[resultRow.FinishPosition] : 0;
-                scoredResultRow.BonusPoints = bonusPoints.ContainsKey(resultRow.FinishPosition) ? bonusPoints[resultRow.FinishPosition] : 0;
-                scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
-                scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
-            }
+                //var droppedRows = scoredResultRows.Where(x => x.ResultRow.CompletedLaps == 0).ToList();
+                //scoredResultRows = scoredResultRows.Except(droppedRows).ToList();
+                //dbContext.Set<ScoredResultRowEntity>().RemoveRange(droppedRows.Where(x => dbContext.Entry(x).State != System.Data.Entity.EntityState.Detached));
 
-            //var droppedRows = scoredResultRows.Where(x => x.ResultRow.CompletedLaps == 0).ToList();
-            //scoredResultRows = scoredResultRows.Except(droppedRows).ToList();
-            //dbContext.Set<ScoredResultRowEntity>().RemoveRange(droppedRows.Where(x => dbContext.Entry(x).State != System.Data.Entity.EntityState.Detached));
-
-            scoredResultRows = scoredResultRows.OrderBy(x => x.PenaltyPoints).OrderBy(x => -x.TotalPoints).ToList();
-            //scoredResultRows.Select((x, i) => new { Item = x, Index = i }).ToList().ForEach(x =>
-            //{
-            //    x.Item.FinalPosition = x.Index + 1;
-            //    x.Item.FinalPositionChange = x.Item.ResultRow.StartPosition - x.Item.FinalPosition;
-            //});
-            ScoredResultRowEntity previousRow = null;
-            for(int i = 0; i < scoredResultRows.Count(); i++)
-            {
-                var row = scoredResultRows.ElementAt(i);
-                if (previousRow != null && row.TotalPoints == previousRow.TotalPoints && row.PenaltyPoints == previousRow.PenaltyPoints)
+                scoredResultRows = scoredResultRows.OrderBy(x => x.PenaltyPoints).OrderBy(x => -x.TotalPoints).ToList();
+                //scoredResultRows.Select((x, i) => new { Item = x, Index = i }).ToList().ForEach(x =>
+                //{
+                //    x.Item.FinalPosition = x.Index + 1;
+                //    x.Item.FinalPositionChange = x.Item.ResultRow.StartPosition - x.Item.FinalPosition;
+                //});
+                ScoredResultRowEntity previousRow = null;
+                for (int i = 0; i < scoredResultRows.Count(); i++)
                 {
-                    row.FinalPosition = previousRow.FinalPosition;
+                    var row = scoredResultRows.ElementAt(i);
+                    if (previousRow != null && row.TotalPoints == previousRow.TotalPoints && row.PenaltyPoints == previousRow.PenaltyPoints)
+                    {
+                        row.FinalPosition = previousRow.FinalPosition;
+                    }
+                    else
+                    {
+                        row.FinalPosition = i + 1;
+                    }
+                    row.FinalPositionChange = row.ResultRow.StartPosition - row.FinalPosition;
+                    previousRow = row;
                 }
-                else
-                {
-                    row.FinalPosition = i + 1;
-                }
-                row.FinalPositionChange = row.ResultRow.StartPosition - row.FinalPosition;
-                previousRow = row;
+
+                var fastestLapRow = scoredResultRows.MinBy(x => x.ResultRow.FastestLapTime);
+                scoredResult.FastestLap = fastestLapRow.ResultRow.FastestLapTime;
+                scoredResult.FastestLapDriver = fastestLapRow.ResultRow.Member;
+
+                var fastestAvgLapRow = scoredResultRows.MinBy(x => x.ResultRow.AvgLapTime);
+                scoredResult.FastestAvgLap = fastestAvgLapRow.ResultRow.AvgLapTime;
+                scoredResult.FastestAvgLapDriver = fastestAvgLapRow.ResultRow.Member;
+
+                var fastestQualyLapRow = scoredResultRows.MinBy(x => x.ResultRow.QualifyingTime);
+                scoredResult.FastestQualyLap = fastestQualyLapRow.ResultRow.QualifyingTime;
+                scoredResult.FastestQualyLapDriver = fastestQualyLapRow.ResultRow.Member;
+
+                dbContext.SaveChanges();
             }
-
-            var fastestLapRow = scoredResultRows.MinBy(x => x.ResultRow.FastestLapTime);
-            scoredResult.FastestLap = fastestLapRow.ResultRow.FastestLapTime;
-            scoredResult.FastestLapDriver = fastestLapRow.ResultRow.Member;
-
-            var fastestAvgLapRow = scoredResultRows.MinBy(x => x.ResultRow.AvgLapTime);
-            scoredResult.FastestAvgLap = fastestAvgLapRow.ResultRow.AvgLapTime;
-            scoredResult.FastestAvgLapDriver = fastestAvgLapRow.ResultRow.Member;
-
-            var fastestQualyLapRow = scoredResultRows.MinBy(x => x.ResultRow.QualifyingTime);
-            scoredResult.FastestQualyLap = fastestQualyLapRow.ResultRow.QualifyingTime;
-            scoredResult.FastestQualyLapDriver = fastestQualyLapRow.ResultRow.Member;
-
-            dbContext.SaveChanges();
 
             if (ScoringKind == ScoringKindEnum.Team)
             {
@@ -491,6 +505,14 @@ namespace iRLeagueDatabase.Entities.Results
 
             //return scoredResultRows;
             return scoredResult;
+        }
+
+        public IEnumerable<ScoredResultEntity> GetResultsFromSource()
+        {
+            if (TakeResultsFromExtSource && ExtScoringSource != null)
+                return ExtScoringSource.ScoredResults;
+            else
+                return ScoredResults;
         }
 
         private int GetReviewPenaltyPoints(VoteEnum vote)
@@ -561,6 +583,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             return resultList;
         }
+
         public static StandingsRowEntity AggregateResults<T>(this IEnumerable<T> source, int maxRacesCount = 0, bool canDropPenaltyRace = true) where T : ScoredResultRowEntity
         {
             source = source.OrderBy(x => x.ResultRow.Date).OrderBy(x => -x.TotalPoints);
