@@ -11,6 +11,8 @@ using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
+using System.Security.Principal;
+using System.Net;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -19,8 +21,11 @@ namespace iRLeagueRESTService.Controllers
     {
         [HttpGet]
         [ActionName("Get")]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetModel(string requestId, string requestType, string leagueName)
         {
+            CheckLeagueRole(User, leagueName);
+
             if (requestId == null || requestType == null || leagueName == null)
             {
                 return BadRequest("Parameter requestType or leagueName can not be null!");
@@ -46,6 +51,8 @@ namespace iRLeagueRESTService.Controllers
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
+            CheckLeagueRole(User, leagueName);
+
             if (requestType == null || leagueName == null)
             {
                 return BadRequest("Parameter requestType or leagueName can not be null!");
@@ -118,6 +125,8 @@ namespace iRLeagueRESTService.Controllers
         [ActionName("PostArray")]
         public IHttpActionResult PostModels([FromBody] MappableDTO[] data, string requestType, string leagueName)
         {
+            CheckLeagueRole(User, leagueName);
+
             if (leagueName == null)
             {
                 return BadRequest("Parameter leagueName can not be null");
@@ -200,6 +209,8 @@ namespace iRLeagueRESTService.Controllers
         [ActionName("PutArray")]
         public IHttpActionResult PutModels([FromBody] MappableDTO[] data, [FromUri] string requestType, [FromUri] string leagueName)
         {
+            CheckLeagueRole(User, leagueName);
+
             if (leagueName == null)
             {
                 return BadRequest("Parameter leagueName can not be null");
@@ -269,6 +280,8 @@ namespace iRLeagueRESTService.Controllers
         [ActionName("DeleteArray")]
         public IHttpActionResult DeleteModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
+            CheckLeagueRole(User, leagueName);
+
             if (requestIds == null || requestType == null || leagueName == null)
             {
                 return BadRequest("Parameters can not be null!");
@@ -358,6 +371,14 @@ namespace iRLeagueRESTService.Controllers
             }
             
             return idList.ToArray();
+        }
+
+        private void CheckLeagueRole(IPrincipal principal, string leagueName)
+        {
+            if (principal.IsInRole($"{leagueName}_User") || principal.IsInRole("Administrator"))
+                return;
+            
+            throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
     }
 }
