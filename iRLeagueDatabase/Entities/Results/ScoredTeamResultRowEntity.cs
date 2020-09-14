@@ -34,6 +34,9 @@ namespace iRLeagueDatabase.Entities.Results
         public long TeamId { get; set; }
         [Required]
         public virtual TeamEntity Team { get; set; }
+        public DateTime? Date { get; set; }
+        public int ClassId { get; set; }
+        public string CarClass { get; set; }
         public int RacePoints { get; set; }
         public int BonusPoints { get; set; }
         //public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }

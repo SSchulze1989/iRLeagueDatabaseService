@@ -320,71 +320,20 @@ namespace iRLeagueRESTService.Data
                     .Where(x => x.ScoringTableId == scoringTableId)
                     .Include(x => x.Scorings.Select(y => y.Sessions.Select(z => z.SessionResult)))
                     .Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
+                    .Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                     .FirstOrDefault();
 
                 if (scoringTable != null)
                 {
                     StandingsEntity standings;
                     if (sessionId == 0)
-                        standings = scoringTable.GetSeasonStandings();
+                        standings = scoringTable.GetSeasonStandings(DbContext);
                     else
-                        standings = scoringTable.GetSeasonStandings(scoringTable.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId));
+                        standings = scoringTable.GetSeasonStandings(scoringTable.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId), DbContext);
                     var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
                     standingsDTO.SessionId = sessionId;
                     responseItems.Add(standingsDTO);
                 }
-
-                //var scoringId = requestId[0];
-                //var sessionId = requestId.Count() > 1 ? requestId[1] : 0;
-                ////var scoring = dbContext.Set<ScoringEntity>()
-                ////    .Include(x => x.Sessions)
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.Sessions))
-                ////    .SingleOrDefault(x => x.ScoringId == itemId);
-                ////var scoredResults = dbContext.Set<ScoredResultEntity>().Where(x => x.ScoringId == scoring.ScoringId || scoring.MultiScoringResults.Any(y => y.ScoringId == x.ScoringId));
-                ////var scoredResultRows = dbContext.Set<ScoredResultRowEntity>().Where(x => scoredResults.Any(y => x.ScoredResultId == y.ResultId && y.ScoringId == y.ScoringId));
-                ////var results = dbContext.Set<ResultEntity>().Where(x => scoredResults.Any(y => y.ResultId == x.ResultId));
-                ////var resultRows = dbContext.Set<ResultRowEntity>().Where(x => results.Any(y => y.ResultId == x.ResultId));
-                //////var sessions = dbContext.Set<SessionBaseEntity>().Where(x => results.Any(y => y.ResultId == x.SessionId));
-                ////dbContext.Set<LeagueMemberEntity>().Where(x => resultRows.Any(y => y.MemberId == x.MemberId));
-                //var scoring = DbContext.Set<ScoringEntity>()
-                //    .Where(x => x.ScoringId == scoringId)
-                //    .Include(x => x.Sessions.Select(y => y.SessionResult))
-                //    .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
-                //    .Include(x => x.MultiScoringResults.Select(y => y.Sessions.Select(z => z.SessionResult)))
-                //    //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
-                //    .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
-                //    //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.AddPenalty))))
-                //    .FirstOrDefault(x => x.ScoringId == scoringId);
-
-                ////var test = ((System.Data.Entity.Infrastructure.DbQuery<ScoringEntity>)DbContext.Set<ScoringEntity>()
-                ////    .Include(x => x.Sessions.Select(y => y.SessionResult))
-                ////    .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.Sessions.Select(z => z.SessionResult)))
-                ////    //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.AddPenalty))))).Sql;
-
-                ////test = ((System.Data.Entity.Infrastructure.DbQuery<ScoringEntity>)DbContext.Set<ScoringEntity>()
-                ////    .Where(x => x.ScoringId == scoringId)
-                ////    .Include(x => x.Sessions.Select(y => y.SessionResult))
-                ////    .Include(x => x.ScoredResults.Select(y => y.FinalResults.Select(z => z.ResultRow.Member)))
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.Sessions.Select(z => z.SessionResult)))
-                ////    //.Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Result.Session.Schedule.Season))))
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.ResultRow.Member))))
-                ////    .Include(x => x.MultiScoringResults.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(n => n.AddPenalty))))).Sql;
-
-
-                //if (scoring != null)
-                //{
-                //    StandingsEntity standings;
-                //    if (sessionId == 0)
-                //        standings = scoring.GetSeasonStandings();
-                //    else
-                //        standings = scoring.GetSeasonStandings(scoring.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId));
-                //    var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
-                //    standingsDTO.SessionId = sessionId;
-                //    responseItems.Add(standingsDTO);
-                //}
             }
             DbContext.Configuration.LazyLoadingEnabled = true;
 
