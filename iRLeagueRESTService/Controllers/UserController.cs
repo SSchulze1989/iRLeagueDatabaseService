@@ -125,6 +125,7 @@ namespace iRLeagueRESTService.Controllers
                     {
                         user = userManager.Find(userName, password);
                         userManager.AddToRole(user.Id, "User");
+                        userManager.AddToRole(user.Id, "TestDatabase_User");
 
                         if (userDto != null)
                         {
