@@ -32,7 +32,10 @@ namespace iRLeagueDatabase
 
         public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString("TestDatabase_leagueDb"))
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
+            if (createDb)
+                Database.SetInitializer(new CreateDatabaseIfNotExists<LeagueDbContext>());
+            else
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
 
             OrphansToHandle = new OrphansToHandle();
             OrphansToHandle.Add<ScheduleEntity, SeasonEntity>(x => x.Season);
