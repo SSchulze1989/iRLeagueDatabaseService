@@ -10,8 +10,6 @@
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            AutomaticMigrationDataLossAllowed = true;
-            ContextKey = "iRLeagueDatabase.LeagueDbContext";
         }
 
         protected override void Seed(iRLeagueDatabase.LeagueDbContext context)

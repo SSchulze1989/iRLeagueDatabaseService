@@ -26,13 +26,17 @@ namespace iRLeagueDatabase
 
         private static bool AllowMultipleResultSets = true;
 
-        public LeagueDbContext() : this($"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets};")
+        public LeagueDbContext() : this(GetConnectionString("TestDatabase_leagueDb"))
         {
         }
 
-        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? $"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog={dbName}; Integrated Security = True; Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets};" : $"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets};")
+        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString("TestDatabase_leagueDb"))
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
+            if (createDb)
+                Database.SetInitializer(new CreateDatabaseIfNotExists<LeagueDbContext>());
+            else
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
+
             OrphansToHandle = new OrphansToHandle();
             OrphansToHandle.Add<ScheduleEntity, SeasonEntity>(x => x.Season);
             OrphansToHandle.Add<SessionBaseEntity, ScheduleEntity>(x => x.Schedule);
@@ -44,6 +48,12 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultEntity, ScoringEntity>(x => x.Scoring);
             OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
+        }
+
+        private static string GetConnectionString(string dbName)
+        {
+            return $"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog={dbName}; Integrated Security = True; " +
+                   $"Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets}; Connect Timeout=30;";
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

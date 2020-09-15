@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using System.Threading.Tasks;
 
 using iRLeagueDatabase;
 using iRLeagueDatabase.Entities;
@@ -14,6 +15,9 @@ namespace iRLeagueRESTService.Data
     public class LeagueActionProvider : ILeagueActionProvider, IDisposable
     {
         private LeagueDbContext DbContext { get; }
+
+        public string UserName { get; set; }
+        public string UserId { get; set; }
 
         public LeagueActionProvider(LeagueDbContext context)
         {
