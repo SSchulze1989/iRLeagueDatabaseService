@@ -63,12 +63,17 @@ namespace iRLeagueRESTService.Controllers
                 sessionIdValues.Add(sessionIdValue);
             }
 
-            using (ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(new LeagueDbContext(leagueName)))
+            using (ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(new LeagueDbContext(GetDatabaseNameFromLeagueName(leagueName))))
             {
                 leagueActionProvider.CalculateScoredResultArray(sessionIdValues.ToArray());
             }
 
             return Ok();
+        }
+
+        private string GetDatabaseNameFromLeagueName(string leagueName)
+        {
+            return $"{leagueName}_leagueDb";
         }
 
         private void CheckLeagueRole(IPrincipal principal, string leagueName)

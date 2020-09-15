@@ -322,7 +322,7 @@ namespace iRLeagueRESTService.Controllers
 
         private string GetDatabaseNameFromLeagueName(string leagueName)
         {
-            return leagueName;
+            return $"{leagueName}_leagueDb";
         }
 
         private Type GetRequestType(string requestTypeString)

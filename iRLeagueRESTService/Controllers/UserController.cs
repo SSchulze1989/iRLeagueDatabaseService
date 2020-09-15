@@ -67,43 +67,6 @@ namespace iRLeagueRESTService.Controllers
             return BadRequest("Authentication failed");
         }
 
-        //[HttpGet]
-        //[ActionName("ListAll")]
-        //[Route("User/ListAll")]
-        //[IdentityBasicAuthentication]
-        //[Authorize(Roles = LeagueRoles.Admin)]
-        //public IHttpActionResult ListAllUsers()
-        //{
-        //    List<UserProfileDTO> users = new List<UserProfileDTO>();
-
-        //    using ( var client = new UsersDbContext())
-        //    {
-        //        var aspNetUsers = client.Users.ToList();
-        //        var userProfiles = client.UserProfiles.ToList();
-
-        //        foreach(var aspNetUser in aspNetUsers)
-        //        {
-        //            var user = new UserProfileDTO()
-        //            {
-        //                UserId = aspNetUser.Id,
-        //                UserName = aspNetUser.UserName,
-        //                Email = aspNetUser.Email
-        //            };
-
-        //            var userProfile = userProfiles.SingleOrDefault(x => x.Id == aspNetUser.Id);
-        //            if (userProfile != null)
-        //            {
-        //                user.Firstname = userProfile.Firstname;
-        //                user.Lastname = userProfile.Lastname;
-        //                user.ProfileText = userProfile.ProfileText;
-        //            }
-        //            users.Add(user);
-        //        }
-        //    }
-
-        //    return Ok(users);
-        //}
-
         [HttpPost]
         [ActionName("CreateUser")]
         [IdentityBasicAuthentication]
