@@ -174,10 +174,10 @@ namespace iRLeagueDatabase.Mapper
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             if (target.Schedules == null)
                 target.Schedules = new List<Entities.Sessions.ScheduleEntity>();
-            MapCollection(source.Schedules, target.Schedules, GetScheduleEntity, x => x.MappingId);
+            MapCollection(source.Schedules, target.Schedules, GetScheduleEntity, x => x.MappingId, autoAddMissing: true);
             if (target.Scorings == null)
                 target.Scorings = new List<Entities.Results.ScoringEntity>();
-            MapCollection(source.Scorings, target.Scorings, MapToScoringEntity, x => x.ScoringId);
+            MapCollection(source.Scorings, target.Scorings, MapToScoringEntity, x => x.ScoringId, autoAddMissing: true);
             if (target.ScoringTables == null)
                 target.ScoringTables = new List<Entities.Results.ScoringTableEntity>();
             MapCollection(source.ScoringTables, target.ScoringTables, MapToScoringTableEntity, x => x.ScoringTableId, autoAddMissing: true);
