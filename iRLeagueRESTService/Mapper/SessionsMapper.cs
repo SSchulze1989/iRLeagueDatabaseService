@@ -273,7 +273,7 @@ namespace iRLeagueDatabase.Mapper
                     return MapToRaceSessionEntity(raceSession, trg as RaceSessionEntity);
 
                 return MapToSessionBaseEntity(src, trg);
-            }, x => x.SessionId);
+            }, x => x.SessionId, autoAddMissing: true);
 
             return target;
         }
