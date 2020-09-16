@@ -27,7 +27,7 @@ namespace iRLeagueRESTService
             }
             using (var context = new iRLeagueDatabase.LeagueDbContext())
             {
-                var season = context.Seasons.First();
+                var season = context.Seasons.FirstOrDefault();
             }
         }
     }

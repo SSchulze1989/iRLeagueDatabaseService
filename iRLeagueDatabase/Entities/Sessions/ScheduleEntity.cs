@@ -30,7 +30,8 @@ namespace iRLeagueDatabase.Entities.Sessions
         //[InverseProperty(nameof(SessionBaseEntity.Schedule))]
         public virtual List<SessionBaseEntity> Sessions { get; set; } = new List<SessionBaseEntity>();
 
-        public virtual ScoringEntity ConnectedScoring { get; set; }
+        public virtual List<ScoringEntity> ConnectedScorings { get; set; }
+        //public virtual ScoringEntity ConnectedScoring { get; set; }
 
         public ScheduleEntity() { }
 

@@ -13,6 +13,26 @@
           <Property Name="IRacingId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DanLisaId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DiscordId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TeamId" Type="Int64" />
+          <NavigationProperty Name="Team" Relationship="Self.TeamEntity_Members" FromRole="TeamEntity_Members_Target" ToRole="TeamEntity_Members_Source" />
+        </EntityType>
+        <EntityType Name="TeamEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Members.TeamEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="TeamId" />
+          </Key>
+          <Property Name="TeamId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Profile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TeamColor" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TeamHomepage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTime" />
+          <Property Name="LastModifiedOn" Type="DateTime" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Members" Relationship="Self.TeamEntity_Members" FromRole="TeamEntity_Members_Source" ToRole="TeamEntity_Members_Target" />
         </EntityType>
         <EntityType Name="SeasonEntity" customannotation:ClrType="iRLeagueDatabase.Entities.SeasonEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
@@ -30,20 +50,24 @@
           <NavigationProperty Name="MainScoring" Relationship="Self.SeasonEntity_MainScoring" FromRole="SeasonEntity_MainScoring_Source" ToRole="SeasonEntity_MainScoring_Target" />
           <NavigationProperty Name="Schedules" Relationship="Self.SeasonEntity_Schedules" FromRole="SeasonEntity_Schedules_Source" ToRole="SeasonEntity_Schedules_Target" />
           <NavigationProperty Name="Scorings" Relationship="Self.ScoringEntity_Season" FromRole="ScoringEntity_Season_Target" ToRole="ScoringEntity_Season_Source" />
+          <NavigationProperty Name="ScoringTables" Relationship="Self.ScoringTableEntity_Season" FromRole="ScoringTableEntity_Season_Target" ToRole="ScoringTableEntity_Season_Source" />
         </EntityType>
         <EntityType Name="ScoringEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ScoringEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
             <PropertyRef Name="ScoringId" />
           </Key>
           <Property Name="ScoringId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScoringKind" Type="Self.ScoringKindEnum" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropWeeks" Type="Int32" Nullable="false" />
           <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
-          <Property Name="IsMultiScoring" Type="Boolean" Nullable="false" />
+          <Property Name="MaxResultsPerGroup" Type="Int32" Nullable="false" />
+          <Property Name="TakeGroupAverage" Type="Boolean" Nullable="false" />
+          <Property Name="ExtScoringSourceId" Type="Int64" />
+          <Property Name="TakeResultsFromExtSource" Type="Boolean" Nullable="false" />
           <Property Name="BasePoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BonusPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IncPenaltyPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="MultiScoringFactors" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -52,7 +76,7 @@
           <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ConnectedSchedule" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Source" ToRole="ScoringEntity_ConnectedSchedule_Target" />
-          <NavigationProperty Name="MultiScoringResults" Relationship="Self.ScoringEntity_MultiScoringResults" FromRole="ScoringEntity_MultiScoringResults_Source" ToRole="ScoringEntity_MultiScoringResults_Target" />
+          <NavigationProperty Name="ExtScoringSource" Relationship="Self.ScoringEntity_ExtScoringSource" FromRole="ScoringEntity_ExtScoringSource_Source" ToRole="ScoringEntity_ExtScoringSource_Target" />
           <NavigationProperty Name="ScoredResults" Relationship="Self.ScoringEntity_ScoredResults" FromRole="ScoringEntity_ScoredResults_Source" ToRole="ScoringEntity_ScoredResults_Target" />
           <NavigationProperty Name="Season" Relationship="Self.ScoringEntity_Season" FromRole="ScoringEntity_Season_Source" ToRole="ScoringEntity_Season_Target" />
           <NavigationProperty Name="Sessions" Relationship="Self.ScoringEntity_Sessions" FromRole="ScoringEntity_Sessions_Source" ToRole="ScoringEntity_Sessions_Target" />
@@ -70,7 +94,7 @@
           <Property Name="CreatedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="ConnectedScoring" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Target" ToRole="ScoringEntity_ConnectedSchedule_Source" />
+          <NavigationProperty Name="ConnectedScorings" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Target" ToRole="ScoringEntity_ConnectedSchedule_Source" />
           <NavigationProperty Name="Season" Relationship="Self.SeasonEntity_Schedules" FromRole="SeasonEntity_Schedules_Target" ToRole="SeasonEntity_Schedules_Source" />
           <NavigationProperty Name="Sessions" Relationship="Self.SessionBaseEntity_Schedule" FromRole="SessionBaseEntity_Schedule_Target" ToRole="SessionBaseEntity_Schedule_Source" />
         </EntityType>
@@ -127,7 +151,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ReviewId" Type="Int64" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="Int64" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <NavigationProperty Name="IncidentReview" Relationship="Self.IncidentReviewEntity_AcceptedReviewVotes" FromRole="IncidentReviewEntity_AcceptedReviewVotes_Target" ToRole="IncidentReviewEntity_AcceptedReviewVotes_Source" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.AcceptedReviewVoteEntity_MemberAtFault" FromRole="AcceptedReviewVoteEntity_MemberAtFault_Source" ToRole="AcceptedReviewVoteEntity_MemberAtFault_Target" />
@@ -143,7 +167,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CommentId" Type="Int64" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="Int64" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.CommentReviewVoteEntity_MemberAtFault" FromRole="CommentReviewVoteEntity_MemberAtFault_Source" ToRole="CommentReviewVoteEntity_MemberAtFault_Target" />
           <NavigationProperty Name="ReviewComment" Relationship="Self.ReviewCommentEntity_CommentReviewVotes" FromRole="ReviewCommentEntity_CommentReviewVotes_Target" ToRole="ReviewCommentEntity_CommentReviewVotes_Source" />
@@ -273,6 +297,32 @@
           <NavigationProperty Name="Result" Relationship="Self.ResultEntity_ScoredResults" FromRole="ResultEntity_ScoredResults_Target" ToRole="ResultEntity_ScoredResults_Source" />
           <NavigationProperty Name="Scoring" Relationship="Self.ScoringEntity_ScoredResults" FromRole="ScoringEntity_ScoredResults_Target" ToRole="ScoringEntity_ScoredResults_Source" />
         </EntityType>
+        <EntityType Name="ScoredTeamResultEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ScoredTeamResultEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.ScoredResultEntity">
+          <NavigationProperty Name="TeamResults" Relationship="Self.ScoredTeamResultEntity_TeamResults" FromRole="ScoredTeamResultEntity_TeamResults_Source" ToRole="ScoredTeamResultEntity_TeamResults_Target" />
+        </EntityType>
+        <EntityType Name="ScoredTeamResultRowEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ScoredTeamResultRowEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="ScoredResultRowId" />
+          </Key>
+          <Property Name="ScoredResultRowId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScoredResultId" Type="Int64" Nullable="false" />
+          <Property Name="ScoringId" Type="Int64" Nullable="false" />
+          <Property Name="TeamId" Type="Int64" Nullable="false" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="ClassId" Type="Int32" Nullable="false" />
+          <Property Name="CarClass" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RacePoints" Type="Int32" Nullable="false" />
+          <Property Name="BonusPoints" Type="Int32" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <Property Name="FinalPosition" Type="Int32" Nullable="false" />
+          <Property Name="FinalPositionChange" Type="Int32" Nullable="false" />
+          <Property Name="TotalPoints" Type="Int32" Nullable="false" />
+          <Property Name="AvgLapTime" Type="Int64" Nullable="false" />
+          <Property Name="FastestLapTime" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="ScoredResultRows" Relationship="Self.ScoredTeamResultRowEntity_ScoredResultRows" FromRole="ScoredTeamResultRowEntity_ScoredResultRows_Source" ToRole="ScoredTeamResultRowEntity_ScoredResultRows_Target" />
+          <NavigationProperty Name="ScoredTeamResult" Relationship="Self.ScoredTeamResultEntity_TeamResults" FromRole="ScoredTeamResultEntity_TeamResults_Target" ToRole="ScoredTeamResultEntity_TeamResults_Source" />
+          <NavigationProperty Name="Team" Relationship="Self.ScoredTeamResultRowEntity_Team" FromRole="ScoredTeamResultRowEntity_Team_Source" ToRole="ScoredTeamResultRowEntity_Team_Target" />
+        </EntityType>
         <EntityType Name="IRacingResultRowEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.IRacingResultRowEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.ResultRowEntity">
           <Property Name="IRacingId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
@@ -287,18 +337,33 @@
           <Property Name="QualyAttached" Type="Boolean" Nullable="false" />
           <Property Name="PracticeAttached" Type="Boolean" Nullable="false" />
         </EntityType>
-        <EntityType Name="LeagueUserEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Members.LeagueUserEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <EntityType Name="ScoringTableEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ScoringTableEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
-            <PropertyRef Name="AdminId" />
+            <PropertyRef Name="ScoringTableId" />
           </Key>
-          <Property Name="AdminId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserIdentityId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PwSalt" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="PwHash" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="MemberId" Type="Int64" />
-          <Property Name="AdminRights" Type="Self.AdminRights" Nullable="false" />
-          <NavigationProperty Name="Member" Relationship="Self.LeagueUserEntity_Member" FromRole="LeagueUserEntity_Member_Source" ToRole="LeagueUserEntity_Member_Target" />
+          <Property Name="ScoringTableId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScoringKind" Type="Self.ScoringKindEnum" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DropWeeks" Type="Int32" Nullable="false" />
+          <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
+          <Property Name="ScoringFactors" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DropRacesOption" Type="Self.DropRacesOption" Nullable="false" />
+          <Property Name="ResultsPerRaceCount" Type="Int32" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" />
+          <Property Name="LastModifiedOn" Type="DateTime" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Scorings" Relationship="Self.ScoringTableEntity_Scorings" FromRole="ScoringTableEntity_Scorings_Source" ToRole="ScoringTableEntity_Scorings_Target" />
+          <NavigationProperty Name="Season" Relationship="Self.ScoringTableEntity_Season" FromRole="ScoringTableEntity_Season_Source" ToRole="ScoringTableEntity_Season_Target" />
         </EntityType>
+        <EnumType Name="ScoringKindEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.ScoringKindEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="Member" Value="0" />
+          <Member Name="Team" Value="1" />
+          <Member Name="Custom" Value="3" />
+        </EnumType>
         <EnumType Name="SessionType" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.SessionType, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="Undefined" Value="0" />
           <Member Name="Practice" Value="1" />
@@ -319,19 +384,25 @@
           <Member Name="Disqualified" Value="2" />
           <Member Name="Unknown" Value="3" />
         </EnumType>
-        <EnumType Name="AdminRights" IsFlags="true" customannotation:ClrType="iRLeagueManager.Enums.AdminRights, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
-          <Member Name="EditMemberData" Value="1" />
-          <Member Name="EditLeagueData" Value="2" />
-          <Member Name="EditDeleteMemberData" Value="5" />
-          <Member Name="EditDeleteLeagueData" Value="10" />
-          <Member Name="RightManager" Value="17" />
-          <Member Name="Owner" Value="255" />
+        <EnumType Name="DropRacesOption" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.DropRacesOption, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="PerTeamResults" Value="0" />
+          <Member Name="PerDriverResults" Value="1" />
         </EnumType>
+        <Association Name="TeamEntity_Members">
+          <End Role="TeamEntity_Members_Source" Type="Self.TeamEntity" Multiplicity="0..1" />
+          <End Role="TeamEntity_Members_Target" Type="Self.LeagueMemberEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeamEntity_Members_Source">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="TeamEntity_Members_Target">
+              <PropertyRef Name="TeamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AcceptedReviewVoteEntity_MemberAtFault">
           <End Role="AcceptedReviewVoteEntity_MemberAtFault_Source" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
-          <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="AcceptedReviewVoteEntity_MemberAtFault_Target">
               <PropertyRef Name="MemberId" />
@@ -357,9 +428,7 @@
         </Association>
         <Association Name="CommentReviewVoteEntity_MemberAtFault">
           <End Role="CommentReviewVoteEntity_MemberAtFault_Source" Type="Self.CommentReviewVoteEntity" Multiplicity="*" />
-          <End Role="CommentReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="CommentReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <ReferentialConstraint>
             <Principal Role="CommentReviewVoteEntity_MemberAtFault_Target">
               <PropertyRef Name="MemberId" />
@@ -515,6 +584,40 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ScoredTeamResultRowEntity_ScoredResultRows">
+          <End Role="ScoredTeamResultRowEntity_ScoredResultRows_Source" Type="Self.ScoredTeamResultRowEntity" Multiplicity="*" />
+          <End Role="ScoredTeamResultRowEntity_ScoredResultRows_Target" Type="Self.ScoredResultRowEntity" Multiplicity="*" />
+        </Association>
+        <Association Name="ScoredTeamResultRowEntity_Team">
+          <End Role="ScoredTeamResultRowEntity_Team_Source" Type="Self.ScoredTeamResultRowEntity" Multiplicity="*" />
+          <End Role="ScoredTeamResultRowEntity_Team_Target" Type="Self.TeamEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <ReferentialConstraint>
+            <Principal Role="ScoredTeamResultRowEntity_Team_Target">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="ScoredTeamResultRowEntity_Team_Source">
+              <PropertyRef Name="TeamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoredTeamResultEntity_TeamResults">
+          <End Role="ScoredTeamResultEntity_TeamResults_Source" Type="Self.ScoredTeamResultEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoredTeamResultEntity_TeamResults_Target" Type="Self.ScoredTeamResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoredTeamResultEntity_TeamResults_Source">
+              <PropertyRef Name="ResultId" />
+              <PropertyRef Name="ScoringId" />
+            </Principal>
+            <Dependent Role="ScoredTeamResultEntity_TeamResults_Target">
+              <PropertyRef Name="ScoredResultId" />
+              <PropertyRef Name="ScoringId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="ResultRowEntity_ScoredResultRows">
           <End Role="ResultRowEntity_ScoredResultRows_Source" Type="Self.ResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -572,12 +675,20 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="ScoringEntity_ConnectedSchedule">
+          <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="*" />
           <End Role="ScoringEntity_ConnectedSchedule_Target" Type="Self.ScheduleEntity" Multiplicity="0..1" />
-          <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="0..1" />
         </Association>
-        <Association Name="ScoringEntity_MultiScoringResults">
-          <End Role="ScoringEntity_MultiScoringResults_Source" Type="Self.ScoringEntity" Multiplicity="*" />
-          <End Role="ScoringEntity_MultiScoringResults_Target" Type="Self.ScoringEntity" Multiplicity="*" />
+        <Association Name="ScoringEntity_ExtScoringSource">
+          <End Role="ScoringEntity_ExtScoringSource_Source" Type="Self.ScoringEntity" Multiplicity="*" />
+          <End Role="ScoringEntity_ExtScoringSource_Target" Type="Self.ScoringEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringEntity_ExtScoringSource_Target">
+              <PropertyRef Name="ScoringId" />
+            </Principal>
+            <Dependent Role="ScoringEntity_ExtScoringSource_Source">
+              <PropertyRef Name="ExtScoringSourceId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="ScoringEntity_ScoredResults">
           <End Role="ScoringEntity_ScoredResults_Source" Type="Self.ScoringEntity" Multiplicity="1">
@@ -613,20 +724,19 @@
           </End>
           <End Role="SeasonEntity_Schedules_Target" Type="Self.ScheduleEntity" Multiplicity="*" />
         </Association>
-        <Association Name="LeagueUserEntity_Member">
-          <End Role="LeagueUserEntity_Member_Source" Type="Self.LeagueUserEntity" Multiplicity="*" />
-          <End Role="LeagueUserEntity_Member_Target" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="LeagueUserEntity_Member_Target">
-              <PropertyRef Name="MemberId" />
-            </Principal>
-            <Dependent Role="LeagueUserEntity_Member_Source">
-              <PropertyRef Name="MemberId" />
-            </Dependent>
-          </ReferentialConstraint>
+        <Association Name="ScoringTableEntity_Scorings">
+          <End Role="ScoringTableEntity_Scorings_Source" Type="Self.ScoringTableEntity" Multiplicity="*" />
+          <End Role="ScoringTableEntity_Scorings_Target" Type="Self.ScoringEntity" Multiplicity="*" />
+        </Association>
+        <Association Name="ScoringTableEntity_Season">
+          <End Role="ScoringTableEntity_Season_Source" Type="Self.ScoringTableEntity" Multiplicity="*" />
+          <End Role="ScoringTableEntity_Season_Target" Type="Self.SeasonEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
         </Association>
         <EntityContainer Name="LeagueDbContext" customannotation:UseClrTypes="true">
           <EntitySet Name="Members" EntityType="Self.LeagueMemberEntity" />
+          <EntitySet Name="TeamEntities" EntityType="Self.TeamEntity" />
           <EntitySet Name="Seasons" EntityType="Self.SeasonEntity" />
           <EntitySet Name="ScoringEntities" EntityType="Self.ScoringEntity" />
           <EntitySet Name="ScheduleEntities" EntityType="Self.ScheduleEntity" />
@@ -641,7 +751,12 @@
           <EntitySet Name="AddPenaltyEntities" EntityType="Self.AddPenaltyEntity" />
           <EntitySet Name="ReviewPenaltyEntities" EntityType="Self.ReviewPenaltyEntity" />
           <EntitySet Name="ScoredResultEntities" EntityType="Self.ScoredResultEntity" />
-          <EntitySet Name="Users" EntityType="Self.LeagueUserEntity" />
+          <EntitySet Name="ScoredTeamResultRowEntities" EntityType="Self.ScoredTeamResultRowEntity" />
+          <EntitySet Name="ScoringTableEntities" EntityType="Self.ScoringTableEntity" />
+          <AssociationSet Name="TeamEntity_Members" Association="Self.TeamEntity_Members">
+            <End Role="TeamEntity_Members_Source" EntitySet="TeamEntities" />
+            <End Role="TeamEntity_Members_Target" EntitySet="Members" />
+          </AssociationSet>
           <AssociationSet Name="AcceptedReviewVoteEntity_MemberAtFault" Association="Self.AcceptedReviewVoteEntity_MemberAtFault">
             <End Role="AcceptedReviewVoteEntity_MemberAtFault_Source" EntitySet="AcceptedReviewVoteEntities" />
             <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" EntitySet="Members" />
@@ -710,6 +825,18 @@
             <End Role="ScoredResultEntity_FinalResults_Source" EntitySet="ScoredResultEntities" />
             <End Role="ScoredResultEntity_FinalResults_Target" EntitySet="ScoredResultRowEntities" />
           </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultRowEntity_ScoredResultRows" Association="Self.ScoredTeamResultRowEntity_ScoredResultRows">
+            <End Role="ScoredTeamResultRowEntity_ScoredResultRows_Source" EntitySet="ScoredTeamResultRowEntities" />
+            <End Role="ScoredTeamResultRowEntity_ScoredResultRows_Target" EntitySet="ScoredResultRowEntities" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultRowEntity_Team" Association="Self.ScoredTeamResultRowEntity_Team">
+            <End Role="ScoredTeamResultRowEntity_Team_Source" EntitySet="ScoredTeamResultRowEntities" />
+            <End Role="ScoredTeamResultRowEntity_Team_Target" EntitySet="TeamEntities" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultEntity_TeamResults" Association="Self.ScoredTeamResultEntity_TeamResults">
+            <End Role="ScoredTeamResultEntity_TeamResults_Source" EntitySet="ScoredResultEntities" />
+            <End Role="ScoredTeamResultEntity_TeamResults_Target" EntitySet="ScoredTeamResultRowEntities" />
+          </AssociationSet>
           <AssociationSet Name="ResultRowEntity_ScoredResultRows" Association="Self.ResultRowEntity_ScoredResultRows">
             <End Role="ResultRowEntity_ScoredResultRows_Source" EntitySet="ResultRowEntities" />
             <End Role="ResultRowEntity_ScoredResultRows_Target" EntitySet="ScoredResultRowEntities" />
@@ -727,12 +854,12 @@
             <End Role="SessionBaseEntity_SessionResult_Target" EntitySet="ResultEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ConnectedSchedule" Association="Self.ScoringEntity_ConnectedSchedule">
-            <End Role="ScoringEntity_ConnectedSchedule_Target" EntitySet="ScheduleEntities" />
             <End Role="ScoringEntity_ConnectedSchedule_Source" EntitySet="ScoringEntities" />
+            <End Role="ScoringEntity_ConnectedSchedule_Target" EntitySet="ScheduleEntities" />
           </AssociationSet>
-          <AssociationSet Name="ScoringEntity_MultiScoringResults" Association="Self.ScoringEntity_MultiScoringResults">
-            <End Role="ScoringEntity_MultiScoringResults_Source" EntitySet="ScoringEntities" />
-            <End Role="ScoringEntity_MultiScoringResults_Target" EntitySet="ScoringEntities" />
+          <AssociationSet Name="ScoringEntity_ExtScoringSource" Association="Self.ScoringEntity_ExtScoringSource">
+            <End Role="ScoringEntity_ExtScoringSource_Source" EntitySet="ScoringEntities" />
+            <End Role="ScoringEntity_ExtScoringSource_Target" EntitySet="ScoringEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ScoredResults" Association="Self.ScoringEntity_ScoredResults">
             <End Role="ScoringEntity_ScoredResults_Source" EntitySet="ScoringEntities" />
@@ -754,9 +881,13 @@
             <End Role="SeasonEntity_Schedules_Source" EntitySet="Seasons" />
             <End Role="SeasonEntity_Schedules_Target" EntitySet="ScheduleEntities" />
           </AssociationSet>
-          <AssociationSet Name="LeagueUserEntity_Member" Association="Self.LeagueUserEntity_Member">
-            <End Role="LeagueUserEntity_Member_Source" EntitySet="Users" />
-            <End Role="LeagueUserEntity_Member_Target" EntitySet="Members" />
+          <AssociationSet Name="ScoringTableEntity_Scorings" Association="Self.ScoringTableEntity_Scorings">
+            <End Role="ScoringTableEntity_Scorings_Source" EntitySet="ScoringTableEntities" />
+            <End Role="ScoringTableEntity_Scorings_Target" EntitySet="ScoringEntities" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringTableEntity_Season" Association="Self.ScoringTableEntity_Season">
+            <End Role="ScoringTableEntity_Season_Source" EntitySet="ScoringTableEntities" />
+            <End Role="ScoringTableEntity_Season_Target" EntitySet="Seasons" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -773,6 +904,25 @@
                 <ScalarProperty Name="IRacingId" ColumnName="IRacingId" />
                 <ScalarProperty Name="DanLisaId" ColumnName="DanLisaId" />
                 <ScalarProperty Name="DiscordId" ColumnName="DiscordId" />
+                <ScalarProperty Name="TeamId" ColumnName="TeamId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TeamEntities">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.TeamEntity">
+              <MappingFragment StoreEntitySet="TeamEntity">
+                <ScalarProperty Name="TeamId" ColumnName="TeamId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Profile" ColumnName="Profile" />
+                <ScalarProperty Name="TeamColor" ColumnName="TeamColor" />
+                <ScalarProperty Name="TeamHomepage" ColumnName="TeamHomepage" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+                <ScalarProperty Name="CreatedByUserName" ColumnName="CreatedByUserName" />
+                <ScalarProperty Name="LastModifiedByUserId" ColumnName="LastModifiedByUserId" />
+                <ScalarProperty Name="LastModifiedByUserName" ColumnName="LastModifiedByUserName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -795,14 +945,17 @@
             <EntityTypeMapping TypeName="iRLeagueDatabase.ScoringEntity">
               <MappingFragment StoreEntitySet="ScoringEntity">
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <ScalarProperty Name="ScoringKind" ColumnName="ScoringKind" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
                 <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
-                <ScalarProperty Name="IsMultiScoring" ColumnName="IsMultiScoring" />
+                <ScalarProperty Name="MaxResultsPerGroup" ColumnName="MaxResultsPerGroup" />
+                <ScalarProperty Name="TakeGroupAverage" ColumnName="TakeGroupAverage" />
+                <ScalarProperty Name="ExtScoringSourceId" ColumnName="ExtScoringSourceId" />
+                <ScalarProperty Name="TakeResultsFromExtSource" ColumnName="TakeResultsFromExtSource" />
                 <ScalarProperty Name="BasePoints" ColumnName="BasePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
                 <ScalarProperty Name="IncPenaltyPoints" ColumnName="IncPenaltyPoints" />
-                <ScalarProperty Name="MultiScoringFactors" ColumnName="MultiScoringFactors" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1028,7 +1181,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ScoredResultEntities">
-            <EntityTypeMapping TypeName="iRLeagueDatabase.ScoredResultEntity">
+            <EntityTypeMapping TypeName="IsTypeOf(iRLeagueDatabase.ScoredResultEntity)">
               <MappingFragment StoreEntitySet="ScoredResultEntity">
                 <ScalarProperty Name="ResultId" ColumnName="ResultId" />
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
@@ -1044,16 +1197,60 @@
                 <ScalarProperty Name="LastModifiedByUserName" ColumnName="LastModifiedByUserName" />
               </MappingFragment>
             </EntityTypeMapping>
+            <EntityTypeMapping TypeName="iRLeagueDatabase.ScoredTeamResultEntity">
+              <MappingFragment StoreEntitySet="ScoredResultEntity">
+                <ScalarProperty Name="ResultId" ColumnName="ResultId" />
+                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <Condition Value="ScoredTeamResultEntity" ColumnName="Discriminator" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="iRLeagueDatabase.ScoredResultEntity">
+              <MappingFragment StoreEntitySet="ScoredResultEntity">
+                <ScalarProperty Name="ResultId" ColumnName="ResultId" />
+                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <Condition Value="ScoredResultEntity" ColumnName="Discriminator" />
+              </MappingFragment>
+            </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="iRLeagueDatabase.LeagueUserEntity">
-              <MappingFragment StoreEntitySet="LeagueUserEntity">
-                <ScalarProperty Name="AdminId" ColumnName="AdminId" />
-                <ScalarProperty Name="UserIdentityId" ColumnName="UserIdentityId" />
-                <ScalarProperty Name="PwSalt" ColumnName="PwSalt" />
-                <ScalarProperty Name="PwHash" ColumnName="PwHash" />
-                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
-                <ScalarProperty Name="AdminRights" ColumnName="AdminRights" />
+          <EntitySetMapping Name="ScoredTeamResultRowEntities">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.ScoredTeamResultRowEntity">
+              <MappingFragment StoreEntitySet="ScoredTeamResultRowEntity">
+                <ScalarProperty Name="ScoredResultRowId" ColumnName="ScoredResultRowId" />
+                <ScalarProperty Name="ScoredResultId" ColumnName="ScoredResultId" />
+                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <ScalarProperty Name="TeamId" ColumnName="TeamId" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ClassId" ColumnName="ClassId" />
+                <ScalarProperty Name="CarClass" ColumnName="CarClass" />
+                <ScalarProperty Name="RacePoints" ColumnName="RacePoints" />
+                <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
+                <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
+                <ScalarProperty Name="FinalPosition" ColumnName="FinalPosition" />
+                <ScalarProperty Name="FinalPositionChange" ColumnName="FinalPositionChange" />
+                <ScalarProperty Name="TotalPoints" ColumnName="TotalPoints" />
+                <ScalarProperty Name="AvgLapTime" ColumnName="AvgLapTime" />
+                <ScalarProperty Name="FastestLapTime" ColumnName="FastestLapTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScoringTableEntities">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.ScoringTableEntity">
+              <MappingFragment StoreEntitySet="ScoringTableEntity">
+                <ScalarProperty Name="ScoringTableId" ColumnName="ScoringTableId" />
+                <ScalarProperty Name="ScoringKind" ColumnName="ScoringKind" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
+                <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
+                <ScalarProperty Name="ScoringFactors" ColumnName="ScoringFactors" />
+                <ScalarProperty Name="DropRacesOption" ColumnName="DropRacesOption" />
+                <ScalarProperty Name="ResultsPerRaceCount" ColumnName="ResultsPerRaceCount" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+                <ScalarProperty Name="CreatedByUserName" ColumnName="CreatedByUserName" />
+                <ScalarProperty Name="LastModifiedByUserId" ColumnName="LastModifiedByUserId" />
+                <ScalarProperty Name="LastModifiedByUserName" ColumnName="LastModifiedByUserName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1103,6 +1300,14 @@
             </EndProperty>
             <Condition IsNull="false" ColumnName="FastestQualyLapDriver_MemberId" />
           </AssociationSetMapping>
+          <AssociationSetMapping Name="ScoredTeamResultRowEntity_ScoredResultRows" TypeName="iRLeagueDatabase.ScoredTeamResultRowEntity_ScoredResultRows" StoreEntitySet="ScoredTeamResultRowEntityScoredResultRowEntity">
+            <EndProperty Name="ScoredTeamResultRowEntity_ScoredResultRows_Source">
+              <ScalarProperty Name="ScoredResultRowId" ColumnName="ScoredTeamResultRowRefId" />
+            </EndProperty>
+            <EndProperty Name="ScoredTeamResultRowEntity_ScoredResultRows_Target">
+              <ScalarProperty Name="ScoredResultRowId" ColumnName="ScoredResultRowRefId" />
+            </EndProperty>
+          </AssociationSetMapping>
           <AssociationSetMapping Name="ScoringEntity_ConnectedSchedule" TypeName="iRLeagueDatabase.ScoringEntity_ConnectedSchedule" StoreEntitySet="ScoringEntity">
             <EndProperty Name="ScoringEntity_ConnectedSchedule_Target">
               <ScalarProperty Name="ScheduleId" ColumnName="ConnectedSchedule_ScheduleId" />
@@ -1111,14 +1316,6 @@
               <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
             </EndProperty>
             <Condition IsNull="false" ColumnName="ConnectedSchedule_ScheduleId" />
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="ScoringEntity_MultiScoringResults" TypeName="iRLeagueDatabase.ScoringEntity_MultiScoringResults" StoreEntitySet="ScoringEntityScoringEntity">
-            <EndProperty Name="ScoringEntity_MultiScoringResults_Source">
-              <ScalarProperty Name="ScoringId" ColumnName="ScoringParentId" />
-            </EndProperty>
-            <EndProperty Name="ScoringEntity_MultiScoringResults_Target">
-              <ScalarProperty Name="ScoringId" ColumnName="ScoringChildId" />
-            </EndProperty>
           </AssociationSetMapping>
           <AssociationSetMapping Name="ScoringEntity_Season" TypeName="iRLeagueDatabase.ScoringEntity_Season" StoreEntitySet="ScoringEntity">
             <EndProperty Name="ScoringEntity_Season_Target">
@@ -1153,6 +1350,22 @@
               <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
             </EndProperty>
           </AssociationSetMapping>
+          <AssociationSetMapping Name="ScoringTableEntity_Scorings" TypeName="iRLeagueDatabase.ScoringTableEntity_Scorings" StoreEntitySet="ScoringTableEntityScoringEntity">
+            <EndProperty Name="ScoringTableEntity_Scorings_Source">
+              <ScalarProperty Name="ScoringTableId" ColumnName="ScoringTableRefId" />
+            </EndProperty>
+            <EndProperty Name="ScoringTableEntity_Scorings_Target">
+              <ScalarProperty Name="ScoringId" ColumnName="ScoringRefId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="ScoringTableEntity_Season" TypeName="iRLeagueDatabase.ScoringTableEntity_Season" StoreEntitySet="ScoringTableEntity">
+            <EndProperty Name="ScoringTableEntity_Season_Target">
+              <ScalarProperty Name="SeasonId" ColumnName="Season_SeasonId" />
+            </EndProperty>
+            <EndProperty Name="ScoringTableEntity_Season_Source">
+              <ScalarProperty Name="ScoringTableId" ColumnName="ScoringTableId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </Mappings>
@@ -1168,6 +1381,24 @@
           <Property Name="IRacingId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DanLisaId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DiscordId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="true" />
+        </EntityType>
+        <EntityType Name="TeamEntity">
+          <Key>
+            <PropertyRef Name="TeamId" />
+          </Key>
+          <Property Name="TeamId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Profile" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="TeamColor" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="TeamHomepage" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="true" />
+          <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
+          <Property Name="Version" Type="int" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="CreatedByUserName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
         <EntityType Name="SeasonEntity">
           <Key>
@@ -1189,14 +1420,17 @@
             <PropertyRef Name="ScoringId" />
           </Key>
           <Property Name="ScoringId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScoringKind" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropWeeks" Type="int" Nullable="false" />
           <Property Name="AverageRaceNr" Type="int" Nullable="false" />
-          <Property Name="IsMultiScoring" Type="bit" Nullable="false" />
+          <Property Name="MaxResultsPerGroup" Type="int" Nullable="false" />
+          <Property Name="TakeGroupAverage" Type="bit" Nullable="false" />
+          <Property Name="ExtScoringSourceId" Type="bigint" customannotation:Index="{ Name: IX_ExtScoringSourceId, Order: 0 }" Nullable="true" />
+          <Property Name="TakeResultsFromExtSource" Type="bit" Nullable="false" />
           <Property Name="BasePoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="BonusPoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="IncPenaltyPoints" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="MultiScoringFactors" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -1278,7 +1512,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ReviewId" Type="bigint" customannotation:Index="{ Name: IX_ReviewId, Order: 0 }" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="CommentBaseEntity">
@@ -1307,7 +1541,7 @@
           </Key>
           <Property Name="ReviewVoteId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CommentId" Type="bigint" customannotation:Index="{ Name: IX_CommentId, Order: 0 }" Nullable="false" />
-          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="false" />
+          <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ResultEntity">
@@ -1397,20 +1631,51 @@
           <Property Name="CreatedByUserName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="FastestAvgLapDriver_MemberId" Type="bigint" customannotation:Index="{ Name: IX_FastestAvgLapDriver_MemberId, Order: 0 }" Nullable="true" />
           <Property Name="FastestLapDriver_MemberId" Type="bigint" customannotation:Index="{ Name: IX_FastestLapDriver_MemberId, Order: 0 }" Nullable="true" />
           <Property Name="FastestQualyLapDriver_MemberId" Type="bigint" customannotation:Index="{ Name: IX_FastestQualyLapDriver_MemberId, Order: 0 }" Nullable="true" />
         </EntityType>
-        <EntityType Name="LeagueUserEntity">
+        <EntityType Name="ScoredTeamResultRowEntity">
           <Key>
-            <PropertyRef Name="AdminId" />
+            <PropertyRef Name="ScoredResultRowId" />
           </Key>
-          <Property Name="AdminId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserIdentityId" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="PwSalt" Type="varbinary(max)" Nullable="true" />
-          <Property Name="PwHash" Type="varbinary(max)" Nullable="true" />
-          <Property Name="MemberId" Type="bigint" customannotation:Index="{ Name: IX_MemberId, Order: 0 }" Nullable="true" />
-          <Property Name="AdminRights" Type="int" Nullable="false" />
+          <Property Name="ScoredResultRowId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScoredResultId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 0 }" Nullable="false" />
+          <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 1 }" Nullable="false" />
+          <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="true" />
+          <Property Name="ClassId" Type="int" Nullable="false" />
+          <Property Name="CarClass" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="RacePoints" Type="int" Nullable="false" />
+          <Property Name="BonusPoints" Type="int" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+          <Property Name="FinalPosition" Type="int" Nullable="false" />
+          <Property Name="FinalPositionChange" Type="int" Nullable="false" />
+          <Property Name="TotalPoints" Type="int" Nullable="false" />
+          <Property Name="AvgLapTime" Type="bigint" Nullable="false" />
+          <Property Name="FastestLapTime" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ScoringTableEntity">
+          <Key>
+            <PropertyRef Name="ScoringTableId" />
+          </Key>
+          <Property Name="ScoringTableId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScoringKind" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="DropWeeks" Type="int" Nullable="false" />
+          <Property Name="AverageRaceNr" Type="int" Nullable="false" />
+          <Property Name="ScoringFactors" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="DropRacesOption" Type="int" Nullable="false" />
+          <Property Name="ResultsPerRaceCount" Type="int" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="true" />
+          <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
+          <Property Name="Version" Type="int" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="CreatedByUserName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Season_SeasonId" Type="bigint" customannotation:Index="{ Name: IX_Season_SeasonId, Order: 0 }" Nullable="false" />
         </EntityType>
         <EntityType Name="IncidentReviewEntityLeagueMemberEntity">
           <Key>
@@ -1420,13 +1685,13 @@
           <Property Name="ReviewRefId" Type="bigint" customannotation:Index="{ Name: IX_ReviewRefId, Order: 0 }" Nullable="false" />
           <Property Name="MemberRefId" Type="bigint" customannotation:Index="{ Name: IX_MemberRefId, Order: 0 }" Nullable="false" />
         </EntityType>
-        <EntityType Name="ScoringEntityScoringEntity">
+        <EntityType Name="ScoredTeamResultRowEntityScoredResultRowEntity">
           <Key>
-            <PropertyRef Name="ScoringParentId" />
-            <PropertyRef Name="ScoringChildId" />
+            <PropertyRef Name="ScoredTeamResultRowRefId" />
+            <PropertyRef Name="ScoredResultRowRefId" />
           </Key>
-          <Property Name="ScoringParentId" Type="bigint" customannotation:Index="{ Name: IX_ScoringParentId, Order: 0 }" Nullable="false" />
-          <Property Name="ScoringChildId" Type="bigint" customannotation:Index="{ Name: IX_ScoringChildId, Order: 0 }" Nullable="false" />
+          <Property Name="ScoredTeamResultRowRefId" Type="bigint" customannotation:Index="{ Name: IX_ScoredTeamResultRowRefId, Order: 0 }" Nullable="false" />
+          <Property Name="ScoredResultRowRefId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultRowRefId, Order: 0 }" Nullable="false" />
         </EntityType>
         <EntityType Name="ScoringEntitySessionBaseEntity">
           <Key>
@@ -1436,10 +1701,28 @@
           <Property Name="ScoringRefId" Type="bigint" customannotation:Index="{ Name: IX_ScoringRefId, Order: 0 }" Nullable="false" />
           <Property Name="SessionRefId" Type="bigint" customannotation:Index="{ Name: IX_SessionRefId, Order: 0 }" Nullable="false" />
         </EntityType>
+        <EntityType Name="ScoringTableEntityScoringEntity">
+          <Key>
+            <PropertyRef Name="ScoringTableRefId" />
+            <PropertyRef Name="ScoringRefId" />
+          </Key>
+          <Property Name="ScoringTableRefId" Type="bigint" customannotation:Index="{ Name: IX_ScoringTableRefId, Order: 0 }" Nullable="false" />
+          <Property Name="ScoringRefId" Type="bigint" customannotation:Index="{ Name: IX_ScoringRefId, Order: 0 }" Nullable="false" />
+        </EntityType>
+        <Association Name="TeamEntity_Members">
+          <End Role="TeamEntity" Type="Self.TeamEntity" Multiplicity="0..1" />
+          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeamEntity">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="LeagueMemberEntity">
+              <PropertyRef Name="TeamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AcceptedReviewVoteEntity_MemberAtFault">
-          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <End Role="AcceptedReviewVoteEntity" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LeagueMemberEntity">
@@ -1465,9 +1748,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="CommentReviewVoteEntity_MemberAtFault">
-          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <End Role="CommentReviewVoteEntity" Type="Self.CommentReviewVoteEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="LeagueMemberEntity">
@@ -1680,6 +1961,64 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ScoredTeamResultRowEntity_ScoredResultRows_Source">
+          <End Role="ScoredTeamResultRowEntity" Type="Self.ScoredTeamResultRowEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoredTeamResultRowEntityScoredResultRowEntity" Type="Self.ScoredTeamResultRowEntityScoredResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoredTeamResultRowEntity">
+              <PropertyRef Name="ScoredResultRowId" />
+            </Principal>
+            <Dependent Role="ScoredTeamResultRowEntityScoredResultRowEntity">
+              <PropertyRef Name="ScoredTeamResultRowRefId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoredTeamResultRowEntity_ScoredResultRows_Target">
+          <End Role="ScoredResultRowEntity" Type="Self.ScoredResultRowEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoredTeamResultRowEntityScoredResultRowEntity" Type="Self.ScoredTeamResultRowEntityScoredResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoredResultRowEntity">
+              <PropertyRef Name="ScoredResultRowId" />
+            </Principal>
+            <Dependent Role="ScoredTeamResultRowEntityScoredResultRowEntity">
+              <PropertyRef Name="ScoredResultRowRefId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoredTeamResultRowEntity_Team">
+          <End Role="TeamEntity" Type="Self.TeamEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoredTeamResultRowEntity" Type="Self.ScoredTeamResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeamEntity">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="ScoredTeamResultRowEntity">
+              <PropertyRef Name="TeamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoredTeamResultEntity_TeamResults">
+          <End Role="ScoredResultEntity" Type="Self.ScoredResultEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoredTeamResultRowEntity" Type="Self.ScoredTeamResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoredResultEntity">
+              <PropertyRef Name="ResultId" />
+              <PropertyRef Name="ScoringId" />
+            </Principal>
+            <Dependent Role="ScoredTeamResultRowEntity">
+              <PropertyRef Name="ScoredResultId" />
+              <PropertyRef Name="ScoringId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="ResultRowEntity_ScoredResultRows">
           <End Role="ResultRowEntity" Type="Self.ResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1748,27 +2087,15 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="ScoringEntity_MultiScoringResults_Source">
-          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1" />
-          <End Role="ScoringEntityScoringEntity" Type="Self.ScoringEntityScoringEntity" Multiplicity="*" />
+        <Association Name="ScoringEntity_ExtScoringSource">
+          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="0..1" />
+          <End Role="ScoringEntitySelf" Type="Self.ScoringEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ScoringEntity">
               <PropertyRef Name="ScoringId" />
             </Principal>
-            <Dependent Role="ScoringEntityScoringEntity">
-              <PropertyRef Name="ScoringParentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ScoringEntity_MultiScoringResults_Target">
-          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1" />
-          <End Role="ScoringEntityScoringEntity" Type="Self.ScoringEntityScoringEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ScoringEntity">
-              <PropertyRef Name="ScoringId" />
-            </Principal>
-            <Dependent Role="ScoringEntityScoringEntity">
-              <PropertyRef Name="ScoringChildId" />
+            <Dependent Role="ScoringEntitySelf">
+              <PropertyRef Name="ExtScoringSourceId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1854,20 +2181,51 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="LeagueUserEntity_Member">
-          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
-          <End Role="LeagueUserEntity" Type="Self.LeagueUserEntity" Multiplicity="*" />
+        <Association Name="ScoringTableEntity_Scorings_Source">
+          <End Role="ScoringTableEntity" Type="Self.ScoringTableEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoringTableEntityScoringEntity" Type="Self.ScoringTableEntityScoringEntity" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="LeagueMemberEntity">
-              <PropertyRef Name="MemberId" />
+            <Principal Role="ScoringTableEntity">
+              <PropertyRef Name="ScoringTableId" />
             </Principal>
-            <Dependent Role="LeagueUserEntity">
-              <PropertyRef Name="MemberId" />
+            <Dependent Role="ScoringTableEntityScoringEntity">
+              <PropertyRef Name="ScoringTableRefId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoringTableEntity_Scorings_Target">
+          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoringTableEntityScoringEntity" Type="Self.ScoringTableEntityScoringEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringEntity">
+              <PropertyRef Name="ScoringId" />
+            </Principal>
+            <Dependent Role="ScoringTableEntityScoringEntity">
+              <PropertyRef Name="ScoringRefId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoringTableEntity_Season">
+          <End Role="SeasonEntity" Type="Self.SeasonEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoringTableEntity" Type="Self.ScoringTableEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeasonEntity">
+              <PropertyRef Name="SeasonId" />
+            </Principal>
+            <Dependent Role="ScoringTableEntity">
+              <PropertyRef Name="Season_SeasonId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="CodeFirstDatabase">
           <EntitySet Name="LeagueMemberEntity" EntityType="Self.LeagueMemberEntity" Schema="dbo" Table="LeagueMemberEntities" />
+          <EntitySet Name="TeamEntity" EntityType="Self.TeamEntity" Schema="dbo" Table="TeamEntities" />
           <EntitySet Name="SeasonEntity" EntityType="Self.SeasonEntity" Schema="dbo" Table="SeasonEntities" />
           <EntitySet Name="ScoringEntity" EntityType="Self.ScoringEntity" Schema="dbo" Table="ScoringEntities" />
           <EntitySet Name="ScheduleEntity" EntityType="Self.ScheduleEntity" Schema="dbo" Table="ScheduleEntities" />
@@ -1882,10 +2240,16 @@
           <EntitySet Name="AddPenaltyEntity" EntityType="Self.AddPenaltyEntity" Schema="dbo" Table="AddPenaltyEntities" />
           <EntitySet Name="ReviewPenaltyEntity" EntityType="Self.ReviewPenaltyEntity" Schema="dbo" Table="ReviewPenaltyEntities" />
           <EntitySet Name="ScoredResultEntity" EntityType="Self.ScoredResultEntity" Schema="dbo" Table="ScoredResultEntities" />
-          <EntitySet Name="LeagueUserEntity" EntityType="Self.LeagueUserEntity" Schema="dbo" Table="LeagueUserEntities" />
+          <EntitySet Name="ScoredTeamResultRowEntity" EntityType="Self.ScoredTeamResultRowEntity" Schema="dbo" Table="ScoredTeamResultRowEntities" />
+          <EntitySet Name="ScoringTableEntity" EntityType="Self.ScoringTableEntity" Schema="dbo" Table="ScoringTableEntities" />
           <EntitySet Name="IncidentReviewEntityLeagueMemberEntity" EntityType="Self.IncidentReviewEntityLeagueMemberEntity" Schema="dbo" Table="IncidentReview_InvolvedLeagueMember" />
-          <EntitySet Name="ScoringEntityScoringEntity" EntityType="Self.ScoringEntityScoringEntity" Schema="dbo" Table="MultiScoringMap" />
+          <EntitySet Name="ScoredTeamResultRowEntityScoredResultRowEntity" EntityType="Self.ScoredTeamResultRowEntityScoredResultRowEntity" Schema="dbo" Table="ScoredTeamResultRowsGroup" />
           <EntitySet Name="ScoringEntitySessionBaseEntity" EntityType="Self.ScoringEntitySessionBaseEntity" Schema="dbo" Table="Scoring_Session" />
+          <EntitySet Name="ScoringTableEntityScoringEntity" EntityType="Self.ScoringTableEntityScoringEntity" Schema="dbo" Table="ScoringTableMap" />
+          <AssociationSet Name="TeamEntity_Members" Association="Self.TeamEntity_Members">
+            <End Role="TeamEntity" EntitySet="TeamEntity" />
+            <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
+          </AssociationSet>
           <AssociationSet Name="AcceptedReviewVoteEntity_MemberAtFault" Association="Self.AcceptedReviewVoteEntity_MemberAtFault">
             <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
             <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
@@ -1958,6 +2322,22 @@
             <End Role="ScoredResultEntity" EntitySet="ScoredResultEntity" />
             <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
           </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultRowEntity_ScoredResultRows_Source" Association="Self.ScoredTeamResultRowEntity_ScoredResultRows_Source">
+            <End Role="ScoredTeamResultRowEntity" EntitySet="ScoredTeamResultRowEntity" />
+            <End Role="ScoredTeamResultRowEntityScoredResultRowEntity" EntitySet="ScoredTeamResultRowEntityScoredResultRowEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultRowEntity_ScoredResultRows_Target" Association="Self.ScoredTeamResultRowEntity_ScoredResultRows_Target">
+            <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
+            <End Role="ScoredTeamResultRowEntityScoredResultRowEntity" EntitySet="ScoredTeamResultRowEntityScoredResultRowEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultRowEntity_Team" Association="Self.ScoredTeamResultRowEntity_Team">
+            <End Role="TeamEntity" EntitySet="TeamEntity" />
+            <End Role="ScoredTeamResultRowEntity" EntitySet="ScoredTeamResultRowEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredTeamResultEntity_TeamResults" Association="Self.ScoredTeamResultEntity_TeamResults">
+            <End Role="ScoredResultEntity" EntitySet="ScoredResultEntity" />
+            <End Role="ScoredTeamResultRowEntity" EntitySet="ScoredTeamResultRowEntity" />
+          </AssociationSet>
           <AssociationSet Name="ResultRowEntity_ScoredResultRows" Association="Self.ResultRowEntity_ScoredResultRows">
             <End Role="ResultRowEntity" EntitySet="ResultRowEntity" />
             <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
@@ -1978,13 +2358,9 @@
             <End Role="ScheduleEntity" EntitySet="ScheduleEntity" />
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
           </AssociationSet>
-          <AssociationSet Name="ScoringEntity_MultiScoringResults_Source" Association="Self.ScoringEntity_MultiScoringResults_Source">
+          <AssociationSet Name="ScoringEntity_ExtScoringSource" Association="Self.ScoringEntity_ExtScoringSource">
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
-            <End Role="ScoringEntityScoringEntity" EntitySet="ScoringEntityScoringEntity" />
-          </AssociationSet>
-          <AssociationSet Name="ScoringEntity_MultiScoringResults_Target" Association="Self.ScoringEntity_MultiScoringResults_Target">
-            <End Role="ScoringEntity" EntitySet="ScoringEntity" />
-            <End Role="ScoringEntityScoringEntity" EntitySet="ScoringEntityScoringEntity" />
+            <End Role="ScoringEntitySelf" EntitySet="ScoringEntity" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ScoredResults" Association="Self.ScoringEntity_ScoredResults">
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
@@ -2010,9 +2386,17 @@
             <End Role="SeasonEntity" EntitySet="SeasonEntity" />
             <End Role="ScheduleEntity" EntitySet="ScheduleEntity" />
           </AssociationSet>
-          <AssociationSet Name="LeagueUserEntity_Member" Association="Self.LeagueUserEntity_Member">
-            <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
-            <End Role="LeagueUserEntity" EntitySet="LeagueUserEntity" />
+          <AssociationSet Name="ScoringTableEntity_Scorings_Source" Association="Self.ScoringTableEntity_Scorings_Source">
+            <End Role="ScoringTableEntity" EntitySet="ScoringTableEntity" />
+            <End Role="ScoringTableEntityScoringEntity" EntitySet="ScoringTableEntityScoringEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringTableEntity_Scorings_Target" Association="Self.ScoringTableEntity_Scorings_Target">
+            <End Role="ScoringEntity" EntitySet="ScoringEntity" />
+            <End Role="ScoringTableEntityScoringEntity" EntitySet="ScoringTableEntityScoringEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringTableEntity_Season" Association="Self.ScoringTableEntity_Season">
+            <End Role="SeasonEntity" EntitySet="SeasonEntity" />
+            <End Role="ScoringTableEntity" EntitySet="ScoringTableEntity" />
           </AssociationSet>
         </EntityContainer>
       </Schema>

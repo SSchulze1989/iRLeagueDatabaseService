@@ -26,6 +26,8 @@ namespace iRLeagueDatabase.Entities
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
+        public virtual List<ScoringTableEntity> ScoringTables { get; set; }
+
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
 
         [NotMapped]

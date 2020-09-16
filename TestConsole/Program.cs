@@ -7,21 +7,20 @@ using System.Data.Entity;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
+
 using iRLeagueDatabase;
 //using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueDatabase.DataTransfer.Sessions;
-using iRLeagueDatabase.Mapper;
 //using TestConsole.LeagueDBServiceRef;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.Entities.Members;
 using System.Net.Http;
-using iRLeagueDatabase.DataTransfer.Messages;
-
+using System.Security.Principal;
 
 namespace TestConsole
 {
@@ -31,17 +30,16 @@ namespace TestConsole
         {
             using (var context = new LeagueDbContext("TestDatabase"))
             {
-                var user = context.Users.First();
+                var table = context.Set<ScoringTableEntity>().Find(1);
+                //var scoring = new ScoringEntity[] { context.Set<ScoringEntity>().Find(5), context.Set<ScoringEntity>().Find(6) };
 
-                Console.WriteLine("Passwort:");
-                string pw = null;
+                //table.Scorings.AddRange(scoring);
+                //table.ScoringFactors = "1;1";
+                var standings = table.GetSeasonStandings(context);
 
-                while (pw != "x")
+                foreach (var row in standings.StandingsRows)
                 {
-                    pw = Console.ReadLine();
-                    var pwBytes = Encoding.UTF8.GetBytes(pw);
-
-                    Console.WriteLine(user.CheckCredentials(pwBytes));
+                    Console.WriteLine($"{row.Position} - {row.Member.Fullname} - {row.TotalPoints}");
                 }
             }
 

@@ -20,7 +20,7 @@ namespace iRLeagueDatabase.Entities.Reviews
         public override object MappingId => ReviewVoteId;
 
         [ForeignKey(nameof(MemberAtFault))]
-        public long MemberAtFaultId { get; set; }
+        public long? MemberAtFaultId { get; set; }
         public virtual LeagueMemberEntity MemberAtFault { get; set; }
         public VoteEnum Vote { get; set; }
     }

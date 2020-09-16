@@ -11,6 +11,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class StandingsDataDTO : MappableDTO
     {
         public ScoringInfoDTO Scoring { get; set; }
+        public long ScoringTableId { get; set; }
         public override object MappingId => new long[] { Scoring.ScoringId.GetValueOrDefault() };
         public long? SessionId { get; set; }
         public override object[] Keys => new object[] { Scoring.ScoringId.GetValueOrDefault() };

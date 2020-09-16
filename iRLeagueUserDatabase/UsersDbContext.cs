@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 
 namespace iRLeagueUserDatabase
 {
@@ -8,6 +9,10 @@ namespace iRLeagueUserDatabase
     public class UsersDbContext : IdentityDbContext<IdentityUser>
     {
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
+
+        private static string connectionString = $"Data Source={Environment.MachineName}\\IRLEAGUEDB;AttachDbFilename=|DataDirectory|\\iRLeagueManager_UserDatabase.mdf;Initial Catalog=iRLeagueManager_UserDatabase;Integrated Security=True";
+
+        public UsersDbContext() : base(connectionString) { }
 
         static UsersDbContext()
         {

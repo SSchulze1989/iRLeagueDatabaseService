@@ -51,10 +51,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\iRLeagueManager\Communication\bin\Debug\Communication.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -81,11 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base.cs" />
-    <Compile Include="Connected Services\LeagueDBServiceRef\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Container.cs" />
     <Compile Include="Derived.cs" />
     <Compile Include="Program.cs" />
@@ -93,55 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Connected Services\LeagueDBServiceRef\LeagueDBService.wsdl" />
-    <None Include="Connected Services\LeagueDBServiceRef\Service.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service8.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\Service9.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.DELItemsResponseMessage.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.GETItemsResponseMessage.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.MappableDTO.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.POSTItemsResponseMessage.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.PUTItemsResponseMessage.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Connected Services\LeagueDBServiceRef\TestConsole.LeagueDBServiceRef.ResponseMessage.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\iRLeagueDatabase.DataTransfer.MappableDTO.datasource" />
     <None Include="Properties\DataSources\iRLeagueDatabase.DataTransfer.Members.LeagueMemberDataDTO.datasource" />
@@ -164,13 +106,13 @@
     <None Include="Properties\DataSources\iRLeagueManager.LeagueDBServiceRef.StandingsRowDTO.datasource" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Users\simon\source\repos\iRLeagueManager\Communication\Communication.csproj">
+      <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
       <Name>iRLeagueDatabase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LeagueDBService\LeagueDBService.csproj">
-      <Project>{c7b2eeaa-632c-4519-89ad-56377afcd1a0}</Project>
-      <Name>LeagueDBService</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -191,24 +133,6 @@
   <ItemGroup>
     <None Include="Tracks.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\LeagueDBServiceRef\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\LeagueDBServiceRef\Service.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\LeagueDBServiceRef\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\LeagueDBServiceRef\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\LeagueDBServiceRef\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
