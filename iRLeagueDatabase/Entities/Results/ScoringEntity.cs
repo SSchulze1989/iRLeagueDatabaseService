@@ -358,7 +358,16 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 var extScoredResult = ExtScoringSource.ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
                 if (extScoredResult != null)
+                {
                     scoredResultRows = extScoredResult.FinalResults;
+
+                    foreach (var scoredResultRow in scoredResult.FinalResults.ToList())
+                    {
+                        scoredResultRow.Delete(dbContext);
+                    }
+                    scoredResult.FinalResults.Clear();
+                }
+                    
             }
             else
             {

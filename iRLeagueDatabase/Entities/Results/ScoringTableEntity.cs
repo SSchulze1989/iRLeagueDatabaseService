@@ -264,6 +264,7 @@ namespace iRLeagueDatabase.Entities.Results
 
                 var teamStandingsRow = teamDriverResultRows.AggregateTeamDriverResults();
                 teamStandingsRow.DriverStandingsRows = teamDriverStandingsRows.ToList();
+                teamStandingsRow.Team = team;
                 teamStandingsRows.Add(teamStandingsRow);
             }
 

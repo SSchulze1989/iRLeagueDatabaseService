@@ -92,6 +92,7 @@ namespace iRLeagueDatabase.Mapper
             target.Status = source.Status;
             target.TeamName = source.Member.Team?.Name;
             target.LocationId = source.Result.Session.LocationId;
+            target.Date = source.Date.GetValueOrDefault();
 
             return target;
         }
@@ -106,7 +107,7 @@ namespace iRLeagueDatabase.Mapper
             MapToResultInfoDTO(source.Result, target);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
             target.ScoringName = source.Scoring.Name;
-            target.FinalResults = source.FinalResults.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
+            target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
 
             return target;
         }
