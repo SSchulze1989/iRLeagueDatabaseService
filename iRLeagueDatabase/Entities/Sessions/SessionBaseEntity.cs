@@ -85,7 +85,8 @@ namespace iRLeagueDatabase.Entities.Sessions
         public override void Delete(LeagueDbContext dbContext)
         {
             SessionResult?.Delete(dbContext);
-            Scorings.ToList().ForEach(x => x.Sessions.Remove(this));
+            Scorings?.ToList().ForEach(x => x.Sessions.Remove(this));
+            Reviews?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

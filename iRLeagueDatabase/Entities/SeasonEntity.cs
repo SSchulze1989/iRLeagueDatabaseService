@@ -51,8 +51,9 @@ namespace iRLeagueDatabase.Entities
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            Schedules.ToList().ForEach(x => x.Delete(dbContext));
-            Scorings.ToList().ForEach(x => x.Delete(dbContext));
+            Schedules?.ToList().ForEach(x => x.Delete(dbContext));
+            Scorings?.ToList().ForEach(x => x.Delete(dbContext));
+            ScoringTables?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

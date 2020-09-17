@@ -42,5 +42,11 @@ namespace iRLeagueDatabase.Entities.Members
             DanLisaId = danLisaId;
             DiscordId = discordId;
         }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            Team?.Members?.Remove(this);
+            base.Delete(dbContext);
+        }
     }
 }

@@ -46,8 +46,8 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            if (ReviewPenalties != null)
-                ReviewPenalties.ToList().ForEach(x => x.Delete(dbContext));
+            AddPenalty?.Delete(dbContext);
+            ReviewPenalties?.ToList().ForEach(x => x.Delete(dbContext));
 
             base.Delete(dbContext);
         }
