@@ -34,6 +34,11 @@ namespace iRLeagueDatabase.Entities.Results
 
         }
 
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            base.Delete(dbContext);
+        }
+
         public List<SessionBaseEntity> GetAllSessions()
         {
             if (Scorings != null && Scorings.Count > 0)
@@ -104,6 +109,7 @@ namespace iRLeagueDatabase.Entities.Results
             StandingsEntity standings = new StandingsEntity()
             {
                 ScoringTable = this,
+                SessionId = currentSession.SessionId
             };
 
             var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
@@ -149,6 +155,7 @@ namespace iRLeagueDatabase.Entities.Results
             TeamStandingsEntity teamStandings = new TeamStandingsEntity()
             {
                 ScoringTable = this,
+                SessionId = currentSession.SessionId
             };
 
             var previousScoredRows = previousScoredResults.SelectMany(x => x.TeamResults).ToList();

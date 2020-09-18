@@ -20,6 +20,7 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual LeagueMemberEntity MostPolesDriver { get; set; }
         public virtual LeagueMemberEntity CleanestDriver { get; set; }
         public virtual LeagueMemberEntity MostPenaltiesDriver { get; set; }
+        public long SessionId { get; set; }
 
         public StandingsEntity()
         {

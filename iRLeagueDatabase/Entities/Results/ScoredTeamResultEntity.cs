@@ -15,8 +15,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            if (TeamResults != null)
-                TeamResults.ToList().ForEach(x => x.Delete(dbContext));
+            TeamResults?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }
