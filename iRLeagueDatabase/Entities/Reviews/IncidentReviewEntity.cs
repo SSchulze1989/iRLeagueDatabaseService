@@ -41,9 +41,9 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public string FullDescription { get; set; }
 
-        public int OnLap { get; set; }
+        public string OnLap { get; set; }
         
-        public int Corner { get; set; }
+        public string Corner { get; set; }
         
         public TimeSpan TimeStamp { get; set; }
         

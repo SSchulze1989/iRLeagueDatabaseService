@@ -130,8 +130,8 @@
           <Property Name="AuthorName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IncidentKind" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="FullDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="OnLap" Type="Int32" Nullable="false" />
-          <Property Name="Corner" Type="Int32" Nullable="false" />
+          <Property Name="OnLap" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Corner" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TimeStamp" Type="Time" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
@@ -1495,8 +1495,8 @@
           <Property Name="AuthorName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="IncidentKind" Type="nvarchar(max)" Nullable="true" />
           <Property Name="FullDescription" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="OnLap" Type="int" Nullable="false" />
-          <Property Name="Corner" Type="int" Nullable="false" />
+          <Property Name="OnLap" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Corner" Type="nvarchar(max)" Nullable="true" />
           <Property Name="TimeStamp" Type="time" Precision="7" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
