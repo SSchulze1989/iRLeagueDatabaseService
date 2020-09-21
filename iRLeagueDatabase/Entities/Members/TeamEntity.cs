@@ -7,6 +7,8 @@ using System.Data;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using iRLeagueDatabase.Entities.Results;
+
 namespace iRLeagueDatabase.Entities.Members
 {
     public class TeamEntity : Revision
@@ -17,6 +19,8 @@ namespace iRLeagueDatabase.Entities.Members
 
         [InverseProperty(nameof(LeagueMemberEntity.Team))]
         public virtual List<LeagueMemberEntity> Members { get; set; }
+        [InverseProperty(nameof(ScoredTeamResultRowEntity.Team))]
+        public virtual List<ScoredTeamResultRowEntity> TeamResultRows { get; set; }
 
         public string Name { get; set; }
         public string Profile { get; set; }
@@ -26,6 +30,7 @@ namespace iRLeagueDatabase.Entities.Members
         public override void Delete(LeagueDbContext dbContext)
         {
             Members?.ToList().ForEach(x => x.Team = null);
+            TeamResultRows?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }
