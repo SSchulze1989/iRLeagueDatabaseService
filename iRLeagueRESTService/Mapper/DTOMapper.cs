@@ -21,12 +21,15 @@ namespace iRLeagueDatabase.Mapper
     {
         private UsersDbContext UserDbContext { get; }
 
+        private LeagueDbContext LeagueDbContext { get; }
+
         private IList<TypeMap> TypeMaps { get; } = new List<TypeMap>();
 
         public IEnumerable<TypeMap> GetTypeMaps() => TypeMaps;
 
-        public DTOMapper()
+        public DTOMapper(LeagueDbContext leagueDbContext)
         {
+            LeagueDbContext = leagueDbContext;
             RegisterTypeMaps();
         }
 

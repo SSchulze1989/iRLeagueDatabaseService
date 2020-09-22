@@ -79,6 +79,8 @@ namespace iRLeagueDatabase.Mapper
             target.SeasonName = source.SeasonName;
             target.SeasonStart = source.SeasonStart.GetValueOrDefault();
             target.Version = source.Version;
+            target.VoteCategories = LeagueDbContext.CustomVoteCategories.AsEnumerable().Select(x => MapToVoteCategoryDTO(x)).ToArray();
+            target.CustomIncidents = LeagueDbContext.CustomIncidentKinds.AsEnumerable().Select(x => MapToCustomIncidentDTO(x)).ToArray();
 
             return target;
         }

@@ -70,7 +70,7 @@ namespace iRLeagueRESTService.Data
         {
             TModelDTO[] items = null;
 
-            var mapper = new DTOMapper();
+            var mapper = new DTOMapper(DbContext);
 
             if (requestType.Equals(typeof(ScoredResultDataDTO)))
             {
@@ -150,7 +150,7 @@ namespace iRLeagueRESTService.Data
             };
 
             var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };
-            var dtoMapper = new DTOMapper();
+            var dtoMapper = new DTOMapper(DbContext);
 
             var rqEntityType = dtoMapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
             if (rqEntityType == null)
@@ -196,7 +196,7 @@ namespace iRLeagueRESTService.Data
             TModelDTO[] items = data;
             
             var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };
-            var dtoMapper = new DTOMapper();
+            var dtoMapper = new DTOMapper(DbContext);
 
             var rqEntityType = dtoMapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
             if (rqEntityType == null)
@@ -239,7 +239,7 @@ namespace iRLeagueRESTService.Data
         {
             bool status = false;
 
-            var mapper = new DTOMapper();
+            var mapper = new DTOMapper(DbContext);
             var rqEntityType = mapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
             if (rqEntityType == null)
                 throw new Exception("No typemap for " + requestType.Name + " found");
@@ -293,7 +293,7 @@ namespace iRLeagueRESTService.Data
                     .Include(x => x.ScoredResultRows).Load();
             } 
 
-            var mapper = new DTOMapper();
+            var mapper = new DTOMapper(DbContext);
             scoredResultData = mapper.MapTo<ScoredResultDataDTO>(scoredResultEntity);
             DbContext.Configuration.LazyLoadingEnabled = true;
 
@@ -307,7 +307,7 @@ namespace iRLeagueRESTService.Data
 
         private StandingsDataDTO[] GetStandings(long[][] requestIds)
         {
-            var mapper = new DTOMapper();
+            var mapper = new DTOMapper(DbContext);
 
             DbContext.Configuration.LazyLoadingEnabled = false;
             List<StandingsDataDTO> responseItems = new List<StandingsDataDTO>();

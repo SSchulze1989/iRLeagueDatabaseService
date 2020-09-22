@@ -331,8 +331,17 @@ namespace iRLeagueDatabase.Mapper
         {
             if (source == null)
                 return null;
+
+            // search for target in database
             if (target == null)
                 DefaultGet(source, ref target);
+
+            // if target is not in database, create
+            if (target == null)
+            {
+                target = DbContext.CustomVoteCategories.Create();
+                DbContext.CustomVoteCategories.Add(target);
+            }
 
             target.DefaultPenalty = source.DefaultPenalty;
             target.Index = source.Index;
@@ -345,8 +354,17 @@ namespace iRLeagueDatabase.Mapper
         {
             if (source == null)
                 return null;
+
+            // search for target in database
             if (target == null)
                 DefaultGet(source, ref target);
+
+            // if target is not in database, create
+            if (target == null)
+            {
+                target = DbContext.CustomIncidentKinds.Create();
+                DbContext.CustomIncidentKinds.Add(target);
+            }
 
             target.Index = source.Index;
             target.Text = source.Text;
