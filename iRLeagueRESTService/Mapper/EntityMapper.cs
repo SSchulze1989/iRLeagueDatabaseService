@@ -114,6 +114,11 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
+        private TTarget DefaultGet<TSource, TTarget>(TSource source, ref TTarget target) where TSource : MappableDTO where TTarget : MappableEntity, new()
+        {
+            return target = DefaultGet<TSource, TTarget>(source);
+        }
+
         /// <summary>
         /// Default method for getting an entity from the database as a mapping target.
         /// If mapping Id on the source is null, a new entity is created.

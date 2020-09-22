@@ -20,6 +20,8 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ReviewCommentEntity, ReviewCommentDataDTO>(MapToReviewCommentDataDTO);
             RegisterTypeMap<CommentReviewVoteEntity, ReviewVoteDataDTO>(MapToReviewVoteDataDTO);
             RegisterTypeMap<AcceptedReviewVoteEntity, ReviewVoteDataDTO>(MapToReviewVoteDataDTO);
+            RegisterTypeMap<VoteCategoryEntity, VoteCategoryDTO>(MapToVoteCategoryDTO);
+            RegisterTypeMap<CustomIncidentEntity, CustomIncidentDTO>(MapToCustomIncidentDTO);
         }
 
         public IncidentReviewInfoDTO MapToReviewInfoDTO(IncidentReviewEntity source, IncidentReviewInfoDTO target = null)
@@ -160,6 +162,8 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<CommentDataDTO, CommentBaseEntity>(MapToCommentBaseEntity);
             RegisterTypeMap<ReviewCommentDataDTO, ReviewCommentEntity>(MapToReviewCommentEntity);
             RegisterTypeMap<ReviewVoteDataDTO, ReviewVoteEntity>(MapToReviewVoteEntity);
+            RegisterTypeMap<VoteCategoryDTO, VoteCategoryEntity>(MapToVoteCategoryEntity);
+            RegisterTypeMap<CustomIncidentDTO, CustomIncidentEntity>(MapToCustomIncidentEntity);
         }
 
         public IncidentReviewEntity GetReviewEntity(IncidentReviewInfoDTO source)
@@ -319,6 +323,33 @@ namespace iRLeagueDatabase.Mapper
                 target = GetCommentReviewVoteEntity(source);
 
             MapToReviewVoteEntity(source, target);
+
+            return target;
+        }
+
+        public VoteCategoryEntity MapToVoteCategoryEntity(VoteCategoryDTO source, VoteCategoryEntity target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                DefaultGet(source, ref target);
+
+            target.DefaultPenalty = source.DefaultPenalty;
+            target.Index = source.Index;
+            target.Text = source.Text;
+
+            return target;
+        }
+
+        public CustomIncidentEntity MapToCustomIncidentEntity(CustomIncidentDTO source, CustomIncidentEntity target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                DefaultGet(source, ref target);
+
+            target.Index = source.Index;
+            target.Text = source.Text;
 
             return target;
         }
