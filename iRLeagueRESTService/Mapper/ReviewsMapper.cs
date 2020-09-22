@@ -121,6 +121,35 @@ namespace iRLeagueDatabase.Mapper
 
             return target;
         }
+
+        public VoteCategoryDTO MapToVoteCategoryDTO(VoteCategoryEntity source, VoteCategoryDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new VoteCategoryDTO();
+
+            target.CatId = source.CatId;
+            target.Text = source.Text;
+            target.DefaultPenalty = source.DefaultPenalty;
+            target.Index = source.Index;
+
+            return target;
+        }
+
+        public CustomIncidentDTO MapToCustomIncidentDTO(CustomIncidentEntity source, CustomIncidentDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new CustomIncidentDTO();
+
+            target.IncidentId = source.IncidentId;
+            target.Index = source.Index;
+            target.Text = source.Text;
+
+            return target;
+        }
     }
 
     public partial class EntityMapper
