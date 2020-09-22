@@ -66,7 +66,9 @@
     <Compile Include="Entities\Results\TeamStandingsRowEntity.cs" />
     <Compile Include="Entities\Reviews\AcceptedReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\CommentReviewVoteEntity.cs" />
+    <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
+    <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
     <Compile Include="LeagueDbConfiguration.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.designer.cs">
@@ -75,6 +77,10 @@
     <Compile Include="Migrations\202009180021301_AddLapCornerString.cs" />
     <Compile Include="Migrations\202009180021301_AddLapCornerString.designer.cs">
       <DependentUpon>202009180021301_AddLapCornerString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009222145254_AddCustomVoteCategories.cs" />
+    <Compile Include="Migrations\202009222145254_AddCustomVoteCategories.designer.cs">
+      <DependentUpon>202009222145254_AddCustomVoteCategories.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -115,6 +121,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009180021301_AddLapCornerString.resx">
       <DependentUpon>202009180021301_AddLapCornerString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009222145254_AddCustomVoteCategories.resx">
+      <DependentUpon>202009222145254_AddCustomVoteCategories.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

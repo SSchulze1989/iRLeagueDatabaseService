@@ -23,5 +23,9 @@ namespace iRLeagueDatabase.Entities.Reviews
         public long? MemberAtFaultId { get; set; }
         public virtual LeagueMemberEntity MemberAtFault { get; set; }
         public VoteEnum Vote { get; set; }
+
+        [ForeignKey(nameof(CustomVoteCat))]
+        public long? CustomVoteCatId { get; set; }
+        public virtual VoteCategoryEntity CustomVoteCat { get; set; }
     }
 }

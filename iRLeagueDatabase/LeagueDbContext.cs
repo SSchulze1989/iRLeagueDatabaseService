@@ -21,6 +21,8 @@ namespace iRLeagueDatabase
         public virtual DbSet<SeasonEntity> Seasons { get; set; }
         //public virtual DbSet<LeagueUserEntity> Users { get; set; }
         public virtual DbSet<LeagueMemberEntity> Members { get; set; }
+        public virtual DbSet<CustomIncidentEntity> CustomIncidentKinds { get; set; }
+        public virtual DbSet<VoteCategoryEntity> CustomVoteCategories { get; set; }
 
         private readonly OrphansToHandle OrphansToHandle;
 

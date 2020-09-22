@@ -3,6 +3,23 @@
   <Runtime>
     <ConceptualModels>
       <Schema Namespace="iRLeagueDatabase" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CustomIncidentEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Reviews.CustomIncidentEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="IncidentId" />
+          </Key>
+          <Property Name="IncidentId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Index" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VoteCategoryEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Reviews.VoteCategoryEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="CatId" />
+          </Key>
+          <Property Name="CatId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Index" Type="Int32" Nullable="false" />
+          <Property Name="DefaultPenalty" Type="Int32" Nullable="false" />
+        </EntityType>
         <EntityType Name="LeagueMemberEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Members.LeagueMemberEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
             <PropertyRef Name="MemberId" />
@@ -293,6 +310,8 @@
           <Property Name="ReviewId" Type="Int64" Nullable="false" />
           <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
+          <Property Name="CustomVoteCatId" Type="Int64" />
+          <NavigationProperty Name="CustomVoteCat" Relationship="Self.AcceptedReviewVoteEntity_CustomVoteCat" FromRole="AcceptedReviewVoteEntity_CustomVoteCat_Source" ToRole="AcceptedReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="IncidentReview" Relationship="Self.IncidentReviewEntity_AcceptedReviewVotes" FromRole="IncidentReviewEntity_AcceptedReviewVotes_Target" ToRole="IncidentReviewEntity_AcceptedReviewVotes_Source" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.AcceptedReviewVoteEntity_MemberAtFault" FromRole="AcceptedReviewVoteEntity_MemberAtFault_Source" ToRole="AcceptedReviewVoteEntity_MemberAtFault_Target" />
         </EntityType>
@@ -309,6 +328,8 @@
           <Property Name="CommentId" Type="Int64" Nullable="false" />
           <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
+          <Property Name="CustomVoteCatId" Type="Int64" />
+          <NavigationProperty Name="CustomVoteCat" Relationship="Self.CommentReviewVoteEntity_CustomVoteCat" FromRole="CommentReviewVoteEntity_CustomVoteCat_Source" ToRole="CommentReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.CommentReviewVoteEntity_MemberAtFault" FromRole="CommentReviewVoteEntity_MemberAtFault_Source" ToRole="CommentReviewVoteEntity_MemberAtFault_Target" />
           <NavigationProperty Name="ReviewComment" Relationship="Self.ReviewCommentEntity_CommentReviewVotes" FromRole="ReviewCommentEntity_CommentReviewVotes_Target" ToRole="ReviewCommentEntity_CommentReviewVotes_Source" />
         </EntityType>
@@ -489,6 +510,18 @@
             <OnDelete Action="Cascade" />
           </End>
         </Association>
+        <Association Name="AcceptedReviewVoteEntity_CustomVoteCat">
+          <End Role="AcceptedReviewVoteEntity_CustomVoteCat_Source" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
+          <End Role="AcceptedReviewVoteEntity_CustomVoteCat_Target" Type="Self.VoteCategoryEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AcceptedReviewVoteEntity_CustomVoteCat_Target">
+              <PropertyRef Name="CatId" />
+            </Principal>
+            <Dependent Role="AcceptedReviewVoteEntity_CustomVoteCat_Source">
+              <PropertyRef Name="CustomVoteCatId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AcceptedReviewVoteEntity_MemberAtFault">
           <End Role="AcceptedReviewVoteEntity_MemberAtFault_Source" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
           <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
@@ -512,6 +545,18 @@
             </Principal>
             <Dependent Role="IncidentReviewEntity_AcceptedReviewVotes_Target">
               <PropertyRef Name="ReviewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CommentReviewVoteEntity_CustomVoteCat">
+          <End Role="CommentReviewVoteEntity_CustomVoteCat_Source" Type="Self.CommentReviewVoteEntity" Multiplicity="*" />
+          <End Role="CommentReviewVoteEntity_CustomVoteCat_Target" Type="Self.VoteCategoryEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="CommentReviewVoteEntity_CustomVoteCat_Target">
+              <PropertyRef Name="CatId" />
+            </Principal>
+            <Dependent Role="CommentReviewVoteEntity_CustomVoteCat_Source">
+              <PropertyRef Name="CustomVoteCatId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -736,6 +781,8 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="LeagueDbContext" customannotation:UseClrTypes="true">
+          <EntitySet Name="CustomIncidentKinds" EntityType="Self.CustomIncidentEntity" />
+          <EntitySet Name="CustomVoteCategories" EntityType="Self.VoteCategoryEntity" />
           <EntitySet Name="Members" EntityType="Self.LeagueMemberEntity" />
           <EntitySet Name="TeamEntities" EntityType="Self.TeamEntity" />
           <EntitySet Name="ScoredTeamResultRowEntities" EntityType="Self.ScoredTeamResultRowEntity" />
@@ -802,6 +849,10 @@
             <End Role="ScoringTableEntity_Season_Source" EntitySet="ScoringTableEntities" />
             <End Role="ScoringTableEntity_Season_Target" EntitySet="Seasons" />
           </AssociationSet>
+          <AssociationSet Name="AcceptedReviewVoteEntity_CustomVoteCat" Association="Self.AcceptedReviewVoteEntity_CustomVoteCat">
+            <End Role="AcceptedReviewVoteEntity_CustomVoteCat_Source" EntitySet="AcceptedReviewVoteEntities" />
+            <End Role="AcceptedReviewVoteEntity_CustomVoteCat_Target" EntitySet="CustomVoteCategories" />
+          </AssociationSet>
           <AssociationSet Name="AcceptedReviewVoteEntity_MemberAtFault" Association="Self.AcceptedReviewVoteEntity_MemberAtFault">
             <End Role="AcceptedReviewVoteEntity_MemberAtFault_Source" EntitySet="AcceptedReviewVoteEntities" />
             <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" EntitySet="Members" />
@@ -809,6 +860,10 @@
           <AssociationSet Name="IncidentReviewEntity_AcceptedReviewVotes" Association="Self.IncidentReviewEntity_AcceptedReviewVotes">
             <End Role="IncidentReviewEntity_AcceptedReviewVotes_Source" EntitySet="IncidentReviewEntities" />
             <End Role="IncidentReviewEntity_AcceptedReviewVotes_Target" EntitySet="AcceptedReviewVoteEntities" />
+          </AssociationSet>
+          <AssociationSet Name="CommentReviewVoteEntity_CustomVoteCat" Association="Self.CommentReviewVoteEntity_CustomVoteCat">
+            <End Role="CommentReviewVoteEntity_CustomVoteCat_Source" EntitySet="CommentReviewVoteEntities" />
+            <End Role="CommentReviewVoteEntity_CustomVoteCat_Target" EntitySet="CustomVoteCategories" />
           </AssociationSet>
           <AssociationSet Name="CommentReviewVoteEntity_MemberAtFault" Association="Self.CommentReviewVoteEntity_MemberAtFault">
             <End Role="CommentReviewVoteEntity_MemberAtFault_Source" EntitySet="CommentReviewVoteEntities" />
@@ -896,6 +951,25 @@
     <Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="CodeFirstDatabase" CdmEntityContainer="LeagueDbContext">
+          <EntitySetMapping Name="CustomIncidentKinds">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.CustomIncidentEntity">
+              <MappingFragment StoreEntitySet="CustomIncidentEntity">
+                <ScalarProperty Name="IncidentId" ColumnName="IncidentId" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Index" ColumnName="Index" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomVoteCategories">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.VoteCategoryEntity">
+              <MappingFragment StoreEntitySet="VoteCategoryEntity">
+                <ScalarProperty Name="CatId" ColumnName="CatId" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Index" ColumnName="Index" />
+                <ScalarProperty Name="DefaultPenalty" ColumnName="DefaultPenalty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Members">
             <EntityTypeMapping TypeName="iRLeagueDatabase.LeagueMemberEntity">
               <MappingFragment StoreEntitySet="LeagueMemberEntity">
@@ -1201,6 +1275,7 @@
                 <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="MemberAtFaultId" ColumnName="MemberAtFaultId" />
                 <ScalarProperty Name="Vote" ColumnName="Vote" />
+                <ScalarProperty Name="CustomVoteCatId" ColumnName="CustomVoteCatId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1243,6 +1318,7 @@
                 <ScalarProperty Name="CommentId" ColumnName="CommentId" />
                 <ScalarProperty Name="MemberAtFaultId" ColumnName="MemberAtFaultId" />
                 <ScalarProperty Name="Vote" ColumnName="Vote" />
+                <ScalarProperty Name="CustomVoteCatId" ColumnName="CustomVoteCatId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1372,6 +1448,23 @@
     </Mappings>
     <StorageModels>
       <Schema Namespace="CodeFirstDatabaseSchema" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CustomIncidentEntity">
+          <Key>
+            <PropertyRef Name="IncidentId" />
+          </Key>
+          <Property Name="IncidentId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Text" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Index" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VoteCategoryEntity">
+          <Key>
+            <PropertyRef Name="CatId" />
+          </Key>
+          <Property Name="CatId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Text" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Index" Type="int" Nullable="false" />
+          <Property Name="DefaultPenalty" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="LeagueMemberEntity">
           <Key>
             <PropertyRef Name="MemberId" />
@@ -1639,6 +1732,7 @@
           <Property Name="ReviewId" Type="bigint" customannotation:Index="{ Name: IX_ReviewId, Order: 0 }" Nullable="false" />
           <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
+          <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
         </EntityType>
         <EntityType Name="CommentBaseEntity">
           <Key>
@@ -1668,6 +1762,7 @@
           <Property Name="CommentId" Type="bigint" customannotation:Index="{ Name: IX_CommentId, Order: 0 }" Nullable="false" />
           <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
+          <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
         </EntityType>
         <EntityType Name="ReviewPenaltyEntity">
           <Key>
@@ -1882,6 +1977,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="AcceptedReviewVoteEntity_CustomVoteCat">
+          <End Role="VoteCategoryEntity" Type="Self.VoteCategoryEntity" Multiplicity="0..1" />
+          <End Role="AcceptedReviewVoteEntity" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VoteCategoryEntity">
+              <PropertyRef Name="CatId" />
+            </Principal>
+            <Dependent Role="AcceptedReviewVoteEntity">
+              <PropertyRef Name="CustomVoteCatId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="AcceptedReviewVoteEntity_MemberAtFault">
           <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1" />
           <End Role="AcceptedReviewVoteEntity" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
@@ -1905,6 +2012,18 @@
             </Principal>
             <Dependent Role="AcceptedReviewVoteEntity">
               <PropertyRef Name="ReviewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="CommentReviewVoteEntity_CustomVoteCat">
+          <End Role="VoteCategoryEntity" Type="Self.VoteCategoryEntity" Multiplicity="0..1" />
+          <End Role="CommentReviewVoteEntity" Type="Self.CommentReviewVoteEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VoteCategoryEntity">
+              <PropertyRef Name="CatId" />
+            </Principal>
+            <Dependent Role="CommentReviewVoteEntity">
+              <PropertyRef Name="CustomVoteCatId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2225,6 +2344,8 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="CodeFirstDatabase">
+          <EntitySet Name="CustomIncidentEntity" EntityType="Self.CustomIncidentEntity" Schema="dbo" Table="CustomIncidentEntities" />
+          <EntitySet Name="VoteCategoryEntity" EntityType="Self.VoteCategoryEntity" Schema="dbo" Table="VoteCategoryEntities" />
           <EntitySet Name="LeagueMemberEntity" EntityType="Self.LeagueMemberEntity" Schema="dbo" Table="LeagueMemberEntities" />
           <EntitySet Name="TeamEntity" EntityType="Self.TeamEntity" Schema="dbo" Table="TeamEntities" />
           <EntitySet Name="ScoredTeamResultRowEntity" EntityType="Self.ScoredTeamResultRowEntity" Schema="dbo" Table="ScoredTeamResultRowEntities" />
@@ -2299,6 +2420,10 @@
             <End Role="SeasonEntity" EntitySet="SeasonEntity" />
             <End Role="ScoringTableEntity" EntitySet="ScoringTableEntity" />
           </AssociationSet>
+          <AssociationSet Name="AcceptedReviewVoteEntity_CustomVoteCat" Association="Self.AcceptedReviewVoteEntity_CustomVoteCat">
+            <End Role="VoteCategoryEntity" EntitySet="VoteCategoryEntity" />
+            <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
+          </AssociationSet>
           <AssociationSet Name="AcceptedReviewVoteEntity_MemberAtFault" Association="Self.AcceptedReviewVoteEntity_MemberAtFault">
             <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
             <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
@@ -2306,6 +2431,10 @@
           <AssociationSet Name="IncidentReviewEntity_AcceptedReviewVotes" Association="Self.IncidentReviewEntity_AcceptedReviewVotes">
             <End Role="IncidentReviewEntity" EntitySet="IncidentReviewEntity" />
             <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
+          </AssociationSet>
+          <AssociationSet Name="CommentReviewVoteEntity_CustomVoteCat" Association="Self.CommentReviewVoteEntity_CustomVoteCat">
+            <End Role="VoteCategoryEntity" EntitySet="VoteCategoryEntity" />
+            <End Role="CommentReviewVoteEntity" EntitySet="CommentReviewVoteEntity" />
           </AssociationSet>
           <AssociationSet Name="CommentReviewVoteEntity_MemberAtFault" Association="Self.CommentReviewVoteEntity_MemberAtFault">
             <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
