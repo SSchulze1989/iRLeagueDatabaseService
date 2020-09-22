@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRLeagueUserDatabase", "iRLeagueUserDatabase\iRLeagueUserDatabase.csproj", "{E80E0176-8BBB-4AB6-B528-314352267B12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication", "..\Users\simon\source\repos\iRLeagueManager\Communication\Communication.csproj", "{0AFD7545-DE7F-44D0-A3B0-DAF3A1E0844F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Communication", "..\iRLeagueManager\Communication\Communication.csproj", "{0AFD7545-DE7F-44D0-A3B0-DAF3A1E0844F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -36,6 +36,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
+            Scorings?.Clear();
             base.Delete(dbContext);
         }
 

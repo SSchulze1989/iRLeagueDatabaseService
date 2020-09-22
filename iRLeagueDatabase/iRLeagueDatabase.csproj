@@ -72,6 +72,10 @@
     <Compile Include="Migrations\202009151217062_InitialCreate.designer.cs">
       <DependentUpon>202009151217062_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009180021301_AddLapCornerString.cs" />
+    <Compile Include="Migrations\202009180021301_AddLapCornerString.designer.cs">
+      <DependentUpon>202009180021301_AddLapCornerString.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -106,15 +110,18 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Users\simon\source\repos\iRLeagueManager\Communication\Communication.csproj">
-      <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
-      <Name>Communication</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Migrations\202009151217062_InitialCreate.resx">
       <DependentUpon>202009151217062_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009180021301_AddLapCornerString.resx">
+      <DependentUpon>202009180021301_AddLapCornerString.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\iRLeagueManager\Communication\Communication.csproj">
+      <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
