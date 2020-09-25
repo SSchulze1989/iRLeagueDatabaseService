@@ -120,6 +120,7 @@ namespace iRLeagueDatabase.Mapper
             target.ReviewVoteId = source.ReviewVoteId;
             target.Vote = source.Vote;
             target.MemberAtFault = MapToMemberInfoDTO(source.MemberAtFault);
+            target.VoteCategoryId = source.CustomVoteCat?.CatId;
 
             return target;
         }
@@ -299,6 +300,7 @@ namespace iRLeagueDatabase.Mapper
 
             target.MemberAtFault = GetMemberEntity(source.MemberAtFault);
             target.Vote = source.Vote;
+            target.CustomVoteCat = DefaultGet<VoteCategoryEntity>(new object[] { source.VoteCategoryId });
 
             return target;
         }
