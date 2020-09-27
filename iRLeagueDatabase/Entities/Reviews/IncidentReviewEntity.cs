@@ -55,6 +55,8 @@ namespace iRLeagueDatabase.Entities.Reviews
         [InverseProperty(nameof(AcceptedReviewVoteEntity.IncidentReview))]
         public virtual List<AcceptedReviewVoteEntity> AcceptedReviewVotes { get; set; }
 
+        public string ResultLongText { get; set; }
+
         //public VoteState VoteState { get; set; }
 
         public IncidentReviewEntity()

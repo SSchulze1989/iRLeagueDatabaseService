@@ -418,7 +418,7 @@ namespace iRLeagueDatabase.Entities.Results
                             {
                                 removePenalty.Remove(reviewPenalty);
                             }
-                            reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote.Vote);
+                            reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote);
                         }
                         removePenalty.ForEach(x => x.Delete(dbContext));
                         //dbContext.SaveChanges();
@@ -524,9 +524,14 @@ namespace iRLeagueDatabase.Entities.Results
                 return ScoredResults;
         }
 
-        private int GetReviewPenaltyPoints(VoteEnum vote)
+        private int GetReviewPenaltyPoints(ReviewVoteEntity vote)
         {
-            switch (vote)
+            if (vote.CustomVoteCat != null)
+            {
+                return vote.CustomVoteCat.DefaultPenalty;
+            }
+
+            switch (vote.Vote)
             {
                 case VoteEnum.Kat0:
                     return 0;

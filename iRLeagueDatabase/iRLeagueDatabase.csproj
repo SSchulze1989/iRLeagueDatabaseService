@@ -82,6 +82,10 @@
     <Compile Include="Migrations\202009222145254_AddCustomVoteCategories.designer.cs">
       <DependentUpon>202009222145254_AddCustomVoteCategories.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202009271416321_AddResultLongTextToReview.cs" />
+    <Compile Include="Migrations\202009271416321_AddResultLongTextToReview.designer.cs">
+      <DependentUpon>202009271416321_AddResultLongTextToReview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -124,6 +128,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009222145254_AddCustomVoteCategories.resx">
       <DependentUpon>202009222145254_AddCustomVoteCategories.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009271416321_AddResultLongTextToReview.resx">
+      <DependentUpon>202009271416321_AddResultLongTextToReview.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
