@@ -221,6 +221,7 @@
           </Key>
           <Property Name="SeasonId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SeasonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="HideCommentsBeforeVoted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -290,6 +291,7 @@
           <Property Name="OnLap" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Corner" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TimeStamp" Type="Time" Nullable="false" />
+          <Property Name="ResultLongText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -1175,6 +1177,7 @@
               <MappingFragment StoreEntitySet="SeasonEntity">
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="SeasonName" ColumnName="SeasonName" />
+                <ScalarProperty Name="HideCommentsBeforeVoted" ColumnName="HideCommentsBeforeVoted" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1258,6 +1261,7 @@
                 <ScalarProperty Name="OnLap" ColumnName="OnLap" />
                 <ScalarProperty Name="Corner" ColumnName="Corner" />
                 <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+                <ScalarProperty Name="ResultLongText" ColumnName="ResultLongText" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1644,6 +1648,7 @@
           </Key>
           <Property Name="SeasonId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SeasonName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="HideCommentsBeforeVoted" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -1716,6 +1721,7 @@
           <Property Name="OnLap" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Corner" Type="nvarchar(max)" Nullable="true" />
           <Property Name="TimeStamp" Type="time" Precision="7" Nullable="false" />
+          <Property Name="ResultLongText" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />

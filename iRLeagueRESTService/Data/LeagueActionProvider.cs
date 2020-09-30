@@ -43,7 +43,7 @@ namespace iRLeagueRESTService.Data
                 .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.ReviewPenalties)))
                 //.Include(x => x.SessionResult.ScoredResults.Select(y => ((ScoredTeamResultEntity)y).TeamResults.Select(z => z.ScoredResultRows)))
                 .Include(x => x.SessionResult.RawResults.Select(y => y.Member.Team))
-                .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes))
+                .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes.Select(z => z.CustomVoteCat)))
                 .Where(x => sessionIds.Contains(x.SessionId));
 
             foreach (var session in sessions)

@@ -81,6 +81,7 @@ namespace iRLeagueDatabase.Mapper
             target.Version = source.Version;
             target.VoteCategories = LeagueDbContext.CustomVoteCategories.AsEnumerable().Select(x => MapToVoteCategoryDTO(x)).ToArray();
             target.CustomIncidents = LeagueDbContext.CustomIncidentKinds.AsEnumerable().Select(x => MapToCustomIncidentDTO(x)).ToArray();
+            target.HideCommentsBeforeVoted = source.HideCommentsBeforeVoted;
 
             return target;
         }
@@ -185,6 +186,7 @@ namespace iRLeagueDatabase.Mapper
             MapCollection(source.ScoringTables, target.ScoringTables, MapToScoringTableEntity, x => x.ScoringTableId, autoAddMissing: true);
             target.SeasonName = source.SeasonName;
             target.Version = source.Version;
+            target.HideCommentsBeforeVoted = source.HideCommentsBeforeVoted;
 
             return target;
         }

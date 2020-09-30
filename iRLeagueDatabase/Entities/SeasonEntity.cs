@@ -42,6 +42,8 @@ namespace iRLeagueDatabase.Entities
         [NotMapped]
         public DateTime? SeasonEnd => Schedules.Select(x => x.ScheduleEnd)?.Max();
 
+        public bool HideCommentsBeforeVoted { get; set; }
+
         public SeasonEntity()
         {
             Schedules = new List<ScheduleEntity>();

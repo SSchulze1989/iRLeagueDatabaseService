@@ -120,7 +120,7 @@ namespace iRLeagueDatabase.Mapper
         }
 
         /// <summary>
-        /// Default method for getting an entity from the database as a mapping target.
+        /// Default method for getting an entity from the database as a mapping target or source.
         /// If mapping Id on the source is null, a new entity is created.
         /// </summary>
         /// <typeparam name="TSource">Source type for mapping</typeparam>

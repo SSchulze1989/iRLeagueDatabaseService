@@ -59,6 +59,7 @@ namespace iRLeagueDatabase.Mapper
             target.Session = MapToSessionInfoDTO(source.Session);
             target.TimeStamp = source.TimeStamp;
             target.AcceptedReviewVotes = source.AcceptedReviewVotes.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
+            target.ResultLongText = source.ResultLongText;
 
             return target;
         }
@@ -120,6 +121,7 @@ namespace iRLeagueDatabase.Mapper
             target.ReviewVoteId = source.ReviewVoteId;
             target.Vote = source.Vote;
             target.MemberAtFault = MapToMemberInfoDTO(source.MemberAtFault);
+            target.VoteCategoryId = source.CustomVoteCat?.CatId;
 
             return target;
         }
@@ -200,6 +202,7 @@ namespace iRLeagueDatabase.Mapper
                 target.AcceptedReviewVotes = new List<AcceptedReviewVoteEntity>();
             MapCollection(source.AcceptedReviewVotes, target.AcceptedReviewVotes, MapToAcceptedReviewVoteEntity, x => x.ReviewVoteId, 
                 removeFromCollection: true, removeFromDatabase: true, autoAddMissing: true);
+            target.ResultLongText = source.ResultLongText;
 
             return target;
         }
@@ -299,6 +302,7 @@ namespace iRLeagueDatabase.Mapper
 
             target.MemberAtFault = GetMemberEntity(source.MemberAtFault);
             target.Vote = source.Vote;
+            target.CustomVoteCat = DefaultGet<VoteCategoryEntity>(new object[] { source.VoteCategoryId });
 
             return target;
         }
