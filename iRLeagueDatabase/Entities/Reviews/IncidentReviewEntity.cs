@@ -31,6 +31,8 @@ namespace iRLeagueDatabase.Entities.Reviews
         //public virtual SessionBaseEntity Session { get; set; }
         public virtual SessionBaseEntity Session { get; set; }
 
+        public string IncidentNr { get; set; }
+
         //[ForeignKey(nameof(Author))]
         //public int AuthorId { get; set; }
         //public virtual LeagueMemberEntity Author { get; set; }

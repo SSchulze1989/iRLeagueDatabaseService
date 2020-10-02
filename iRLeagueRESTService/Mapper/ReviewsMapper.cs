@@ -60,6 +60,7 @@ namespace iRLeagueDatabase.Mapper
             target.TimeStamp = source.TimeStamp;
             target.AcceptedReviewVotes = source.AcceptedReviewVotes.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
             target.ResultLongText = source.ResultLongText;
+            target.IncidentNr = source.IncidentNr;
 
             return target;
         }
@@ -203,6 +204,7 @@ namespace iRLeagueDatabase.Mapper
             MapCollection(source.AcceptedReviewVotes, target.AcceptedReviewVotes, MapToAcceptedReviewVoteEntity, x => x.ReviewVoteId, 
                 removeFromCollection: true, removeFromDatabase: true, autoAddMissing: true);
             target.ResultLongText = source.ResultLongText;
+            target.IncidentNr = source.IncidentNr;
 
             return target;
         }
