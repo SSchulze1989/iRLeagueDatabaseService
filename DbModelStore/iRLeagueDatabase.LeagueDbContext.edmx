@@ -284,6 +284,7 @@
           </Key>
           <Property Name="ReviewId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SessionId" Type="Int64" Nullable="false" />
+          <Property Name="IncidentNr" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="AuthorUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="AuthorName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IncidentKind" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1254,6 +1255,7 @@
               <MappingFragment StoreEntitySet="IncidentReviewEntity">
                 <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="IncidentNr" ColumnName="IncidentNr" />
                 <ScalarProperty Name="AuthorUserId" ColumnName="AuthorUserId" />
                 <ScalarProperty Name="AuthorName" ColumnName="AuthorName" />
                 <ScalarProperty Name="IncidentKind" ColumnName="IncidentKind" />
@@ -1714,6 +1716,7 @@
           </Key>
           <Property Name="ReviewId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SessionId" Type="bigint" customannotation:Index="{ Name: IX_SessionId, Order: 0 }" Nullable="false" />
+          <Property Name="IncidentNr" Type="nvarchar(max)" Nullable="true" />
           <Property Name="AuthorUserId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="AuthorName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="IncidentKind" Type="nvarchar(max)" Nullable="true" />

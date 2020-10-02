@@ -90,6 +90,10 @@
     <Compile Include="Migrations\202009271450441_AddHideCommentsBeforeVotedOption.designer.cs">
       <DependentUpon>202009271450441_AddHideCommentsBeforeVotedOption.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202010012023548_AddIncidentNr.cs" />
+    <Compile Include="Migrations\202010012023548_AddIncidentNr.designer.cs">
+      <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
@@ -138,6 +142,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009271450441_AddHideCommentsBeforeVotedOption.resx">
       <DependentUpon>202009271450441_AddHideCommentsBeforeVotedOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010012023548_AddIncidentNr.resx">
+      <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
