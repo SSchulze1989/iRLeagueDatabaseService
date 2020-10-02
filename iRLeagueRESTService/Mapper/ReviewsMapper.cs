@@ -93,7 +93,7 @@ namespace iRLeagueDatabase.Mapper
             target.Date = source.Date;
             target.Text = source.Text;
             target.ReplyTo = MapToCommentInfoDTO(source.ReplyTo);
-            target.Replies = source.Replies.Select(x => MapToCommentDataDTO(x)).ToArray();
+            target.Replies = source.Replies?.Select(x => MapToCommentDataDTO(x)).ToArray();
 
             return target;
         }
