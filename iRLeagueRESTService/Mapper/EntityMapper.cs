@@ -222,10 +222,17 @@ namespace iRLeagueDatabase.Mapper
                 }
             }
 
+            var addList = new List<TTarget>();
             foreach(var source in newTargetsList)
             {
                 var dbSet = DbContext.Set(typeof(TTarget));
+
+                //-> this can be a problem when another entity of this kind has been added in the same context without saving.
+                //   the problem is migitated for cases of multiple adds in one collection by buffering and only adding to database after the
+                //   whole collection is run through. There might be an issue appearing with multiple collections of same type but I do not have a quick way around this.
                 var target = dbSet.Find(source.Keys) as TTarget;
+                //if (target != null && DbContext.Entry(target).State == System.Data.Entity.EntityState.Added)
+                //    target = null;
                 
                 if (target == null)
                 {
@@ -236,8 +243,10 @@ namespace iRLeagueDatabase.Mapper
                 }
 
                 target = map(source, target);
-                targetCollection.Add(target);
+                //targetCollection.Add(target);
+                addList.Add(target);
             }
+            addList.ForEach(x => targetCollection.Add(x));
 
             if (removeFromCollection)
 
