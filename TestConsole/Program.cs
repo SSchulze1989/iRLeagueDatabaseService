@@ -30,17 +30,7 @@ namespace TestConsole
         {
             using (var context = new LeagueDbContext("TestDatabase"))
             {
-                var table = context.Set<ScoringTableEntity>().Find(1);
-                //var scoring = new ScoringEntity[] { context.Set<ScoringEntity>().Find(5), context.Set<ScoringEntity>().Find(6) };
-
-                //table.Scorings.AddRange(scoring);
-                //table.ScoringFactors = "1;1";
-                var standings = table.GetSeasonStandings(context);
-
-                foreach (var row in standings.StandingsRows)
-                {
-                    Console.WriteLine($"{row.Position} - {row.Member.Fullname} - {row.TotalPoints}");
-                }
+                
             }
 
             Console.Read();

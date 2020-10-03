@@ -83,6 +83,10 @@ namespace iRLeagueRESTService.Data
                 //var sessionIds = requestIds.Select(x => x.Count() > 0 ? x[1] : 0).ToArray();
                 items = GetStandings(requestIds).Cast<TModelDTO>().ToArray();
             }
+            else if (requestType.Equals(typeof(IncidentReviewDataDTO)))
+            {
+                items = GetReviews(requestIds.Select(x => x.FirstOrDefault()).ToArray()).Cast<TModelDTO>().ToArray();
+            }
             else
             {
                 var rqEntityType = mapper.GetTypeMaps().FirstOrDefault(x => x.TargetType.Equals(requestType))?.SourceType;
@@ -119,6 +123,29 @@ namespace iRLeagueRESTService.Data
             }
 
             return items;
+        }
+
+        public IncidentReviewDataDTO[] GetReviews(long[] keys)
+        {
+            var mapper = new DTOMapper(DbContext);
+
+            DbContext.Configuration.LazyLoadingEnabled = false;
+            var reviewEnties = DbContext.Set<IncidentReviewEntity>().Where(x => keys.Contains(x.ReviewId))
+                .Include(x => x.Session)
+                .Include(x => x.InvolvedMembers).ToArray();
+
+            DbContext.Set<ReviewCommentEntity>().Where(x => keys.Contains(x.ReviewId))
+                .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
+                .Include(x => x.Replies).Load();
+            DbContext.Set<AcceptedReviewVoteEntity>().Where(x => keys.Contains(x.ReviewId))
+                .Include(x => x.MemberAtFault).Load();
+
+            DbContext.ChangeTracker.DetectChanges();
+
+            var reviewDtos = reviewEnties.Select(x => mapper.MapTo<IncidentReviewDataDTO>(x)).ToArray();
+            DbContext.Configuration.LazyLoadingEnabled = true;
+
+            return reviewDtos;
         }
 
         public TModelDTO Post(Type requestType, TModelDTO data)
