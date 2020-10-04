@@ -122,7 +122,12 @@ namespace iRLeagueDatabase.Entities.Results
             var currentStandingsRows = allScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
             currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
-            standings.StandingsRows = currentStandingsRows.Diff(previousStandingsRows).OrderBy(x => -x.TotalPoints).ToList();
+            standings.StandingsRows = currentStandingsRows
+                .Diff(previousStandingsRows)
+                .OrderBy(x => -x.TotalPoints)
+                .ThenBy(x => -x.PenaltyPoints)
+                .ThenBy(x => -x.Wins)
+                .ToList();
             standings.StandingsRows.ForEach(x => x.ScoringTable = this);
             standings.Calculate();
 
