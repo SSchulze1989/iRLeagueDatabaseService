@@ -295,7 +295,7 @@ namespace iRLeagueRESTService.Data
             var scoredResultEntity = DbContext.Set<ScoredResultEntity>()
                 //.AsNoTracking()
                 //.Include(x => x.Result.Session)
-                //.Include(x => x.Scoring)
+                .Include(x => x.Scoring)
                 //.Include(x => x.Result.RawResults.Select(y => y.Member))
                 //.Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
                 //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
@@ -308,11 +308,18 @@ namespace iRLeagueRESTService.Data
                     Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
                 };
 
-            DbContext.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
-            DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
-            DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
+            DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
+                .Include(x => x.Session).Load();
+            DbContext.Set<ScoredResultRowEntity>().Where(x => x.ScoredResultId == sessionId && x.ScoringId == scoringId)
                 .Include(x => x.AddPenalty)
                 .Include(x => x.ResultRow.Member.Team).Load();
+            //DbContext.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
+            //DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
+            //DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
+            //    .Include(x => x.AddPenalty)
+            //    .Include(x => x.ResultRow.Member.Team).Load();
+
+            DbContext.ChangeTracker.DetectChanges();
 
             if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
             {
@@ -345,10 +352,19 @@ namespace iRLeagueRESTService.Data
 
                 var scoringTable = DbContext.Set<ScoringTableEntity>()
                     .Where(x => x.ScoringTableId == scoringTableId)
-                    .Include(x => x.Scorings.Select(y => y.Sessions.Select(z => z.SessionResult)))
-                    .Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
-                    .Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
+                    .Include(x => x.Scorings.Select(y => y.ExtScoringSource))
+                    //.Include(x => x.Scorings.Select(y => y.Sessions.Select(z => z.SessionResult)))
+                    //.Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
+                    //.Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                     .FirstOrDefault();
+                var localScoringEntityIds = DbContext.Set<ScoringEntity>().Local.Select(y => y.ScoringId);
+
+                DbContext.Set<ScoringEntity>().Where(x => localScoringEntityIds.Contains(x.ScoringId))
+                    .Include(x => x.Sessions.Select(y => y.SessionResult)).Load();
+                DbContext.Set<ScoredResultEntity>().Where(x => localScoringEntityIds.Contains(x.ScoringId))
+                    .Include(x => x.FinalResults.Select(y => y.ResultRow.Member)).Load();
+
+                DbContext.ChangeTracker.DetectChanges();
 
                 if (scoringTable != null)
                 {
