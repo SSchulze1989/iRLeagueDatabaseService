@@ -189,7 +189,9 @@ namespace iRLeagueDatabase.Entities.Results
 
                 var allScoredDriverRows = allScoredDriverResults.SelectMany(x => x.FinalResults);
                 currentStandingsRows = allScoredResults.SelectMany(x => x.TeamResults).AggregateByTeam(maxRacesCount, true, DropRacesOption, ResultsPerRaceCount, allScoredDriverRows)
-                    .OrderBy(x => -x.TotalPoints);
+                    .OrderBy(x => -x.TotalPoints)
+                    .ThenBy(x => -x.PenaltyPoints)
+                    .ThenBy(x => x.Wins);
             }
             else
             {
@@ -204,8 +206,13 @@ namespace iRLeagueDatabase.Entities.Results
             previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
             currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
-            teamStandings.StandingsRows = currentStandingsRows.Diff(previousStandingsRows).OrderBy(x => -x.TotalPoints).ToList();
-            teamStandings.StandingsRows = currentStandingsRows.OrderBy(x => -x.TotalPoints).Cast<StandingsRowEntity>().ToList();
+            teamStandings.StandingsRows = currentStandingsRows
+                .Diff(previousStandingsRows)
+                .OrderBy(x => -x.TotalPoints)
+                .ThenBy(x => -x.PenaltyPoints)
+                .ThenBy(x => -x.Wins)
+                .ToList();
+            //teamStandings.StandingsRows = currentStandingsRows.OrderBy(x => -x.TotalPoints).Cast<StandingsRowEntity>().ToList();
             teamStandings.StandingsRows.ForEach(x => x.ScoringTable = this);
             //teamStandings.Calculate();
 
