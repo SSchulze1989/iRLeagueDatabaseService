@@ -38,6 +38,15 @@ namespace iRLeagueDatabase.Entities.Results
         [ForeignKey(nameof(Member))]
         public long MemberId { get; set; }
         public virtual LeagueMemberEntity Member { get; set; }
+
+        public int IRating { get; set; }
+        public int SeasonStartIRating { get; set; }
+
+        public string License { get; set; }
+        public string SeasonStartLicense { get; set; }
+
+        public double SafetyRating { get; set; }
+        public double SeasonStartSafetyRating { get; set; }
         
         public int CarNumber { get; set; }
         

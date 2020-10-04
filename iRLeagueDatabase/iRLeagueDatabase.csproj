@@ -54,6 +54,11 @@
   <ItemGroup>
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
+    <Compile Include="Entities\Results\DoubleFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\FilterValueBaseEntity.cs" />
+    <Compile Include="Entities\Results\IntFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\MemberFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\ResultsFilterOptionEntity.cs" />
     <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
@@ -62,6 +67,8 @@
     <Compile Include="Entities\Results\StandingsEntity.cs" />
     <Compile Include="Entities\Results\StandingsRowEntity.cs" />
     <Compile Include="Entities\Results\ScoredTeamResultEntity.cs" />
+    <Compile Include="Entities\Results\StringFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\TeamFilterValueEntity.cs" />
     <Compile Include="Entities\Results\TeamStandingsEntity.cs" />
     <Compile Include="Entities\Results\TeamStandingsRowEntity.cs" />
     <Compile Include="Entities\Reviews\AcceptedReviewVoteEntity.cs" />
@@ -69,6 +76,11 @@
     <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
+    <Compile Include="Filters\FilterTypeEnum.cs" />
+    <Compile Include="Filters\InvalidFilterValueException.cs" />
+    <Compile Include="Filters\IResultsFilter.cs" />
+    <Compile Include="Filters\MemberListFilter.cs" />
+    <Compile Include="Filters\SeasonStartIratingFilter.cs" />
     <Compile Include="LeagueDbConfiguration.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.designer.cs">
@@ -93,6 +105,10 @@
     <Compile Include="Migrations\202010012023548_AddIncidentNr.cs" />
     <Compile Include="Migrations\202010012023548_AddIncidentNr.designer.cs">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010032215338_AddResultFilterOptions.cs" />
+    <Compile Include="Migrations\202010032215338_AddResultFilterOptions.designer.cs">
+      <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -145,6 +161,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010012023548_AddIncidentNr.resx">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010032215338_AddResultFilterOptions.resx">
+      <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

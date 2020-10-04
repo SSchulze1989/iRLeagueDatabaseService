@@ -35,6 +35,9 @@ namespace iRLeagueDatabase.Entities.Results
         public bool TakeResultsFromExtSource { get; set; }
         //public bool IsMultiScoring { get; set; }
 
+        [InverseProperty(nameof(ResultsFilterOptionEntity.Scoring))]
+        public virtual List<ResultsFilterOptionEntity> ResultsFilterOptions { get; set; }
+
         public List<SessionBaseEntity> sessions;
         public virtual List<SessionBaseEntity> Sessions
         {
