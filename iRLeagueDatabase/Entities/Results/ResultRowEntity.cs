@@ -39,7 +39,8 @@ namespace iRLeagueDatabase.Entities.Results
         public long MemberId { get; set; }
         public virtual LeagueMemberEntity Member { get; set; }
 
-        public int IRating { get; set; }
+        public int OldIRating { get; set; }
+        public int NewIRating { get; set; }
         public int SeasonStartIRating { get; set; }
 
         public string License { get; set; }
@@ -84,6 +85,7 @@ namespace iRLeagueDatabase.Entities.Results
         public long FastestLapTime { get; set; }
 
         public int PositionChange { get; set; }
+
 
         [InverseProperty(nameof(ScoredResultRowEntity.ResultRow))]
         public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }

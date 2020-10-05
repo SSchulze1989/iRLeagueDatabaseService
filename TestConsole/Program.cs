@@ -28,10 +28,9 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            using (var context = new LeagueDbContext("TestDatabase"))
-            {
-                
-            }
+            var test = 0.5;
+
+            var test2 = test as IComparable;
 
             Console.Read();
         }

@@ -459,6 +459,22 @@ namespace iRLeagueDatabase.Mapper
             target.StartPosition = source.StartPosition;
             target.Status = source.Status;
             target.Result = GetResultEntity(new ResultInfoDTO() { ResultId = source.ResultId });
+            target.OldIRating = source.OldIRating;
+            target.NewIRating = source.NewIRating;
+
+            //compare with other resultrows in this season and determine SeasonStartIRating
+            //DbContext.Entry(target).Reference(x => x.Result.Session.Schedule.Season);
+            var seasonResultRows = target.Result.Session.Schedule.Season.Results
+                .SelectMany(x => x.RawResults);
+
+            if (seasonResultRows.Any(x => x.MemberId == target.MemberId))
+            {
+                target.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == target.MemberId).SeasonStartIRating;
+            }
+            else
+            {
+                target.SeasonStartIRating = target.OldIRating;
+            }
 
             return target;
         }
