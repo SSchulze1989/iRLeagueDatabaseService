@@ -114,8 +114,6 @@
     <Compile Include="Migrations\202010032215338_AddResultFilterOptions.designer.cs">
       <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="Session.cs" />
-    <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
     <Compile Include="Entities\Location.cs" />
     <Compile Include="Entities\MappableEntity.cs" />

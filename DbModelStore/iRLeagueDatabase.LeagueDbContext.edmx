@@ -111,6 +111,13 @@
           <Property Name="StartPosition" Type="Int32" Nullable="false" />
           <Property Name="FinishPosition" Type="Int32" Nullable="false" />
           <Property Name="MemberId" Type="Int64" Nullable="false" />
+          <Property Name="OldIRating" Type="Int32" Nullable="false" />
+          <Property Name="NewIRating" Type="Int32" Nullable="false" />
+          <Property Name="SeasonStartIRating" Type="Int32" Nullable="false" />
+          <Property Name="License" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SeasonStartLicense" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SafetyRating" Type="Double" Nullable="false" />
+          <Property Name="SeasonStartSafetyRating" Type="Double" Nullable="false" />
           <Property Name="CarNumber" Type="Int32" Nullable="false" />
           <Property Name="ClassId" Type="Int32" Nullable="false" />
           <Property Name="Car" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -376,6 +383,7 @@
           <Property Name="ScoringId" Type="Int64" Nullable="false" />
           <Property Name="ResultsFilterId" Type="Int64" Nullable="false" />
           <Property Name="ResultsFilterType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Exclude" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="FilterValues" Relationship="Self.ResultsFilterOptionEntity_FilterValues" FromRole="ResultsFilterOptionEntity_FilterValues_Source" ToRole="ResultsFilterOptionEntity_FilterValues_Target" />
           <NavigationProperty Name="Scoring" Relationship="Self.ScoringEntity_ResultsFilterOptions" FromRole="ScoringEntity_ResultsFilterOptions_Target" ToRole="ScoringEntity_ResultsFilterOptions_Source" />
         </EntityType>
@@ -1173,6 +1181,13 @@
                 <ScalarProperty Name="StartPosition" ColumnName="StartPosition" />
                 <ScalarProperty Name="FinishPosition" ColumnName="FinishPosition" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="OldIRating" ColumnName="OldIRating" />
+                <ScalarProperty Name="NewIRating" ColumnName="NewIRating" />
+                <ScalarProperty Name="SeasonStartIRating" ColumnName="SeasonStartIRating" />
+                <ScalarProperty Name="License" ColumnName="License" />
+                <ScalarProperty Name="SeasonStartLicense" ColumnName="SeasonStartLicense" />
+                <ScalarProperty Name="SafetyRating" ColumnName="SafetyRating" />
+                <ScalarProperty Name="SeasonStartSafetyRating" ColumnName="SeasonStartSafetyRating" />
                 <ScalarProperty Name="CarNumber" ColumnName="CarNumber" />
                 <ScalarProperty Name="ClassId" ColumnName="ClassId" />
                 <ScalarProperty Name="Car" ColumnName="Car" />
@@ -1450,6 +1465,7 @@
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
                 <ScalarProperty Name="ResultsFilterId" ColumnName="ResultsFilterId" />
                 <ScalarProperty Name="ResultsFilterType" ColumnName="ResultsFilterType" />
+                <ScalarProperty Name="Exclude" ColumnName="Exclude" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1730,6 +1746,13 @@
           <Property Name="StartPosition" Type="int" Nullable="false" />
           <Property Name="FinishPosition" Type="int" Nullable="false" />
           <Property Name="MemberId" Type="bigint" customannotation:Index="{ Name: IX_MemberId, Order: 0 }" Nullable="false" />
+          <Property Name="OldIRating" Type="int" Nullable="false" />
+          <Property Name="NewIRating" Type="int" Nullable="false" />
+          <Property Name="SeasonStartIRating" Type="int" Nullable="false" />
+          <Property Name="License" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="SeasonStartLicense" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="SafetyRating" Type="float" Nullable="false" />
+          <Property Name="SeasonStartSafetyRating" Type="float" Nullable="false" />
           <Property Name="CarNumber" Type="int" Nullable="false" />
           <Property Name="ClassId" Type="int" Nullable="false" />
           <Property Name="Car" Type="nvarchar(max)" Nullable="true" />
@@ -1960,6 +1983,7 @@
           <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoringId, Order: 0 }" Nullable="false" />
           <Property Name="ResultsFilterId" Type="bigint" Nullable="false" />
           <Property Name="ResultsFilterType" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Exclude" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="FilterValueBaseEntity">
           <Key>

@@ -42,49 +42,31 @@ namespace iRLeagueDatabase.Entities.Results
         public int OldIRating { get; set; }
         public int NewIRating { get; set; }
         public int SeasonStartIRating { get; set; }
-
         public string License { get; set; }
-        public string SeasonStartLicense { get; set; }
-
         public double SafetyRating { get; set; }
-        public double SeasonStartSafetyRating { get; set; }
-        
+        public int OldCpi { get; set; }
+        public int NewCpi { get; set; }
+        public int ClubId { get; set; }
+        public string ClubName { get; set; }
         public int CarNumber { get; set; }
-        
         public int ClassId { get; set; }
-
         public string Car { get; set; }
-        
+        public int CarId { get; set; }
         public string CarClass { get; set; }
-        
-        public int CompletedLaps { get; set; }
-        
+        public int CompletedLaps { get; set; } 
         public int LeadLaps { get; set; }
-        
         public int FastLapNr { get; set; }
-        
         public int Incidents { get; set; }
-        
         public RaceStatusEnum Status { get; set; }
-        
-        //public int RacePoints { get; set; }
-        
-        //public int BonusPoints { get; set; }
-
-        //public int PenaltyPoints { get; set; }
-
-        //[NotMapped]
-        //public int TotalPoints => RacePoints + BonusPoints - PenaltyPoints;
-
+        public DateTime QualifyingTimeAt { get; set; }
         public long QualifyingTime { get; set; }
-
         public long Interval { get; set; }
-
         public long AvgLapTime { get; set; }
-
         public long FastestLapTime { get; set; }
-
         public int PositionChange { get; set; }
+        public int Division { get; set; }
+        public int OldLicenseLevel { get; set; }
+        public int NewLicenseLevel { get; set; }
 
 
         [InverseProperty(nameof(ScoredResultRowEntity.ResultRow))]
