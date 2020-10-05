@@ -76,6 +76,8 @@
     <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
+    <Compile Include="Entities\Statistics\DriverStatisticEntity.cs" />
+    <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
     <Compile Include="Filters\ComparatorTypeEnum.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />
