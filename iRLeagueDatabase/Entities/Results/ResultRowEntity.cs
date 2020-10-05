@@ -27,6 +27,8 @@ namespace iRLeagueDatabase.Entities.Results
         [Required]
         public virtual ResultEntity Result { get; set; }
 
+        public SimSessionTypeEnum SimSessionType { get; set; }
+
         public DateTime? Date => Result?.Session?.Date;
 
         //public int FinalPosition { get; set; }
@@ -67,6 +69,16 @@ namespace iRLeagueDatabase.Entities.Results
         public int Division { get; set; }
         public int OldLicenseLevel { get; set; }
         public int NewLicenseLevel { get; set; }
+
+        // Additional lap data. Has to be retrieved from iracing from different endpoints than results
+        // Not sure if this will get used here or if there will be an additional lap data set in the parent result.
+        // Num... value should be default -1 for no value.
+        public int NumPitStops { get; set; }
+        public string PittedLaps { get; set; }
+        public int NumOfftrackLaps { get; set; }
+        public string OfftrackLaps { get; set; }
+        public int NumContactLaps { get; set; }
+        public string ContactLaps { get; set; }
 
 
         [InverseProperty(nameof(ScoredResultRowEntity.ResultRow))]

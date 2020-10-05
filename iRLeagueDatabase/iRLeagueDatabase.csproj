@@ -57,6 +57,7 @@
     <Compile Include="Entities\Results\DoubleFilterValueEntity.cs" />
     <Compile Include="Entities\Results\FilterValueBaseEntity.cs" />
     <Compile Include="Entities\Results\IntFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
     <Compile Include="Entities\Results\MemberFilterValueEntity.cs" />
     <Compile Include="Entities\Results\ResultsFilterOptionEntity.cs" />
     <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
