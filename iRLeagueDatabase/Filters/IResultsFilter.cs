@@ -8,13 +8,8 @@ using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Filters
 {
-    public interface IResultsFilter
-    {
-        string FilterName { get; }
-        string FilterDescription { get; }
-        int NrOfFilterValues { get; }
-        
-        IEnumerable<string> FilterValueDescriptions { get; }
+    public interface IResultsFilter : IResultsFilterDescription
+    {   
         List<FilterValueBaseEntity> FilterValues { get; set; }
         IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows, bool exclude = false);
     }
