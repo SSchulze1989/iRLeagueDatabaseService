@@ -136,6 +136,10 @@
     <Compile Include="Entities\Sessions\ScheduleEntity.cs" />
     <Compile Include="Entities\Sessions\SessionBaseEntity.cs" />
     <Compile Include="Entities\TrackConfig.cs" />
+    <Compile Include="Migrations\202010051903552_AddSimSessionDetails.cs" />
+    <Compile Include="Migrations\202010051903552_AddSimSessionDetails.designer.cs">
+      <DependentUpon>202010051903552_AddSimSessionDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -167,6 +171,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010032215338_AddResultFilterOptions.resx">
       <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010051903552_AddSimSessionDetails.resx">
+      <DependentUpon>202010051903552_AddSimSessionDetails.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
