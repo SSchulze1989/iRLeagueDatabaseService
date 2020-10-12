@@ -25,6 +25,10 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override object MappingId => ResultId;
 
+        [ForeignKey(nameof(Season))]
+        public long? SeasonId { get; set; }
+        public virtual SeasonEntity Season { get; set; }
+
         /// <summary>
         /// Data rows of results table
         /// This contains all result rows including practice and qualy together. They can be distinguished by SimSessionType value

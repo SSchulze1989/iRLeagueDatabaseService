@@ -60,7 +60,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int FastLapNr { get; set; }
         public int Incidents { get; set; }
         public RaceStatusEnum Status { get; set; }
-        public DateTime QualifyingTimeAt { get; set; }
+        public DateTime? QualifyingTimeAt { get; set; }
         public long QualifyingTime { get; set; }
         public long Interval { get; set; }
         public long AvgLapTime { get; set; }

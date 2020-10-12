@@ -140,6 +140,14 @@
     <Compile Include="Migrations\202010051903552_AddSimSessionDetails.designer.cs">
       <DependentUpon>202010051903552_AddSimSessionDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202010071853058_AddResultSeasonNavigationProperty.cs" />
+    <Compile Include="Migrations\202010071853058_AddResultSeasonNavigationProperty.designer.cs">
+      <DependentUpon>202010071853058_AddResultSeasonNavigationProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010071930457_FixDateTimeColumn.cs" />
+    <Compile Include="Migrations\202010071930457_FixDateTimeColumn.designer.cs">
+      <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -174,6 +182,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010051903552_AddSimSessionDetails.resx">
       <DependentUpon>202010051903552_AddSimSessionDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010071853058_AddResultSeasonNavigationProperty.resx">
+      <DependentUpon>202010071853058_AddResultSeasonNavigationProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010071930457_FixDateTimeColumn.resx">
+      <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

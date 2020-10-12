@@ -131,7 +131,7 @@
           <Property Name="FastLapNr" Type="Int32" Nullable="false" />
           <Property Name="Incidents" Type="Int32" Nullable="false" />
           <Property Name="Status" Type="Self.RaceStatusEnum" Nullable="false" />
-          <Property Name="QualifyingTimeAt" Type="DateTime" Nullable="false" />
+          <Property Name="QualifyingTimeAt" Type="DateTime" />
           <Property Name="QualifyingTime" Type="Int64" Nullable="false" />
           <Property Name="Interval" Type="Int64" Nullable="false" />
           <Property Name="AvgLapTime" Type="Int64" Nullable="false" />
@@ -155,6 +155,7 @@
             <PropertyRef Name="ResultId" />
           </Key>
           <Property Name="ResultId" Type="Int64" Nullable="false" />
+          <Property Name="SeasonId" Type="Int64" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -165,6 +166,7 @@
           <NavigationProperty Name="IRSimSessionDetails" Relationship="Self.ResultEntity_IRSimSessionDetails" FromRole="ResultEntity_IRSimSessionDetails_Source" ToRole="ResultEntity_IRSimSessionDetails_Target" />
           <NavigationProperty Name="RawResults" Relationship="Self.ResultEntity_RawResults" FromRole="ResultEntity_RawResults_Source" ToRole="ResultEntity_RawResults_Target" />
           <NavigationProperty Name="ScoredResults" Relationship="Self.ResultEntity_ScoredResults" FromRole="ResultEntity_ScoredResults_Source" ToRole="ResultEntity_ScoredResults_Target" />
+          <NavigationProperty Name="Season" Relationship="Self.ResultEntity_Season" FromRole="ResultEntity_Season_Source" ToRole="ResultEntity_Season_Target" />
           <NavigationProperty Name="Session" Relationship="Self.SessionBaseEntity_SessionResult" FromRole="SessionBaseEntity_SessionResult_Target" ToRole="SessionBaseEntity_SessionResult_Source" />
         </EntityType>
         <EntityType Name="IRSimSessionDetailsEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.IRSimSessionDetailsEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -918,6 +920,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ResultEntity_Season">
+          <End Role="ResultEntity_Season_Source" Type="Self.ResultEntity" Multiplicity="*" />
+          <End Role="ResultEntity_Season_Target" Type="Self.SeasonEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ResultEntity_Season_Target">
+              <PropertyRef Name="SeasonId" />
+            </Principal>
+            <Dependent Role="ResultEntity_Season_Source">
+              <PropertyRef Name="SeasonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="ResultRowEntity_ScoredResultRows">
           <End Role="ResultRowEntity_ScoredResultRows_Source" Type="Self.ResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1146,6 +1160,10 @@
             <End Role="ResultEntity_ScoredResults_Source" EntitySet="ResultEntities" />
             <End Role="ResultEntity_ScoredResults_Target" EntitySet="ScoredResultEntities" />
           </AssociationSet>
+          <AssociationSet Name="ResultEntity_Season" Association="Self.ResultEntity_Season">
+            <End Role="ResultEntity_Season_Source" EntitySet="ResultEntities" />
+            <End Role="ResultEntity_Season_Target" EntitySet="Seasons" />
+          </AssociationSet>
           <AssociationSet Name="ResultRowEntity_ScoredResultRows" Association="Self.ResultRowEntity_ScoredResultRows">
             <End Role="ResultRowEntity_ScoredResultRows_Source" EntitySet="ResultRowEntities" />
             <End Role="ResultRowEntity_ScoredResultRows_Target" EntitySet="ScoredResultRowEntities" />
@@ -1330,6 +1348,7 @@
             <EntityTypeMapping TypeName="iRLeagueDatabase.ResultEntity">
               <MappingFragment StoreEntitySet="ResultEntity">
                 <ScalarProperty Name="ResultId" ColumnName="ResultId" />
+                <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1929,7 +1948,7 @@
           <Property Name="FastLapNr" Type="int" Nullable="false" />
           <Property Name="Incidents" Type="int" Nullable="false" />
           <Property Name="Status" Type="int" Nullable="false" />
-          <Property Name="QualifyingTimeAt" Type="datetime" Nullable="false" />
+          <Property Name="QualifyingTimeAt" Type="datetime" Nullable="true" />
           <Property Name="QualifyingTime" Type="bigint" Nullable="false" />
           <Property Name="Interval" Type="bigint" Nullable="false" />
           <Property Name="AvgLapTime" Type="bigint" Nullable="false" />
@@ -1952,6 +1971,7 @@
             <PropertyRef Name="ResultId" />
           </Key>
           <Property Name="ResultId" Type="bigint" customannotation:Index="{ Name: IX_ResultId, Order: 0 }" Nullable="false" />
+          <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -2797,6 +2817,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ResultEntity_Season">
+          <End Role="SeasonEntity" Type="Self.SeasonEntity" Multiplicity="0..1" />
+          <End Role="ResultEntity" Type="Self.ResultEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeasonEntity">
+              <PropertyRef Name="SeasonId" />
+            </Principal>
+            <Dependent Role="ResultEntity">
+              <PropertyRef Name="SeasonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="ResultRowEntity_ScoredResultRows">
           <End Role="ResultRowEntity" Type="Self.ResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3064,6 +3096,10 @@
           <AssociationSet Name="ResultEntity_ScoredResults" Association="Self.ResultEntity_ScoredResults">
             <End Role="ResultEntity" EntitySet="ResultEntity" />
             <End Role="ScoredResultEntity" EntitySet="ScoredResultEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ResultEntity_Season" Association="Self.ResultEntity_Season">
+            <End Role="SeasonEntity" EntitySet="SeasonEntity" />
+            <End Role="ResultEntity" EntitySet="ResultEntity" />
           </AssociationSet>
           <AssociationSet Name="ResultRowEntity_ScoredResultRows" Association="Self.ResultRowEntity_ScoredResultRows">
             <End Role="ResultRowEntity" EntitySet="ResultRowEntity" />

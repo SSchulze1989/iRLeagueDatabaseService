@@ -21,7 +21,7 @@ namespace iRLeagueDatabase.Entities.Sessions
 
         public override object MappingId => ScheduleId;
 
-        public SeasonEntity Season { get; set; }
+        public virtual SeasonEntity Season { get; set; }
 
         public DateTime? ScheduleStart => Sessions.Select(x => x.Date).Min();
 

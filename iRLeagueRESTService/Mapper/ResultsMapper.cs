@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
+using System.Data.Entity;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -93,6 +94,8 @@ namespace iRLeagueDatabase.Mapper
             target.TeamName = source.Member.Team?.Name;
             target.LocationId = source.Result.Session.LocationId;
             target.Date = source.Date.GetValueOrDefault();
+            target.OldIRating = source.OldIRating;
+            target.NewIRating = source.NewIRating;
 
             return target;
         }
@@ -394,6 +397,7 @@ namespace iRLeagueDatabase.Mapper
             MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId });
             MapCollection(source.Reviews, target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.Session = GetSessionBaseEntity(source.Session);
+            target.Season = target.Session.Schedule.Season;
 
             return target;
         }
@@ -463,9 +467,12 @@ namespace iRLeagueDatabase.Mapper
             target.NewIRating = source.NewIRating;
 
             //compare with other resultrows in this season and determine SeasonStartIRating
-            //DbContext.Entry(target).Reference(x => x.Result.Session.Schedule.Season);
-            var seasonResultRows = target.Result.Session.Schedule.Season.Results
-                .SelectMany(x => x.RawResults);
+            DbContext.Configuration.LazyLoadingEnabled = false;
+            DbContext.Set<ResultEntity>()
+                .Where(x => x.SeasonId == target.Result.SeasonId)
+                .Include(x => x.RawResults)
+                .Load();
+            var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
 
             if (seasonResultRows.Any(x => x.MemberId == target.MemberId))
             {
@@ -475,6 +482,7 @@ namespace iRLeagueDatabase.Mapper
             {
                 target.SeasonStartIRating = target.OldIRating;
             }
+            DbContext.Configuration.LazyLoadingEnabled = true;
 
             return target;
         }

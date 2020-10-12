@@ -30,8 +30,8 @@ namespace iRLeagueDatabase.Entities
 
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
 
-        [NotMapped]
-        public virtual IEnumerable<ResultEntity> Results => null; /*Schedules.Select(x => x.Sessions.Select(y => y.SessionResult)).Aggregate((x, y) => x.Concat(y));*/
+        [InverseProperty(nameof(ResultEntity.Season))]
+        public virtual IEnumerable<ResultEntity> Results { get; set; }
 
         //[ForeignKey(nameof(MainScoring))]
         //public int? MainScoringId { get; set; }
