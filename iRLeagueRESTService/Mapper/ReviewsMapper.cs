@@ -51,14 +51,14 @@ namespace iRLeagueDatabase.Mapper
             target.IncidentKind = source.IncidentKind;
             target.FullDescription = source.FullDescription;
             target.AuthorName = source.AuthorName;
-            target.Comments = source.Comments.Select(x => MapToReviewCommentDataDTO(x)).ToList();
+            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToList();
             target.Corner = source.Corner;
-            target.InvolvedMembers = source.InvolvedMembers.Select(x => MapToMemberInfoDTO(x)).ToList();
+            target.InvolvedMembers = source.InvolvedMembers?.Select(x => MapToMemberInfoDTO(x)).ToList();
             target.OnLap = source.OnLap;
             target.ReviewId = source.ReviewId;
             target.Session = MapToSessionInfoDTO(source.Session);
             target.TimeStamp = source.TimeStamp;
-            target.AcceptedReviewVotes = source.AcceptedReviewVotes.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
+            target.AcceptedReviewVotes = source.AcceptedReviewVotes?.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
             target.ResultLongText = source.ResultLongText;
             target.IncidentNr = source.IncidentNr;
 
@@ -122,7 +122,7 @@ namespace iRLeagueDatabase.Mapper
             target.ReviewVoteId = source.ReviewVoteId;
             target.Vote = source.Vote;
             target.MemberAtFault = MapToMemberInfoDTO(source.MemberAtFault);
-            target.VoteCategoryId = source.CustomVoteCat?.CatId;
+            target.VoteCategoryId = source.CustomVoteCatId;
 
             return target;
         }
