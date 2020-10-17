@@ -1,4 +1,5 @@
 ﻿using iRLeagueDatabase.Entities.Results;
+using iRLeagueDatabase.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +8,9 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Filters
 {
-    public class ColumnPropertyFilter : IResultsFilter
+    public class ColumnPropertyFilter : ColumnPropertyFilterDescription, IResultsFilter
     {
-
-        public string FilterName => "Column value Filter";
-
-        public string FilterDescription => "Select results based on comparing a single column to a static value";
-
-        public int NrOfFilterValues => 3;
-
         public List<FilterValueBaseEntity> FilterValues { get; set; } = new List<FilterValueBaseEntity>();
-
-        public IEnumerable<string> FilterValueDescriptions => new string[] { "Column Name", "Operator", "Value" };
 
         public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows, bool exclude = false)
         {

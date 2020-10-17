@@ -80,12 +80,11 @@
     <Compile Include="Entities\Statistics\DriverStatisticEntity.cs" />
     <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
-    <Compile Include="Filters\ComparatorTypeEnum.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />
     <Compile Include="Filters\InvalidFilterValueException.cs" />
     <Compile Include="Filters\IResultsFilter.cs" />
     <Compile Include="Filters\MemberListFilter.cs" />
-    <Compile Include="Filters\SeasonStartIratingFilter.cs" />
+    <Compile Include="Filters\SeasonStartIRatingFilter.cs" />
     <Compile Include="LeagueDbConfiguration.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.designer.cs">
@@ -114,10 +113,6 @@
     <Compile Include="Migrations\202010032215338_AddResultFilterOptions.cs" />
     <Compile Include="Migrations\202010032215338_AddResultFilterOptions.designer.cs">
       <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.cs" />
-    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.designer.cs">
-      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
     </Compile>
     <Compile Include="LeagueDbContext.cs" />
     <Compile Include="Entities\Location.cs" />
@@ -151,6 +146,10 @@
     <Compile Include="Migrations\202010071930457_FixDateTimeColumn.cs" />
     <Compile Include="Migrations\202010071930457_FixDateTimeColumn.designer.cs">
       <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010172203354_AddReviewPenaltyToResultRow.cs" />
+    <Compile Include="Migrations\202010172203354_AddReviewPenaltyToResultRow.designer.cs">
+      <DependentUpon>202010172203354_AddReviewPenaltyToResultRow.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -193,8 +192,8 @@
     <EmbeddedResource Include="Migrations\202010071930457_FixDateTimeColumn.resx">
       <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010170000412_AddReviewVoteToPenalty.resx">
-      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202010172203354_AddReviewPenaltyToResultRow.resx">
+      <DependentUpon>202010172203354_AddReviewPenaltyToResultRow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

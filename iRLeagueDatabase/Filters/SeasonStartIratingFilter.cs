@@ -7,16 +7,8 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Filters
 {
-    public class SeasonStartIratingFilter : IResultsFilter
+    public class SeasonStartIRatingFilter : SeasonStartIRatingFilterDescription, IResultsFilter
     {
-        public string FilterName => "Season start iRating";
-
-        public string FilterDescription => "Filter based on iRating at first appearance in this season";
-
-        public int NrOfFilterValues => 1;
-
-        public IEnumerable<string> FilterValueDescriptions => new string[] { "iRating value" };
-
         public List<FilterValueBaseEntity> FilterValues { get; set; } = new List<FilterValueBaseEntity>();
 
         public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows, bool exclude = false)

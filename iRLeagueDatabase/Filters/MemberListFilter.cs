@@ -7,16 +7,8 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Filters
 {
-    public class MemberListFilter : IResultsFilter
+    public class MemberListFilter : MemberListFilterDescription, IResultsFilter
     {
-        public string FilterName => "Member List";
-
-        public string FilterDescription => "Include/Exclude members based on a static list";
-
-        public int NrOfFilterValues => -1;
-
-        public IEnumerable<string> FilterValueDescriptions => new string[] { "Select member" };
-
         public List<FilterValueBaseEntity> FilterValues { get; set; } = new List<FilterValueBaseEntity>();
 
         public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows, bool exclude)
