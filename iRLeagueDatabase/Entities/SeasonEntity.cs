@@ -26,6 +26,8 @@ namespace iRLeagueDatabase.Entities
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
+        public virtual List<ScoringTableEntity> ScoringTables { get; set; }
+
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
 
         [NotMapped]
@@ -40,6 +42,8 @@ namespace iRLeagueDatabase.Entities
         [NotMapped]
         public DateTime? SeasonEnd => Schedules.Select(x => x.ScheduleEnd)?.Max();
 
+        public bool HideCommentsBeforeVoted { get; set; }
+
         public SeasonEntity()
         {
             Schedules = new List<ScheduleEntity>();
@@ -49,8 +53,9 @@ namespace iRLeagueDatabase.Entities
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            Schedules.ToList().ForEach(x => x.Delete(dbContext));
-            Scorings.ToList().ForEach(x => x.Delete(dbContext));
+            Schedules?.ToList().ForEach(x => x.Delete(dbContext));
+            Scorings?.ToList().ForEach(x => x.Delete(dbContext));
+            ScoringTables?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

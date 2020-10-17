@@ -73,6 +73,7 @@ namespace iRLeagueDatabase.Mapper
             target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y));
             target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToList();
             target.Scorings = source.Scorings?.Select(x => MapToScoringDataDTO(x)).ToList();
+            target.ScoringTables = source.ScoringTables?.Select(x => MapToScoringTableDataDTO(x)).ToList();
             target.SeasonEnd = source.SeasonEnd.GetValueOrDefault();
             target.SeasonId = source.SeasonId;
             target.SeasonName = source.SeasonName;
@@ -171,8 +172,15 @@ namespace iRLeagueDatabase.Mapper
             target.SeasonName = source.SeasonName;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
+            if (target.Schedules == null)
+                target.Schedules = new List<Entities.Sessions.ScheduleEntity>();
             MapCollection(source.Schedules, target.Schedules, GetScheduleEntity, x => x.MappingId);
+            if (target.Scorings == null)
+                target.Scorings = new List<Entities.Results.ScoringEntity>();
             MapCollection(source.Scorings, target.Scorings, MapToScoringEntity, x => x.ScoringId);
+            if (target.ScoringTables == null)
+                target.ScoringTables = new List<Entities.Results.ScoringTableEntity>();
+            MapCollection(source.ScoringTables, target.ScoringTables, MapToScoringTableEntity, x => x.ScoringTableId);
             target.SeasonName = source.SeasonName;
             target.Version = source.Version;
 

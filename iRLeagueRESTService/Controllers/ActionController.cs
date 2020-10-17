@@ -10,6 +10,8 @@ using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
+using System.Security.Principal;
+using System.Net;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -44,6 +46,8 @@ namespace iRLeagueRESTService.Controllers
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult CalculateResultsTrigger([FromUri] string[] requestIds, string leagueName)
         {
+            CheckLeagueRole(User, leagueName);
+
             if (requestIds == null || leagueName == null)
             {
                 return BadRequest("Parameters can not be null");
@@ -59,12 +63,25 @@ namespace iRLeagueRESTService.Controllers
                 sessionIdValues.Add(sessionIdValue);
             }
 
-            using (ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(new LeagueDbContext(leagueName)))
+            using (ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(new LeagueDbContext(GetDatabaseNameFromLeagueName(leagueName))))
             {
                 leagueActionProvider.CalculateScoredResultArray(sessionIdValues.ToArray());
             }
 
             return Ok();
+        }
+
+        private string GetDatabaseNameFromLeagueName(string leagueName)
+        {
+            return $"{leagueName}_leagueDb";
+        }
+
+        private void CheckLeagueRole(IPrincipal principal, string leagueName)
+        {
+            if (principal.IsInRole($"{leagueName}_User") || principal.IsInRole("Administrator"))
+                return;
+
+            throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
     }
 }

@@ -210,6 +210,7 @@ namespace iRLeagueDatabase.Mapper
             }
 
             if (removeFromCollection)
+
             {
                 foreach (var target in removeEntitiesList)
                 {

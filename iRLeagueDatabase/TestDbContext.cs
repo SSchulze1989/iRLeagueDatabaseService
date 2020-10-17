@@ -11,6 +11,6 @@ namespace iRLeagueDatabase
     {
         public DbSet<Session> Sessions { get; set; }
 
-        public TestDbContext() : base ("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDb;Integrated Security=True;Pooling=False") { }
+        public TestDbContext() : base ("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase_leagueDb;Integrated Security=True;Pooling=False") { }
     }
 }

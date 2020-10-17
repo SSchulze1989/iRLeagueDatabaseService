@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Entities.Results
 {
+    [NotMapped]
     public class StandingsEntity : MappableEntity
     {
         public ScoringTableEntity ScoringTable { get; set; }
@@ -18,6 +20,7 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual LeagueMemberEntity MostPolesDriver { get; set; }
         public virtual LeagueMemberEntity CleanestDriver { get; set; }
         public virtual LeagueMemberEntity MostPenaltiesDriver { get; set; }
+        public long SessionId { get; set; }
 
         public StandingsEntity()
         {

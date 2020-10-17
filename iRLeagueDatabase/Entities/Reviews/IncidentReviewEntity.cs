@@ -31,6 +31,8 @@ namespace iRLeagueDatabase.Entities.Reviews
         //public virtual SessionBaseEntity Session { get; set; }
         public virtual SessionBaseEntity Session { get; set; }
 
+        public string IncidentNr { get; set; }
+
         //[ForeignKey(nameof(Author))]
         //public int AuthorId { get; set; }
         //public virtual LeagueMemberEntity Author { get; set; }
@@ -41,9 +43,9 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public string FullDescription { get; set; }
 
-        public int OnLap { get; set; }
+        public string OnLap { get; set; }
         
-        public int Corner { get; set; }
+        public string Corner { get; set; }
         
         public TimeSpan TimeStamp { get; set; }
         
@@ -54,6 +56,8 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         [InverseProperty(nameof(AcceptedReviewVoteEntity.IncidentReview))]
         public virtual List<AcceptedReviewVoteEntity> AcceptedReviewVotes { get; set; }
+
+        public string ResultLongText { get; set; }
 
         //public VoteState VoteState { get; set; }
 
@@ -70,12 +74,9 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            if (Comments != null && Comments.Count() > 0)
-                Comments.ToList().ForEach(x => x.Delete(dbContext));
-
-            if (AcceptedReviewVotes != null)
-                AcceptedReviewVotes.ToList().ForEach(x => x.Delete(dbContext));
-
+            InvolvedMembers?.Clear();
+            Comments?.ToList().ForEach(x => x.Delete(dbContext));
+            AcceptedReviewVotes?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

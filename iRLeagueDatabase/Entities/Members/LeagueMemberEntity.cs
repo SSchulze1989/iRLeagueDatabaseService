@@ -23,6 +23,10 @@ namespace iRLeagueDatabase.Entities.Members
         public string DanLisaId { get; set; } = "0";
         public string DiscordId { get; set; } = "0";
 
+        [ForeignKey(nameof(Team))]
+        public long? TeamId { get; set; }
+        public virtual TeamEntity Team { get; set; }
+
         public override object MappingId => MemberId;
 
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
@@ -37,6 +41,12 @@ namespace iRLeagueDatabase.Entities.Members
             IRacingId = iRacingId;
             DanLisaId = danLisaId;
             DiscordId = discordId;
+        }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            Team?.Members?.Remove(this);
+            base.Delete(dbContext);
         }
     }
 }

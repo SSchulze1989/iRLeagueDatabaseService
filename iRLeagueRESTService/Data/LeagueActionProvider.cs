@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using System.Threading.Tasks;
 
 using iRLeagueDatabase;
 using iRLeagueDatabase.Entities;
@@ -14,6 +15,9 @@ namespace iRLeagueRESTService.Data
     public class LeagueActionProvider : ILeagueActionProvider, IDisposable
     {
         private LeagueDbContext DbContext { get; }
+
+        public string UserName { get; set; }
+        public string UserId { get; set; }
 
         public LeagueActionProvider(LeagueDbContext context)
         {
@@ -37,8 +41,9 @@ namespace iRLeagueRESTService.Data
                 .Include(x => x.Scorings.Select(y => y.ScoredResults))
                 .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.AddPenalty)))
                 .Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.ReviewPenalties)))
-                .Include(x => x.SessionResult.RawResults.Select(y => y.Member))
-                .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes))
+                //.Include(x => x.SessionResult.ScoredResults.Select(y => ((ScoredTeamResultEntity)y).TeamResults.Select(z => z.ScoredResultRows)))
+                .Include(x => x.SessionResult.RawResults.Select(y => y.Member.Team))
+                .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes.Select(z => z.CustomVoteCat)))
                 .Where(x => sessionIds.Contains(x.SessionId));
 
             foreach (var session in sessions)
@@ -48,6 +53,15 @@ namespace iRLeagueRESTService.Data
                 foreach (var scoring in scorings)
                 {
                     scoring.CalculateResults(session, DbContext);
+                }
+
+                foreach (var scoredResult in session.SessionResult.ScoredResults.ToList())
+                {
+                    if (scoredResult != null && !session.Scorings.Contains(scoredResult.Scoring))
+                    {
+                        scoredResult.Delete(DbContext);
+                        session.SessionResult.ScoredResults.Remove(scoredResult);
+                    }
                 }
             }
 

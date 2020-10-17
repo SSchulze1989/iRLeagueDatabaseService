@@ -48,20 +48,20 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
-        public LeagueUserDTO MapToLeagueUserDTO(LeagueUserEntity source, LeagueUserDTO target = null)
-        {
-            if (source == null)
-                return null;
+        //public LeagueUserDTO MapToLeagueUserDTO(LeagueUserEntity source, LeagueUserDTO target = null)
+        //{
+        //    if (source == null)
+        //        return null;
 
-            if (target == null)
-                target = new LeagueUserDTO();
+        //    if (target == null)
+        //        target = new LeagueUserDTO();
 
-            target.AdminId = source.AdminId;
-            target.AdminRights = source.AdminRights;
-            target.Member = MapToMemberInfoDTO(source.Member);
+        //    target.AdminId = source.AdminId;
+        //    target.AdminRights = source.AdminRights;
+        //    target.Member = MapToMemberInfoDTO(source.Member);
 
-            return target;
-        }
+        //    return target;
+        //}
     }
 
     public partial class EntityMapper

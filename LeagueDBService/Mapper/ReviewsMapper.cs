@@ -253,7 +253,6 @@ namespace iRLeagueDatabase.Mapper
             if (target.CommentReviewVotes == null)
                 target.CommentReviewVotes = new List<CommentReviewVoteEntity>();
             MapCollection(source.CommentReviewVotes, target.CommentReviewVotes, MapToCommentReviewVoteEntity, x => x.Keys, removeFromCollection: true, removeFromDatabase: true);
-            //target.CommentReviewVotes.ForEach(x => x.ReviewComment = target);
 
             return target;
         }

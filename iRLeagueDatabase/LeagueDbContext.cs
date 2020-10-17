@@ -19,18 +19,26 @@ namespace iRLeagueDatabase
     public class LeagueDbContext : DbContext
     {
         public virtual DbSet<SeasonEntity> Seasons { get; set; }
-        public virtual DbSet<LeagueUserEntity> Users { get; set; }
+        //public virtual DbSet<LeagueUserEntity> Users { get; set; }
         public virtual DbSet<LeagueMemberEntity> Members { get; set; }
+        public virtual DbSet<CustomIncidentEntity> CustomIncidentKinds { get; set; }
+        public virtual DbSet<VoteCategoryEntity> CustomVoteCategories { get; set; }
 
         private readonly OrphansToHandle OrphansToHandle;
 
-        public LeagueDbContext() : this("Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=TestDatabase;Integrated Security=True;Pooling=False;")
+        private static bool AllowMultipleResultSets = true;
+
+        public LeagueDbContext() : this(GetConnectionString("TestDatabase_leagueDb"))
         {
         }
 
-        public LeagueDbContext(string dbName) : base((dbName != null && dbName != "") ? "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog="+dbName+ "; Integrated Security = True; Pooling=False;" : "Data Source=" + Environment.MachineName + "\\IRLEAGUEDB;Initial Catalog=LeagueDatabase;Integrated Security=True;Pooling=False;")
+        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString("TestDatabase_leagueDb"))
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>());
+            if (createDb)
+                Database.SetInitializer(new CreateDatabaseIfNotExists<LeagueDbContext>());
+            else
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<LeagueDbContext, iRLeagueDatabase.Migrations.Configuration>(useSuppliedContext: true));
+
             OrphansToHandle = new OrphansToHandle();
             OrphansToHandle.Add<ScheduleEntity, SeasonEntity>(x => x.Season);
             OrphansToHandle.Add<SessionBaseEntity, ScheduleEntity>(x => x.Schedule);
@@ -42,6 +50,12 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultEntity, ScoringEntity>(x => x.Scoring);
             OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
+        }
+
+        private static string GetConnectionString(string dbName)
+        {
+            return $"Data Source={Environment.MachineName}\\IRLEAGUEDB;Initial Catalog={dbName}; Integrated Security = True; " +
+                   $"Pooling=False; MultipleActiveResultSets={AllowMultipleResultSets}; Connect Timeout=30;";
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -91,25 +105,42 @@ namespace iRLeagueDatabase
             //modelBuilder.Entity<ScoringEntity>()
             //    .HasMany(r => r.Results)
             //    .WithMany(m => m.Session.Scorings);
+            //modelBuilder.Entity<ScoringEntity>()
+            //    .HasMany(r => r.MultiScoringResults)
+            //    .WithMany()
+            //    .Map(rm =>
+            //    {
+            //        rm.MapLeftKey("ScoringParentId");
+            //        rm.MapRightKey("ScoringChildId");
+            //        rm.ToTable("MultiScoringMap");
+            //    });
             modelBuilder.Entity<ScoringEntity>()
-                .HasMany(r => r.MultiScoringResults)
+                .HasOptional(r => r.ConnectedSchedule)
+                .WithMany(m => m.ConnectedScorings);
+            //modelBuilder.Entity<ScoredResultRowEntity>()
+            //    .ToTable("ScoredResultRowEntities");
+            modelBuilder.Entity<ScoringTableEntity>()
+                .HasMany(r => r.Scorings)
                 .WithMany()
                 .Map(rm =>
                 {
-                    rm.MapLeftKey("ScoringParentId");
-                    rm.MapRightKey("ScoringChildId");
-                    rm.ToTable("MultiScoringMap");
+                    rm.MapLeftKey("ScoringTableRefId");
+                    rm.MapRightKey("ScoringRefId");
+                    rm.ToTable("ScoringTableMap");
                 });
-            modelBuilder.Entity<ScoringEntity>()
-                .HasOptional(r => r.ConnectedSchedule)
-                .WithOptionalDependent(r => r.ConnectedScoring);
-            //modelBuilder.Entity<ScoredResultRowEntity>()
-            //    .ToTable("ScoredResultRowEntities");
-
-            modelBuilder.Entity<LeagueUserEntity>();
 
             modelBuilder.Entity<ScoredResultEntity>()
                 .ToTable("ScoredResultEntities");
+
+            modelBuilder.Entity<ScoredTeamResultRowEntity>()
+                .HasMany(r => r.ScoredResultRows)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ScoredTeamResultRowRefId");
+                    rm.MapRightKey("ScoredResultRowRefId");
+                    rm.ToTable("ScoredTeamResultRowsGroup");
+                });
         }
 
         public override int SaveChanges()

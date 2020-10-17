@@ -26,8 +26,7 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            if (CommentReviewVotes != null)
-                CommentReviewVotes.ToList().ForEach(x => x.Delete(dbContext));
+            CommentReviewVotes?.ToList().ForEach(x => x.Delete(dbContext));
 
             base.Delete(dbContext);
         }

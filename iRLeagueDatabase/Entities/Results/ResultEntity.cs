@@ -60,7 +60,6 @@ namespace iRLeagueDatabase.Entities.Results
         public override void Delete(LeagueDbContext dbContext)
         {
             RawResults.ToList().ForEach(x => x.Delete(dbContext));
-            Reviews.ToList().ForEach(x => x.Delete(dbContext));
             ScoredResults.ToList().ForEach(x =>  x.Delete(dbContext));
             base.Delete(dbContext);
         }

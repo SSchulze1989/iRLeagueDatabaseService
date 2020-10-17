@@ -21,9 +21,12 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ScoredResultRowEntity, ScoredResultRowDataDTO>(MapToScoredResultRowDataDTO);
             RegisterTypeMap<ScoringEntity, ScoringInfoDTO>(MapToScoringInfoDTO);
             RegisterTypeMap<ScoringEntity, ScoringDataDTO>(MapToScoringDataDTO);
+            RegisterTypeMap<ScoringTableEntity, ScoringTableInfoDTO>(MapToScoringTableInfoDTO);
+            RegisterTypeMap<ScoringTableEntity, ScoringTableDataDTO>(MapToScoringTableDataDTO);
             RegisterTypeMap<StandingsEntity, StandingsDataDTO>(MapToStandingsDataDTO);
             RegisterTypeMap<StandingsRowEntity, StandingsRowDataDTO>(MapToStandingsRowDataDTO);
             RegisterTypeMap<AddPenaltyEntity, AddPenaltyDTO>(MapToPenaltyDTO);
+            
         }
 
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
@@ -98,6 +101,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToResultInfoDTO(source.Result, target);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.ScoringName = source.Scoring.Name;
             target.FinalResults = source.FinalResults.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
 
             return target;
@@ -209,6 +213,7 @@ namespace iRLeagueDatabase.Mapper
             target.MostPolesDriver = MapToMemberInfoDTO(source.MostPolesDriver);
             target.MostWinsDriver = MapToMemberInfoDTO(source.MostWinsDriver);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.ScoringTableId = source.ScoringTable.ScoringTableId;
             target.StandingsRows = source.StandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
 
             return target;
@@ -278,6 +283,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ScoringDataDTO, ScoringEntity>(MapToScoringEntity);
             RegisterTypeMap<ResultRowDataDTO, ResultRowEntity>(MapToResultRowEntity);
             RegisterTypeMap<AddPenaltyDTO, AddPenaltyEntity>(MapToPenaltyEntity);
+            RegisterTypeMap<ScoringTableDataDTO, ScoringTableEntity>(MapToScoringTableEntity);
         }
 
         public ResultEntity GetResultEntity(ResultInfoDTO source)
@@ -422,13 +428,19 @@ namespace iRLeagueDatabase.Mapper
             //MapCollection(source.MultiScoringResults, target.MultiScoringResults, GetScoringEntity, x => x.ScoringId);
             target.Name = source.Name;
             target.Season = GetSeasonEntity(source.Season);
-            target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults.Count > 0;
-            if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults.Count() > 0))
+            target.IsMultiScoring = source.IsMultiScoring || target.MultiScoringResults?.Count > 0;
+            if (target.Sessions == null)
+                target.Sessions = new List<Entities.Sessions.SessionBaseEntity>();
+            if (target.IsMultiScoring == true || (target.MultiScoringResults != null && target.MultiScoringResults?.Count() > 0))
                 target.Sessions.Clear();
             else
                 MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
 
             target.ConnectedSchedule = GetScheduleEntity(source.ConnectedSchedule);
+            if (target.ConnectedSchedule != null)
+            {
+                target.Sessions = target.ConnectedSchedule.Sessions;
+            }
 
             return target;
         }
@@ -451,8 +463,9 @@ namespace iRLeagueDatabase.Mapper
             target.DropWeeks = source.DropWeeks;
             target.Name = source.Name;
             target.ScoringFactors = source.ScoringFactors;
+            if (target.Scorings == null)
+                target.Scorings = new List<ScoringEntity>();
             MapCollection(source.Scorings, target.Scorings, GetScoringEntity, x => x.Keys, removeFromCollection: true);
-            target.Season = GetSeasonEntity(source.Season);
 
             return target;
         }

@@ -14,6 +14,10 @@ namespace iRLeagueDatabase.DataTransfer.Results
         //public long? ScoredResultId { get; set; }
         [DataMember]
         public ScoringInfoDTO Scoring { get; set; }
+
+        [DataMember]
+        public string ScoringName { get; set; }
+
         public override object MappingId => new long[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
 
         public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
