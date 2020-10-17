@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
-    <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
+    <Compile Include="Entities\Reviews\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
     <Compile Include="Entities\Results\ScoredTeamResultRowEntity.cs" />
@@ -93,6 +93,10 @@
     <Compile Include="Migrations\202010012023548_AddIncidentNr.cs" />
     <Compile Include="Migrations\202010012023548_AddIncidentNr.designer.cs">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.cs" />
+    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.designer.cs">
+      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="TestDbContext.cs" />
@@ -145,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010012023548_AddIncidentNr.resx">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010170000412_AddReviewVoteToPenalty.resx">
+      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

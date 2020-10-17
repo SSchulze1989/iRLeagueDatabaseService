@@ -410,12 +410,14 @@ namespace iRLeagueDatabase.Entities.Results
                                 reviewPenalty = new ReviewPenaltyEntity()
                                 {
                                     Review = reviewVote.IncidentReview,
-                                    ScoredResultRow = scoredResultRow
+                                    ScoredResultRow = scoredResultRow,
+                                    ReviewVote = reviewVote
                                 };
                                 scoredResultRow.ReviewPenalties.Add(reviewPenalty);
                             }
                             else
                             {
+                                reviewPenalty.ReviewVote = reviewVote;
                                 removePenalty.Remove(reviewPenalty);
                             }
                             reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote);
