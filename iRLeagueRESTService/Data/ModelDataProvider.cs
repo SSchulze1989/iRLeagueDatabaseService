@@ -16,6 +16,7 @@ using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Mapper;
+using System.Threading.Tasks;
 
 namespace iRLeagueRESTService.Data
 {
@@ -308,17 +309,42 @@ namespace iRLeagueRESTService.Data
                     Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
                 };
 
-            DbContext.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
-            DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
-            DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
-                .Include(x => x.AddPenalty)
-                .Include(x => x.ResultRow.Member.Team).Load();
+            List<Task> taskList = new List<Task>();
+            DbContext.Entry(scoredResultEntity)
+                     .Reference(x => x.Scoring)
+                     .Load();
+            DbContext.Entry(scoredResultEntity)
+                     .Reference(x => x.Result)
+                     .Query()
+                     .Include(x => x.Session)
+                     .Load();
+            DbContext.Entry(scoredResultEntity)
+                     .Collection(x => x.FinalResults)
+                     .Query()
+                     .Include(x => x.AddPenalty)
+                     .Include(x => x.ResultRow.Member.Team)
+                     .Include(x => x.ReviewPenalties)
+                     .Load();
+            DbContext.Set<IncidentReviewEntity>()
+                     .Where(x => x.SessionId == sessionId)
+                     .Include(x => x.AcceptedReviewVotes)
+                     .Load();
+
+            //if (scoredResultRowIds != null)
+            //{
+            //    DbContext.Set<ReviewPenaltyEntity>().Where(x => scoredResultRowIds.Contains(x.ResultRowId))
+            //    .Include(x => x.ReviewVote.MemberAtFault)
+            //    .Include(x => x.ReviewVote.CustomVoteCat)
+            //    .Load();
+            //}
 
             if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
             {
                 DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
                     .Include(x => x.ScoredResultRows).Load();
-            } 
+            }
+
+            DbContext.ChangeTracker.DetectChanges();
 
             var mapper = new DTOMapper(DbContext);
             scoredResultData = mapper.MapTo<ScoredResultDataDTO>(scoredResultEntity);

@@ -417,6 +417,7 @@ namespace iRLeagueDatabase.Entities.Results
                             }
                             else
                             {
+                                reviewPenalty.ReviewVote = reviewVote;
                                 removePenalty.Remove(reviewPenalty);
                             }
                             reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote);

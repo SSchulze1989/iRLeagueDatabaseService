@@ -167,6 +167,7 @@ namespace iRLeagueDatabase.Mapper
             target.ResultRowId = source.ResultRowId;
             target.ReviewId = source.ReviewId;
             target.ReviewVote = MapToReviewVoteDataDTO(source.ReviewVote);
+            target.IncidentNr = source.Review.IncidentNr;
 
             return target;
         }

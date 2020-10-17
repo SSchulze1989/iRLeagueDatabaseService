@@ -128,6 +128,7 @@ namespace iRLeagueDatabase.Mapper
             target.PenaltyPoints = source.PenaltyPoints;
             target.RacePoints = source.RacePoints;
             target.ScoringId = source.ScoringId;
+            target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
 
             return target;
         }
