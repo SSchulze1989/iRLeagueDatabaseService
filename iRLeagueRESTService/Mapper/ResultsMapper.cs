@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
+using iRLeagueDatabase.DataTransfer.Reviews;
 
 namespace iRLeagueDatabase.Mapper
 {
