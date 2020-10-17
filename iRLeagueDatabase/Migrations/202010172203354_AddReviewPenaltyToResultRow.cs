@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddReviewVoteToPenalty : DbMigration
+    public partial class AddReviewPenaltyToResultRow : DbMigration
     {
         public override void Up()
         {

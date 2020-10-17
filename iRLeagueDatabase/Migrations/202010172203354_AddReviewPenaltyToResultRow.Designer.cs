@@ -7,13 +7,13 @@ namespace iRLeagueDatabase.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class AddReviewVoteToPenalty : IMigrationMetadata
+    public sealed partial class AddReviewPenaltyToResultRow : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddReviewVoteToPenalty));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddReviewPenaltyToResultRow));
         
         string IMigrationMetadata.Id
         {
-            get { return "202010170000412_AddReviewVoteToPenalty"; }
+            get { return "202010172203354_AddReviewPenaltyToResultRow"; }
         }
         
         string IMigrationMetadata.Source
