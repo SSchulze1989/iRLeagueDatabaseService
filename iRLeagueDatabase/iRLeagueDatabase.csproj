@@ -60,7 +60,7 @@
     <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
     <Compile Include="Entities\Results\MemberFilterValueEntity.cs" />
     <Compile Include="Entities\Results\ResultsFilterOptionEntity.cs" />
-    <Compile Include="Entities\Results\ReviewPenaltyEntity.cs" />
+    <Compile Include="Entities\Reviews\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
     <Compile Include="Entities\Results\ScoredTeamResultRowEntity.cs" />
@@ -114,6 +114,10 @@
     <Compile Include="Migrations\202010032215338_AddResultFilterOptions.cs" />
     <Compile Include="Migrations\202010032215338_AddResultFilterOptions.designer.cs">
       <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.cs" />
+    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.designer.cs">
+      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
     </Compile>
     <Compile Include="LeagueDbContext.cs" />
     <Compile Include="Entities\Location.cs" />
@@ -188,6 +192,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010071930457_FixDateTimeColumn.resx">
       <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010170000412_AddReviewVoteToPenalty.resx">
+      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
