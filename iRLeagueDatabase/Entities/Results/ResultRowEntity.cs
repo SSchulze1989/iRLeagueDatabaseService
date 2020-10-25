@@ -56,6 +56,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int CarId { get; set; }
         public string CarClass { get; set; }
         public int CompletedLaps { get; set; } 
+        public double CompletedPct { get; set; }
         public int LeadLaps { get; set; }
         public int FastLapNr { get; set; }
         public int Incidents { get; set; }

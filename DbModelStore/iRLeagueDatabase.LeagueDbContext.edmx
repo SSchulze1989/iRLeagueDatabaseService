@@ -127,6 +127,7 @@
           <Property Name="CarId" Type="Int32" Nullable="false" />
           <Property Name="CarClass" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CompletedLaps" Type="Int32" Nullable="false" />
+          <Property Name="CompletedPct" Type="Double" Nullable="false" />
           <Property Name="LeadLaps" Type="Int32" Nullable="false" />
           <Property Name="FastLapNr" Type="Int32" Nullable="false" />
           <Property Name="Incidents" Type="Int32" Nullable="false" />
@@ -447,7 +448,7 @@
           <Property Name="QualyAttached" Type="Boolean" Nullable="false" />
           <Property Name="PracticeAttached" Type="Boolean" Nullable="false" />
         </EntityType>
-        <EntityType Name="ResultsFilterOptionEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ResultsFilterOptionEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <EntityType Name="ResultsFilterOptionEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Filters.ResultsFilterOptionEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
             <PropertyRef Name="ScoringId" />
             <PropertyRef Name="ResultsFilterId" />
@@ -455,37 +456,11 @@
           <Property Name="ScoringId" Type="Int64" Nullable="false" />
           <Property Name="ResultsFilterId" Type="Int64" Nullable="false" />
           <Property Name="ResultsFilterType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnPropertyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Comparator" Type="Self.ComparatorTypeEnum" Nullable="false" />
           <Property Name="Exclude" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="FilterValues" Relationship="Self.ResultsFilterOptionEntity_FilterValues" FromRole="ResultsFilterOptionEntity_FilterValues_Source" ToRole="ResultsFilterOptionEntity_FilterValues_Target" />
+          <Property Name="FilterValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Scoring" Relationship="Self.ScoringEntity_ResultsFilterOptions" FromRole="ScoringEntity_ResultsFilterOptions_Target" ToRole="ScoringEntity_ResultsFilterOptions_Source" />
-        </EntityType>
-        <EntityType Name="FilterValueBaseEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.FilterValueBaseEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Abstract="true">
-          <Key>
-            <PropertyRef Name="ScoringId" />
-            <PropertyRef Name="ResultsFilterOptionId" />
-            <PropertyRef Name="FilterValueId" />
-          </Key>
-          <Property Name="ScoringId" Type="Int64" Nullable="false" />
-          <Property Name="ResultsFilterOptionId" Type="Int64" Nullable="false" />
-          <Property Name="FilterValueId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="ResultsFilterOption" Relationship="Self.ResultsFilterOptionEntity_FilterValues" FromRole="ResultsFilterOptionEntity_FilterValues_Target" ToRole="ResultsFilterOptionEntity_FilterValues_Source" />
-        </EntityType>
-        <EntityType Name="DoubleFilterValueEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.DoubleFilterValueEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.FilterValueBaseEntity">
-          <Property Name="DoubleValue" Type="Double" Nullable="false" />
-        </EntityType>
-        <EntityType Name="IntFilterValueEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.IntFilterValueEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.FilterValueBaseEntity">
-          <Property Name="IntValue" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="MemberFilterValueEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.MemberFilterValueEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.FilterValueBaseEntity">
-          <Property Name="MemberId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="MemberValue" Relationship="Self.MemberFilterValueEntity_MemberValue" FromRole="MemberFilterValueEntity_MemberValue_Source" ToRole="MemberFilterValueEntity_MemberValue_Target" />
-        </EntityType>
-        <EntityType Name="StringFilterValueEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.StringFilterValueEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.FilterValueBaseEntity">
-          <Property Name="StringValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="TeamFilterValueEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.TeamFilterValueEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.FilterValueBaseEntity">
-          <Property Name="TeamId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="TeamValue" Relationship="Self.TeamFilterValueEntity_TeamValue" FromRole="TeamFilterValueEntity_TeamValue_Source" ToRole="TeamFilterValueEntity_TeamValue_Target" />
         </EntityType>
         <EntityType Name="ScoredTeamResultEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ScoredTeamResultEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.ScoredResultEntity">
           <NavigationProperty Name="TeamResults" Relationship="Self.ScoredTeamResultEntity_TeamResults" FromRole="ScoredTeamResultEntity_TeamResults_Source" ToRole="ScoredTeamResultEntity_TeamResults_Target" />
@@ -541,6 +516,15 @@
           <Member Name="Kat2" Value="3" />
           <Member Name="Kat3" Value="4" />
           <Member Name="Indecisive" Value="5" />
+        </EnumType>
+        <EnumType Name="ComparatorTypeEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.ComparatorTypeEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="IsSmaller" Value="0" />
+          <Member Name="IsSmallerOrEqual" Value="1" />
+          <Member Name="IsEqual" Value="2" />
+          <Member Name="IsBiggerOrEqual" Value="3" />
+          <Member Name="IsBigger" Value="4" />
+          <Member Name="NotEqual" Value="5" />
+          <Member Name="InList" Value="6" />
         </EnumType>
         <Association Name="TeamEntity_Members">
           <End Role="TeamEntity_Members_Source" Type="Self.TeamEntity" Multiplicity="0..1" />
@@ -810,50 +794,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="MemberFilterValueEntity_MemberValue">
-          <End Role="MemberFilterValueEntity_MemberValue_Source" Type="Self.MemberFilterValueEntity" Multiplicity="*" />
-          <End Role="MemberFilterValueEntity_MemberValue_Target" Type="Self.LeagueMemberEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <ReferentialConstraint>
-            <Principal Role="MemberFilterValueEntity_MemberValue_Target">
-              <PropertyRef Name="MemberId" />
-            </Principal>
-            <Dependent Role="MemberFilterValueEntity_MemberValue_Source">
-              <PropertyRef Name="MemberId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="TeamFilterValueEntity_TeamValue">
-          <End Role="TeamFilterValueEntity_TeamValue_Source" Type="Self.TeamFilterValueEntity" Multiplicity="*" />
-          <End Role="TeamFilterValueEntity_TeamValue_Target" Type="Self.TeamEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <ReferentialConstraint>
-            <Principal Role="TeamFilterValueEntity_TeamValue_Target">
-              <PropertyRef Name="TeamId" />
-            </Principal>
-            <Dependent Role="TeamFilterValueEntity_TeamValue_Source">
-              <PropertyRef Name="TeamId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ResultsFilterOptionEntity_FilterValues">
-          <End Role="ResultsFilterOptionEntity_FilterValues_Source" Type="Self.ResultsFilterOptionEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="ResultsFilterOptionEntity_FilterValues_Target" Type="Self.FilterValueBaseEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ResultsFilterOptionEntity_FilterValues_Source">
-              <PropertyRef Name="ScoringId" />
-              <PropertyRef Name="ResultsFilterId" />
-            </Principal>
-            <Dependent Role="ResultsFilterOptionEntity_FilterValues_Target">
-              <PropertyRef Name="ScoringId" />
-              <PropertyRef Name="ResultsFilterOptionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="ScoringEntity_ResultsFilterOptions">
           <End Role="ScoringEntity_ResultsFilterOptions_Source" Type="Self.ScoringEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1028,7 +968,6 @@
           <EntitySet Name="CommentReviewVoteEntities" EntityType="Self.CommentReviewVoteEntity" />
           <EntitySet Name="CommentBaseEntities" EntityType="Self.CommentBaseEntity" />
           <EntitySet Name="ResultsFilterOptionEntities" EntityType="Self.ResultsFilterOptionEntity" />
-          <EntitySet Name="FilterValueBaseEntities" EntityType="Self.FilterValueBaseEntity" />
           <EntitySet Name="ReviewPenaltyEntities" EntityType="Self.ReviewPenaltyEntity" />
           <AssociationSet Name="TeamEntity_Members" Association="Self.TeamEntity_Members">
             <End Role="TeamEntity_Members_Source" EntitySet="TeamEntities" />
@@ -1137,18 +1076,6 @@
           <AssociationSet Name="ScoringEntity_ExtScoringSource" Association="Self.ScoringEntity_ExtScoringSource">
             <End Role="ScoringEntity_ExtScoringSource_Source" EntitySet="ScoringEntities" />
             <End Role="ScoringEntity_ExtScoringSource_Target" EntitySet="ScoringEntities" />
-          </AssociationSet>
-          <AssociationSet Name="MemberFilterValueEntity_MemberValue" Association="Self.MemberFilterValueEntity_MemberValue">
-            <End Role="MemberFilterValueEntity_MemberValue_Source" EntitySet="FilterValueBaseEntities" />
-            <End Role="MemberFilterValueEntity_MemberValue_Target" EntitySet="Members" />
-          </AssociationSet>
-          <AssociationSet Name="TeamFilterValueEntity_TeamValue" Association="Self.TeamFilterValueEntity_TeamValue">
-            <End Role="TeamFilterValueEntity_TeamValue_Source" EntitySet="FilterValueBaseEntities" />
-            <End Role="TeamFilterValueEntity_TeamValue_Target" EntitySet="TeamEntities" />
-          </AssociationSet>
-          <AssociationSet Name="ResultsFilterOptionEntity_FilterValues" Association="Self.ResultsFilterOptionEntity_FilterValues">
-            <End Role="ResultsFilterOptionEntity_FilterValues_Source" EntitySet="ResultsFilterOptionEntities" />
-            <End Role="ResultsFilterOptionEntity_FilterValues_Target" EntitySet="FilterValueBaseEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ResultsFilterOptions" Association="Self.ScoringEntity_ResultsFilterOptions">
             <End Role="ScoringEntity_ResultsFilterOptions_Source" EntitySet="ScoringEntities" />
@@ -1327,6 +1254,7 @@
                 <ScalarProperty Name="CarId" ColumnName="CarId" />
                 <ScalarProperty Name="CarClass" ColumnName="CarClass" />
                 <ScalarProperty Name="CompletedLaps" ColumnName="CompletedLaps" />
+                <ScalarProperty Name="CompletedPct" ColumnName="CompletedPct" />
                 <ScalarProperty Name="LeadLaps" ColumnName="LeadLaps" />
                 <ScalarProperty Name="FastLapNr" ColumnName="FastLapNr" />
                 <ScalarProperty Name="Incidents" ColumnName="Incidents" />
@@ -1665,61 +1593,10 @@
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
                 <ScalarProperty Name="ResultsFilterId" ColumnName="ResultsFilterId" />
                 <ScalarProperty Name="ResultsFilterType" ColumnName="ResultsFilterType" />
+                <ScalarProperty Name="ColumnPropertyName" ColumnName="ColumnPropertyName" />
+                <ScalarProperty Name="Comparator" ColumnName="Comparator" />
                 <ScalarProperty Name="Exclude" ColumnName="Exclude" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FilterValueBaseEntities">
-            <EntityTypeMapping TypeName="IsTypeOf(iRLeagueDatabase.FilterValueBaseEntity)">
-              <MappingFragment StoreEntitySet="FilterValueBaseEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-                <ScalarProperty Name="ResultsFilterOptionId" ColumnName="ResultsFilterOptionId" />
-                <ScalarProperty Name="FilterValueId" ColumnName="FilterValueId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-            <EntityTypeMapping TypeName="iRLeagueDatabase.DoubleFilterValueEntity">
-              <MappingFragment StoreEntitySet="FilterValueBaseEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-                <ScalarProperty Name="ResultsFilterOptionId" ColumnName="ResultsFilterOptionId" />
-                <ScalarProperty Name="FilterValueId" ColumnName="FilterValueId" />
-                <ScalarProperty Name="DoubleValue" ColumnName="DoubleValue" />
-                <Condition Value="DoubleFilterValueEntity" ColumnName="Discriminator" />
-              </MappingFragment>
-            </EntityTypeMapping>
-            <EntityTypeMapping TypeName="iRLeagueDatabase.IntFilterValueEntity">
-              <MappingFragment StoreEntitySet="FilterValueBaseEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-                <ScalarProperty Name="ResultsFilterOptionId" ColumnName="ResultsFilterOptionId" />
-                <ScalarProperty Name="FilterValueId" ColumnName="FilterValueId" />
-                <ScalarProperty Name="IntValue" ColumnName="IntValue" />
-                <Condition Value="IntFilterValueEntity" ColumnName="Discriminator" />
-              </MappingFragment>
-            </EntityTypeMapping>
-            <EntityTypeMapping TypeName="iRLeagueDatabase.MemberFilterValueEntity">
-              <MappingFragment StoreEntitySet="FilterValueBaseEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-                <ScalarProperty Name="ResultsFilterOptionId" ColumnName="ResultsFilterOptionId" />
-                <ScalarProperty Name="FilterValueId" ColumnName="FilterValueId" />
-                <ScalarProperty Name="MemberId" ColumnName="MemberIdValue" />
-                <Condition Value="MemberFilterValueEntity" ColumnName="Discriminator" />
-              </MappingFragment>
-            </EntityTypeMapping>
-            <EntityTypeMapping TypeName="iRLeagueDatabase.StringFilterValueEntity">
-              <MappingFragment StoreEntitySet="FilterValueBaseEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-                <ScalarProperty Name="ResultsFilterOptionId" ColumnName="ResultsFilterOptionId" />
-                <ScalarProperty Name="FilterValueId" ColumnName="FilterValueId" />
-                <ScalarProperty Name="StringValue" ColumnName="StringValue" />
-                <Condition Value="StringFilterValueEntity" ColumnName="Discriminator" />
-              </MappingFragment>
-            </EntityTypeMapping>
-            <EntityTypeMapping TypeName="iRLeagueDatabase.TeamFilterValueEntity">
-              <MappingFragment StoreEntitySet="FilterValueBaseEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-                <ScalarProperty Name="ResultsFilterOptionId" ColumnName="ResultsFilterOptionId" />
-                <ScalarProperty Name="FilterValueId" ColumnName="FilterValueId" />
-                <ScalarProperty Name="TeamId" ColumnName="TeamIdValue" />
-                <Condition Value="TeamFilterValueEntity" ColumnName="Discriminator" />
+                <ScalarProperty Name="FilterValues" ColumnName="FilterValues" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1963,6 +1840,7 @@
           <Property Name="CarId" Type="int" Nullable="false" />
           <Property Name="CarClass" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CompletedLaps" Type="int" Nullable="false" />
+          <Property Name="CompletedPct" Type="float" Nullable="false" />
           <Property Name="LeadLaps" Type="int" Nullable="false" />
           <Property Name="FastLapNr" Type="int" Nullable="false" />
           <Property Name="Incidents" Type="int" Nullable="false" />
@@ -2253,23 +2131,10 @@
           <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoringId, Order: 0 }" Nullable="false" />
           <Property Name="ResultsFilterId" Type="bigint" Nullable="false" />
           <Property Name="ResultsFilterType" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="ColumnPropertyName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Comparator" Type="int" Nullable="false" />
           <Property Name="Exclude" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="FilterValueBaseEntity">
-          <Key>
-            <PropertyRef Name="ScoringId" />
-            <PropertyRef Name="ResultsFilterOptionId" />
-            <PropertyRef Name="FilterValueId" />
-          </Key>
-          <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoringId_ResultsFilterOptionId, Order: 0 }" Nullable="false" />
-          <Property Name="ResultsFilterOptionId" Type="bigint" customannotation:Index="{ Name: IX_ScoringId_ResultsFilterOptionId, Order: 1 }" Nullable="false" />
-          <Property Name="FilterValueId" Type="bigint" Nullable="false" />
-          <Property Name="DoubleValue" Type="float" Nullable="true" />
-          <Property Name="IntValue" Type="int" Nullable="true" />
-          <Property Name="MemberIdValue" Type="bigint" customannotation:Index="{ Name: IX_MemberIdValue, Order: 0 }" Nullable="true" />
-          <Property Name="StringValue" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="TeamIdValue" Type="bigint" customannotation:Index="{ Name: IX_TeamIdValue, Order: 0 }" Nullable="true" />
-          <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="FilterValues" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
         <EntityType Name="ReviewPenaltyEntity">
           <Key>
@@ -2693,50 +2558,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="MemberFilterValueEntity_MemberValue">
-          <End Role="LeagueMemberEntity" Type="Self.LeagueMemberEntity" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="FilterValueBaseEntity" Type="Self.FilterValueBaseEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="LeagueMemberEntity">
-              <PropertyRef Name="MemberId" />
-            </Principal>
-            <Dependent Role="FilterValueBaseEntity">
-              <PropertyRef Name="MemberIdValue" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="TeamFilterValueEntity_TeamValue">
-          <End Role="TeamEntity" Type="Self.TeamEntity" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="FilterValueBaseEntity" Type="Self.FilterValueBaseEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TeamEntity">
-              <PropertyRef Name="TeamId" />
-            </Principal>
-            <Dependent Role="FilterValueBaseEntity">
-              <PropertyRef Name="TeamIdValue" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ResultsFilterOptionEntity_FilterValues">
-          <End Role="ResultsFilterOptionEntity" Type="Self.ResultsFilterOptionEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="FilterValueBaseEntity" Type="Self.FilterValueBaseEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ResultsFilterOptionEntity">
-              <PropertyRef Name="ScoringId" />
-              <PropertyRef Name="ResultsFilterId" />
-            </Principal>
-            <Dependent Role="FilterValueBaseEntity">
-              <PropertyRef Name="ScoringId" />
-              <PropertyRef Name="ResultsFilterOptionId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="ScoringEntity_ResultsFilterOptions">
           <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -2967,7 +2788,6 @@
           <EntitySet Name="CommentBaseEntity" EntityType="Self.CommentBaseEntity" Schema="dbo" Table="CommentBaseEntities" />
           <EntitySet Name="CommentReviewVoteEntity" EntityType="Self.CommentReviewVoteEntity" Schema="dbo" Table="CommentReviewVoteEntities" />
           <EntitySet Name="ResultsFilterOptionEntity" EntityType="Self.ResultsFilterOptionEntity" Schema="dbo" Table="ResultsFilterOptionEntities" />
-          <EntitySet Name="FilterValueBaseEntity" EntityType="Self.FilterValueBaseEntity" Schema="dbo" Table="FilterValueBaseEntities" />
           <EntitySet Name="ReviewPenaltyEntity" EntityType="Self.ReviewPenaltyEntity" Schema="dbo" Table="ReviewPenaltyEntities" />
           <EntitySet Name="ScoringTableEntityScoringEntity" EntityType="Self.ScoringTableEntityScoringEntity" Schema="dbo" Table="ScoringTableMap" />
           <EntitySet Name="IncidentReviewEntityLeagueMemberEntity" EntityType="Self.IncidentReviewEntityLeagueMemberEntity" Schema="dbo" Table="IncidentReview_InvolvedLeagueMember" />
@@ -3088,18 +2908,6 @@
           <AssociationSet Name="ScoringEntity_ExtScoringSource" Association="Self.ScoringEntity_ExtScoringSource">
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
             <End Role="ScoringEntitySelf" EntitySet="ScoringEntity" />
-          </AssociationSet>
-          <AssociationSet Name="MemberFilterValueEntity_MemberValue" Association="Self.MemberFilterValueEntity_MemberValue">
-            <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
-            <End Role="FilterValueBaseEntity" EntitySet="FilterValueBaseEntity" />
-          </AssociationSet>
-          <AssociationSet Name="TeamFilterValueEntity_TeamValue" Association="Self.TeamFilterValueEntity_TeamValue">
-            <End Role="TeamEntity" EntitySet="TeamEntity" />
-            <End Role="FilterValueBaseEntity" EntitySet="FilterValueBaseEntity" />
-          </AssociationSet>
-          <AssociationSet Name="ResultsFilterOptionEntity_FilterValues" Association="Self.ResultsFilterOptionEntity_FilterValues">
-            <End Role="ResultsFilterOptionEntity" EntitySet="ResultsFilterOptionEntity" />
-            <End Role="FilterValueBaseEntity" EntitySet="FilterValueBaseEntity" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ResultsFilterOptions" Association="Self.ScoringEntity_ResultsFilterOptions">
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />

@@ -97,6 +97,7 @@ namespace iRLeagueDatabase.Mapper
             target.Date = source.Date.GetValueOrDefault();
             target.OldIRating = source.OldIRating;
             target.NewIRating = source.NewIRating;
+            target.CompletedPct = source.CompletedPct;
 
             return target;
         }
@@ -174,6 +175,8 @@ namespace iRLeagueDatabase.Mapper
             target.TakeGroupAverage = source.TakeGroupAverage;
             target.ExtScoringSource = MapToScoringInfoDTO(source.ExtScoringSource);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
+            //target.ResultsFilterOptions = source.ResultsFilterOptions.Select(x => MapToResultsFilterOptionDTO(x)).ToArray();
+            target.ResultsFilterOptionIds = source.ResultsFilterOptions.Select(x => x.ResultsFilterId).ToArray();
 
             return target;
         }
@@ -467,6 +470,7 @@ namespace iRLeagueDatabase.Mapper
             target.Result = GetResultEntity(new ResultInfoDTO() { ResultId = source.ResultId });
             target.OldIRating = source.OldIRating;
             target.NewIRating = source.NewIRating;
+            target.CompletedPct = source.CompletedPct;
 
             //compare with other resultrows in this season and determine SeasonStartIRating
             DbContext.Configuration.LazyLoadingEnabled = false;
@@ -476,9 +480,9 @@ namespace iRLeagueDatabase.Mapper
                 .Load();
             var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
 
-            if (seasonResultRows.Any(x => x.MemberId == target.MemberId))
+            if (seasonResultRows.Any(x => x.MemberId == target.MemberId && x.Date < target.Date))
             {
-                target.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == target.MemberId).SeasonStartIRating;
+                target.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == target.MemberId && x.Date < target.Date).SeasonStartIRating;
             }
             else
             {

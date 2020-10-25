@@ -1,5 +1,6 @@
 ﻿using iRLeagueDatabase.Entities.Results;
-using iRLeagueDatabase.Enums;
+using iRLeagueManager.Enums;
+using iRLeagueDatabase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,78 +11,85 @@ namespace iRLeagueDatabase.Filters
 {
     public class ColumnPropertyFilter : ColumnPropertyFilterDescription, IResultsFilter
     {
-        public List<FilterValueBaseEntity> FilterValues { get; set; } = new List<FilterValueBaseEntity>();
+        public string ColumnPropertyName { get; set; }
+        public ComparatorTypeEnum Comparator { get; set; }
+        public List<string> FilterValues { get; set; } = new List<string>();
+        public bool Exclude { get; set; }
 
-        public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows, bool exclude = false)
+        public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows)
         {
-            //string columnPropertyName;
-            ComparatorTypeEnum comparator;
-            //IComparable value;
-
-            // check for correct filter value types
-            if (FilterValues.ElementAt(0).Value is string columnPropertyName) { }
-            else
-            {
-                throw new InvalidFilterValueException("Filter value 0 does not have the correct type string");
-            }
-
-            if (FilterValues.ElementAt(1).Value is int comparatorInt) 
-            {
-                try
-                {
-                    comparator = (ComparatorTypeEnum)comparatorInt;
-                }
-                catch (Exception e)
-                {
-                    throw new InvalidFilterValueException("Failed to cast value 1 to type ComparatorTypeEnum, see inner exception for details", e);
-                }
-            }
-            else
-            {
-                throw new InvalidFilterValueException("Filter value 1 does not have the correct type int");
-            }
-
-            if (FilterValues.ElementAt(2).Value is IComparable compValue) { }
-            else
-            {
-                throw new InvalidFilterValueException("Filter value 2 dose not have the correct type IComparable");
-            }
-
             // get property by columnPropertyName
-            var columnProperty = typeof(ResultRowEntity).GetProperty(columnPropertyName);
-            if (columnProperty == null)
+            var nestedColumnProperty = typeof(ResultRowEntity).GetNestedPropertyInfo(ColumnPropertyName);
+            if (nestedColumnProperty == null)
             {
-                throw new InvalidFilterValueException($"Column property witht the name {columnPropertyName} not found");
+                throw new InvalidFilterValueException($"Column property witht the name {ColumnPropertyName} not found");
             }
 
-            Func<IComparable, IComparable, bool> compare;
+            Type propertyType = nestedColumnProperty.PropertyType;
+            if (typeof(IComparable).IsAssignableFrom(propertyType) == false)
+            {
+                throw new InvalidFilterValueException($"Column {ColumnPropertyName} does not have a comparable type");
+            }
 
-            switch (comparator)
+            // Convert string to column property type
+            IEnumerable<IComparable> comparableFilterValues;
+            if (propertyType.Equals(typeof(TimeSpan)))
+            {
+                comparableFilterValues = FilterValues.Select(x => TimeSpan.Parse(x)).Cast<IComparable>();
+            }
+            else
+            { 
+                comparableFilterValues = FilterValues.Select(x => Convert.ChangeType(x, propertyType)).Cast<IComparable>(); 
+            }
+
+            Func<IComparable, IEnumerable<IComparable>, bool> compare;
+
+            switch (Comparator)
             {
                 case ComparatorTypeEnum.IsBigger:
-                    compare = (x, y) => { var c = x.CompareTo(y); return c == 1; };
+                    compare = (x, y) => { var c = x.CompareTo(y.FirstOrDefault()); return c == 1; };
                     break;
                 case ComparatorTypeEnum.IsBiggerOrEqual:
-                    compare = (x, y) => { var c = x.CompareTo(y); return c == 1 || c == 0; };
+                    compare = (x, y) => { var c = x.CompareTo(y.FirstOrDefault()); return c == 1 || c == 0; };
                     break;
                 case ComparatorTypeEnum.IsEqual:
-                    compare = (x, y) => { var c = x.CompareTo(y); return c == 0; };
+                    compare = (x, y) => { var c = x.CompareTo(y.FirstOrDefault()); return c == 0; };
                     break;
                 case ComparatorTypeEnum.IsSmallerOrEqual:
-                    compare = (x, y) => { var c = x.CompareTo(y); return c == -1 || c == 0; };
+                    compare = (x, y) => { var c = x.CompareTo(y.FirstOrDefault()); return c == -1 || c == 0; };
                     break;
                 case ComparatorTypeEnum.IsSmaller:
-                    compare = (x, y) => { var c = x.CompareTo(y); return c == -1; };
+                    compare = (x, y) => { var c = x.CompareTo(y.FirstOrDefault()); return c == -1; };
                     break;
                 case ComparatorTypeEnum.NotEqual:
-                    compare = (x, y) => { var c = x.CompareTo(y); return c == 1 || c == -1; };
+                    compare = (x, y) => { var c = x.CompareTo(y.FirstOrDefault()); return c == 1 || c == -1; };
+                    break;
+                case ComparatorTypeEnum.InList:
+                    compare = (x, y) => { var c = y.Any(z => x.CompareTo(z) == 0); return c; };
                     break;
                 default:
                     compare = (x, y) => true;
                     break;
             }
 
-            return resultRows.Where(x => compare(((IComparable)columnProperty.GetValue(x)), compValue));
+            return resultRows.Where(x => { var value = (IComparable)nestedColumnProperty.GetValue(x); return (value != null && compare(value, comparableFilterValues)) != Exclude; });
+        }
+
+        public IEnumerable<string> GetFilterValues()
+        {
+            return FilterValues;
+        }
+
+        public void SetFilterOptions(string columnPropertyName, ComparatorTypeEnum comparator, bool exclude)
+        {
+            ColumnPropertyName = columnPropertyName;
+            Comparator = comparator;
+            Exclude = exclude;
+        }
+
+        public void SetFilterValueStrings(params string[] filterValues)
+        {
+            FilterValues = filterValues.ToList();
         }
     }
 }
