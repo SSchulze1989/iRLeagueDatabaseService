@@ -92,6 +92,11 @@ namespace iRLeagueDatabase.Mapper
 
     public partial class EntityMapper
     {
+        public void RegisterFiltersTypeMaps()
+        {
+            RegisterTypeMap<ResultsFilterOptionDTO, ResultsFilterOptionEntity>(MapToResultsFilterOptionEntity);
+        }
+
         public ResultsFilterOptionEntity MapToResultsFilterOptionEntity(ResultsFilterOptionDTO source, ResultsFilterOptionEntity target = null)
         {
             if (source == null)

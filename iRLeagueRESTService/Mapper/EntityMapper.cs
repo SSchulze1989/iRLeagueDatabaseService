@@ -33,6 +33,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterResultsTypeMaps();
             RegisterReviewsTypeMaps();
             RegisterSessionsTypeMaps();
+            RegisterFiltersTypeMaps();
         }
 
         public TypeMap GetTypeMap(Type sourceType, Type targetType)
