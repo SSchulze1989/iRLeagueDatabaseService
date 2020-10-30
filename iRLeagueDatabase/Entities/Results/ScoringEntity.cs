@@ -584,18 +584,25 @@ namespace iRLeagueDatabase.Entities.Results
             List<StandingsRowEntity> resultList = new List<StandingsRowEntity>();
             foreach (var row in source)
             {
-                StandingsRowEntity resultRow;
+                StandingsRowEntity standingsRow;
                 var compRow = compare.SingleOrDefault(x => x.Member.MemberId == row.Member.MemberId);
                 if (compRow != null)
                 {
-                    resultRow = row.Diff(compRow);
+                    if (row is TeamStandingsRowEntity teamStandingsRow && compRow is TeamStandingsRowEntity compTeamStandingsRow)
+                    {
+                        standingsRow = teamStandingsRow.Diff(compTeamStandingsRow);
+                    }
+                    else
+                    { 
+                        standingsRow = row.Diff(compRow); 
+                    }
                 }
                 else
                 {
-                    resultRow = row;
+                    standingsRow = row;
                 }
 
-                resultList.Add(resultRow);
+                resultList.Add(standingsRow);
             }
 
             return resultList;
