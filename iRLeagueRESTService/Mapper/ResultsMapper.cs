@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
+using iRLeagueDatabase.DataTransfer.Reviews;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -127,6 +128,7 @@ namespace iRLeagueDatabase.Mapper
             target.PenaltyPoints = source.PenaltyPoints;
             target.RacePoints = source.RacePoints;
             target.ScoringId = source.ScoringId;
+            target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
 
             return target;
         }
