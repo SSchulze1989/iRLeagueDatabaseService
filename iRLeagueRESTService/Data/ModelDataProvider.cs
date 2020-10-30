@@ -240,7 +240,7 @@ namespace iRLeagueRESTService.Data
                 }
                 catch (Exception e)
                 {
-                    throw;
+                    throw e;
                 }
                 var dto = dtoMapper.MapTo(entity, requestType) as TModelDTO;
                 resultItems.Add(dto);
@@ -312,7 +312,8 @@ namespace iRLeagueRESTService.Data
                      .Include(x => x.Session).Load();
             DbContext.Set<ScoredResultRowEntity>().Where(x => x.ScoredResultId == sessionId && x.ScoringId == scoringId)
                      .Include(x => x.AddPenalty)
-                     .Include(x => x.ResultRow.Member.Team).Load();
+                     .Include(x => x.ResultRow.Member.Team)
+                     .Include(x => x.ReviewPenalties).Load();
             //DbContext.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
             //DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
             //DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
