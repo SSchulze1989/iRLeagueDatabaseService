@@ -47,6 +47,7 @@ namespace iRLeagueDatabase.Mapper
             target.FilterValues = source.FilterValues.Split(';').Select(x => ConvertToResultsValueObject(sourceColumnProperty.PropertyType, x, targetColumnProperty.PropertyType)).ToArray();
             target.ResultsFilterId = source.ResultsFilterId;
             target.ResultsFilterType = source.ResultsFilterType;
+            target.Exclude = source.Exclude;
             target.ScoringId = source.ScoringId;
 
             return target;
@@ -67,6 +68,17 @@ namespace iRLeagueDatabase.Mapper
             }
 
             // convert values
+            if (string.IsNullOrEmpty(source))
+            {
+                if (targetType.IsValueType)
+                {
+                    return Activator.CreateInstance(targetType);
+                }
+                else
+                {
+                    return null;
+                }
+            }
             object sourceObject = Convert.ChangeType(source, sourceType);
             object target;
             if (sourceType.Equals(typeof(long)) && targetType.Equals(typeof(TimeSpan)))
@@ -122,6 +134,7 @@ namespace iRLeagueDatabase.Mapper
             var sourceColumnProperty = typeof(ResultRowDataDTO).GetNestedPropertyInfo(source.ColumnPropertyName);
             target.FilterValues = String.Join(";", source.FilterValues.Select(x => ConvertToResultsValueString(sourceColumnProperty.PropertyType, x, targetColumnProperty.PropertyType)));
             target.ResultsFilterType = source.ResultsFilterType;
+            target.Exclude = source.Exclude;
             if (target.Scoring == null && target.ScoringId == 0)
             {
                 target.Scoring = DefaultGet<ScoringEntity>(new object[] { source.ScoringId });

@@ -97,7 +97,14 @@ namespace iRLeagueDatabase.Mapper
             target.Date = source.Date.GetValueOrDefault();
             target.OldIRating = source.OldIRating;
             target.NewIRating = source.NewIRating;
+            target.SeasonStartIRating = source.SeasonStartIRating;
             target.CompletedPct = source.CompletedPct;
+            target.OldSafetyRating = source.OldSafetyRating;
+            target.NewSafetyRating = source.NewSafetyRating;
+            target.OldCpi = source.OldCpi;
+            target.NewCpi = source.NewCpi;
+            target.OldLicenseLevel = source.OldLicenseLevel;
+            target.NewLicenseLevel = source.NewLicenseLevel;
 
             return target;
         }
@@ -471,12 +478,19 @@ namespace iRLeagueDatabase.Mapper
             target.OldIRating = source.OldIRating;
             target.NewIRating = source.NewIRating;
             target.CompletedPct = source.CompletedPct;
+            target.OldSafetyRating = source.OldSafetyRating;
+            target.NewSafetyRating = source.NewSafetyRating;
+            target.OldLicenseLevel = source.OldLicenseLevel;
+            target.NewLicenseLevel = source.NewLicenseLevel;
+            target.OldCpi = source.OldCpi;
+            target.NewCpi = source.NewCpi;
 
             //compare with other resultrows in this season and determine SeasonStartIRating
             DbContext.Configuration.LazyLoadingEnabled = false;
             DbContext.Set<ResultEntity>()
                 .Where(x => x.SeasonId == target.Result.SeasonId)
                 .Include(x => x.RawResults)
+                .Include(x => x.Session)
                 .Load();
             var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
 

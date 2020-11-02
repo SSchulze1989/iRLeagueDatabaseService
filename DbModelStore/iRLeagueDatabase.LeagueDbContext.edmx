@@ -116,7 +116,8 @@
           <Property Name="NewIRating" Type="Int32" Nullable="false" />
           <Property Name="SeasonStartIRating" Type="Int32" Nullable="false" />
           <Property Name="License" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="SafetyRating" Type="Double" Nullable="false" />
+          <Property Name="OldSafetyRating" Type="Double" Nullable="false" />
+          <Property Name="NewSafetyRating" Type="Double" Nullable="false" />
           <Property Name="OldCpi" Type="Int32" Nullable="false" />
           <Property Name="NewCpi" Type="Int32" Nullable="false" />
           <Property Name="ClubId" Type="Int32" Nullable="false" />
@@ -450,11 +451,10 @@
         </EntityType>
         <EntityType Name="ResultsFilterOptionEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Filters.ResultsFilterOptionEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
-            <PropertyRef Name="ScoringId" />
             <PropertyRef Name="ResultsFilterId" />
           </Key>
+          <Property Name="ResultsFilterId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ScoringId" Type="Int64" Nullable="false" />
-          <Property Name="ResultsFilterId" Type="Int64" Nullable="false" />
           <Property Name="ResultsFilterType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ColumnPropertyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Comparator" Type="Self.ComparatorTypeEnum" Nullable="false" />
@@ -1243,7 +1243,8 @@
                 <ScalarProperty Name="NewIRating" ColumnName="NewIRating" />
                 <ScalarProperty Name="SeasonStartIRating" ColumnName="SeasonStartIRating" />
                 <ScalarProperty Name="License" ColumnName="License" />
-                <ScalarProperty Name="SafetyRating" ColumnName="SafetyRating" />
+                <ScalarProperty Name="OldSafetyRating" ColumnName="OldSafetyRating" />
+                <ScalarProperty Name="NewSafetyRating" ColumnName="NewSafetyRating" />
                 <ScalarProperty Name="OldCpi" ColumnName="OldCpi" />
                 <ScalarProperty Name="NewCpi" ColumnName="NewCpi" />
                 <ScalarProperty Name="ClubId" ColumnName="ClubId" />
@@ -1590,8 +1591,8 @@
           <EntitySetMapping Name="ResultsFilterOptionEntities">
             <EntityTypeMapping TypeName="iRLeagueDatabase.ResultsFilterOptionEntity">
               <MappingFragment StoreEntitySet="ResultsFilterOptionEntity">
-                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
                 <ScalarProperty Name="ResultsFilterId" ColumnName="ResultsFilterId" />
+                <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
                 <ScalarProperty Name="ResultsFilterType" ColumnName="ResultsFilterType" />
                 <ScalarProperty Name="ColumnPropertyName" ColumnName="ColumnPropertyName" />
                 <ScalarProperty Name="Comparator" ColumnName="Comparator" />
@@ -1829,7 +1830,8 @@
           <Property Name="NewIRating" Type="int" Nullable="false" />
           <Property Name="SeasonStartIRating" Type="int" Nullable="false" />
           <Property Name="License" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="SafetyRating" Type="float" Nullable="false" />
+          <Property Name="OldSafetyRating" Type="float" Nullable="false" />
+          <Property Name="NewSafetyRating" Type="float" Nullable="false" />
           <Property Name="OldCpi" Type="int" Nullable="false" />
           <Property Name="NewCpi" Type="int" Nullable="false" />
           <Property Name="ClubId" Type="int" Nullable="false" />
@@ -2125,11 +2127,10 @@
         </EntityType>
         <EntityType Name="ResultsFilterOptionEntity">
           <Key>
-            <PropertyRef Name="ScoringId" />
             <PropertyRef Name="ResultsFilterId" />
           </Key>
+          <Property Name="ResultsFilterId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoringId, Order: 0 }" Nullable="false" />
-          <Property Name="ResultsFilterId" Type="bigint" Nullable="false" />
           <Property Name="ResultsFilterType" Type="nvarchar(max)" Nullable="true" />
           <Property Name="ColumnPropertyName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Comparator" Type="int" Nullable="false" />

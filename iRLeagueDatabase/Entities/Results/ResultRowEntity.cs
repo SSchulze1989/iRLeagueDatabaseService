@@ -45,7 +45,8 @@ namespace iRLeagueDatabase.Entities.Results
         public int NewIRating { get; set; }
         public int SeasonStartIRating { get; set; }
         public string License { get; set; }
-        public double SafetyRating { get; set; }
+        public double OldSafetyRating { get; set; }
+        public double NewSafetyRating { get; set; }
         public int OldCpi { get; set; }
         public int NewCpi { get; set; }
         public int ClubId { get; set; }

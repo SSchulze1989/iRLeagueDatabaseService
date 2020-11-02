@@ -14,10 +14,10 @@ namespace iRLeagueDatabase.Entities.Filters
 {
     public class ResultsFilterOptionEntity : MappableEntity
     {
-        [Key, Column(Order = 1)]
+        [Key, Column(Order = 0)]
         public long ResultsFilterId { get; set; }
 
-        [Key, ForeignKey(nameof(Scoring)), Column(Order = 0)]
+        [ForeignKey(nameof(Scoring)), Column(Order = 1)]
         public long ScoringId { get; set; }
         public virtual ScoringEntity Scoring { get; set; }
         public string ResultsFilterType { get; set; }
@@ -29,6 +29,6 @@ namespace iRLeagueDatabase.Entities.Filters
         //public virtual List<FilterValueBaseEntity> FilterValues { get; set; }
         public string FilterValues { get; set; }
 
-        public override object MappingId => new object[] { ScoringId, ResultsFilterId };
+        public override object MappingId => ResultsFilterId;
     }
 }

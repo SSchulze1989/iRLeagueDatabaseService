@@ -111,10 +111,6 @@
     <Compile Include="Migrations\202010012023548_AddIncidentNr.designer.cs">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202010032215338_AddResultFilterOptions.cs" />
-    <Compile Include="Migrations\202010032215338_AddResultFilterOptions.designer.cs">
-      <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
-    </Compile>
     <Compile Include="LeagueDbContext.cs" />
     <Compile Include="Entities\Location.cs" />
     <Compile Include="Entities\MappableEntity.cs" />
@@ -136,29 +132,13 @@
     <Compile Include="Entities\Sessions\ScheduleEntity.cs" />
     <Compile Include="Entities\Sessions\SessionBaseEntity.cs" />
     <Compile Include="Entities\TrackConfig.cs" />
-    <Compile Include="Migrations\202010051903552_AddSimSessionDetails.cs" />
-    <Compile Include="Migrations\202010051903552_AddSimSessionDetails.designer.cs">
-      <DependentUpon>202010051903552_AddSimSessionDetails.cs</DependentUpon>
+    <Compile Include="Migrations\202011011702472_AddCustomResultsFilter.cs" />
+    <Compile Include="Migrations\202011011702472_AddCustomResultsFilter.designer.cs">
+      <DependentUpon>202011011702472_AddCustomResultsFilter.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202010071853058_AddResultSeasonNavigationProperty.cs" />
-    <Compile Include="Migrations\202010071853058_AddResultSeasonNavigationProperty.designer.cs">
-      <DependentUpon>202010071853058_AddResultSeasonNavigationProperty.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202010071930457_FixDateTimeColumn.cs" />
-    <Compile Include="Migrations\202010071930457_FixDateTimeColumn.designer.cs">
-      <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202010172203354_AddReviewPenaltyToResultRow.cs" />
-    <Compile Include="Migrations\202010172203354_AddReviewPenaltyToResultRow.designer.cs">
-      <DependentUpon>202010172203354_AddReviewPenaltyToResultRow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202010202141098_RemoveFilterValueEntities.cs" />
-    <Compile Include="Migrations\202010202141098_RemoveFilterValueEntities.designer.cs">
-      <DependentUpon>202010202141098_RemoveFilterValueEntities.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202010240029220_AddCompletedPctColumn.cs" />
-    <Compile Include="Migrations\202010240029220_AddCompletedPctColumn.designer.cs">
-      <DependentUpon>202010240029220_AddCompletedPctColumn.cs</DependentUpon>
+    <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.cs" />
+    <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.designer.cs">
+      <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -189,26 +169,11 @@
     <EmbeddedResource Include="Migrations\202010012023548_AddIncidentNr.resx">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010032215338_AddResultFilterOptions.resx">
-      <DependentUpon>202010032215338_AddResultFilterOptions.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202011011702472_AddCustomResultsFilter.resx">
+      <DependentUpon>202011011702472_AddCustomResultsFilter.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010051903552_AddSimSessionDetails.resx">
-      <DependentUpon>202010051903552_AddSimSessionDetails.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010071853058_AddResultSeasonNavigationProperty.resx">
-      <DependentUpon>202010071853058_AddResultSeasonNavigationProperty.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010071930457_FixDateTimeColumn.resx">
-      <DependentUpon>202010071930457_FixDateTimeColumn.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010172203354_AddReviewPenaltyToResultRow.resx">
-      <DependentUpon>202010172203354_AddReviewPenaltyToResultRow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010202141098_RemoveFilterValueEntities.resx">
-      <DependentUpon>202010202141098_RemoveFilterValueEntities.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010240029220_AddCompletedPctColumn.resx">
-      <DependentUpon>202010240029220_AddCompletedPctColumn.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202011021553524_AddOldNewSafetyRating.resx">
+      <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
