@@ -85,10 +85,6 @@ namespace iRLeagueDatabase.Mapper
             {
                 target = TimeSpanConverter.Convert((long)sourceObject);
             }
-            else if (sourceType.Equals(typeof(LeagueMemberInfoDTO)) && targetType.Equals(typeof(long)))
-            {
-                target = ((LeagueMemberInfoDTO)sourceObject).MemberId;
-            }
             else if (sourceType.Equals(typeof(long)) && targetType.Equals(typeof(LeagueMemberInfoDTO)))
             {
                 target = new LeagueMemberInfoDTO() { MemberId = (long)sourceObject };
@@ -167,7 +163,7 @@ namespace iRLeagueDatabase.Mapper
             {
                 target = TimeSpanConverter.Convert((TimeSpan)source);
             }
-            if (sourceType.Equals(typeof(LeagueMemberInfoDTO)) && targetType.Equals(typeof(long)))
+            else if (sourceType.Equals(typeof(LeagueMemberInfoDTO)) && targetType.Equals(typeof(long)))
             {
                 target = ((LeagueMemberInfoDTO)source).MemberId;
             }
