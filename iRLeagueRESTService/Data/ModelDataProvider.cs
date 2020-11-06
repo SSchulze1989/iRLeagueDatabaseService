@@ -174,7 +174,8 @@ namespace iRLeagueRESTService.Data
                 "iRLeagueDatabase.DataTransfer.Members.",
                 "iRLeagueDatabase.DataTransfer.Results.",
                 "iRLeagueDatabase.DataTransfer.Reviews.",
-                "iRLeagueDatabase.DataTransfer.Sessions."
+                "iRLeagueDatabase.DataTransfer.Sessions.",
+                "iRLeagueDatabase.DataTransfer.Filters"
             };
 
             var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };

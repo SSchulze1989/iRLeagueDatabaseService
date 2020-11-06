@@ -54,6 +54,12 @@
   <ItemGroup>
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
+    <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
+    <Compile Include="Entities\Filters\FilterValueBaseEntity.cs" />
+    <Compile Include="Entities\Filters\IntFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
+    <Compile Include="Entities\Filters\MemberFilterValueEntity.cs" />
+    <Compile Include="Entities\Filters\ResultsFilterOptionEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewPenaltyEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultEntity.cs" />
     <Compile Include="Entities\Results\ScoredResultRowEntity.cs" />
@@ -62,6 +68,8 @@
     <Compile Include="Entities\Results\StandingsEntity.cs" />
     <Compile Include="Entities\Results\StandingsRowEntity.cs" />
     <Compile Include="Entities\Results\ScoredTeamResultEntity.cs" />
+    <Compile Include="Entities\Filters\StringFilterValueEntity.cs" />
+    <Compile Include="Entities\Filters\TeamFilterValueEntity.cs" />
     <Compile Include="Entities\Results\TeamStandingsEntity.cs" />
     <Compile Include="Entities\Results\TeamStandingsRowEntity.cs" />
     <Compile Include="Entities\Reviews\AcceptedReviewVoteEntity.cs" />
@@ -69,6 +77,15 @@
     <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
+    <Compile Include="Entities\Statistics\DriverStatisticEntity.cs" />
+    <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
+    <Compile Include="Filters\ColumnPropertyFilter.cs" />
+    <Compile Include="Filters\FilterFactoryHelper.cs" />
+    <Compile Include="Filters\FilterTypeEnum.cs" />
+    <Compile Include="Filters\InvalidFilterValueException.cs" />
+    <Compile Include="Filters\IResultsFilter.cs" />
+    <Compile Include="Filters\MemberListFilter.cs" />
+    <Compile Include="Filters\SeasonStartIRatingFilter.cs" />
     <Compile Include="LeagueDbConfiguration.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.cs" />
     <Compile Include="Migrations\202009151217062_InitialCreate.designer.cs">
@@ -94,12 +111,6 @@
     <Compile Include="Migrations\202010012023548_AddIncidentNr.designer.cs">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.cs" />
-    <Compile Include="Migrations\202010170000412_AddReviewVoteToPenalty.designer.cs">
-      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Session.cs" />
-    <Compile Include="TestDbContext.cs" />
     <Compile Include="LeagueDbContext.cs" />
     <Compile Include="Entities\Location.cs" />
     <Compile Include="Entities\MappableEntity.cs" />
@@ -121,6 +132,14 @@
     <Compile Include="Entities\Sessions\ScheduleEntity.cs" />
     <Compile Include="Entities\Sessions\SessionBaseEntity.cs" />
     <Compile Include="Entities\TrackConfig.cs" />
+    <Compile Include="Migrations\202011011702472_AddCustomResultsFilter.cs" />
+    <Compile Include="Migrations\202011011702472_AddCustomResultsFilter.designer.cs">
+      <DependentUpon>202011011702472_AddCustomResultsFilter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.cs" />
+    <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.designer.cs">
+      <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -150,8 +169,11 @@
     <EmbeddedResource Include="Migrations\202010012023548_AddIncidentNr.resx">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202010170000412_AddReviewVoteToPenalty.resx">
-      <DependentUpon>202010170000412_AddReviewVoteToPenalty.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202011011702472_AddCustomResultsFilter.resx">
+      <DependentUpon>202011011702472_AddCustomResultsFilter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011021553524_AddOldNewSafetyRating.resx">
+      <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

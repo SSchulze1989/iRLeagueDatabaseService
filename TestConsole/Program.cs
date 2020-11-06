@@ -21,6 +21,7 @@ using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.Entities.Members;
 using System.Net.Http;
 using System.Security.Principal;
+using iRLeagueDatabase.Extensions;
 
 namespace TestConsole
 {
@@ -28,10 +29,29 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            using (var context = new LeagueDbContext("TestDatabase"))
+            var test = 0.5;
+
+            var test2 = test as IComparable;
+
+            var member = new LeagueMemberEntity()
             {
-                
-            }
+                Team = new TeamEntity()
+                {
+                    Name = "Test Team"
+                },
+                Firstname = "Test",
+                Lastname = "Member"
+            };
+
+            var resultRow = new ResultRowEntity()
+            {
+                Member = member
+            };
+
+            var propertyName = "Member.Team.TeamId";
+
+            var nestedProperty = typeof(ResultRowEntity).GetNestedPropertyInfo(propertyName);
+            var nestedValue = nestedProperty.GetValue(resultRow);
 
             Console.Read();
         }

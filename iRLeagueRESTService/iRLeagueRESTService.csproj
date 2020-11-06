@@ -188,6 +188,7 @@
     <Compile Include="Mapper\BaseMapper.cs" />
     <Compile Include="Mapper\DTOMapper.cs" />
     <Compile Include="Mapper\EntityMapper.cs" />
+    <Compile Include="Mapper\FiltersMapper.cs" />
     <Compile Include="Mapper\MemberMapper.cs" />
     <Compile Include="Mapper\ResultsMapper.cs" />
     <Compile Include="Mapper\ReviewsMapper.cs" />
