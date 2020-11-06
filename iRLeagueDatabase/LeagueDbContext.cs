@@ -121,7 +121,7 @@ namespace iRLeagueDatabase
             //    .ToTable("ScoredResultRowEntities");
             modelBuilder.Entity<ScoringTableEntity>()
                 .HasMany(r => r.Scorings)
-                .WithMany()
+                .WithMany(m => m.ScoringTables)
                 .Map(rm =>
                 {
                     rm.MapLeftKey("ScoringTableRefId");

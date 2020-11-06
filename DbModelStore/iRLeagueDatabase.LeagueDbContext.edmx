@@ -274,9 +274,11 @@
           <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ConnectedSchedule" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Source" ToRole="ScoringEntity_ConnectedSchedule_Target" />
-          <NavigationProperty Name="ExtScoringSource" Relationship="Self.ScoringEntity_ExtScoringSource" FromRole="ScoringEntity_ExtScoringSource_Source" ToRole="ScoringEntity_ExtScoringSource_Target" />
+          <NavigationProperty Name="DependendScorings" Relationship="Self.ScoringEntity_DependendScorings" FromRole="ScoringEntity_DependendScorings_Source" ToRole="ScoringEntity_DependendScorings_Target" />
+          <NavigationProperty Name="ExtScoringSource" Relationship="Self.ScoringEntity_DependendScorings" FromRole="ScoringEntity_DependendScorings_Target" ToRole="ScoringEntity_DependendScorings_Source" />
           <NavigationProperty Name="ResultsFilterOptions" Relationship="Self.ScoringEntity_ResultsFilterOptions" FromRole="ScoringEntity_ResultsFilterOptions_Source" ToRole="ScoringEntity_ResultsFilterOptions_Target" />
           <NavigationProperty Name="ScoredResults" Relationship="Self.ScoringEntity_ScoredResults" FromRole="ScoringEntity_ScoredResults_Source" ToRole="ScoringEntity_ScoredResults_Target" />
+          <NavigationProperty Name="ScoringTables" Relationship="Self.ScoringTableEntity_Scorings" FromRole="ScoringTableEntity_Scorings_Target" ToRole="ScoringTableEntity_Scorings_Source" />
           <NavigationProperty Name="Season" Relationship="Self.ScoringEntity_Season" FromRole="ScoringEntity_Season_Source" ToRole="ScoringEntity_Season_Target" />
           <NavigationProperty Name="Sessions" Relationship="Self.ScoringEntity_Sessions" FromRole="ScoringEntity_Sessions_Source" ToRole="ScoringEntity_Sessions_Target" />
         </EntityType>
@@ -782,14 +784,14 @@
           <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="*" />
           <End Role="ScoringEntity_ConnectedSchedule_Target" Type="Self.ScheduleEntity" Multiplicity="0..1" />
         </Association>
-        <Association Name="ScoringEntity_ExtScoringSource">
-          <End Role="ScoringEntity_ExtScoringSource_Source" Type="Self.ScoringEntity" Multiplicity="*" />
-          <End Role="ScoringEntity_ExtScoringSource_Target" Type="Self.ScoringEntity" Multiplicity="0..1" />
+        <Association Name="ScoringEntity_DependendScorings">
+          <End Role="ScoringEntity_DependendScorings_Source" Type="Self.ScoringEntity" Multiplicity="0..1" />
+          <End Role="ScoringEntity_DependendScorings_Target" Type="Self.ScoringEntity" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="ScoringEntity_ExtScoringSource_Target">
+            <Principal Role="ScoringEntity_DependendScorings_Source">
               <PropertyRef Name="ScoringId" />
             </Principal>
-            <Dependent Role="ScoringEntity_ExtScoringSource_Source">
+            <Dependent Role="ScoringEntity_DependendScorings_Target">
               <PropertyRef Name="ExtScoringSourceId" />
             </Dependent>
           </ReferentialConstraint>
@@ -1073,9 +1075,9 @@
             <End Role="ScoringEntity_ConnectedSchedule_Source" EntitySet="ScoringEntities" />
             <End Role="ScoringEntity_ConnectedSchedule_Target" EntitySet="ScheduleEntities" />
           </AssociationSet>
-          <AssociationSet Name="ScoringEntity_ExtScoringSource" Association="Self.ScoringEntity_ExtScoringSource">
-            <End Role="ScoringEntity_ExtScoringSource_Source" EntitySet="ScoringEntities" />
-            <End Role="ScoringEntity_ExtScoringSource_Target" EntitySet="ScoringEntities" />
+          <AssociationSet Name="ScoringEntity_DependendScorings" Association="Self.ScoringEntity_DependendScorings">
+            <End Role="ScoringEntity_DependendScorings_Source" EntitySet="ScoringEntities" />
+            <End Role="ScoringEntity_DependendScorings_Target" EntitySet="ScoringEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoringEntity_ResultsFilterOptions" Association="Self.ScoringEntity_ResultsFilterOptions">
             <End Role="ScoringEntity_ResultsFilterOptions_Source" EntitySet="ScoringEntities" />
@@ -2547,7 +2549,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="ScoringEntity_ExtScoringSource">
+        <Association Name="ScoringEntity_DependendScorings">
           <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="0..1" />
           <End Role="ScoringEntitySelf" Type="Self.ScoringEntity" Multiplicity="*" />
           <ReferentialConstraint>
@@ -2906,7 +2908,7 @@
             <End Role="ScheduleEntity" EntitySet="ScheduleEntity" />
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
           </AssociationSet>
-          <AssociationSet Name="ScoringEntity_ExtScoringSource" Association="Self.ScoringEntity_ExtScoringSource">
+          <AssociationSet Name="ScoringEntity_DependendScorings" Association="Self.ScoringEntity_DependendScorings">
             <End Role="ScoringEntity" EntitySet="ScoringEntity" />
             <End Role="ScoringEntitySelf" EntitySet="ScoringEntity" />
           </AssociationSet>

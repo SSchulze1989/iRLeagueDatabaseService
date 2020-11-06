@@ -87,6 +87,10 @@ namespace iRLeagueDatabase.Mapper
             }
             else if (sourceType.Equals(typeof(LeagueMemberInfoDTO)) && targetType.Equals(typeof(long)))
             {
+                target = ((LeagueMemberInfoDTO)sourceObject).MemberId;
+            }
+            else if (sourceType.Equals(typeof(long)) && targetType.Equals(typeof(LeagueMemberInfoDTO)))
+            {
                 target = new LeagueMemberInfoDTO() { MemberId = (long)sourceObject };
             }
             else if (sourceType.Equals(targetType))

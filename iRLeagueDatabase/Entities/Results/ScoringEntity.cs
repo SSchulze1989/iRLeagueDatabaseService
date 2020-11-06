@@ -32,11 +32,15 @@ namespace iRLeagueDatabase.Entities.Results
         public int MaxResultsPerGroup { get; set; }
         public bool TakeGroupAverage { get; set; }
 
+        [InverseProperty(nameof(ScoringEntity.ExtScoringSource))]
+        public virtual List<ScoringEntity> DependendScorings { get; set; }
         [ForeignKey(nameof(ExtScoringSource))]
         public long? ExtScoringSourceId { get; set; }
         public virtual ScoringEntity ExtScoringSource { get; set; }
         public bool TakeResultsFromExtSource { get; set; }
         //public bool IsMultiScoring { get; set; }
+
+        public virtual List<ScoringTableEntity> ScoringTables { get; set; }
 
         [InverseProperty(nameof(ResultsFilterOptionEntity.Scoring))]
         public virtual List<ResultsFilterOptionEntity> ResultsFilterOptions { get; set; }
@@ -395,7 +399,7 @@ namespace iRLeagueDatabase.Entities.Results
                 // Apply filters
                 foreach(var filter in resultsFilters)
                 {
-                    resultRows = filter.GetFilteredRows(resultRows);
+                    resultRows = filter.GetFilteredRows(resultRows).OrderBy(x => x.FinishPosition);
                 }
 
                 IDictionary<int, int> basePoints = new Dictionary<int, int>();
@@ -407,8 +411,10 @@ namespace iRLeagueDatabase.Entities.Results
 
                 var removeRows = scoredResultRows.ToList();
 
-                foreach (var resultRow in resultRows)
+                foreach (var resultRowObj in resultRows.Select((row, index) => new { index, row }))
                 {
+                    var resultRow = resultRowObj.row;
+                    var position = resultRowObj.index + 1;
                     ScoredResultRowEntity scoredResultRow;
                     if (scoredResultRows.Exists(x => x.ResultRowId == resultRow.ResultRowId))
                     {
@@ -453,9 +459,8 @@ namespace iRLeagueDatabase.Entities.Results
                         removePenalty.ForEach(x => x.Delete(dbContext));
                         //dbContext.SaveChanges();
                     }
-
-                    scoredResultRow.RacePoints = basePoints.ContainsKey(resultRow.FinishPosition) ? basePoints[resultRow.FinishPosition] : 0;
-                    scoredResultRow.BonusPoints = bonusPoints.ContainsKey(resultRow.FinishPosition) ? bonusPoints[resultRow.FinishPosition] : 0;
+                    scoredResultRow.RacePoints = basePoints.ContainsKey(position) ? basePoints[position] : 0;
+                    scoredResultRow.BonusPoints = bonusPoints.ContainsKey(position) ? bonusPoints[position] : 0;
                     scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
@@ -608,6 +613,8 @@ namespace iRLeagueDatabase.Entities.Results
         {
             ScoredResults?.ToList().ForEach(x => x.Delete(dbContext));
             Sessions?.ForEach(x => x.Scorings.Remove(this));
+            DependendScorings?.ForEach(x => x.ExtScoringSource = null);
+            ScoringTables?.ForEach(x => x.Scorings.Remove(this));
             base.Delete(dbContext);
         }
     }

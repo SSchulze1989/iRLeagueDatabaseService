@@ -43,6 +43,7 @@ namespace iRLeagueDatabase.Entities.Sessions
         public override void Delete(LeagueDbContext dbContext)
         {
             Sessions?.ToList().ForEach(x => x.Delete(dbContext));
+            ConnectedScorings?.ToList().ForEach(x => x.ConnectedSchedule = null);
             base.Delete(dbContext);
         }
     }
