@@ -90,8 +90,14 @@ namespace iRLeagueDatabase.Entities.Results
 
         public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession, LeagueDbContext dbContext, int maxRacesCount = -1)
         {
+            StandingsEntity standings = new StandingsEntity()
+            {
+                ScoringTable = this,
+                SessionId = (currentSession?.SessionId).GetValueOrDefault()
+            };
+
             if (currentSession == null)
-                return null;
+                return standings;
 
             if (maxRacesCount == -1)
                 maxRacesCount = Sessions.Count() - maxRacesCount;
@@ -106,12 +112,6 @@ namespace iRLeagueDatabase.Entities.Results
 
             var currentResult = currentSession.SessionResult;
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
-
-            StandingsEntity standings = new StandingsEntity()
-            {
-                ScoringTable = this,
-                SessionId = currentSession.SessionId
-            };
 
             var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
             var previousStandingsRows = previousScoredRows.AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
