@@ -232,7 +232,7 @@ namespace iRLeagueDatabase.Mapper
             }
             catch (Exception e)
             {
-                throw new CollectionMapperException($"Error mapping collection of type {typeof(TSource)} to type {typeof(TTarget)}. See inner exception for details.", typeof(TSource), typeof(TTarget), 
+                throw new CollectionMapperException($"Error mapping collection of type {typeof(TSource)} to type {typeof(TTarget)}. See inner exception for details.", e, typeof(TSource), typeof(TTarget), 
                     sourceCollection?.Cast<object>(), targetCollection?.Cast<object>(), source, target);
             }
 
@@ -252,7 +252,10 @@ namespace iRLeagueDatabase.Mapper
                 if (target == null)
                 {
                     if (autoAddMissing)
+                    {
                         target = dbSet.Create() as TTarget;
+                        DbContext.Set(typeof(TTarget)).Attach(target);
+                    }
                     else
                         continue;
                 }

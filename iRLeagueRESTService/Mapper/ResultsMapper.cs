@@ -8,6 +8,7 @@ using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using System.Data.Entity;
+using iRLeagueDatabase.Extensions;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -559,7 +560,7 @@ namespace iRLeagueDatabase.Mapper
             target.TakeGroupAverage = source.TakeGroupAverage;
             target.ExtScoringSource = GetScoringEntity(source.ExtScoringSource);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
-            target.GetAllSessions().ForEach(x => x.SessionResult.RequiresRecalculation = true);
+            target.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
 
             return target;
         }

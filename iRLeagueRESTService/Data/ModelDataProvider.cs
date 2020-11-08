@@ -308,6 +308,26 @@ namespace iRLeagueRESTService.Data
             var scoredResultData = new ScoredResultDataDTO();
 
             DbContext.Configuration.LazyLoadingEnabled = false;
+
+            /// Load result and check if recalculation needed
+            var result = DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
+                .Include(x => x.Session)
+                .FirstOrDefault();
+
+            if (result == null)
+            {
+                return new ScoredResultDataDTO()
+                {
+                    ResultId = sessionId,
+                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                };
+            }
+            else if (result.RequiresRecalculation)
+            {
+                ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(DbContext);
+                leagueActionProvider.CalculateScoredResult(sessionId);
+            }
+
             var scoredResultEntity = DbContext.Set<ScoredResultEntity>()
                 //.AsNoTracking()
                 //.Include(x => x.Result.Session)
@@ -323,8 +343,8 @@ namespace iRLeagueRESTService.Data
                     ResultId = sessionId,
                     Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
                 };
-            DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
-                     .Include(x => x.Session).Load();
+            //DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
+            //         .Include(x => x.Session).Load();
             DbContext.Set<ScoredResultRowEntity>().Where(x => x.ScoredResultId == sessionId && x.ScoringId == scoringId)
                      .Include(x => x.AddPenalty)
                      .Include(x => x.ResultRow.Member.Team)
