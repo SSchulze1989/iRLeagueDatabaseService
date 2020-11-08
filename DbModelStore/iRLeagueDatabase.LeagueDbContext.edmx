@@ -158,6 +158,7 @@
           </Key>
           <Property Name="ResultId" Type="Int64" Nullable="false" />
           <Property Name="SeasonId" Type="Int64" />
+          <Property Name="RequiresRecalculation" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -1298,6 +1299,7 @@
               <MappingFragment StoreEntitySet="ResultEntity">
                 <ScalarProperty Name="ResultId" ColumnName="ResultId" />
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
+                <ScalarProperty Name="RequiresRecalculation" ColumnName="RequiresRecalculation" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1873,6 +1875,7 @@
           </Key>
           <Property Name="ResultId" Type="bigint" customannotation:Index="{ Name: IX_ResultId, Order: 0 }" Nullable="false" />
           <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="true" />
+          <Property Name="RequiresRecalculation" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />

@@ -45,6 +45,8 @@ namespace iRLeagueDatabase.Entities.Results
         [InverseProperty(nameof(ScoredResultEntity.Result))]
         public virtual List<ScoredResultEntity> ScoredResults { get; set; }
 
+        public bool RequiresRecalculation { get; set; }
+
         [NotMapped]
         public IEnumerable<Members.LeagueMemberEntity> DriverList => RawResults.Select(x => x.Member).Distinct();
 

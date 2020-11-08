@@ -94,6 +94,7 @@ namespace iRLeagueDatabase.Entities.Results
             //{
             //    return MultiScoringResults.Where(x => x.Sessions != null).SelectMany(x => x.Sessions).ToList();
             //}
+            UpdateSessionList();
             return Sessions;
         }
 

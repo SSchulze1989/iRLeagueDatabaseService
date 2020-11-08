@@ -8,6 +8,7 @@ using iRLeagueDatabase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Results;
 
@@ -139,6 +140,7 @@ namespace iRLeagueDatabase.Mapper
             {
                 target.Scoring = DefaultGet<ScoringEntity>(new object[] { source.ScoringId });
             }
+            target.Scoring?.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
 
             return target;
         }

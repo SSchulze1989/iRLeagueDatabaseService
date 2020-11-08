@@ -8,6 +8,7 @@ using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using System.Data.Entity;
+using iRLeagueDatabase.Extensions;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -410,6 +411,7 @@ namespace iRLeagueDatabase.Mapper
             MapCollection(source.Reviews, target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.Session = GetSessionBaseEntity(source.Session);
             target.Season = target.Session.Schedule.Season;
+            target.RequiresRecalculation = true;
 
             return target;
         }
@@ -558,6 +560,7 @@ namespace iRLeagueDatabase.Mapper
             target.TakeGroupAverage = source.TakeGroupAverage;
             target.ExtScoringSource = GetScoringEntity(source.ExtScoringSource);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
+            target.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
 
             return target;
         }
@@ -625,6 +628,10 @@ namespace iRLeagueDatabase.Mapper
 
             target.ScoredResultRow = GetScoredResultRowEntity(new ScoredResultRowDataDTO() { ScoredResultRowId = source.ScoredResultRowId });
             target.PenaltyPoints = source.PenaltyPoints;
+            if (target.ScoredResultRow?.ScoredResult?.Result != null)
+            {
+                target.ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
+            }
 
             return target;
         }
