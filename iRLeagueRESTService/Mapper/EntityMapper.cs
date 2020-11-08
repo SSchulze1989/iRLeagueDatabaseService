@@ -254,7 +254,6 @@ namespace iRLeagueDatabase.Mapper
                     if (autoAddMissing)
                     {
                         target = dbSet.Create() as TTarget;
-                        DbContext.Set(typeof(TTarget)).Attach(target);
                     }
                     else
                         continue;
