@@ -140,6 +140,10 @@
     <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.designer.cs">
       <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011081954092_AddRequireCalculationOption.cs" />
+    <Compile Include="Migrations\202011081954092_AddRequireCalculationOption.designer.cs">
+      <DependentUpon>202011081954092_AddRequireCalculationOption.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -174,6 +178,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011021553524_AddOldNewSafetyRating.resx">
       <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011081954092_AddRequireCalculationOption.resx">
+      <DependentUpon>202011081954092_AddRequireCalculationOption.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
