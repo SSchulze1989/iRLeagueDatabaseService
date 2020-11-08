@@ -132,17 +132,9 @@
     <Compile Include="Entities\Sessions\ScheduleEntity.cs" />
     <Compile Include="Entities\Sessions\SessionBaseEntity.cs" />
     <Compile Include="Entities\TrackConfig.cs" />
-    <Compile Include="Migrations\202011011702472_AddCustomResultsFilter.cs" />
-    <Compile Include="Migrations\202011011702472_AddCustomResultsFilter.designer.cs">
-      <DependentUpon>202011011702472_AddCustomResultsFilter.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.cs" />
-    <Compile Include="Migrations\202011021553524_AddOldNewSafetyRating.designer.cs">
-      <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202011081954092_AddRequireCalculationOption.cs" />
-    <Compile Include="Migrations\202011081954092_AddRequireCalculationOption.designer.cs">
-      <DependentUpon>202011081954092_AddRequireCalculationOption.cs</DependentUpon>
+    <Compile Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.cs" />
+    <Compile Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.designer.cs">
+      <DependentUpon>202011082336177_AddCustomFiltersAndExtendedResultInformation.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -173,14 +165,8 @@
     <EmbeddedResource Include="Migrations\202010012023548_AddIncidentNr.resx">
       <DependentUpon>202010012023548_AddIncidentNr.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202011011702472_AddCustomResultsFilter.resx">
-      <DependentUpon>202011011702472_AddCustomResultsFilter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202011021553524_AddOldNewSafetyRating.resx">
-      <DependentUpon>202011021553524_AddOldNewSafetyRating.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202011081954092_AddRequireCalculationOption.resx">
-      <DependentUpon>202011081954092_AddRequireCalculationOption.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.resx">
+      <DependentUpon>202011082336177_AddCustomFiltersAndExtendedResultInformation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
