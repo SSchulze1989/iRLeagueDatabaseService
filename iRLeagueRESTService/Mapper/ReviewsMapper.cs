@@ -221,6 +221,10 @@ namespace iRLeagueDatabase.Mapper
                 removeFromCollection: true, removeFromDatabase: true, autoAddMissing: true);
             target.ResultLongText = source.ResultLongText;
             target.IncidentNr = source.IncidentNr;
+            if (target.Session?.SessionResult != null)
+            {
+                target.Session.SessionResult.RequiresRecalculation = true;
+            }
 
             return target;
         }
@@ -333,6 +337,11 @@ namespace iRLeagueDatabase.Mapper
                 target = GetAcceptedReviewVoteEntity(source);
 
             MapToReviewVoteEntity(source, target);
+
+            if (target.IncidentReview?.Session?.SessionResult != null)
+            {
+                target.IncidentReview.Session.SessionResult.RequiresRecalculation = true;
+            }
 
             return target;
         }

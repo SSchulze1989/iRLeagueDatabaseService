@@ -14,5 +14,14 @@ namespace iRLeagueDatabase.Entities.Results
         public long ScoredResultRowId { get; set; }
         public virtual ScoredResultRowEntity ScoredResultRow { get; set; }
         public int PenaltyPoints { get; set; }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            if (ScoredResultRow?.ScoredResult?.Result != null)
+            {
+                ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
+            }
+            base.Delete(dbContext);
+        }
     }
 }

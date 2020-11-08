@@ -333,7 +333,8 @@ namespace iRLeagueRESTService.Controllers
                 "iRLeagueDatabase.DataTransfer.Members.",
                 "iRLeagueDatabase.DataTransfer.Results.",
                 "iRLeagueDatabase.DataTransfer.Reviews.",
-                "iRLeagueDatabase.DataTransfer.Sessions."
+                "iRLeagueDatabase.DataTransfer.Sessions.",
+                "iRLeagueDatabase.DataTransfer.Filters."
             };
 
             var assemblyName = typeof(iRLeagueDatabase.DataTransfer.MappableDTO).Assembly.FullName;
