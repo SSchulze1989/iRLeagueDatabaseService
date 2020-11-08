@@ -411,7 +411,15 @@ namespace iRLeagueRESTService.Data
                         if (sessionId == 0)
                             standings = scoringTable.GetSeasonStandings(DbContext);
                         else
-                            standings = scoringTable.GetSeasonStandings(scoringTable.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId), DbContext);
+                        {
+                            var scoringSession = scoringTable.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId);
+                            if (scoringSession == null)
+                            {
+                                var session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
+                                scoringSession = scoringTable.GetAllSessions().FirstOrDefault(x => x.Date <= session?.Date);
+                            }
+                            standings = scoringTable.GetSeasonStandings(scoringSession, DbContext);
+                        }
                         var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
                         standingsDTO.SessionId = sessionId;
                         responseItems.Add(standingsDTO);
