@@ -30,5 +30,18 @@ namespace iRLeagueDatabase.Entities.Filters
         public string FilterValues { get; set; }
 
         public override object MappingId => ResultsFilterId;
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            if (Scoring != null)
+            {
+                var results = Scoring.GetAllSessions().Where(x => x.SessionResult != null).Select(x => x.SessionResult);
+                foreach(var result in results)
+                {
+                    result.RequiresRecalculation = true;
+                }
+            }
+            base.Delete(dbContext);
+        }
     }
 }

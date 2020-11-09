@@ -402,6 +402,20 @@
           <NavigationProperty Name="CustomVoteCat" Relationship="Self.AcceptedReviewVoteEntity_CustomVoteCat" FromRole="AcceptedReviewVoteEntity_CustomVoteCat_Source" ToRole="AcceptedReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="IncidentReview" Relationship="Self.IncidentReviewEntity_AcceptedReviewVotes" FromRole="IncidentReviewEntity_AcceptedReviewVotes_Target" ToRole="IncidentReviewEntity_AcceptedReviewVotes_Source" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.AcceptedReviewVoteEntity_MemberAtFault" FromRole="AcceptedReviewVoteEntity_MemberAtFault_Source" ToRole="AcceptedReviewVoteEntity_MemberAtFault_Target" />
+          <NavigationProperty Name="ReviewPenalties" Relationship="Self.AcceptedReviewVoteEntity_ReviewPenalties" FromRole="AcceptedReviewVoteEntity_ReviewPenalties_Source" ToRole="AcceptedReviewVoteEntity_ReviewPenalties_Target" />
+        </EntityType>
+        <EntityType Name="ReviewPenaltyEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Reviews.ReviewPenaltyEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="ResultRowId" />
+            <PropertyRef Name="ReviewId" />
+          </Key>
+          <Property Name="ResultRowId" Type="Int64" Nullable="false" />
+          <Property Name="ReviewId" Type="Int64" Nullable="false" />
+          <Property Name="ReviewVoteId" Type="Int64" />
+          <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Review" Relationship="Self.ReviewPenaltyEntity_Review" FromRole="ReviewPenaltyEntity_Review_Source" ToRole="ReviewPenaltyEntity_Review_Target" />
+          <NavigationProperty Name="ReviewVote" Relationship="Self.AcceptedReviewVoteEntity_ReviewPenalties" FromRole="AcceptedReviewVoteEntity_ReviewPenalties_Target" ToRole="AcceptedReviewVoteEntity_ReviewPenalties_Source" />
+          <NavigationProperty Name="ScoredResultRow" Relationship="Self.ScoredResultRowEntity_ReviewPenalties" FromRole="ScoredResultRowEntity_ReviewPenalties_Target" ToRole="ScoredResultRowEntity_ReviewPenalties_Source" />
         </EntityType>
         <EntityType Name="ReviewCommentEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Reviews.ReviewCommentEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.CommentBaseEntity">
           <Property Name="ReviewId" Type="Int64" Nullable="false" />
@@ -470,19 +484,6 @@
         </EntityType>
         <EntityType Name="IRacingResultRowEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.IRacingResultRowEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.ResultRowEntity">
           <Property Name="IRacingId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="ReviewPenaltyEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Reviews.ReviewPenaltyEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <Key>
-            <PropertyRef Name="ResultRowId" />
-            <PropertyRef Name="ReviewId" />
-          </Key>
-          <Property Name="ResultRowId" Type="Int64" Nullable="false" />
-          <Property Name="ReviewId" Type="Int64" Nullable="false" />
-          <Property Name="ReviewVoteId" Type="Int64" />
-          <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Review" Relationship="Self.ReviewPenaltyEntity_Review" FromRole="ReviewPenaltyEntity_Review_Source" ToRole="ReviewPenaltyEntity_Review_Target" />
-          <NavigationProperty Name="ReviewVote" Relationship="Self.ReviewPenaltyEntity_ReviewVote" FromRole="ReviewPenaltyEntity_ReviewVote_Source" ToRole="ReviewPenaltyEntity_ReviewVote_Target" />
-          <NavigationProperty Name="ScoredResultRow" Relationship="Self.ScoredResultRowEntity_ReviewPenalties" FromRole="ScoredResultRowEntity_ReviewPenalties_Target" ToRole="ScoredResultRowEntity_ReviewPenalties_Source" />
         </EntityType>
         <EnumType Name="SimSessionTypeEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.SimSessionTypeEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="Unknown" Value="0" />
@@ -662,6 +663,32 @@
             </Principal>
             <Dependent Role="AcceptedReviewVoteEntity_MemberAtFault_Source">
               <PropertyRef Name="MemberAtFaultId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ReviewPenaltyEntity_Review">
+          <End Role="ReviewPenaltyEntity_Review_Source" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
+          <End Role="ReviewPenaltyEntity_Review_Target" Type="Self.IncidentReviewEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <ReferentialConstraint>
+            <Principal Role="ReviewPenaltyEntity_Review_Target">
+              <PropertyRef Name="ReviewId" />
+            </Principal>
+            <Dependent Role="ReviewPenaltyEntity_Review_Source">
+              <PropertyRef Name="ReviewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AcceptedReviewVoteEntity_ReviewPenalties">
+          <End Role="AcceptedReviewVoteEntity_ReviewPenalties_Source" Type="Self.AcceptedReviewVoteEntity" Multiplicity="0..1" />
+          <End Role="AcceptedReviewVoteEntity_ReviewPenalties_Target" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AcceptedReviewVoteEntity_ReviewPenalties_Source">
+              <PropertyRef Name="ReviewVoteId" />
+            </Principal>
+            <Dependent Role="AcceptedReviewVoteEntity_ReviewPenalties_Target">
+              <PropertyRef Name="ReviewVoteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -891,32 +918,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="ReviewPenaltyEntity_Review">
-          <End Role="ReviewPenaltyEntity_Review_Source" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
-          <End Role="ReviewPenaltyEntity_Review_Target" Type="Self.IncidentReviewEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <ReferentialConstraint>
-            <Principal Role="ReviewPenaltyEntity_Review_Target">
-              <PropertyRef Name="ReviewId" />
-            </Principal>
-            <Dependent Role="ReviewPenaltyEntity_Review_Source">
-              <PropertyRef Name="ReviewId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ReviewPenaltyEntity_ReviewVote">
-          <End Role="ReviewPenaltyEntity_ReviewVote_Source" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
-          <End Role="ReviewPenaltyEntity_ReviewVote_Target" Type="Self.AcceptedReviewVoteEntity" Multiplicity="0..1" />
-          <ReferentialConstraint>
-            <Principal Role="ReviewPenaltyEntity_ReviewVote_Target">
-              <PropertyRef Name="ReviewVoteId" />
-            </Principal>
-            <Dependent Role="ReviewPenaltyEntity_ReviewVote_Source">
-              <PropertyRef Name="ReviewVoteId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="ScoredResultRowEntity_ReviewPenalties">
           <End Role="ScoredResultRowEntity_ReviewPenalties_Source" Type="Self.ScoredResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -968,10 +969,10 @@
           <EntitySet Name="SessionBaseEntities" EntityType="Self.SessionBaseEntity" />
           <EntitySet Name="IncidentReviewEntities" EntityType="Self.IncidentReviewEntity" />
           <EntitySet Name="AcceptedReviewVoteEntities" EntityType="Self.AcceptedReviewVoteEntity" />
+          <EntitySet Name="ReviewPenaltyEntities" EntityType="Self.ReviewPenaltyEntity" />
           <EntitySet Name="CommentReviewVoteEntities" EntityType="Self.CommentReviewVoteEntity" />
           <EntitySet Name="CommentBaseEntities" EntityType="Self.CommentBaseEntity" />
           <EntitySet Name="ResultsFilterOptionEntities" EntityType="Self.ResultsFilterOptionEntity" />
-          <EntitySet Name="ReviewPenaltyEntities" EntityType="Self.ReviewPenaltyEntity" />
           <AssociationSet Name="TeamEntity_Members" Association="Self.TeamEntity_Members">
             <End Role="TeamEntity_Members_Source" EntitySet="TeamEntities" />
             <End Role="TeamEntity_Members_Target" EntitySet="Members" />
@@ -1031,6 +1032,14 @@
           <AssociationSet Name="AcceptedReviewVoteEntity_MemberAtFault" Association="Self.AcceptedReviewVoteEntity_MemberAtFault">
             <End Role="AcceptedReviewVoteEntity_MemberAtFault_Source" EntitySet="AcceptedReviewVoteEntities" />
             <End Role="AcceptedReviewVoteEntity_MemberAtFault_Target" EntitySet="Members" />
+          </AssociationSet>
+          <AssociationSet Name="ReviewPenaltyEntity_Review" Association="Self.ReviewPenaltyEntity_Review">
+            <End Role="ReviewPenaltyEntity_Review_Source" EntitySet="ReviewPenaltyEntities" />
+            <End Role="ReviewPenaltyEntity_Review_Target" EntitySet="IncidentReviewEntities" />
+          </AssociationSet>
+          <AssociationSet Name="AcceptedReviewVoteEntity_ReviewPenalties" Association="Self.AcceptedReviewVoteEntity_ReviewPenalties">
+            <End Role="AcceptedReviewVoteEntity_ReviewPenalties_Source" EntitySet="AcceptedReviewVoteEntities" />
+            <End Role="AcceptedReviewVoteEntity_ReviewPenalties_Target" EntitySet="ReviewPenaltyEntities" />
           </AssociationSet>
           <AssociationSet Name="IncidentReviewEntity_AcceptedReviewVotes" Association="Self.IncidentReviewEntity_AcceptedReviewVotes">
             <End Role="IncidentReviewEntity_AcceptedReviewVotes_Source" EntitySet="IncidentReviewEntities" />
@@ -1111,14 +1120,6 @@
           <AssociationSet Name="ResultRowEntity_ScoredResultRows" Association="Self.ResultRowEntity_ScoredResultRows">
             <End Role="ResultRowEntity_ScoredResultRows_Source" EntitySet="ResultRowEntities" />
             <End Role="ResultRowEntity_ScoredResultRows_Target" EntitySet="ScoredResultRowEntities" />
-          </AssociationSet>
-          <AssociationSet Name="ReviewPenaltyEntity_Review" Association="Self.ReviewPenaltyEntity_Review">
-            <End Role="ReviewPenaltyEntity_Review_Source" EntitySet="ReviewPenaltyEntities" />
-            <End Role="ReviewPenaltyEntity_Review_Target" EntitySet="IncidentReviewEntities" />
-          </AssociationSet>
-          <AssociationSet Name="ReviewPenaltyEntity_ReviewVote" Association="Self.ReviewPenaltyEntity_ReviewVote">
-            <End Role="ReviewPenaltyEntity_ReviewVote_Source" EntitySet="ReviewPenaltyEntities" />
-            <End Role="ReviewPenaltyEntity_ReviewVote_Target" EntitySet="AcceptedReviewVoteEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoredResultRowEntity_ReviewPenalties" Association="Self.ScoredResultRowEntity_ReviewPenalties">
             <End Role="ScoredResultRowEntity_ReviewPenalties_Source" EntitySet="ScoredResultRowEntities" />
@@ -1549,6 +1550,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ReviewPenaltyEntities">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.ReviewPenaltyEntity">
+              <MappingFragment StoreEntitySet="ReviewPenaltyEntity">
+                <ScalarProperty Name="ResultRowId" ColumnName="ResultRowId" />
+                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
+                <ScalarProperty Name="ReviewVoteId" ColumnName="ReviewVoteId" />
+                <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="CommentBaseEntities">
             <EntityTypeMapping TypeName="iRLeagueDatabase.ReviewCommentEntity">
               <MappingFragment StoreEntitySet="CommentBaseEntity">
@@ -1602,16 +1613,6 @@
                 <ScalarProperty Name="Comparator" ColumnName="Comparator" />
                 <ScalarProperty Name="Exclude" ColumnName="Exclude" />
                 <ScalarProperty Name="FilterValues" ColumnName="FilterValues" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReviewPenaltyEntities">
-            <EntityTypeMapping TypeName="iRLeagueDatabase.ReviewPenaltyEntity">
-              <MappingFragment StoreEntitySet="ReviewPenaltyEntity">
-                <ScalarProperty Name="ResultRowId" ColumnName="ResultRowId" />
-                <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
-                <ScalarProperty Name="ReviewVoteId" ColumnName="ReviewVoteId" />
-                <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2100,6 +2101,16 @@
           <Property Name="Vote" Type="int" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
         </EntityType>
+        <EntityType Name="ReviewPenaltyEntity">
+          <Key>
+            <PropertyRef Name="ResultRowId" />
+            <PropertyRef Name="ReviewId" />
+          </Key>
+          <Property Name="ResultRowId" Type="bigint" customannotation:Index="{ Name: IX_ResultRowId, Order: 0 }" Nullable="false" />
+          <Property Name="ReviewId" Type="bigint" customannotation:Index="{ Name: IX_ReviewId, Order: 0 }" Nullable="false" />
+          <Property Name="ReviewVoteId" Type="bigint" customannotation:Index="{ Name: IX_ReviewVoteId, Order: 0 }" Nullable="true" />
+          <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="CommentBaseEntity">
           <Key>
             <PropertyRef Name="CommentId" />
@@ -2141,16 +2152,6 @@
           <Property Name="Comparator" Type="int" Nullable="false" />
           <Property Name="Exclude" Type="bit" Nullable="false" />
           <Property Name="FilterValues" Type="nvarchar(max)" Nullable="true" />
-        </EntityType>
-        <EntityType Name="ReviewPenaltyEntity">
-          <Key>
-            <PropertyRef Name="ResultRowId" />
-            <PropertyRef Name="ReviewId" />
-          </Key>
-          <Property Name="ResultRowId" Type="bigint" customannotation:Index="{ Name: IX_ResultRowId, Order: 0 }" Nullable="false" />
-          <Property Name="ReviewId" Type="bigint" customannotation:Index="{ Name: IX_ReviewId, Order: 0 }" Nullable="false" />
-          <Property Name="ReviewVoteId" Type="bigint" customannotation:Index="{ Name: IX_ReviewVoteId, Order: 0 }" Nullable="true" />
-          <Property Name="PenaltyPoints" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ScoringTableEntityScoringEntity">
           <Key>
@@ -2389,6 +2390,32 @@
             </Principal>
             <Dependent Role="AcceptedReviewVoteEntity">
               <PropertyRef Name="MemberAtFaultId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ReviewPenaltyEntity_Review">
+          <End Role="IncidentReviewEntity" Type="Self.IncidentReviewEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ReviewPenaltyEntity" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IncidentReviewEntity">
+              <PropertyRef Name="ReviewId" />
+            </Principal>
+            <Dependent Role="ReviewPenaltyEntity">
+              <PropertyRef Name="ReviewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AcceptedReviewVoteEntity_ReviewPenalties">
+          <End Role="AcceptedReviewVoteEntity" Type="Self.AcceptedReviewVoteEntity" Multiplicity="0..1" />
+          <End Role="ReviewPenaltyEntity" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AcceptedReviewVoteEntity">
+              <PropertyRef Name="ReviewVoteId" />
+            </Principal>
+            <Dependent Role="ReviewPenaltyEntity">
+              <PropertyRef Name="ReviewVoteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2690,32 +2717,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="ReviewPenaltyEntity_Review">
-          <End Role="IncidentReviewEntity" Type="Self.IncidentReviewEntity" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="ReviewPenaltyEntity" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="IncidentReviewEntity">
-              <PropertyRef Name="ReviewId" />
-            </Principal>
-            <Dependent Role="ReviewPenaltyEntity">
-              <PropertyRef Name="ReviewId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="ReviewPenaltyEntity_ReviewVote">
-          <End Role="AcceptedReviewVoteEntity" Type="Self.AcceptedReviewVoteEntity" Multiplicity="0..1" />
-          <End Role="ReviewPenaltyEntity" Type="Self.ReviewPenaltyEntity" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AcceptedReviewVoteEntity">
-              <PropertyRef Name="ReviewVoteId" />
-            </Principal>
-            <Dependent Role="ReviewPenaltyEntity">
-              <PropertyRef Name="ReviewVoteId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="ScoredResultRowEntity_ReviewPenalties">
           <End Role="ScoredResultRowEntity" Type="Self.ScoredResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -2791,10 +2792,10 @@
           <EntitySet Name="SessionBaseEntity" EntityType="Self.SessionBaseEntity" Schema="dbo" Table="SessionBaseEntities" />
           <EntitySet Name="IncidentReviewEntity" EntityType="Self.IncidentReviewEntity" Schema="dbo" Table="IncidentReviewEntities" />
           <EntitySet Name="AcceptedReviewVoteEntity" EntityType="Self.AcceptedReviewVoteEntity" Schema="dbo" Table="AcceptedReviewVoteEntities" />
+          <EntitySet Name="ReviewPenaltyEntity" EntityType="Self.ReviewPenaltyEntity" Schema="dbo" Table="ReviewPenaltyEntities" />
           <EntitySet Name="CommentBaseEntity" EntityType="Self.CommentBaseEntity" Schema="dbo" Table="CommentBaseEntities" />
           <EntitySet Name="CommentReviewVoteEntity" EntityType="Self.CommentReviewVoteEntity" Schema="dbo" Table="CommentReviewVoteEntities" />
           <EntitySet Name="ResultsFilterOptionEntity" EntityType="Self.ResultsFilterOptionEntity" Schema="dbo" Table="ResultsFilterOptionEntities" />
-          <EntitySet Name="ReviewPenaltyEntity" EntityType="Self.ReviewPenaltyEntity" Schema="dbo" Table="ReviewPenaltyEntities" />
           <EntitySet Name="ScoringTableEntityScoringEntity" EntityType="Self.ScoringTableEntityScoringEntity" Schema="dbo" Table="ScoringTableMap" />
           <EntitySet Name="IncidentReviewEntityLeagueMemberEntity" EntityType="Self.IncidentReviewEntityLeagueMemberEntity" Schema="dbo" Table="IncidentReview_InvolvedLeagueMember" />
           <EntitySet Name="ScoringEntitySessionBaseEntity" EntityType="Self.ScoringEntitySessionBaseEntity" Schema="dbo" Table="Scoring_Session" />
@@ -2862,6 +2863,14 @@
           <AssociationSet Name="AcceptedReviewVoteEntity_MemberAtFault" Association="Self.AcceptedReviewVoteEntity_MemberAtFault">
             <End Role="LeagueMemberEntity" EntitySet="LeagueMemberEntity" />
             <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ReviewPenaltyEntity_Review" Association="Self.ReviewPenaltyEntity_Review">
+            <End Role="IncidentReviewEntity" EntitySet="IncidentReviewEntity" />
+            <End Role="ReviewPenaltyEntity" EntitySet="ReviewPenaltyEntity" />
+          </AssociationSet>
+          <AssociationSet Name="AcceptedReviewVoteEntity_ReviewPenalties" Association="Self.AcceptedReviewVoteEntity_ReviewPenalties">
+            <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
+            <End Role="ReviewPenaltyEntity" EntitySet="ReviewPenaltyEntity" />
           </AssociationSet>
           <AssociationSet Name="IncidentReviewEntity_AcceptedReviewVotes" Association="Self.IncidentReviewEntity_AcceptedReviewVotes">
             <End Role="IncidentReviewEntity" EntitySet="IncidentReviewEntity" />
@@ -2950,14 +2959,6 @@
           <AssociationSet Name="ResultRowEntity_ScoredResultRows" Association="Self.ResultRowEntity_ScoredResultRows">
             <End Role="ResultRowEntity" EntitySet="ResultRowEntity" />
             <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
-          </AssociationSet>
-          <AssociationSet Name="ReviewPenaltyEntity_Review" Association="Self.ReviewPenaltyEntity_Review">
-            <End Role="IncidentReviewEntity" EntitySet="IncidentReviewEntity" />
-            <End Role="ReviewPenaltyEntity" EntitySet="ReviewPenaltyEntity" />
-          </AssociationSet>
-          <AssociationSet Name="ReviewPenaltyEntity_ReviewVote" Association="Self.ReviewPenaltyEntity_ReviewVote">
-            <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
-            <End Role="ReviewPenaltyEntity" EntitySet="ReviewPenaltyEntity" />
           </AssociationSet>
           <AssociationSet Name="ScoredResultRowEntity_ReviewPenalties" Association="Self.ScoredResultRowEntity_ReviewPenalties">
             <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
