@@ -91,6 +91,10 @@ namespace iRLeagueDatabase.Entities.Results
         public override void Delete(LeagueDbContext dbContext)
         {
             ScoredResultRows.ToList().ForEach(x => x.Delete(dbContext));
+            if (Result != null)
+            {
+                Result.RequiresRecalculation = true;
+            }
             base.Delete(dbContext);
         }
     }
