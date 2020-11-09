@@ -12,5 +12,19 @@ namespace iRLeagueDatabase.Entities.Reviews
         [ForeignKey(nameof(IncidentReview))]
         public long ReviewId { get; set; }
         public virtual IncidentReviewEntity IncidentReview { get; set; }
+        
+        [InverseProperty(nameof(ReviewPenaltyEntity.ReviewVote))]
+        public virtual List<ReviewPenaltyEntity> ReviewPenalties { get; set; }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            IncidentReview?.AcceptedReviewVotes?.Remove(this);
+            ReviewPenalties?.ForEach(x => x.ReviewVote = null);
+            if (IncidentReview?.Session?.SessionResult != null)
+            {
+                IncidentReview.Session.SessionResult.RequiresRecalculation = true;
+            }
+            base.Delete(dbContext);
+        }
     }
 }
