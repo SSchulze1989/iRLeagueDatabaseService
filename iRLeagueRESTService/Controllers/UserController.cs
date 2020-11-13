@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.User;
 using iRLeagueUserDatabase;
+using System.Net;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -145,6 +146,11 @@ namespace iRLeagueRESTService.Controllers
         {
             if (userDto == null)
                 return BadRequest("Content was null");
+
+            if (User.Identity.GetUserId() != userDto.UserId)
+            {
+                throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            }
 
             using(var client = new UsersDbContext())
             {
