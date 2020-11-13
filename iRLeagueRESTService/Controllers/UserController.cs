@@ -148,10 +148,23 @@ namespace iRLeagueRESTService.Controllers
 
             using(var client = new UsersDbContext())
             {
+                var userProfile = client.Set<UserProfile>().Find(userDto.UserId);
+                if (userProfile == null)
+                {
+                    return BadRequest($"User profile not found. id={userDto.UserId}");
+                }
 
+                userProfile.Firstname = userDto.Firstname;
+                userProfile.Lastname = userDto.Lastname;
+                userProfile.MemberId = userDto.MemberId;
+                userProfile.ProfileText = userDto.ProfileText;
+
+                var user = client.Set<IdentityUser>().Find(userDto.UserId);
+                user.Email = userDto.Email;
+                client.SaveChanges();
             }
 
-            return null;
+            return Ok(userDto);
         }
 
         [HttpGet]
