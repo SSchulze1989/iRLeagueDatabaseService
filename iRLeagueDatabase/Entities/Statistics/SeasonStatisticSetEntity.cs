@@ -12,27 +12,20 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Entities.Statistics
 {
-    public class SeasonStatisticSetEntity : Revision
+    public class SeasonStatisticSetEntity : StatisticSetEntity
     {
-        [Key]
-        public long Id { get; set; }
-
         [ForeignKey(nameof(Season))]
         public long SeasonId { get; set; }
         public virtual SeasonEntity Season { get; set; }
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
-        [ForeignKey(nameof(DriverStatistic))]
-        public long DriverStatisticId { get; set; }
-        public virtual DriverStatisticEntity DriverStatistic { get; set; }
-
         /// <summary>
         /// Load the required data to perform results calculation from the database.
         /// Must be performed before calling Calculate() function if lazy loading is disabled.
         /// </summary>
         /// <param name="dbContext">Database context to load data from</param>
-        public async Task LoadRequiredDataAsync(LeagueDbContext dbContext)
+        public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext)
         {
             await dbContext.Entry(this)
                 .Collection(x => x.Scorings)
@@ -53,7 +46,7 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// Calculate season statistics. Make sure that either lazy loading is enabled or that all required data is loaded from the database.
         /// </summary>
         /// <param name="dbContext"></param>
-        public void Calculate(LeagueDbContext dbContext)
+        public override void Calculate(LeagueDbContext dbContext)
         {
             // Get all scored races
             var scoredRaces = Scorings.Where(x => x.Season.SeasonId == Season.SeasonId).SelectMany(x => x.GetAllSessions()).Where(x => x.SessionResult != null);
@@ -66,20 +59,22 @@ namespace iRLeagueDatabase.Entities.Statistics
 
             if (DriverStatistic == null)
             {
-                DriverStatistic = new DriverStatisticEntity();
+                DriverStatistic = new List<DriverStatisticRowEntity>();
             }
 
             List<DriverStatisticRowEntity> newDriverStatisticRows = new List<DriverStatisticRowEntity>();
-            List<DriverStatisticRowEntity> removeDriverStatisticRows = DriverStatistic.StatisticRows.ToList();
+            List<DriverStatisticRowEntity> removeDriverStatisticRows = DriverStatistic.ToList();
 
             // Calculate statistics per driver
             foreach(var memberResultRows in scoredResultsRows)
             {
                 var member = memberResultRows.Key;
                 DriverStatisticRowEntity driverStatRow;
-                if (DriverStatistic.StatisticRows.Any(x => x.Member == member))
+                if (DriverStatistic.Any(x => x.Member == member))
                 {
-                    driverStatRow = DriverStatistic.StatisticRows.SingleOrDefault(x => x.Member == member);
+                    driverStatRow = DriverStatistic.SingleOrDefault(x => x.Member == member);
+                    driverStatRow.ResetStatistic();
+                    removeDriverStatisticRows.Remove(driverStatRow);
                 }
                 else
                 {
@@ -136,17 +131,13 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.FirstRace = memberResultRows.Select(x => x.ScoredResult.Result.Session).OfType<RaceSessionEntity>().FirstOrDefault();
                 driverStatRow.FirstRaceFinalPosition = firstResult.FinalPosition;
                 driverStatRow.FirstRaceFinishPosition = firstResult.ResultRow.FinishPosition;
-                driverStatRow.FirstRaceId = driverStatRow.FirstRace?.RaceId ?? 0;
                 driverStatRow.FirstRaceStartPosition = firstResult.ResultRow.StartPosition;
                 driverStatRow.FirstSession = memberResultRows.Select(x => x.ScoredResult.Result.Session).FirstOrDefault();
-                driverStatRow.FirstSessionId = driverStatRow.FirstSession?.SessionId ?? 0;
                 driverStatRow.LastRace = memberResultRows.Select(x => x.ScoredResult.Result.Session).OfType<RaceSessionEntity>().LastOrDefault();
-                driverStatRow.LastRaceId = driverStatRow.LastRace?.RaceId ?? 0;
                 driverStatRow.LastRaceFinalPosition = lastResult.FinalPosition;
                 driverStatRow.LastRaceFinishPosition = lastResult.ResultRow.FinishPosition;
                 driverStatRow.LastRaceStartPosition = lastResult.ResultRow.StartPosition;
                 driverStatRow.LastSession = memberResultRows.Select(x => x.ScoredResult.Result.Session).LastOrDefault();
-                driverStatRow.LastSessionId = driverStatRow.LastSession?.SessionId ?? 0;
                 driverStatRow.StartIRating = firstResult.ResultRow.OldIRating;
                 driverStatRow.EndIRating = lastResult.ResultRow.NewIRating;
                 driverStatRow.StartSRating = firstResult.ResultRow.OldSafetyRating;
@@ -167,6 +158,14 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.AvgSRating = memberResultRows.Average(x => x.ResultRow.NewSafetyRating);
                 driverStatRow.AvgStartPosition = memberResultRows.Average(x => x.ResultRow.StartPosition);
             }
+
+            // Remove rows of drivers that are not in the current statistic set anymore
+            removeDriverStatisticRows.ForEach(x => DriverStatistic.Remove(x));
+        }
+
+        public override void Delete(LeagueDbContext dbContext)
+        {
+            base.Delete(dbContext);
         }
     }
 }

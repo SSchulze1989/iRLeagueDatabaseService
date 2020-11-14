@@ -24,6 +24,7 @@ namespace iRLeagueDatabase
         public virtual DbSet<LeagueMemberEntity> Members { get; set; }
         public virtual DbSet<CustomIncidentEntity> CustomIncidentKinds { get; set; }
         public virtual DbSet<VoteCategoryEntity> CustomVoteCategories { get; set; }
+        public virtual DbSet<LeagueStatisticSetEntity> LeagueStatistics { get; set; }
 
         private readonly OrphansToHandle OrphansToHandle;
 
@@ -145,8 +146,14 @@ namespace iRLeagueDatabase
                 });
 
             modelBuilder.Entity<SeasonStatisticSetEntity>()
-                .HasMany(r => r.Season)
-                .WithMany(m => m.)
+                .HasMany(r => r.Scorings)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("SeasonStatisticSetRefId");
+                    rm.MapRightKey("ScoringRefId");
+                    rm.ToTable("SeasonStatisticSet_Scoring");
+                });
         }
 
         public override int SaveChanges()

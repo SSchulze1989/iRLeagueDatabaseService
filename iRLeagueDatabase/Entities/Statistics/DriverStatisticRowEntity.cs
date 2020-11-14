@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Entities.Statistics
 {
-    public class DriverStatisticRowEntity
+    public class DriverStatisticRowEntity : MappableEntity
     {
-        [Key, ForeignKey(nameof(DriverStatistic)), Column(Order = 1)]
-        public long DriverStatisticId { get; set; }
-        public virtual DriverStatisticEntity DriverStatistic { get; set; }
+        [Key, ForeignKey(nameof(StatisticSet)), Column(Order = 1)]
+        public long StatisticSetId { get; set; }
+        public virtual StatisticSetEntity StatisticSet { get; set; }
 
         [Key, ForeignKey(nameof(Member)), Column(Order = 2)]
         public long MemberId { get; set; }
@@ -28,27 +28,31 @@ namespace iRLeagueDatabase.Entities.Statistics
         public double EndSRating { get; set; }
 
         [ForeignKey(nameof(FirstSession))]
-        public long FirstSessionId { get; set; }
+        public long? FirstSessionId { get; set; }
         public virtual SessionBaseEntity FirstSession { get; set; }
 
         [ForeignKey(nameof(FirstRace))]
-        public long FirstRaceId { get; set; }
+        public long? FirstRaceId { get; set; }
         public virtual RaceSessionEntity FirstRace { get; set; }
 
-        [ForeignKey(nameof(FirstResult))]
-        public long FirstResultId { get; set; }
+        [ForeignKey(nameof(FirstResult)), Column(Order = 3)]
+        public long? FirstResultId { get; set; }
+        [ForeignKey(nameof(FirstResult)), Column(Order = 4)]
+        public long? FirstResultScoringId { get; set; }
         public virtual ScoredResultEntity FirstResult { get; set; }
 
         [ForeignKey(nameof(LastSession))]
-        public long LastSessionId { get; set; }
+        public long? LastSessionId { get; set; }
         public virtual SessionBaseEntity LastSession { get; set; }
 
         [ForeignKey(nameof(LastRace))]
-        public long LastRaceId { get; set; }
+        public long? LastRaceId { get; set; }
         public virtual RaceSessionEntity LastRace { get; set; }
 
-        [ForeignKey(nameof(LastResult))]
-        public long LastResultId { get; set; }
+        [ForeignKey(nameof(LastResult)), Column(Order = 5)]
+        public long? LastResultId { get; set; }
+        [ForeignKey(nameof(LastResult)),Column(Order = 6)]
+        public long? LastResultScoringId { get; set; }
         public virtual ScoredResultEntity LastResult { get; set; }
 
         public int RacePoints { get; set; }
@@ -98,5 +102,60 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int WorstStartPosition { get; set; }
         public int FirstRaceStartPosition { get; set; }
         public int LastRaceStartPosition { get; set; }
+
+        public void ResetStatistic()
+        {
+            RacePoints = default;
+            TotalPoints = default;
+            BonusPoints = default;
+            Races = default;
+            Wins = default;
+            Poles = default;
+            Top3 = default;
+            Top5 = default;
+            Top10 = default;
+            Top15 = default;
+            Top20 = default;
+            Top25 = default;
+            RacesInPoints = default;
+            RacesCompleted = default;
+            Incidents = default;
+            PenaltyPoints = default;
+            FastestLaps = default;
+            IncidentsUnderInvestigation = default;
+            IncidentsWithPenalty = default;
+            LeadingLaps = default;
+            CompletedLaps = default;
+            DrivenKm = default;
+            LeadingKm = default;
+            AvgFinishPosition = default;
+            AvgFinalPosition = default;
+            AvgStartPosition = default;
+            AvgPointsPerRace = default;
+            AvgIncidentsPerRace = default;
+            AvgIncidentsPerLap = default;
+            AvgIncidentsPerKm = default;
+            AvgPenaltyPointsPerRace = default;
+            AvgPenaltyPointsPerLap = default;
+            AvgPenaltyPointsPerKm = default;
+            AvgIRating = default;
+            AvgSRating = default;
+            BestFinishPosition = default;
+            WorstFinishPosition = default;
+            FirstRaceFinishPosition = default;
+            LastRaceFinishPosition = default;
+            BestFinalPosition = default;
+            WorstFinalPosition = default;
+            FirstRaceFinalPosition = default;
+            LastRaceFinalPosition = default;
+            BestStartPosition = default;
+            WorstStartPosition = default;
+            FirstRaceStartPosition = default;
+            LastRaceStartPosition = default;
+            StartIRating = default;
+            EndIRating = default;
+            StartSRating = default;
+            EndSRating = default;
+        }
     }
 }
