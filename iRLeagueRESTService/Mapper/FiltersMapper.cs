@@ -28,6 +28,8 @@ namespace iRLeagueDatabase.Mapper
             if (target == null)
                 target = new ResultsFilterOptionDTO();
 
+            MapToVersionDTO(source, target);
+
             target.ColumnPropertyName = source.ColumnPropertyName;
             target.Comparator = source.Comparator;
 
@@ -116,6 +118,11 @@ namespace iRLeagueDatabase.Mapper
                 return null;
             if (target == null)
                 target = DefaultGet<ResultsFilterOptionDTO, ResultsFilterOptionEntity>(source);
+
+            if (MapToRevision(source, target) == false)
+            {
+                return target;
+            }
 
             switch (source.ColumnPropertyName)
             {
