@@ -13,11 +13,12 @@ namespace iRLeagueDatabase.Entities.Statistics
         [Key]
         public long DriverStatisticsId { get; set; }
 
-        [ForeignKey(nameof(Season))]
-        public long? SeasonId { get; set; }
-        public virtual SeasonEntity Season { get; set; }
-
         [InverseProperty(nameof(DriverStatisticRowEntity.DriverStatistic))]
         public virtual List<DriverStatisticRowEntity> StatisticRows { get; set; }
+
+        public DriverStatisticEntity()
+        {
+            StatisticRows = new List<DriverStatisticRowEntity>();
+        }
     }
 }

@@ -13,6 +13,7 @@ using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
+using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase
 {
@@ -50,6 +51,7 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultEntity, ScoringEntity>(x => x.Scoring);
             OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
+
         }
 
         private static string GetConnectionString(string dbName)
@@ -141,6 +143,10 @@ namespace iRLeagueDatabase
                     rm.MapRightKey("ScoredResultRowRefId");
                     rm.ToTable("ScoredTeamResultRowsGroup");
                 });
+
+            modelBuilder.Entity<SeasonStatisticSetEntity>()
+                .HasMany(r => r.Season)
+                .WithMany(m => m.)
         }
 
         public override int SaveChanges()

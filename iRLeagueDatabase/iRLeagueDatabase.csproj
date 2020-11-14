@@ -79,6 +79,7 @@
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
     <Compile Include="Entities\Statistics\DriverStatisticEntity.cs" />
     <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
+    <Compile Include="Entities\Statistics\SeasonStatisticSetEntity.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
     <Compile Include="Filters\FilterFactoryHelper.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />

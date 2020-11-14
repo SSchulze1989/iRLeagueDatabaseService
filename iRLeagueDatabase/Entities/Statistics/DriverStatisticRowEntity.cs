@@ -1,4 +1,5 @@
 ﻿using iRLeagueDatabase.Entities.Members;
+using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Sessions;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int StartIRating { get; set; }
         public int EndIRating { get; set; }
 
-        public int StartSRating { get; set; }
-        public int EndSRating { get; set; }
+        public double StartSRating { get; set; }
+        public double EndSRating { get; set; }
 
         [ForeignKey(nameof(FirstSession))]
         public long FirstSessionId { get; set; }
@@ -34,6 +35,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         public long FirstRaceId { get; set; }
         public virtual RaceSessionEntity FirstRace { get; set; }
 
+        [ForeignKey(nameof(FirstResult))]
+        public long FirstResultId { get; set; }
+        public virtual ScoredResultEntity FirstResult { get; set; }
+
         [ForeignKey(nameof(LastSession))]
         public long LastSessionId { get; set; }
         public virtual SessionBaseEntity LastSession { get; set; }
@@ -42,6 +47,13 @@ namespace iRLeagueDatabase.Entities.Statistics
         public long LastRaceId { get; set; }
         public virtual RaceSessionEntity LastRace { get; set; }
 
+        [ForeignKey(nameof(LastResult))]
+        public long LastResultId { get; set; }
+        public virtual ScoredResultEntity LastResult { get; set; }
+
+        public int RacePoints { get; set; }
+        public int TotalPoints { get; set; }
+        public int BonusPoints { get; set; }
         public int Races { get; set; }
         public int Wins { get; set; }
         public int Poles { get; set; }
@@ -58,8 +70,9 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int FastestLaps { get; set; }
         public int IncidentsUnderInvestigation { get; set; }
         public int IncidentsWithPenalty { get; set; }
+        public int LeadingLaps { get; set; }
+        public int CompletedLaps { get; set; }
         public double DrivenKm { get; set; }
-        public double LeadingLaps { get; set; }
         public double LeadingKm { get; set; }
         public double AvgFinishPosition { get; set; }
         public double AvgFinalPosition { get; set; }
