@@ -36,10 +36,8 @@ namespace iRLeagueDatabase.Entities.Statistics
         public virtual RaceSessionEntity FirstRace { get; set; }
 
         [ForeignKey(nameof(FirstResult)), Column(Order = 3)]
-        public long? FirstResultId { get; set; }
-        [ForeignKey(nameof(FirstResult)), Column(Order = 4)]
-        public long? FirstResultScoringId { get; set; }
-        public virtual ScoredResultEntity FirstResult { get; set; }
+        public long? FirstResultRowId { get; set; }
+        public virtual ScoredResultRowEntity FirstResult { get; set; }
 
         [ForeignKey(nameof(LastSession))]
         public long? LastSessionId { get; set; }
@@ -49,11 +47,9 @@ namespace iRLeagueDatabase.Entities.Statistics
         public long? LastRaceId { get; set; }
         public virtual RaceSessionEntity LastRace { get; set; }
 
-        [ForeignKey(nameof(LastResult)), Column(Order = 5)]
-        public long? LastResultId { get; set; }
-        [ForeignKey(nameof(LastResult)),Column(Order = 6)]
-        public long? LastResultScoringId { get; set; }
-        public virtual ScoredResultEntity LastResult { get; set; }
+        [ForeignKey(nameof(LastResult)), Column(Order = 4)]
+        public long? LastResultRowId { get; set; }
+        public virtual ScoredResultRowEntity LastResult { get; set; }
 
         public int RacePoints { get; set; }
         public int TotalPoints { get; set; }

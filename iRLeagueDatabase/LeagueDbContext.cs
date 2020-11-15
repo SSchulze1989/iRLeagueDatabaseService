@@ -154,6 +154,16 @@ namespace iRLeagueDatabase
                     rm.MapRightKey("ScoringRefId");
                     rm.ToTable("SeasonStatisticSet_Scoring");
                 });
+
+            modelBuilder.Entity<LeagueStatisticSetEntity>()
+                .HasMany(r => r.SeasonStatisticSets)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("LeagueStatisticSetRefId");
+                    rm.MapRightKey("SeasonStatisticSetRefId");
+                    rm.ToTable("LeagueStatisticSet_SeasonStatisticSet");
+                });
         }
 
         public override int SaveChanges()

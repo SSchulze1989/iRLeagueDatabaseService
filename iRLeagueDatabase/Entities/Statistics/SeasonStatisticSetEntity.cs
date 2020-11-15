@@ -20,6 +20,11 @@ namespace iRLeagueDatabase.Entities.Statistics
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
+        public SeasonStatisticSetEntity()
+        {
+            Scorings = new List<ScoringEntity>();
+        }
+
         /// <summary>
         /// Load the required data to perform results calculation from the database.
         /// Must be performed before calling Calculate() function if lazy loading is disabled.
@@ -27,16 +32,53 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// <param name="dbContext">Database context to load data from</param>
         public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext)
         {
-            await dbContext.Entry(this)
+            if (Scorings == null || Scorings.Count == 0)
+            {
+                await dbContext.Entry(this)
                 .Collection(x => x.Scorings)
                 .LoadAsync();
+            }
+            if (Season == null)
+            {
+                await dbContext.Entry(this)
+                .Reference(x => x.Season)
+                .LoadAsync();
+            }
+            if (DriverStatistic == null || DriverStatistic.Count == 0)
+            {
+                await dbContext.Entry(this)
+                    .Collection(x => x.DriverStatistic)
+                    .LoadAsync();
+            }
+
+            foreach(var scoring in Scorings)
+            {
+                await dbContext.Entry(scoring)
+                    .Reference(x => x.ConnectedSchedule)
+                    .Query()
+                    .Include(x => x.Sessions)
+                    .LoadAsync();
+                await dbContext.Entry(scoring)
+                    .Collection(x => x.Sessions)
+                    .LoadAsync();
+                scoring.GetAllSessions();
+            }
+
+            var scoringIds = Scorings.Select(y => y.ScoringId);
 
             await dbContext.Set<ScoredResultEntity>()
-                .Where(x => Scorings.Select(y => y.ScoringId).Contains(x.ScoringId))
-                .Include(x => x.Result.Session)
-                .Include(x => x.Result.RawResults.Select(y => y.Member))
-                .Include(x => x.Result.IRSimSessionDetails)
-                .Include(x => x.FinalResults)
+                .Where(x => scoringIds.Contains(x.ScoringId))
+                .Include(x => x.FinalResults.Select(y => y.AddPenalty))
+                .Include(x => x.FinalResults.Select(y => y.ReviewPenalties))
+                .LoadAsync();
+
+            var resultIds = Scorings.SelectMany(x => x.ScoredResults.Select(y => y.ResultId));
+
+            await dbContext.Set<ResultEntity>()
+                .Where(x => resultIds.Contains(x.ResultId))
+                .Include(x => x.RawResults.Select(y => y.Member.Team))
+                .Include(x => x.IRSimSessionDetails)
+                .Include(x => x.Session.Reviews.Select(y => y.AcceptedReviewVotes.Select(z => z.CustomVoteCat)))
                 .LoadAsync();
 
             dbContext.ChangeTracker.DetectChanges();
@@ -49,10 +91,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         public override void Calculate(LeagueDbContext dbContext)
         {
             // Get all scored races
-            var scoredRaces = Scorings.Where(x => x.Season.SeasonId == Season.SeasonId).SelectMany(x => x.GetAllSessions()).Where(x => x.SessionResult != null);
+            var scoredRaces = Scorings.SelectMany(x => x.GetAllSessions().Where(y => y.SessionResult != null).Select(y => new { x, y })).GroupBy(x => x.x, x => x.y);
 
             // Get races that need recalculation and recalculate results
-            scoredRaces.Select(x => x.SessionResult).Where(x => x.RequiresRecalculation).ForEach(x => x.Session.Scorings.ForEach(y => y.CalculateResults(x.Session.SessionId, dbContext)));
+            scoredRaces.ForEach(x => x.Where(y => y.SessionResult.RequiresRecalculation).ForEach(y => x.Key.CalculateResults(y.SessionId, dbContext)));
 
             // Get all scored resultrows and group by driver
             var scoredResultsRows = Scorings.SelectMany(x => x.ScoredResults).SelectMany(x => x.FinalResults).OrderBy(x => x.ResultRow.Date).GroupBy(x => x.ResultRow.Member);
@@ -62,7 +104,6 @@ namespace iRLeagueDatabase.Entities.Statistics
                 DriverStatistic = new List<DriverStatisticRowEntity>();
             }
 
-            List<DriverStatisticRowEntity> newDriverStatisticRows = new List<DriverStatisticRowEntity>();
             List<DriverStatisticRowEntity> removeDriverStatisticRows = DriverStatistic.ToList();
 
             // Calculate statistics per driver
@@ -82,6 +123,7 @@ namespace iRLeagueDatabase.Entities.Statistics
                     {
                         Member = member
                     };
+                    DriverStatistic.Add(driverStatRow);
                 }
 
                 if (memberResultRows.Count() == 0)
@@ -93,10 +135,10 @@ namespace iRLeagueDatabase.Entities.Statistics
                 foreach (var resultRow in memberResultRows)
                 {
                     driverStatRow.CompletedLaps += resultRow.ResultRow.CompletedLaps;
-                    driverStatRow.DrivenKm += resultRow.ResultRow.CompletedLaps * resultRow.ResultRow.Result.IRSimSessionDetails.KmDistPerLap;
+                    driverStatRow.DrivenKm += resultRow.ResultRow.CompletedLaps * resultRow.ResultRow.Result.IRSimSessionDetails?.KmDistPerLap ?? 0;
                     driverStatRow.FastestLaps += resultRow.ScoredResult.FastestAvgLapDriver == member ? 1 : 0;
                     driverStatRow.Incidents += resultRow.ResultRow.Incidents;
-                    driverStatRow.LeadingKm += resultRow.ResultRow.LeadLaps * resultRow.ResultRow.Result.IRSimSessionDetails.KmDistPerLap;
+                    driverStatRow.LeadingKm += resultRow.ResultRow.LeadLaps * resultRow.ResultRow.Result.IRSimSessionDetails?.KmDistPerLap ?? 0;
                     driverStatRow.LeadingLaps += resultRow.ResultRow.LeadLaps;
                     driverStatRow.PenaltyPoints += resultRow.PenaltyPoints;
                     driverStatRow.Poles += resultRow.ResultRow.StartPosition == 1 ? 1 : 0;
@@ -126,8 +168,8 @@ namespace iRLeagueDatabase.Entities.Statistics
                 // Calculate start/end statistics
                 var firstResult = memberResultRows.First();
                 var lastResult = memberResultRows.Last();
-                driverStatRow.FirstResult = firstResult.ScoredResult;
-                driverStatRow.LastResult = lastResult.ScoredResult;
+                driverStatRow.FirstResult = firstResult;
+                driverStatRow.LastResult = lastResult;
                 driverStatRow.FirstRace = memberResultRows.Select(x => x.ScoredResult.Result.Session).OfType<RaceSessionEntity>().FirstOrDefault();
                 driverStatRow.FirstRaceFinalPosition = firstResult.FinalPosition;
                 driverStatRow.FirstRaceFinishPosition = firstResult.ResultRow.FinishPosition;
@@ -147,13 +189,13 @@ namespace iRLeagueDatabase.Entities.Statistics
                 var rowCount = memberResultRows.Count();
                 driverStatRow.AvgFinalPosition = memberResultRows.Average(x => x.FinalPosition);
                 driverStatRow.AvgFinishPosition = memberResultRows.Average(x => x.ResultRow.FinishPosition);
-                driverStatRow.AvgIncidentsPerKm = driverStatRow.Incidents / driverStatRow.DrivenKm;
-                driverStatRow.AvgIncidentsPerLap = driverStatRow.Incidents / driverStatRow.CompletedLaps;
-                driverStatRow.AvgIncidentsPerRace = driverStatRow.Incidents / driverStatRow.Races;
+                driverStatRow.AvgIncidentsPerKm = ((double)driverStatRow.Incidents / driverStatRow.DrivenKm).GetZeroWhenInvalid();
+                driverStatRow.AvgIncidentsPerLap = ((double)driverStatRow.Incidents / driverStatRow.CompletedLaps).GetZeroWhenInvalid();
+                driverStatRow.AvgIncidentsPerRace = ((double)driverStatRow.Incidents / driverStatRow.Races).GetZeroWhenInvalid();
                 driverStatRow.AvgIRating = memberResultRows.Average(x => x.ResultRow.NewIRating);
-                driverStatRow.AvgPenaltyPointsPerKm = driverStatRow.PenaltyPoints / driverStatRow.DrivenKm;
-                driverStatRow.AvgPenaltyPointsPerLap = driverStatRow.PenaltyPoints / driverStatRow.CompletedLaps;
-                driverStatRow.AvgPenaltyPointsPerRace = driverStatRow.PenaltyPoints / driverStatRow.Races;
+                driverStatRow.AvgPenaltyPointsPerKm = ((double)driverStatRow.PenaltyPoints / driverStatRow.DrivenKm).GetZeroWhenInvalid();
+                driverStatRow.AvgPenaltyPointsPerLap = ((double)driverStatRow.PenaltyPoints / driverStatRow.CompletedLaps).GetZeroWhenInvalid();
+                driverStatRow.AvgPenaltyPointsPerRace = ((double)driverStatRow.PenaltyPoints / driverStatRow.Races).GetZeroWhenInvalid();
                 driverStatRow.AvgPointsPerRace = driverStatRow.TotalPoints / driverStatRow.Races;
                 driverStatRow.AvgSRating = memberResultRows.Average(x => x.ResultRow.NewSafetyRating);
                 driverStatRow.AvgStartPosition = memberResultRows.Average(x => x.ResultRow.StartPosition);

@@ -138,6 +138,10 @@
     <Compile Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.designer.cs">
       <DependentUpon>202011082336177_AddCustomFiltersAndExtendedResultInformation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011142152332_AddDriverStatistics.cs" />
+    <Compile Include="Migrations\202011142152332_AddDriverStatistics.designer.cs">
+      <DependentUpon>202011142152332_AddDriverStatistics.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -169,6 +173,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.resx">
       <DependentUpon>202011082336177_AddCustomFiltersAndExtendedResultInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011142152332_AddDriverStatistics.resx">
+      <DependentUpon>202011142152332_AddDriverStatistics.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

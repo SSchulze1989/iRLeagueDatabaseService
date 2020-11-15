@@ -290,7 +290,21 @@ namespace iRLeagueDatabase.Entities.Results
         {
             if (ConnectedSchedule != null)
             {
-                Sessions = ConnectedSchedule.Sessions;
+                if (Sessions == null)
+                {
+                    Sessions = new List<SessionBaseEntity>();
+                }
+                var remove = Sessions.ToList();
+
+                foreach(var session in ConnectedSchedule.Sessions)
+                {
+                    if (Sessions.Contains(session) == false)
+                    {
+                        Sessions.Add(session);
+                    }
+                    remove.Remove(session);
+                }
+                remove.ForEach(x => Sessions.Remove(x));
             }
         }
 

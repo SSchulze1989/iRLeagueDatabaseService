@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iRLeagueDatabase.Entities.Members;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,6 +16,11 @@ namespace iRLeagueDatabase.Entities.Statistics
 
         [InverseProperty(nameof(DriverStatisticRowEntity.StatisticSet))]
         public virtual List<DriverStatisticRowEntity> DriverStatistic { get; set; }
+
+        public StatisticSetEntity()
+        {
+            DriverStatistic = new List<DriverStatisticRowEntity>();
+        }
 
         public abstract Task LoadRequiredDataAsync(LeagueDbContext dbContext);
         public abstract void Calculate(LeagueDbContext dbContext);
