@@ -156,7 +156,7 @@ namespace iRLeagueDatabase
                 });
 
             modelBuilder.Entity<LeagueStatisticSetEntity>()
-                .HasMany(r => r.SeasonStatisticSets)
+                .HasMany(r => r.StatisticSets)
                 .WithMany()
                 .Map(rm =>
                 {

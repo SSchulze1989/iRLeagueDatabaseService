@@ -9,12 +9,17 @@ namespace iRLeagueDatabase.Entities.Statistics
 {
     public class LeagueStatisticSetEntity : StatisticSetEntity
     {
-        public virtual List<SeasonStatisticSetEntity> SeasonStatisticSets { get; set; }
+        public virtual List<StatisticSetEntity> StatisticSets { get; set; }
+
+        public LeagueStatisticSetEntity()
+        {
+            StatisticSets = new List<StatisticSetEntity>();
+        }
 
         public override void Calculate(LeagueDbContext dbContext)
         {
             // Get all statistic rows and group them by member
-            var seasonStatisticRows = SeasonStatisticSets.SelectMany(x => x.DriverStatistic).GroupBy(x => x.Member);
+            var seasonStatisticRows = StatisticSets.SelectMany(x => x.DriverStatistic).GroupBy(x => x.Member);
 
             List<DriverStatisticRowEntity> removeDriverStatisticRows = DriverStatistic.ToList();
 
@@ -95,29 +100,58 @@ namespace iRLeagueDatabase.Entities.Statistics
                 var rowCount = memberStatisticRows.Count();
                 driverStatRow.AvgFinalPosition = memberStatisticRows.WeightedAverage(x => x.AvgFinalPosition, x => x.Races);
                 driverStatRow.AvgFinishPosition = memberStatisticRows.WeightedAverage(x => x.AvgFinishPosition, x => x.Races);
-                driverStatRow.AvgIncidentsPerKm = driverStatRow.Incidents / driverStatRow.DrivenKm;
-                driverStatRow.AvgIncidentsPerLap = driverStatRow.Incidents / driverStatRow.CompletedLaps;
-                driverStatRow.AvgIncidentsPerRace = driverStatRow.Incidents / driverStatRow.Races;
+                driverStatRow.AvgIncidentsPerKm = (driverStatRow.Incidents / driverStatRow.DrivenKm).GetZeroWhenInvalid();
+                driverStatRow.AvgIncidentsPerLap = ((double)driverStatRow.Incidents / driverStatRow.CompletedLaps).GetZeroWhenInvalid();
+                driverStatRow.AvgIncidentsPerRace = ((double)driverStatRow.Incidents / driverStatRow.Races).GetZeroWhenInvalid();
                 driverStatRow.AvgIRating = memberStatisticRows.WeightedAverage(x => x.AvgIRating, x => x.Races);
-                driverStatRow.AvgPenaltyPointsPerKm = driverStatRow.PenaltyPoints / driverStatRow.DrivenKm;
-                driverStatRow.AvgPenaltyPointsPerLap = driverStatRow.PenaltyPoints / driverStatRow.CompletedLaps;
-                driverStatRow.AvgPenaltyPointsPerRace = driverStatRow.PenaltyPoints / driverStatRow.Races;
-                driverStatRow.AvgPointsPerRace = driverStatRow.TotalPoints / driverStatRow.Races;
+                driverStatRow.AvgPenaltyPointsPerKm = (driverStatRow.PenaltyPoints / driverStatRow.DrivenKm).GetZeroWhenInvalid();
+                driverStatRow.AvgPenaltyPointsPerLap = ((double)driverStatRow.PenaltyPoints / driverStatRow.CompletedLaps).GetZeroWhenInvalid();
+                driverStatRow.AvgPenaltyPointsPerRace = ((double)driverStatRow.PenaltyPoints / driverStatRow.Races).GetZeroWhenInvalid();
+                driverStatRow.AvgPointsPerRace = ((double)driverStatRow.TotalPoints / driverStatRow.Races).GetZeroWhenInvalid();
                 driverStatRow.AvgSRating = memberStatisticRows.WeightedAverage(x => x.AvgSRating, x => x.Races);
                 driverStatRow.AvgStartPosition = memberStatisticRows.WeightedAverage(x => x.AvgStartPosition, x => x.Races);
             }
         }
 
-        public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext)
+        public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
         {
+            if (IsDataLoaded && force == false)
+            {
+                return;
+            }
             // Load season statistic sets
-            await dbContext.Entry(this).Reference(x => x.SeasonStatisticSets).LoadAsync();
+            await dbContext.Entry(this).Collection(x => x.StatisticSets).LoadAsync();
 
             // Load data for each SeasonStatisticSet
-            foreach(var statisticSet in SeasonStatisticSets)
+            foreach (var statisticSet in StatisticSets)
             {
                 await statisticSet.LoadRequiredDataAsync(dbContext);
             }
+
+            IsDataLoaded = true;
+        }
+
+        public override async Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext)
+        {
+            if (RequiresRecalculation)
+            {
+                return true;
+            }
+
+            if (dbContext.Configuration.LazyLoadingEnabled == false)
+            {
+                await LoadRequiredDataAsync(dbContext);
+            }
+
+            RequiresRecalculation |= StatisticSets.Any(x => x.LastModifiedOn > LastModifiedOn);
+            if (RequiresRecalculation)
+            {
+                return true;
+            }
+
+            RequiresRecalculation |= (await Task.WhenAll(StatisticSets.Select(async x => await x.CheckRequireRecalculationAsync(dbContext)))).Any(x => x);
+
+            return RequiresRecalculation;
         }
     }
 }

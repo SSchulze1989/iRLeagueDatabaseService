@@ -22,6 +22,7 @@ using iRLeagueDatabase.Entities.Members;
 using System.Net.Http;
 using System.Security.Principal;
 using iRLeagueDatabase.Extensions;
+using iRLeagueDatabase.Entities.Statistics;
 
 namespace TestConsole
 {
@@ -29,31 +30,62 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            var test = 0.5;
+            // Create season statistic set
+            //using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
+            //{
+            //    var season = dbContext.Seasons.Find(1);
 
-            var test2 = test as IComparable;
+            //    var seasonStatistics = new SeasonStatisticSetEntity();
+            //    season.SeasonStatistics.Add(seasonStatistics);
 
-            var member = new LeagueMemberEntity()
+            //    var sprintScoring = dbContext.Set<ScoringEntity>().Find(7);
+            //    var enduranceScoring = dbContext.Set<ScoringEntity>().Find(8);
+
+            //    seasonStatistics.Scorings.Add(sprintScoring);
+            //    seasonStatistics.Scorings.Add(enduranceScoring);
+
+            //    dbContext.SaveChanges();
+            //}
+
+            // Calculate season statistics
+            //using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
+            //{
+            //    var seasonStatistics = dbContext.Set<SeasonStatisticSetEntity>().Find(2);
+
+            //    dbContext.Configuration.LazyLoadingEnabled = false;
+
+            //    seasonStatistics.LoadRequiredDataAsync(dbContext).Wait();
+            //    seasonStatistics.Calculate(dbContext);
+
+            //    dbContext.SaveChanges();
+            //}
+
+            // Create league statistic set
+            using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
             {
-                Team = new TeamEntity()
-                {
-                    Name = "Test Team"
-                },
-                Firstname = "Test",
-                Lastname = "Member"
-            };
+                var leagueStatistic = new LeagueStatisticSetEntity();
+                dbContext.LeagueStatistics.Add(leagueStatistic);
 
-            var resultRow = new ResultRowEntity()
+                leagueStatistic.StatisticSets.Add(dbContext.Seasons.First().SeasonStatistics.First());
+                leagueStatistic.StatisticSets.Add(dbContext.Seasons.First().SeasonStatistics.Last());
+
+                dbContext.SaveChanges();
+            }
+
+            // Calculate league statistics
+            using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
             {
-                Member = member
-            };
+                var leagueStatistic = dbContext.Set<LeagueStatisticSetEntity>().First();
 
-            var propertyName = "Member.Team.TeamId";
+                dbContext.Configuration.LazyLoadingEnabled = false;
 
-            var nestedProperty = typeof(ResultRowEntity).GetNestedPropertyInfo(propertyName);
-            var nestedValue = nestedProperty.GetValue(resultRow);
+                leagueStatistic.LoadRequiredDataAsync(dbContext).Wait();
+                leagueStatistic.Calculate(dbContext);
 
-            Console.Read();
+                dbContext.SaveChanges();
+            }
+
+            //Console.Read();
         }
 
         static void NotifyDirect(object sender, PropertyChangedEventArgs e)

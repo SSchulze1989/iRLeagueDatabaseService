@@ -17,12 +17,18 @@ namespace iRLeagueDatabase.Entities.Statistics
         [InverseProperty(nameof(DriverStatisticRowEntity.StatisticSet))]
         public virtual List<DriverStatisticRowEntity> DriverStatistic { get; set; }
 
+        public bool RequiresRecalculation { get; set; }
+
+        [NotMapped]
+        public bool IsDataLoaded { get; protected set; } = false;
+
         public StatisticSetEntity()
         {
             DriverStatistic = new List<DriverStatisticRowEntity>();
         }
 
-        public abstract Task LoadRequiredDataAsync(LeagueDbContext dbContext);
+        public abstract Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false);
         public abstract void Calculate(LeagueDbContext dbContext);
+        public abstract Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext);
     }
 }

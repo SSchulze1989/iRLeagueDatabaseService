@@ -30,8 +30,13 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// Must be performed before calling Calculate() function if lazy loading is disabled.
         /// </summary>
         /// <param name="dbContext">Database context to load data from</param>
-        public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext)
+        public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
         {
+            if (IsDataLoaded && force == false)
+            {
+                return;
+            }
+
             if (Scorings == null || Scorings.Count == 0)
             {
                 await dbContext.Entry(this)
@@ -82,6 +87,8 @@ namespace iRLeagueDatabase.Entities.Statistics
                 .LoadAsync();
 
             dbContext.ChangeTracker.DetectChanges();
+
+            IsDataLoaded = true;
         }
 
         /// <summary>
@@ -196,7 +203,7 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.AvgPenaltyPointsPerKm = ((double)driverStatRow.PenaltyPoints / driverStatRow.DrivenKm).GetZeroWhenInvalid();
                 driverStatRow.AvgPenaltyPointsPerLap = ((double)driverStatRow.PenaltyPoints / driverStatRow.CompletedLaps).GetZeroWhenInvalid();
                 driverStatRow.AvgPenaltyPointsPerRace = ((double)driverStatRow.PenaltyPoints / driverStatRow.Races).GetZeroWhenInvalid();
-                driverStatRow.AvgPointsPerRace = driverStatRow.TotalPoints / driverStatRow.Races;
+                driverStatRow.AvgPointsPerRace = ((double)driverStatRow.TotalPoints / driverStatRow.Races).GetZeroWhenInvalid();
                 driverStatRow.AvgSRating = memberResultRows.Average(x => x.ResultRow.NewSafetyRating);
                 driverStatRow.AvgStartPosition = memberResultRows.Average(x => x.ResultRow.StartPosition);
             }
@@ -208,6 +215,23 @@ namespace iRLeagueDatabase.Entities.Statistics
         public override void Delete(LeagueDbContext dbContext)
         {
             base.Delete(dbContext);
+        }
+
+        public override async Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext)
+        {
+            if (RequiresRecalculation)
+            {
+                return true;
+            }
+
+            if (dbContext.Configuration.LazyLoadingEnabled == false)
+            {
+                await LoadRequiredDataAsync(dbContext);
+            }
+
+            RequiresRecalculation = Scorings.SelectMany(x => x.Sessions.Where(y => y.SessionResult != null).Select(y => y.SessionResult)).Any(x => x.RequiresRecalculation || x.LastModifiedOn > LastModifiedOn);
+
+            return RequiresRecalculation;
         }
     }
 }

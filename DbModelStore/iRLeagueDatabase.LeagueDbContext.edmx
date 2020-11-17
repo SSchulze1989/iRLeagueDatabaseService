@@ -21,7 +21,7 @@
           <Property Name="DefaultPenalty" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="LeagueStatisticSetEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.LeagueStatisticSetEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.StatisticSetEntity">
-          <NavigationProperty Name="SeasonStatisticSets" Relationship="Self.LeagueStatisticSetEntity_SeasonStatisticSets" FromRole="LeagueStatisticSetEntity_SeasonStatisticSets_Source" ToRole="LeagueStatisticSetEntity_SeasonStatisticSets_Target" />
+          <NavigationProperty Name="StatisticSets" Relationship="Self.LeagueStatisticSetEntity_StatisticSets" FromRole="LeagueStatisticSetEntity_StatisticSets_Source" ToRole="LeagueStatisticSetEntity_StatisticSets_Target" />
         </EntityType>
         <EntityType Name="DriverStatisticRowEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.DriverStatisticRowEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
@@ -579,6 +579,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RequiresRecalculation" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -588,6 +589,7 @@
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="DriverStatistic" Relationship="Self.StatisticSetEntity_DriverStatistic" FromRole="StatisticSetEntity_DriverStatistic_Source" ToRole="StatisticSetEntity_DriverStatistic_Target" />
         </EntityType>
+        <EntityType Name="ImportedStatisticSetEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.ImportedStatisticSetEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.StatisticSetEntity" />
         <EnumType Name="SessionType" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.SessionType, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="Undefined" Value="0" />
           <Member Name="Practice" Value="1" />
@@ -1171,9 +1173,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="LeagueStatisticSetEntity_SeasonStatisticSets">
-          <End Role="LeagueStatisticSetEntity_SeasonStatisticSets_Source" Type="Self.LeagueStatisticSetEntity" Multiplicity="*" />
-          <End Role="LeagueStatisticSetEntity_SeasonStatisticSets_Target" Type="Self.SeasonStatisticSetEntity" Multiplicity="*" />
+        <Association Name="LeagueStatisticSetEntity_StatisticSets">
+          <End Role="LeagueStatisticSetEntity_StatisticSets_Source" Type="Self.LeagueStatisticSetEntity" Multiplicity="*" />
+          <End Role="LeagueStatisticSetEntity_StatisticSets_Target" Type="Self.StatisticSetEntity" Multiplicity="*" />
         </Association>
         <EntityContainer Name="LeagueDbContext" customannotation:UseClrTypes="true">
           <EntitySet Name="CustomIncidentKinds" EntityType="Self.CustomIncidentEntity" />
@@ -1400,9 +1402,9 @@
             <End Role="StatisticSetEntity_DriverStatistic_Source" EntitySet="StatisticSetEntities" />
             <End Role="StatisticSetEntity_DriverStatistic_Target" EntitySet="DriverStatisticRowEntities" />
           </AssociationSet>
-          <AssociationSet Name="LeagueStatisticSetEntity_SeasonStatisticSets" Association="Self.LeagueStatisticSetEntity_SeasonStatisticSets">
-            <End Role="LeagueStatisticSetEntity_SeasonStatisticSets_Source" EntitySet="StatisticSetEntities" />
-            <End Role="LeagueStatisticSetEntity_SeasonStatisticSets_Target" EntitySet="StatisticSetEntities" />
+          <AssociationSet Name="LeagueStatisticSetEntity_StatisticSets" Association="Self.LeagueStatisticSetEntity_StatisticSets">
+            <End Role="LeagueStatisticSetEntity_StatisticSets_Source" EntitySet="StatisticSetEntities" />
+            <End Role="LeagueStatisticSetEntity_StatisticSets_Target" EntitySet="StatisticSetEntities" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
@@ -1446,6 +1448,7 @@
             <EntityTypeMapping TypeName="IsTypeOf(iRLeagueDatabase.StatisticSetEntity)">
               <MappingFragment StoreEntitySet="StatisticSetEntity">
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="RequiresRecalculation" ColumnName="RequiresRecalculation" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1453,6 +1456,12 @@
                 <ScalarProperty Name="CreatedByUserName" ColumnName="CreatedByUserName" />
                 <ScalarProperty Name="LastModifiedByUserId" ColumnName="LastModifiedByUserId" />
                 <ScalarProperty Name="LastModifiedByUserName" ColumnName="LastModifiedByUserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="iRLeagueDatabase.ImportedStatisticSetEntity">
+              <MappingFragment StoreEntitySet="StatisticSetEntity">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <Condition Value="ImportedStatisticSetEntity" ColumnName="Discriminator" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2106,11 +2115,11 @@
               <ScalarProperty Name="MemberId" ColumnName="MemberRefId" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="LeagueStatisticSetEntity_SeasonStatisticSets" TypeName="iRLeagueDatabase.LeagueStatisticSetEntity_SeasonStatisticSets" StoreEntitySet="LeagueStatisticSetEntitySeasonStatisticSetEntity">
-            <EndProperty Name="LeagueStatisticSetEntity_SeasonStatisticSets_Source">
+          <AssociationSetMapping Name="LeagueStatisticSetEntity_StatisticSets" TypeName="iRLeagueDatabase.LeagueStatisticSetEntity_StatisticSets" StoreEntitySet="LeagueStatisticSetEntityStatisticSetEntity">
+            <EndProperty Name="LeagueStatisticSetEntity_StatisticSets_Source">
               <ScalarProperty Name="Id" ColumnName="LeagueStatisticSetRefId" />
             </EndProperty>
-            <EndProperty Name="LeagueStatisticSetEntity_SeasonStatisticSets_Target">
+            <EndProperty Name="LeagueStatisticSetEntity_StatisticSets_Target">
               <ScalarProperty Name="Id" ColumnName="SeasonStatisticSetRefId" />
             </EndProperty>
           </AssociationSetMapping>
@@ -2141,6 +2150,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RequiresRecalculation" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -2666,7 +2676,7 @@
           <Property Name="ReviewRefId" Type="bigint" customannotation:Index="{ Name: IX_ReviewRefId, Order: 0 }" Nullable="false" />
           <Property Name="MemberRefId" Type="bigint" customannotation:Index="{ Name: IX_MemberRefId, Order: 0 }" Nullable="false" />
         </EntityType>
-        <EntityType Name="LeagueStatisticSetEntitySeasonStatisticSetEntity">
+        <EntityType Name="LeagueStatisticSetEntityStatisticSetEntity">
           <Key>
             <PropertyRef Name="LeagueStatisticSetRefId" />
             <PropertyRef Name="SeasonStatisticSetRefId" />
@@ -3404,26 +3414,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="LeagueStatisticSetEntity_SeasonStatisticSets_Source">
+        <Association Name="LeagueStatisticSetEntity_StatisticSets_Source">
           <End Role="StatisticSetEntity" Type="Self.StatisticSetEntity" Multiplicity="1" />
-          <End Role="LeagueStatisticSetEntitySeasonStatisticSetEntity" Type="Self.LeagueStatisticSetEntitySeasonStatisticSetEntity" Multiplicity="*" />
+          <End Role="LeagueStatisticSetEntityStatisticSetEntity" Type="Self.LeagueStatisticSetEntityStatisticSetEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StatisticSetEntity">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="LeagueStatisticSetEntitySeasonStatisticSetEntity">
+            <Dependent Role="LeagueStatisticSetEntityStatisticSetEntity">
               <PropertyRef Name="LeagueStatisticSetRefId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="LeagueStatisticSetEntity_SeasonStatisticSets_Target">
+        <Association Name="LeagueStatisticSetEntity_StatisticSets_Target">
           <End Role="StatisticSetEntity" Type="Self.StatisticSetEntity" Multiplicity="1" />
-          <End Role="LeagueStatisticSetEntitySeasonStatisticSetEntity" Type="Self.LeagueStatisticSetEntitySeasonStatisticSetEntity" Multiplicity="*" />
+          <End Role="LeagueStatisticSetEntityStatisticSetEntity" Type="Self.LeagueStatisticSetEntityStatisticSetEntity" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="StatisticSetEntity">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="LeagueStatisticSetEntitySeasonStatisticSetEntity">
+            <Dependent Role="LeagueStatisticSetEntityStatisticSetEntity">
               <PropertyRef Name="SeasonStatisticSetRefId" />
             </Dependent>
           </ReferentialConstraint>
@@ -3458,7 +3468,7 @@
           <EntitySet Name="ScoringEntitySessionBaseEntity" EntityType="Self.ScoringEntitySessionBaseEntity" Schema="dbo" Table="Scoring_Session" />
           <EntitySet Name="ScoredTeamResultRowEntityScoredResultRowEntity" EntityType="Self.ScoredTeamResultRowEntityScoredResultRowEntity" Schema="dbo" Table="ScoredTeamResultRowsGroup" />
           <EntitySet Name="IncidentReviewEntityLeagueMemberEntity" EntityType="Self.IncidentReviewEntityLeagueMemberEntity" Schema="dbo" Table="IncidentReview_InvolvedLeagueMember" />
-          <EntitySet Name="LeagueStatisticSetEntitySeasonStatisticSetEntity" EntityType="Self.LeagueStatisticSetEntitySeasonStatisticSetEntity" Schema="dbo" Table="LeagueStatisticSet_SeasonStatisticSet" />
+          <EntitySet Name="LeagueStatisticSetEntityStatisticSetEntity" EntityType="Self.LeagueStatisticSetEntityStatisticSetEntity" Schema="dbo" Table="LeagueStatisticSet_SeasonStatisticSet" />
           <AssociationSet Name="AcceptedReviewVoteEntity_CustomVoteCat" Association="Self.AcceptedReviewVoteEntity_CustomVoteCat">
             <End Role="VoteCategoryEntity" EntitySet="VoteCategoryEntity" />
             <End Role="AcceptedReviewVoteEntity" EntitySet="AcceptedReviewVoteEntity" />
@@ -3679,13 +3689,13 @@
             <End Role="StatisticSetEntity" EntitySet="StatisticSetEntity" />
             <End Role="DriverStatisticRowEntity" EntitySet="DriverStatisticRowEntity" />
           </AssociationSet>
-          <AssociationSet Name="LeagueStatisticSetEntity_SeasonStatisticSets_Source" Association="Self.LeagueStatisticSetEntity_SeasonStatisticSets_Source">
+          <AssociationSet Name="LeagueStatisticSetEntity_StatisticSets_Source" Association="Self.LeagueStatisticSetEntity_StatisticSets_Source">
             <End Role="StatisticSetEntity" EntitySet="StatisticSetEntity" />
-            <End Role="LeagueStatisticSetEntitySeasonStatisticSetEntity" EntitySet="LeagueStatisticSetEntitySeasonStatisticSetEntity" />
+            <End Role="LeagueStatisticSetEntityStatisticSetEntity" EntitySet="LeagueStatisticSetEntityStatisticSetEntity" />
           </AssociationSet>
-          <AssociationSet Name="LeagueStatisticSetEntity_SeasonStatisticSets_Target" Association="Self.LeagueStatisticSetEntity_SeasonStatisticSets_Target">
+          <AssociationSet Name="LeagueStatisticSetEntity_StatisticSets_Target" Association="Self.LeagueStatisticSetEntity_StatisticSets_Target">
             <End Role="StatisticSetEntity" EntitySet="StatisticSetEntity" />
-            <End Role="LeagueStatisticSetEntitySeasonStatisticSetEntity" EntitySet="LeagueStatisticSetEntitySeasonStatisticSetEntity" />
+            <End Role="LeagueStatisticSetEntityStatisticSetEntity" EntitySet="LeagueStatisticSetEntityStatisticSetEntity" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
