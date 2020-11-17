@@ -14,10 +14,20 @@ namespace iRLeagueDatabase.Entities.Statistics
 {
     public class SeasonStatisticSetEntity : StatisticSetEntity
     {
+        /// <summary>
+        /// Id of the connected Season. <para>This is set automatically by the <see cref="LeagueDbContext"/></para>
+        /// </summary>
         [ForeignKey(nameof(Season))]
         public long SeasonId { get; set; }
+
+        /// <summary>
+        /// Season connected with this statistic.
+        /// </summary>
         public virtual SeasonEntity Season { get; set; }
 
+        /// <summary>
+        /// List of <see cref="ScoringEntity"/> that are used as data source for calculating the season statistic.
+        /// </summary>
         public virtual List<ScoringEntity> Scorings { get; set; }
 
         public SeasonStatisticSetEntity()
@@ -26,10 +36,11 @@ namespace iRLeagueDatabase.Entities.Statistics
         }
 
         /// <summary>
-        /// Load the required data to perform results calculation from the database.
-        /// Must be performed before calling Calculate() function if lazy loading is disabled.
+        /// <para>Load all data required for calculating the statistics from the database.</para>
+        /// <para>Must be called prior to <see cref="Calculate"/> if lazy loading is disabled!</para>
         /// </summary>
-        /// <param name="dbContext">Database context to load data from</param>
+        /// <param name="dbContext">Database context from EntityFramework.</param>
+        /// <param name="force">Force loading data again even if IsDataLoaded is true.</param>
         public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
         {
             if (IsDataLoaded && force == false)
@@ -92,9 +103,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         }
 
         /// <summary>
-        /// Calculate season statistics. Make sure that either lazy loading is enabled or that all required data is loaded from the database.
+        /// Calculate statistic data based on the current data set.
+        /// <para>Make sure either lazy-loading is enabled on the context or run <see cref="LoadRequiredDataAsync(LeagueDbContext, bool)"/> before execution.</para>
         /// </summary>
-        /// <param name="dbContext"></param>
+        /// <param name="dbContext">Database context from EntityFramework</param>
         public override void Calculate(LeagueDbContext dbContext)
         {
             // Get all scored races
@@ -217,6 +229,12 @@ namespace iRLeagueDatabase.Entities.Statistics
             base.Delete(dbContext);
         }
 
+        /// <summary>
+        /// Perform a check if recalculation is required based on the current data set.
+        /// <para>Calling this function will also set the value of <see cref="StatisticSetEntity.RequiresRecalculation"/></para>
+        /// </summary>
+        /// <param name="dbContext">Database context from EntityFramework</param>
+        /// <returns><see langword="true"/> if calculation is required</returns>
         public override async Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext)
         {
             if (RequiresRecalculation)

@@ -9,6 +9,9 @@ namespace iRLeagueDatabase.Entities.Statistics
 {
     public class LeagueStatisticSetEntity : StatisticSetEntity
     {
+        /// <summary>
+        /// List of <see cref="StatisticSetEntity"/> that are used as data source for calculating the league statistic
+        /// </summary>
         public virtual List<StatisticSetEntity> StatisticSets { get; set; }
 
         public LeagueStatisticSetEntity()
@@ -16,6 +19,11 @@ namespace iRLeagueDatabase.Entities.Statistics
             StatisticSets = new List<StatisticSetEntity>();
         }
 
+        /// <summary>
+        /// Calculate statistic data based on the current data set.
+        /// <para>Make sure either lazy-loading is enabled on the context or run <see cref="LoadRequiredDataAsync(LeagueDbContext, bool)"/> before execution.</para>
+        /// </summary>
+        /// <param name="dbContext">Database context from EntityFramework</param>
         public override void Calculate(LeagueDbContext dbContext)
         {
             // Get all statistic rows and group them by member
@@ -113,6 +121,13 @@ namespace iRLeagueDatabase.Entities.Statistics
             }
         }
 
+        /// <summary>
+        /// <para>Load all data required for calculating the statistics from the database.</para>
+        /// <para>Must be called prior to <see cref="Calculate"/> if lazy loading is disabled!</para>
+        /// </summary>
+        /// <param name="dbContext">Database context from EntityFramework.</param>
+        /// <param name="force">Force loading data again even if IsDataLoaded is true.</param>
+        /// <returns></returns>
         public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
         {
             if (IsDataLoaded && force == false)
@@ -131,6 +146,12 @@ namespace iRLeagueDatabase.Entities.Statistics
             IsDataLoaded = true;
         }
 
+        /// <summary>
+        /// Perform a check if recalculation is required based on the current data set.
+        /// <para>Calling this function will also set the value of <see cref="StatisticSetEntity.RequiresRecalculation"/></para>
+        /// </summary>
+        /// <param name="dbContext">Database context from EntityFramework</param>
+        /// <returns><see langword="true"/> if calculation is required</returns>
         public override async Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext)
         {
             if (RequiresRecalculation)
