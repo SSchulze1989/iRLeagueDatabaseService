@@ -323,6 +323,7 @@
     <Compile Include="Mapper\ResultsMapper.cs" />
     <Compile Include="Mapper\ReviewsMapper.cs" />
     <Compile Include="Mapper\SessionsMapper.cs" />
+    <Compile Include="Mapper\StatisticsMapper.cs" />
     <Compile Include="Mapper\TypeMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Results\AddChallengeOnUnauthorizedResult.cs" />

@@ -41,6 +41,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterReviewsTypeMaps();
             RegisterSessionsTypeMaps();
             RegisterFiltersTypeMaps();
+            RegisterStatisticsTypeMaps();
         }
 
         public TTarget MapTo<TTarget>(MappableEntity source) where TTarget : MappableDTO, new()

@@ -34,6 +34,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterReviewsTypeMaps();
             RegisterSessionsTypeMaps();
             RegisterFiltersTypeMaps();
+            RegisterStatisticsTypeMaps();
         }
 
         public TypeMap GetTypeMap(Type sourceType, Type targetType)
@@ -128,7 +129,24 @@ namespace iRLeagueDatabase.Mapper
         /// <typeparam name="TTarget">Target type for mapping</typeparam>
         /// <param name="source">Mapping source that contains the Id of the mapping target</param>
         /// <returns></returns>
-        private TTarget DefaultGet<TSource, TTarget>(TSource source) where TSource : MappableDTO where TTarget : MappableEntity, new()
+        private TTarget DefaultGet<TSource, TTarget>(TSource source) where TSource : MappableDTO where TTarget : MappableEntity
+        {
+            //if (source == null)
+            //    return null;
+            //TTarget target;
+
+            //if (source.MappingId == null)
+            //{
+            //    target = DbContext.Set<TTarget>().Create();
+            //}
+            //else
+            //    target = DbContext.Set<TTarget>().Find(source.Keys);
+
+            //return target;
+            return DefaultGet<TTarget>(source);
+        }
+
+        private TTarget DefaultGet<TTarget>(MappableDTO source) where TTarget : MappableEntity
         {
             if (source == null)
                 return null;
@@ -139,12 +157,14 @@ namespace iRLeagueDatabase.Mapper
                 target = DbContext.Set<TTarget>().Create();
             }
             else
+            {
                 target = DbContext.Set<TTarget>().Find(source.Keys);
+            }
 
             return target;
         }
 
-        private TTarget DefaultGet<TTarget>(object[] keys) where TTarget : MappableEntity, new()
+        private TTarget DefaultGet<TTarget>(object[] keys) where TTarget : MappableEntity
         {
             return DbContext.Set<TTarget>().Find(keys);
         }
@@ -154,7 +174,7 @@ namespace iRLeagueDatabase.Mapper
             return source.MappingId.Equals(target.MappingId);
         }
 
-        public void RegisterTypeMap<TSource, TTarget>(Func<TSource, TTarget, TTarget> mapFunc) where TSource : MappableDTO where TTarget : MappableEntity, new()
+        public void RegisterTypeMap<TSource, TTarget>(Func<TSource, TTarget, TTarget> mapFunc) where TSource : MappableDTO where TTarget : MappableEntity
         {
             var typeMap = new TypeMap<TSource, TTarget>(DefaultGet<TSource, TTarget>, mapFunc, DefaultCompare);
             RegisterTypeMap(typeMap);

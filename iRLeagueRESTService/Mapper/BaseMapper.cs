@@ -96,12 +96,20 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<SeasonInfoDTO, SeasonEntity>(MapToSeasonEntity);
         }
 
+        /// <summary>
+        /// Checks if source version is newer than target version and maps 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public bool MapToRevision(VersionInfoDTO source, Revision target)
         {
             if (source == null)
                 return false;
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
+
+            target.Version = source.Version;
 
             if (target.CreatedOn == null)
             {
