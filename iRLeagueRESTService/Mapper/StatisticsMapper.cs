@@ -1,4 +1,26 @@
-﻿using iRLeagueDatabase.DataTransfer.Results;
+﻿// MIT License
+
+// Copyright (c) 2020 Simon Schulze
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Statistics;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Results;
@@ -20,6 +42,10 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<LeagueStatisticSetEntity, LeagueStatisticSetDTO>(MapToLeagueStatisticSetDTO);
             RegisterTypeMap<LeagueStatisticSetEntity, StatisticSetDTO>(src => new LeagueStatisticSetDTO(), (src, trg) => MapToLeagueStatisticSetDTO(src, (LeagueStatisticSetDTO)trg), DefaultCompare);
             RegisterTypeMap<StatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
+            RegisterTypeMap<SeasonStatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
+            RegisterTypeMap<LeagueStatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
+            RegisterTypeMap<ImportedStatisticSetEntity, ImportedStatisticSetDTO>(MapToImportedStatisticSetDTO);
+            RegisterTypeMap<ImportedStatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
         }
 
         public StatisticSetDTO MapToStatisticSetDTO(StatisticSetEntity source, StatisticSetDTO target = null)
@@ -78,6 +104,26 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
+        public ImportedStatisticSetDTO MapToImportedStatisticSetDTO(ImportedStatisticSetEntity source, ImportedStatisticSetDTO target = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                target = new ImportedStatisticSetDTO();
+            }
+
+            MapToStatisticSetDTO(source, target);
+            target.Description = source.Description;
+            target.ImportSource = source.ImportSource;
+            target.FirstDate = source.FirstDate.GetValueOrDefault();
+            target.LastDate = source.LastDate.GetValueOrDefault();
+
+            return target;
+        }
+
         public DriverStatisticDTO MapToDriverStatisticDTO(StatisticSetEntity source, DriverStatisticDTO target = null)
         {
             if (source == null)
@@ -130,18 +176,22 @@ namespace iRLeagueDatabase.Mapper
             target.FirstRaceFinalPosition = source.FirstRaceFinalPosition;
             target.FirstRaceFinishPosition = source.FirstRaceFinishPosition;
             target.FirstRaceId = source.FirstRaceId;
+            target.FirstRaceDate = source.FirstRaceDate;
             target.FirstRaceStartPosition = source.FirstRaceStartPosition;
             target.FirstResultRowId = source.FirstResultRowId;
             target.FirstSessionId = source.FirstSessionId;
+            target.FirstSessionDate = source.FirstSessionDate;
             target.Incidents = source.Incidents;
             target.IncidentsUnderInvestigation = source.IncidentsUnderInvestigation;
             target.IncidentsWithPenalty = source.IncidentsWithPenalty;
             target.LastRaceFinalPosition = source.LastRaceFinalPosition;
             target.LastRaceFinishPosition = source.LastRaceFinishPosition;
             target.LastRaceId = source.LastRaceId;
+            target.LastRaceDate = source.LastRaceDate;
             target.LastRaceStartPosition = source.LastRaceStartPosition;
             target.LastResultRowId = source.LastResultRowId;
             target.LastSessionId = source.LastSessionId;
+            target.LastSessionDate = source.LastSessionDate;
             target.LeadingKm = source.LeadingKm;
             target.LeadingLaps = source.LeadingLaps;
             target.MemberId = source.MemberId;
@@ -180,6 +230,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<LeagueStatisticSetDTO, LeagueStatisticSetEntity>(MapToLeagueStatisticSetEntity);
             RegisterTypeMap<ImportedStatisticSetDTO, ImportedStatisticSetEntity>(MapToImportedStatisticSetEntity);
             RegisterTypeMap<DriverStatisticDTO, ImportedStatisticSetEntity>(MapToImportedStatisticSetEntity);
+            RegisterTypeMap<DriverStatisticDTO, StatisticSetEntity>(src => DefaultGet<ImportedStatisticSetEntity>(src), (src, trg) => MapToImportedStatisticSetEntity(src, (ImportedStatisticSetEntity)trg), DefaultCompare);
         }
 
         public StatisticSetEntity MapToStatisticSetEntity(StatisticSetDTO source, StatisticSetEntity target = null, bool force = false)
@@ -201,6 +252,7 @@ namespace iRLeagueDatabase.Mapper
             target.Id = source.Id;
             target.UpdateInterval = TimeSpanConverter.Convert(source.UpdateInterval);
             target.UpdateTime = source.UpdateTime;
+            target.RequiresRecalculation = true;
 
             return target;
         }
@@ -290,8 +342,8 @@ namespace iRLeagueDatabase.Mapper
 
             MapCollection(source.DriverStatisticRows, target.DriverStatistic, MapToDriverStatisticRowEntity, x => x.Keys, 
                 removeFromCollection: true, removeFromDatabase: true, autoAddMissing: true);
-            target.FirstDate = target.DriverStatistic.Min(x => x.FirstSession.Date);
-            target.LastDate = target.DriverStatistic.Max(x => x.LastSession.Date);
+            target.FirstDate = target.DriverStatistic.Min(x => x.FirstSessionDate);
+            target.LastDate = target.DriverStatistic.Max(x => x.LastSessionDate);
 
             return target;
         }
@@ -331,18 +383,22 @@ namespace iRLeagueDatabase.Mapper
             target.FirstRaceFinalPosition = source.FirstRaceFinalPosition;
             target.FirstRaceFinishPosition = source.FirstRaceFinishPosition;
             target.FirstRaceId = source.FirstRaceId;
+            target.FirstRaceDate = source.FirstRaceDate;
             target.FirstRaceStartPosition = source.FirstRaceStartPosition;
             target.FirstResultRowId = source.FirstResultRowId;
             target.FirstSessionId = source.FirstSessionId;
+            target.FirstSessionDate = source.FirstSessionDate;
             target.Incidents = source.Incidents;
             target.IncidentsUnderInvestigation = source.IncidentsUnderInvestigation;
             target.IncidentsWithPenalty = source.IncidentsWithPenalty;
             target.LastRaceFinalPosition = source.LastRaceFinalPosition;
             target.LastRaceFinishPosition = source.LastRaceFinishPosition;
             target.LastRaceId = source.LastRaceId;
+            target.LastRaceDate = source.LastRaceDate;
             target.LastRaceStartPosition = source.LastRaceStartPosition;
             target.LastResultRowId = source.LastResultRowId;
             target.LastSessionId = source.LastSessionId;
+            target.LastSessionDate = source.LastSessionDate;
             target.LeadingKm = source.LeadingKm;
             target.LeadingLaps = source.LeadingLaps;
             target.MemberId = source.MemberId;

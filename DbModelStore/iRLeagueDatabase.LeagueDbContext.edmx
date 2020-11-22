@@ -35,10 +35,14 @@
           <Property Name="StartSRating" Type="Double" Nullable="false" />
           <Property Name="EndSRating" Type="Double" Nullable="false" />
           <Property Name="FirstSessionId" Type="Int64" />
+          <Property Name="FirstSessionDate" Type="DateTime" />
           <Property Name="FirstRaceId" Type="Int64" />
+          <Property Name="FirstRaceDate" Type="DateTime" />
           <Property Name="FirstResultRowId" Type="Int64" />
           <Property Name="LastSessionId" Type="Int64" />
+          <Property Name="LastSessionDate" Type="DateTime" />
           <Property Name="LastRaceId" Type="Int64" />
+          <Property Name="LastRaceDate" Type="DateTime" />
           <Property Name="LastResultRowId" Type="Int64" />
           <Property Name="RacePoints" Type="Int32" Nullable="false" />
           <Property Name="TotalPoints" Type="Int32" Nullable="false" />
@@ -307,7 +311,7 @@
           <Property Name="ResultId" Type="Int64" Nullable="false" />
           <Property Name="IRSubsessionId" Type="Int64" Nullable="false" />
           <Property Name="IRSeasonId" Type="Int64" Nullable="false" />
-          <Property Name="IRSeasonName" Type="Int64" Nullable="false" />
+          <Property Name="IRSeasonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IRSeasonYear" Type="Int32" Nullable="false" />
           <Property Name="IRSeasonQuarter" Type="Int32" Nullable="false" />
           <Property Name="IRRaceWeek" Type="Int32" Nullable="false" />
@@ -589,7 +593,12 @@
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="DriverStatistic" Relationship="Self.StatisticSetEntity_DriverStatistic" FromRole="StatisticSetEntity_DriverStatistic_Source" ToRole="StatisticSetEntity_DriverStatistic_Target" />
         </EntityType>
-        <EntityType Name="ImportedStatisticSetEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.ImportedStatisticSetEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.StatisticSetEntity" />
+        <EntityType Name="ImportedStatisticSetEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.ImportedStatisticSetEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.StatisticSetEntity">
+          <Property Name="ImportSource" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FirstDate" Type="DateTime" />
+          <Property Name="LastDate" Type="DateTime" />
+        </EntityType>
         <EnumType Name="SessionType" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.SessionType, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="Undefined" Value="0" />
           <Member Name="Practice" Value="1" />
@@ -1461,6 +1470,10 @@
             <EntityTypeMapping TypeName="iRLeagueDatabase.ImportedStatisticSetEntity">
               <MappingFragment StoreEntitySet="StatisticSetEntity">
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ImportSource" ColumnName="ImportSource" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FirstDate" ColumnName="FirstDate" />
+                <ScalarProperty Name="LastDate" ColumnName="LastDate" />
                 <Condition Value="ImportedStatisticSetEntity" ColumnName="Discriminator" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1475,10 +1488,14 @@
                 <ScalarProperty Name="StartSRating" ColumnName="StartSRating" />
                 <ScalarProperty Name="EndSRating" ColumnName="EndSRating" />
                 <ScalarProperty Name="FirstSessionId" ColumnName="FirstSessionId" />
+                <ScalarProperty Name="FirstSessionDate" ColumnName="FirstSessionDate" />
                 <ScalarProperty Name="FirstRaceId" ColumnName="FirstRaceId" />
+                <ScalarProperty Name="FirstRaceDate" ColumnName="FirstRaceDate" />
                 <ScalarProperty Name="FirstResultRowId" ColumnName="FirstResultRowId" />
                 <ScalarProperty Name="LastSessionId" ColumnName="LastSessionId" />
+                <ScalarProperty Name="LastSessionDate" ColumnName="LastSessionDate" />
                 <ScalarProperty Name="LastRaceId" ColumnName="LastRaceId" />
+                <ScalarProperty Name="LastRaceDate" ColumnName="LastRaceDate" />
                 <ScalarProperty Name="LastResultRowId" ColumnName="LastResultRowId" />
                 <ScalarProperty Name="RacePoints" ColumnName="RacePoints" />
                 <ScalarProperty Name="TotalPoints" ColumnName="TotalPoints" />
@@ -2159,6 +2176,10 @@
           <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="true" />
+          <Property Name="ImportSource" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="FirstDate" Type="datetime" Nullable="true" />
+          <Property Name="LastDate" Type="datetime" Nullable="true" />
           <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="DriverStatisticRowEntity">
@@ -2175,9 +2196,13 @@
           <Property Name="StartSRating" Type="float" Nullable="false" />
           <Property Name="EndSRating" Type="float" Nullable="false" />
           <Property Name="FirstSessionId" Type="bigint" customannotation:Index="{ Name: IX_FirstSessionId, Order: 0 }" Nullable="true" />
+          <Property Name="FirstSessionDate" Type="datetime" Nullable="true" />
           <Property Name="FirstRaceId" Type="bigint" customannotation:Index="{ Name: IX_FirstRaceId, Order: 0 }" Nullable="true" />
+          <Property Name="FirstRaceDate" Type="datetime" Nullable="true" />
           <Property Name="LastSessionId" Type="bigint" customannotation:Index="{ Name: IX_LastSessionId, Order: 0 }" Nullable="true" />
+          <Property Name="LastSessionDate" Type="datetime" Nullable="true" />
           <Property Name="LastRaceId" Type="bigint" customannotation:Index="{ Name: IX_LastRaceId, Order: 0 }" Nullable="true" />
+          <Property Name="LastRaceDate" Type="datetime" Nullable="true" />
           <Property Name="RacePoints" Type="int" Nullable="false" />
           <Property Name="TotalPoints" Type="int" Nullable="false" />
           <Property Name="BonusPoints" Type="int" Nullable="false" />
@@ -2430,7 +2455,7 @@
           <Property Name="ResultId" Type="bigint" customannotation:Index="{ Name: IX_ResultId, Order: 0 }" Nullable="false" />
           <Property Name="IRSubsessionId" Type="bigint" Nullable="false" />
           <Property Name="IRSeasonId" Type="bigint" Nullable="false" />
-          <Property Name="IRSeasonName" Type="bigint" Nullable="false" />
+          <Property Name="IRSeasonName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="IRSeasonYear" Type="int" Nullable="false" />
           <Property Name="IRSeasonQuarter" Type="int" Nullable="false" />
           <Property Name="IRRaceWeek" Type="int" Nullable="false" />

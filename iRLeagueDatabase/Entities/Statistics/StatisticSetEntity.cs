@@ -39,7 +39,9 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// <summary>
         /// If true, statistics will be recalculated at the next update time. If false, calculation will be skipped.
         /// </summary>
-        public bool RequiresRecalculation { get; set; }
+        public virtual bool RequiresRecalculation { get; set; }
+
+        public override object MappingId => Id;
 
         /// <summary>
         /// True if LoadRequiredDataAsync has been performed earlier on this object.
@@ -58,7 +60,15 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// </summary>
         /// <param name="dbContext">Database context from EntityFramework.</param>
         /// <param name="force">Force loading data again even if IsDataLoaded is true.</param>
-        public abstract Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false);
+        public virtual async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
+        {
+            if (DriverStatistic == null || DriverStatistic.Count == 0)
+            {
+                await dbContext.Entry(this)
+                    .Collection(x => x.DriverStatistic)
+                    .LoadAsync();
+            }
+        }
         /// <summary>
         /// Calculate statistic data based on the current data set.
         /// <para>Make sure either lazy-loading is enabled on the context or run <see cref="LoadRequiredDataAsync(LeagueDbContext, bool)"/> before execution.</para>
@@ -71,6 +81,11 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// </summary>
         /// <param name="dbContext">Database context from EntityFramework</param>
         /// <returns><see langword="true"/> if calculation is required</returns>
-        public abstract Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext);
+#pragma warning disable CS1998 // Bei der asynchronen Methode fehlen "await"-Operatoren. Die Methode wird synchron ausgeführt.
+        public virtual async Task<bool> CheckRequireRecalculationAsync(LeagueDbContext dbContext)
+#pragma warning restore CS1998 // Bei der asynchronen Methode fehlen "await"-Operatoren. Die Methode wird synchron ausgeführt.
+        {
+            return RequiresRecalculation;
+        }
     }
 }

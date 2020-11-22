@@ -1,4 +1,26 @@
-﻿using iRLeagueDatabase.Extensions;
+﻿// MIT License
+
+// Copyright (c) 2020 Simon Schulze
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using iRLeagueDatabase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,22 +112,25 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.FirstResult = firstResult;
                 driverStatRow.LastResult = lastResult;
                 driverStatRow.FirstRace = memberStatisticRows.Select(x => x.FirstRace).OrderBy(x => x.Date).FirstOrDefault();
+                driverStatRow.FirstRaceDate = memberStatisticRows.Min(x => x.FirstRaceDate);
                 driverStatRow.FirstRaceFinalPosition = firstResult.FinalPosition;
                 driverStatRow.FirstRaceFinishPosition = lastResult.ResultRow.FinishPosition;
                 driverStatRow.FirstRaceStartPosition = firstResult.ResultRow.StartPosition;
                 driverStatRow.FirstSession = memberStatisticRows.Select(x => x.FirstSession).OrderBy(x => x.Date).FirstOrDefault();
+                driverStatRow.FirstSessionDate = memberStatisticRows.Min(x => x.FirstSessionDate);
                 driverStatRow.LastRace = memberStatisticRows.Select(x => x.LastRace).OrderBy(x => x.Date).LastOrDefault();
+                driverStatRow.LastRaceDate = memberStatisticRows.Max(x => x.LastRaceDate);
                 driverStatRow.LastRaceFinalPosition = lastResult.FinalPosition;
                 driverStatRow.LastRaceFinishPosition = lastResult.ResultRow.FinishPosition;
                 driverStatRow.LastRaceStartPosition = lastResult.ResultRow.StartPosition;
                 driverStatRow.LastSession = memberStatisticRows.Select(x => x.LastSession).LastOrDefault();
+                driverStatRow.LastSessionDate = memberStatisticRows.Max(x => x.LastSessionDate);
                 driverStatRow.StartIRating = firstResult.ResultRow.OldIRating;
                 driverStatRow.EndIRating = lastResult.ResultRow.NewIRating;
                 driverStatRow.StartSRating = firstResult.ResultRow.OldSafetyRating;
                 driverStatRow.EndSRating = lastResult.ResultRow.NewSafetyRating;
 
                 // Calculate average statistics
-                var rowCount = memberStatisticRows.Count();
                 driverStatRow.AvgFinalPosition = memberStatisticRows.WeightedAverage(x => x.AvgFinalPosition, x => x.Races);
                 driverStatRow.AvgFinishPosition = memberStatisticRows.WeightedAverage(x => x.AvgFinishPosition, x => x.Races);
                 driverStatRow.AvgIncidentsPerKm = (driverStatRow.Incidents / driverStatRow.DrivenKm).GetZeroWhenInvalid();
@@ -134,6 +159,9 @@ namespace iRLeagueDatabase.Entities.Statistics
             {
                 return;
             }
+
+            await base.LoadRequiredDataAsync(dbContext, force);
+
             // Load season statistic sets
             await dbContext.Entry(this).Collection(x => x.StatisticSets).LoadAsync();
 

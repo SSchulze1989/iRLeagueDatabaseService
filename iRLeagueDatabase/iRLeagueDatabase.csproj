@@ -143,6 +143,18 @@
     <Compile Include="Migrations\202011142152332_AddDriverStatistics.designer.cs">
       <DependentUpon>202011142152332_AddDriverStatistics.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011212135452_AddImportStatistics.cs" />
+    <Compile Include="Migrations\202011212135452_AddImportStatistics.designer.cs">
+      <DependentUpon>202011212135452_AddImportStatistics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202011221527157_AddFirstLastRaceDate.cs" />
+    <Compile Include="Migrations\202011221527157_AddFirstLastRaceDate.designer.cs">
+      <DependentUpon>202011221527157_AddFirstLastRaceDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202011221902514_ChangeSeasonNameToString.cs" />
+    <Compile Include="Migrations\202011221902514_ChangeSeasonNameToString.designer.cs">
+      <DependentUpon>202011221902514_ChangeSeasonNameToString.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -177,6 +189,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011142152332_AddDriverStatistics.resx">
       <DependentUpon>202011142152332_AddDriverStatistics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011212135452_AddImportStatistics.resx">
+      <DependentUpon>202011212135452_AddImportStatistics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011221527157_AddFirstLastRaceDate.resx">
+      <DependentUpon>202011221527157_AddFirstLastRaceDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011221902514_ChangeSeasonNameToString.resx">
+      <DependentUpon>202011221902514_ChangeSeasonNameToString.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

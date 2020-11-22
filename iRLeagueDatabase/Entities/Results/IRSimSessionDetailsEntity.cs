@@ -20,7 +20,7 @@ namespace iRLeagueDatabase.Entities.Results
         // Session details
         public long IRSubsessionId { get; set; }
         public long IRSeasonId { get; set; }
-        public long IRSeasonName { get; set; }
+        public string IRSeasonName { get; set; }
         public int IRSeasonYear { get; set; }
         public int IRSeasonQuarter { get; set; }
         public int IRRaceWeek { get; set; }

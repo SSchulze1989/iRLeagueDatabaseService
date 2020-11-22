@@ -182,16 +182,6 @@ namespace iRLeagueRESTService.Data
             if (items == null)
                 return null;
 
-            var searchNames = new string[]
-            {
-                "iRLeagueDatabase.DataTransfer.",
-                "iRLeagueDatabase.DataTransfer.Members.",
-                "iRLeagueDatabase.DataTransfer.Results.",
-                "iRLeagueDatabase.DataTransfer.Reviews.",
-                "iRLeagueDatabase.DataTransfer.Sessions.",
-                "iRLeagueDatabase.DataTransfer.Filters"
-            };
-
             var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };
             var dtoMapper = new DTOMapper(DbContext);
 

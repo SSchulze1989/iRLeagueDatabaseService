@@ -1,4 +1,26 @@
-﻿using iRLeagueDatabase.Entities.Members;
+﻿// MIT License
+
+// Copyright (c) 2020 Simon Schulze
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Sessions;
 using System;
@@ -30,10 +52,12 @@ namespace iRLeagueDatabase.Entities.Statistics
         [ForeignKey(nameof(FirstSession))]
         public long? FirstSessionId { get; set; }
         public virtual SessionBaseEntity FirstSession { get; set; }
+        public DateTime? FirstSessionDate { get; set; }
 
         [ForeignKey(nameof(FirstRace))]
         public long? FirstRaceId { get; set; }
         public virtual RaceSessionEntity FirstRace { get; set; }
+        public DateTime? FirstRaceDate { get; set; }
 
         [ForeignKey(nameof(FirstResult)), Column(Order = 3)]
         public long? FirstResultRowId { get; set; }
@@ -42,10 +66,12 @@ namespace iRLeagueDatabase.Entities.Statistics
         [ForeignKey(nameof(LastSession))]
         public long? LastSessionId { get; set; }
         public virtual SessionBaseEntity LastSession { get; set; }
+        public DateTime? LastSessionDate { get; set; }
 
         [ForeignKey(nameof(LastRace))]
         public long? LastRaceId { get; set; }
         public virtual RaceSessionEntity LastRace { get; set; }
+        public DateTime? LastRaceDate { get; set; }
 
         [ForeignKey(nameof(LastResult)), Column(Order = 4)]
         public long? LastResultRowId { get; set; }
@@ -98,6 +124,8 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int WorstStartPosition { get; set; }
         public int FirstRaceStartPosition { get; set; }
         public int LastRaceStartPosition { get; set; }
+
+        public override object MappingId => new { StatisticSetId, MemberId };
 
         public void ResetStatistic()
         {
@@ -152,6 +180,14 @@ namespace iRLeagueDatabase.Entities.Statistics
             EndIRating = default;
             StartSRating = default;
             EndSRating = default;
+            FirstRace = default;
+            FirstRaceDate = default;
+            FirstSession = default;
+            FirstSessionDate = default;
+            LastRace = default;
+            LastRaceDate = default;
+            LastSession = default;
+            LastSessionDate = default;
         }
     }
 }

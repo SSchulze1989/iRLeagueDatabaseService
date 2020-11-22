@@ -1,4 +1,26 @@
-﻿using iRLeagueDatabase.Entities.Results;
+﻿// MIT License
+
+// Copyright (c) 2020 Simon Schulze
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Extensions;
 using System;
@@ -48,6 +70,8 @@ namespace iRLeagueDatabase.Entities.Statistics
                 return;
             }
 
+            await base.LoadRequiredDataAsync(dbContext, force);
+
             if (Scorings == null || Scorings.Count == 0)
             {
                 await dbContext.Entry(this)
@@ -60,12 +84,12 @@ namespace iRLeagueDatabase.Entities.Statistics
                 .Reference(x => x.Season)
                 .LoadAsync();
             }
-            if (DriverStatistic == null || DriverStatistic.Count == 0)
-            {
-                await dbContext.Entry(this)
-                    .Collection(x => x.DriverStatistic)
-                    .LoadAsync();
-            }
+            //if (DriverStatistic == null || DriverStatistic.Count == 0)
+            //{
+            //    await dbContext.Entry(this)
+            //        .Collection(x => x.DriverStatistic)
+            //        .LoadAsync();
+            //}
 
             foreach(var scoring in Scorings)
             {
@@ -190,22 +214,25 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.FirstResult = firstResult;
                 driverStatRow.LastResult = lastResult;
                 driverStatRow.FirstRace = memberResultRows.Select(x => x.ScoredResult.Result.Session).OfType<RaceSessionEntity>().FirstOrDefault();
+                driverStatRow.FirstRaceDate = driverStatRow.FirstRace?.Date;
                 driverStatRow.FirstRaceFinalPosition = firstResult.FinalPosition;
                 driverStatRow.FirstRaceFinishPosition = firstResult.ResultRow.FinishPosition;
                 driverStatRow.FirstRaceStartPosition = firstResult.ResultRow.StartPosition;
                 driverStatRow.FirstSession = memberResultRows.Select(x => x.ScoredResult.Result.Session).FirstOrDefault();
+                driverStatRow.FirstSessionDate = driverStatRow.FirstSession?.Date;
                 driverStatRow.LastRace = memberResultRows.Select(x => x.ScoredResult.Result.Session).OfType<RaceSessionEntity>().LastOrDefault();
+                driverStatRow.LastRaceDate = driverStatRow.LastRace?.Date;
                 driverStatRow.LastRaceFinalPosition = lastResult.FinalPosition;
                 driverStatRow.LastRaceFinishPosition = lastResult.ResultRow.FinishPosition;
                 driverStatRow.LastRaceStartPosition = lastResult.ResultRow.StartPosition;
                 driverStatRow.LastSession = memberResultRows.Select(x => x.ScoredResult.Result.Session).LastOrDefault();
+                driverStatRow.LastSessionDate = driverStatRow.LastSession?.Date;
                 driverStatRow.StartIRating = firstResult.ResultRow.OldIRating;
                 driverStatRow.EndIRating = lastResult.ResultRow.NewIRating;
                 driverStatRow.StartSRating = firstResult.ResultRow.OldSafetyRating;
                 driverStatRow.EndSRating = lastResult.ResultRow.NewSafetyRating;
 
                 // Calculate average statistics
-                var rowCount = memberResultRows.Count();
                 driverStatRow.AvgFinalPosition = memberResultRows.Average(x => x.FinalPosition);
                 driverStatRow.AvgFinishPosition = memberResultRows.Average(x => x.ResultRow.FinishPosition);
                 driverStatRow.AvgIncidentsPerKm = ((double)driverStatRow.Incidents / driverStatRow.DrivenKm).GetZeroWhenInvalid();

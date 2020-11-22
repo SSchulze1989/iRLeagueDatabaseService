@@ -48,29 +48,29 @@ namespace TestConsole
             //}
 
             // Calculate season statistics
-            //using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
-            //{
-            //    var seasonStatistics = dbContext.Set<SeasonStatisticSetEntity>().Find(2);
-
-            //    dbContext.Configuration.LazyLoadingEnabled = false;
-
-            //    seasonStatistics.LoadRequiredDataAsync(dbContext).Wait();
-            //    seasonStatistics.Calculate(dbContext);
-
-            //    dbContext.SaveChanges();
-            //}
-
-            // Create league statistic set
             using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
             {
-                var leagueStatistic = new LeagueStatisticSetEntity();
-                dbContext.LeagueStatistics.Add(leagueStatistic);
+                var seasonStatistics = dbContext.Set<SeasonStatisticSetEntity>().ToList();
 
-                leagueStatistic.StatisticSets.Add(dbContext.Seasons.First().SeasonStatistics.First());
-                leagueStatistic.StatisticSets.Add(dbContext.Seasons.First().SeasonStatistics.Last());
+                dbContext.Configuration.LazyLoadingEnabled = false;
+
+                seasonStatistics.ForEach(x => x.LoadRequiredDataAsync(dbContext).Wait());
+                seasonStatistics.ForEach(x => x.Calculate(dbContext));
 
                 dbContext.SaveChanges();
             }
+
+            // Create league statistic set
+            //using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
+            //{
+            //    var leagueStatistic = new LeagueStatisticSetEntity();
+            //    dbContext.LeagueStatistics.Add(leagueStatistic);
+
+            //    leagueStatistic.StatisticSets.Add(dbContext.Seasons.First().SeasonStatistics.First());
+            //    leagueStatistic.StatisticSets.Add(dbContext.Seasons.First().SeasonStatistics.Last());
+
+            //    dbContext.SaveChanges();
+            //}
 
             // Calculate league statistics
             using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))

@@ -63,6 +63,7 @@ namespace iRLeagueDatabase.Mapper
             target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x));
             target.Season = MapToSeasonInfoDTO(source.Session.Schedule.Season);
             target.Session = MapToSessionInfoDTO(source.Session);
+            target.SimSessionDetails = MapToSimSessionDetailsDTO(source.IRSimSessionDetails);
 
             return target;
         }
@@ -364,6 +365,75 @@ namespace iRLeagueDatabase.Mapper
 
             return target;
         }
+
+        public SimSessionDetailsDTO MapToSimSessionDetailsDTO(IRSimSessionDetailsEntity source, SimSessionDetailsDTO target = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                target = new SimSessionDetailsDTO();
+            }
+
+            target.IRSubsessionId = source.IRSubsessionId;
+            target.IRTrackId = source.IRTrackId;
+            target.IRSeasonName = source.IRSeasonName;
+            target.IRSeasonYear = source.IRSeasonYear;
+            target.IRSeasonQuarter = source.IRSeasonQuarter;
+            target.IRRaceWeek = source.IRRaceWeek;
+            target.IRSessionId = source.IRSessionId;
+            target.LicenseCategory = source.LicenseCategory;
+            target.SessionName = source.SessionName;
+            target.StartTime = source.StartTime;
+            target.EndTime = source.EndTime;
+            target.CornersPerLap = source.CornersPerLap;
+            target.KmDistPerLap = source.KmDistPerLap;
+            target.MaxWeeks = source.MaxWeeks;
+            target.EventStrengthOfField = source.EventStrengthOfField;
+            target.EventAverageLap = source.EventAverageLap;
+            target.EventLapsComplete = source.EventLapsComplete;
+            target.NumCautions = source.NumCautions;
+            target.NumCautionLaps = source.NumCautionLaps;
+            target.NumLeadChanges = source.NumLeadChanges;
+            target.TimeOfDay = source.TimeOfDay;
+            target.DamageModel = source.DamageModel;
+
+            // Track details
+            target.IRTrackId = source.IRTrackId;
+            target.TrackName = source.TrackName;
+            target.ConfigName = source.ConfigName;
+            target.TrackCategoryId = source.TrackCategoryId;
+            target.Category = source.Category;
+
+            // Weather details
+            target.WeatherType = source.WeatherType;
+            target.TempUnits = source.TempUnits;
+            target.TempValue = source.TempValue;
+            target.RelHumidity = source.RelHumidity;
+            target.Fog = source.Fog;
+            target.WindDir = source.WindDir;
+            target.WindUnits = source.WindUnits;
+            target.Skies = source.Skies;
+            target.WeatherVarInitial = source.WeatherVarInitial;
+            target.WeatherVarOngoing = source.WeatherVarOngoing;
+            target.SimStartUTCTime = source.SimStartUTCTime;
+            target.SimStartUTCOffset = source.SimStartUTCOffset;
+
+            // Track state details 
+            target.LeaveMarbles = source.LeaveMarbles;
+            target.PracticeRubber = source.PracticeRubber;
+            target.QualifyRubber = source.QualifyRubber;
+            target.WarmupRubber = source.WarmupRubber;
+            target.RaceRubber = source.RaceRubber;
+            target.PracticeGripCompound = source.PracticeGripCompound;
+            target.QualifyGripCompund = source.QualifyGripCompund;
+            target.WarmupGripCompound = source.WarmupGripCompound;
+            target.RaceGripCompound = source.RaceGripCompound;
+
+            return target;
+        }
     }
 
     public partial class EntityMapper
@@ -412,6 +482,7 @@ namespace iRLeagueDatabase.Mapper
             target.Session = GetSessionBaseEntity(source.Session);
             target.Season = target.Session.Schedule.Season;
             target.RequiresRecalculation = true;
+            target.IRSimSessionDetails = MapToSimSessionDetailsEntity(source.SimSessionDetails, target.IRSimSessionDetails);
 
             return target;
         }
@@ -632,6 +703,75 @@ namespace iRLeagueDatabase.Mapper
             {
                 target.ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
             }
+
+            return target;
+        }
+
+        public IRSimSessionDetailsEntity MapToSimSessionDetailsEntity(SimSessionDetailsDTO source, IRSimSessionDetailsEntity target = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                target = new IRSimSessionDetailsEntity();
+            }
+
+            target.IRSubsessionId = source.IRSubsessionId;
+            target.IRTrackId = source.IRTrackId;
+            target.IRSeasonName = source.IRSeasonName;
+            target.IRSeasonYear = source.IRSeasonYear;
+            target.IRSeasonQuarter = source.IRSeasonQuarter;
+            target.IRRaceWeek = source.IRRaceWeek;
+            target.IRSessionId = source.IRSessionId;
+            target.LicenseCategory = source.LicenseCategory;
+            target.SessionName = source.SessionName;
+            target.StartTime = source.StartTime;
+            target.EndTime = source.EndTime;
+            target.CornersPerLap = source.CornersPerLap;
+            target.KmDistPerLap = source.KmDistPerLap;
+            target.MaxWeeks = source.MaxWeeks;
+            target.EventStrengthOfField = source.EventStrengthOfField;
+            target.EventAverageLap = source.EventAverageLap;
+            target.EventLapsComplete = source.EventLapsComplete;
+            target.NumCautions = source.NumCautions;
+            target.NumCautionLaps = source.NumCautionLaps;
+            target.NumLeadChanges = source.NumLeadChanges;
+            target.TimeOfDay = source.TimeOfDay;
+            target.DamageModel = source.DamageModel;
+
+            // Track details
+            target.IRTrackId = source.IRTrackId;
+            target.TrackName = source.TrackName;
+            target.ConfigName = source.ConfigName;
+            target.TrackCategoryId = source.TrackCategoryId;
+            target.Category = source.Category;
+
+            // Weather details
+            target.WeatherType = source.WeatherType;
+            target.TempUnits = source.TempUnits;
+            target.TempValue = source.TempValue;
+            target.RelHumidity = source.RelHumidity;
+            target.Fog = source.Fog;
+            target.WindDir = source.WindDir;
+            target.WindUnits = source.WindUnits;
+            target.Skies = source.Skies;
+            target.WeatherVarInitial = source.WeatherVarInitial;
+            target.WeatherVarOngoing = source.WeatherVarOngoing;
+            target.SimStartUTCTime = source.SimStartUTCTime;
+            target.SimStartUTCOffset = source.SimStartUTCOffset;
+
+            // Track state details 
+            target.LeaveMarbles = source.LeaveMarbles;
+            target.PracticeRubber = source.PracticeRubber;
+            target.QualifyRubber = source.QualifyRubber;
+            target.WarmupRubber = source.WarmupRubber;
+            target.RaceRubber = source.RaceRubber;
+            target.PracticeGripCompound = source.PracticeGripCompound;
+            target.QualifyGripCompund = source.QualifyGripCompund;
+            target.WarmupGripCompound = source.WarmupGripCompound;
+            target.RaceGripCompound = source.RaceGripCompound;
 
             return target;
         }
