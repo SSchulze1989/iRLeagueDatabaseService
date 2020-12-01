@@ -243,6 +243,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             foreach (var team in teams)
             {
+                
                 IEnumerable<T> teamResultRows = source.Where(x => x.Team == team).OrderBy(x => x.Date).OrderBy(x => -x.TotalPoints);
                 if (dropRacesOption == DropRacesOption.PerTeamResults)
                     teamResultRows = teamResultRows.Take(maxRacesCount);
@@ -257,7 +258,9 @@ namespace iRLeagueDatabase.Entities.Results
                     var drivers= teamDriverResultRows.GroupBy(x => x.ResultRow.Member);
                     foreach (var driver in drivers)
                     {
-                        var driverResultRows = driver.OrderBy(x => x.ResultRow.Date).OrderBy(x => -x.ResultRow.Interval).OrderBy(x => -x.TotalPoints);
+                        // #### Hotfix for interval not being defined fix to positiv or negative values! This needs to be changed when final implementation is done!
+                        var driverResultRows = driver.OrderBy(x => x.ResultRow.Date).OrderBy(x => Math.Abs(x.ResultRow.Interval)).OrderBy(x => -x.TotalPoints);
+                        // ####
 
                         if (!canDropPenaltyRace)
                         {
