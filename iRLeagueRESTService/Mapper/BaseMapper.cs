@@ -82,6 +82,7 @@ namespace iRLeagueDatabase.Mapper
             target.VoteCategories = LeagueDbContext.CustomVoteCategories.AsEnumerable().Select(x => MapToVoteCategoryDTO(x)).ToArray();
             target.CustomIncidents = LeagueDbContext.CustomIncidentKinds.AsEnumerable().Select(x => MapToCustomIncidentDTO(x)).ToArray();
             target.HideCommentsBeforeVoted = source.HideCommentsBeforeVoted;
+            target.SeasonStatisticSetIds = source.SeasonStatistics.Select(x => x.Id).ToArray();
 
             return target;
         }
