@@ -13,37 +13,52 @@ using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using System.Security.Principal;
 using System.Net;
+using log4net;
 
 namespace iRLeagueRESTService.Controllers
 {
     [IdentityBasicAuthentication]
     public class ModelController : ApiController
     {
+        private static ILog logger = log4net.LogManager.GetLogger(typeof(ModelController));
+
         [HttpGet]
         [ActionName("Get")]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetModel(string requestId, string requestType, string leagueName)
         {
-            CheckLeagueRole(User, leagueName);
-
-            if (requestId == null || requestType == null || leagueName == null)
+            try
             {
-                return BadRequest("Parameter requestType or leagueName can not be null!");
+                logger.Info($"Get Model request || type: {requestType} - league: {leagueName} - id: [{requestId}]");
+                CheckLeagueRole(User, leagueName);
+
+                if (requestId == null || requestType == null || leagueName == null)
+                {
+                    return BadRequest("Parameter requestType or leagueName can not be null!");
+                }
+
+                long[] requestIdValue = GetIdFromString(requestId);
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                MappableDTO data;
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                {
+                    data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                }
+                //GC.Collect();
+
+                logger.Info($"Get Model request || send data: {data.ToString()}");
+
+                return Ok(data);
             }
-
-            long[] requestIdValue = GetIdFromString(requestId);
-
-            Type requestTypeType = GetRequestType(requestType);
-
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-            MappableDTO data;
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+            catch (Exception e)
             {
-                data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                logger.Error("Error in GetModel", e);
+                throw;
             }
-            //GC.Collect();
-            return Ok(data);
         }
 
         [HttpGet]
@@ -51,34 +66,47 @@ namespace iRLeagueRESTService.Controllers
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
-            CheckLeagueRole(User, leagueName);
-
-            if (requestType == null || leagueName == null)
+            try
             {
-                return BadRequest("Parameter requestType or leagueName can not be null!");
-            }
+                logger.Info($"Get Models request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))}");
 
-            long[][] requestIdValues;
-            if (requestIds != null && requestIds.Count() > 0)
+                CheckLeagueRole(User, leagueName);
+
+                if (requestType == null || leagueName == null)
+                {
+                    return BadRequest("Parameter requestType or leagueName can not be null!");
+                }
+
+                long[][] requestIdValues;
+                if (requestIds != null && requestIds.Count() > 0)
+                {
+                    requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+                }
+                else
+                {
+                    requestIdValues = null;
+                }
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                MappableDTO[] data;
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                {
+                    data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                }
+                //GC.Collect();
+
+                logger.Info($"Get Models request || send data: {string.Join("/", (object[])data)}");
+
+                return Ok(data);
+            }
+            catch (Exception e)
             {
-                requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+                logger.Error("Error in GetModels", e);
+                throw;
             }
-            else
-            {
-                requestIdValues = null;
-            }
-
-            Type requestTypeType = GetRequestType(requestType);
-
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-            MappableDTO[] data;
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
-            {
-                data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
-            }
-            //GC.Collect();
-            return Ok(data);
         }
 
         //[HttpPost]
@@ -125,44 +153,55 @@ namespace iRLeagueRESTService.Controllers
         [ActionName("PostArray")]
         public IHttpActionResult PostModels([FromBody] MappableDTO[] data, string requestType, string leagueName)
         {
-            CheckLeagueRole(User, leagueName);
-
-            if (leagueName == null)
+            try
             {
-                return BadRequest("Parameter leagueName can not be null");
-            }
+                logger.Info($"Post Models request || type: {requestType} - league: {leagueName} - data: {string.Join("/", (object[])data)}");
+                CheckLeagueRole(User, leagueName);
 
-            if (data == null)
+                if (leagueName == null)
+                {
+                    return BadRequest("Parameter leagueName can not be null");
+                }
+
+                if (data == null)
+                {
+                    return null;
+                }
+
+                if (data.Count() == 0)
+                    return Ok(new MappableDTO[0]);
+
+                Type requestTypeType;
+                if (requestType == null)
+                {
+                    requestTypeType = data.GetType();
+                }
+                else
+                {
+                    requestTypeType = GetRequestType(requestType);
+                }
+
+                if (requestTypeType == null)
+                {
+                    return BadRequest("Could not identify request type");
+                }
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
+                {
+                    data = modelDataProvider.PostArray(requestTypeType, data);
+                }
+                //GC.Collect();
+
+                logger.Info($"Post Models request || send data: {string.Join("/", (object[])data)}");
+                return Ok(data);
+            }
+            catch (Exception e)
             {
-                return null;
+                logger.Error("Error in PostModels", e);
+                throw;
             }
-
-            if (data.Count() == 0)
-                return Ok(new MappableDTO[0]);
-
-            Type requestTypeType;
-            if (requestType == null)
-            {
-                requestTypeType = data.GetType();
-            }
-            else
-            {
-                requestTypeType = GetRequestType(requestType);
-            }
-
-            if (requestTypeType == null)
-            {
-                return BadRequest("Could not identify request type");
-            }
-
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
-            {
-                data = modelDataProvider.PostArray(requestTypeType, data);
-            }
-            //GC.Collect();
-            return Ok(data);
         }
 
         //[HttpPut]
@@ -209,46 +248,56 @@ namespace iRLeagueRESTService.Controllers
         [ActionName("PutArray")]
         public IHttpActionResult PutModels([FromBody] MappableDTO[] data, [FromUri] string requestType, [FromUri] string leagueName)
         {
-            CheckLeagueRole(User, leagueName);
-
-            if (leagueName == null)
+            try
             {
-                return BadRequest("Parameter leagueName can not be null");
-            }
+                logger.Info($"Put Models request || type: {requestType} - league: {leagueName} - data: {string.Join("/", (object[])data)}");
+                CheckLeagueRole(User, leagueName);
 
-            if (data == null)
-            {
+                if (leagueName == null)
+                {
+                    return BadRequest("Parameter leagueName can not be null");
+                }
+
+                if (data == null)
+                {
+                    return Ok(data);
+                }
+
+                //return Ok();
+
+                if (data.Count() == 0)
+                    return Ok(new MappableDTO[0]);
+
+                Type requestTypeType;
+                if (requestType == null)
+                {
+                    requestTypeType = data.GetType();
+                }
+                else
+                {
+                    requestTypeType = GetRequestType(requestType);
+                }
+
+                if (requestTypeType == null)
+                {
+                    return BadRequest("Could not identify request type");
+                }
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
+                {
+                    data = modelDataProvider.PutArray(requestTypeType, data);
+                }
+                //GC.Collect();
+                logger.Info($"Put Models request || send data: {string.Join("/", (object[])data)}");
                 return Ok(data);
             }
-
-            //return Ok();
-
-            if (data.Count() == 0)
-                return Ok(new MappableDTO[0]);
-
-            Type requestTypeType;
-            if (requestType == null)
+            catch (Exception e)
             {
-                requestTypeType = data.GetType();
+                logger.Error("Error in PutModels", e);
+                throw;
             }
-            else
-            {
-                requestTypeType = GetRequestType(requestType);
-            }
-
-            if (requestTypeType == null)
-            {
-                return BadRequest("Could not identify request type");
-            }
-
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
-            {
-                data = modelDataProvider.PutArray(requestTypeType, data);
-            }
-            //GC.Collect();
-            return Ok(data);
         }
 
         //[HttpDelete]
@@ -280,40 +329,50 @@ namespace iRLeagueRESTService.Controllers
         [ActionName("DeleteArray")]
         public IHttpActionResult DeleteModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
-            CheckLeagueRole(User, leagueName);
-
-            if (requestIds == null || requestType == null || leagueName == null)
+            try
             {
-                return BadRequest("Parameters can not be null!");
-            }
+                logger.Info($"Delete Models request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{x}]"))}");
+                CheckLeagueRole(User, leagueName);
 
-            if (requestIds.Count() == 0)
+                if (requestIds == null || requestType == null || leagueName == null)
+                {
+                    return BadRequest("Parameters can not be null!");
+                }
+
+                if (requestIds.Count() == 0)
+                {
+                    return BadRequest("Request ids can not be empty");
+                }
+
+                long[][] requestIdValues;
+                if (requestIds != null && requestIds.Count() > 0)
+                {
+                    requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+                }
+                else
+                {
+                    requestIdValues = null;
+                }
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                bool data;
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                {
+                    data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
+                }
+                //GC.Collect();
+                logger.Info($"Delete Models request || send answer: {data}");
+                return Ok(data);
+            }
+            catch (Exception e)
             {
-                return BadRequest("Request ids can not be empty");
+                logger.Error("Error in PostModels", e);
+                throw;
             }
-
-            long[][] requestIdValues;
-            if (requestIds != null && requestIds.Count() > 0)
-            {
-                requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
-            }
-            else
-            {
-                requestIdValues = null;
-            }
-
-            Type requestTypeType = GetRequestType(requestType);
-
-            var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-            bool data;
-            using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
-            {
-                data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
-            }
-            //GC.Collect();
-            return Ok(data);
-        }
+}
 
         private LeagueDbContext CreateDbContext(string datbaseName)
         {
