@@ -175,6 +175,7 @@
     <Compile Include="Controllers\LeagueController.cs" />
     <Compile Include="Controllers\ModelController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Data\ILeagueActionProvider.cs" />
