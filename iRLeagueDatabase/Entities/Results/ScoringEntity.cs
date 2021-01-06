@@ -99,6 +99,7 @@ namespace iRLeagueDatabase.Entities.Results
             return Sessions;
         }
 
+        [Obsolete]
         public StandingsEntity GetSeasonStandings()
         {
             var allSessions = GetAllSessions();
@@ -117,7 +118,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             return GetSeasonStandings(session, allSessions.Count - DropWeeks);
         }
-
+        [Obsolete]
         public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession)
         {
             var allSessions = GetAllSessions();
@@ -327,6 +328,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
             var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
+            var firstResult = ScoredResults.Select(x => x?.Result).OrderBy(x => x?.Session.Date).FirstOrDefault();
 
             if (Season.Finished && scoredResult != null)
             {
@@ -463,6 +465,12 @@ namespace iRLeagueDatabase.Entities.Results
                             //Scoring = this,
                         };
                         scoredResultRows.Add(scoredResultRow);
+                    }
+
+                    var firstResultMemberRow = firstResult?.RawResults.SingleOrDefault(x => x.MemberId == resultRow.MemberId);
+                    if (firstResultMemberRow != null)
+                    {
+                        resultRow.SeasonStartIRating = firstResultMemberRow.SeasonStartIRating;
                     }
 
                     var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
