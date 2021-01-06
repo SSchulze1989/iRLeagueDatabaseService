@@ -77,8 +77,11 @@
     <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
-    <Compile Include="Entities\Statistics\DriverStatisticEntity.cs" />
     <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
+    <Compile Include="Entities\Statistics\ImportedStatisticSetEntity.cs" />
+    <Compile Include="Entities\Statistics\LeagueStatisticSetEntity.cs" />
+    <Compile Include="Entities\Statistics\SeasonStatisticSetEntity.cs" />
+    <Compile Include="Entities\Statistics\StatisticSetEntity.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
     <Compile Include="Filters\FilterFactoryHelper.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />
@@ -136,6 +139,10 @@
     <Compile Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.designer.cs">
       <DependentUpon>202011082336177_AddCustomFiltersAndExtendedResultInformation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012291901576_AddStatistics.cs" />
+    <Compile Include="Migrations\202012291901576_AddStatistics.designer.cs">
+      <DependentUpon>202012291901576_AddStatistics.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -167,6 +174,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011082336177_AddCustomFiltersAndExtendedResultInformation.resx">
       <DependentUpon>202011082336177_AddCustomFiltersAndExtendedResultInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012291901576_AddStatistics.resx">
+      <DependentUpon>202012291901576_AddStatistics.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

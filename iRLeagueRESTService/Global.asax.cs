@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iRLeagueRESTService.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace iRLeagueRESTService
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalConfiguration.Configuration.EnsureInitialized();
+
+            // Start watchers for statistic calculation
+            StatisticCalculationWatcher.RegisterWatcher("SkippyCup_leagueDb");
 
             //Configure logger
             SetupLog4Net("C:\\Logging\\config.xml");

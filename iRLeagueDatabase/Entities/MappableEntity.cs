@@ -15,7 +15,7 @@ namespace iRLeagueDatabase.Entities
     public abstract class MappableEntity
     {
         [NotMapped]
-        public virtual object MappingId { get; } = null;
+        public abstract object MappingId { get; }
 
         public virtual void Delete(LeagueDbContext dbContext)
         {

@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
+using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase.Entities
 {
@@ -21,12 +22,17 @@ namespace iRLeagueDatabase.Entities
         public override object MappingId => SeasonId;
 
         public string SeasonName { get; set; }
+
+        public bool Finished { get; set; }
         
         public virtual List<ScheduleEntity> Schedules { get; set; }
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
         public virtual List<ScoringTableEntity> ScoringTables { get; set; }
+
+        [InverseProperty(nameof(SeasonStatisticSetEntity.Season))]
+        public virtual List<SeasonStatisticSetEntity> SeasonStatistics { get; set; }
 
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
 

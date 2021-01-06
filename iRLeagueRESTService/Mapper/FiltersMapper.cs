@@ -5,6 +5,7 @@ using iRLeagueDatabase.Entities.Filters;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Extensions;
+using iRLeagueManager.Timing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace iRLeagueDatabase.Mapper
                 return null;
             if (target == null)
                 target = new ResultsFilterOptionDTO();
+
+            MapToVersionDTO(source, target);
 
             target.ColumnPropertyName = source.ColumnPropertyName;
             target.Comparator = source.Comparator;
@@ -116,6 +119,11 @@ namespace iRLeagueDatabase.Mapper
                 return null;
             if (target == null)
                 target = DefaultGet<ResultsFilterOptionDTO, ResultsFilterOptionEntity>(source);
+
+            if (MapToRevision(source, target) == false)
+            {
+                return target;
+            }
 
             switch (source.ColumnPropertyName)
             {
