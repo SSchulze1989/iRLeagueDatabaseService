@@ -91,7 +91,7 @@ namespace iRLeagueRESTService.Data
                 return true;
             }
 
-            return true;
+            return false;
         }
     }
 }
