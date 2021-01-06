@@ -15,5 +15,7 @@ namespace iRLeagueDatabase.Entities.Reviews
         public string Text { get; set; }
         public int Index { get; set; }
         public int DefaultPenalty { get; set; }
+
+        public override object MappingId => CatId;
     }
 }

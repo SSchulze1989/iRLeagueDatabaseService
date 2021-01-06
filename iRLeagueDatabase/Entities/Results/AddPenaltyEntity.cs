@@ -15,6 +15,8 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual ScoredResultRowEntity ScoredResultRow { get; set; }
         public int PenaltyPoints { get; set; }
 
+        public override object MappingId => ScoredResultRowId;
+
         public override void Delete(LeagueDbContext dbContext)
         {
             if (ScoredResultRow?.ScoredResult?.Result != null)

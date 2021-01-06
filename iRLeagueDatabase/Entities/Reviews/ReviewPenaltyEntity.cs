@@ -26,6 +26,8 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public int PenaltyPoints { get; set; }
 
+        public override object MappingId => new { ResultRowId, ReviewId };
+
         public override void Delete(LeagueDbContext dbContext)
         {
             base.Delete(dbContext);

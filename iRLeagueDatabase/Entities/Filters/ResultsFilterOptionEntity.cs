@@ -12,7 +12,7 @@ using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Filters
 {
-    public class ResultsFilterOptionEntity : MappableEntity
+    public class ResultsFilterOptionEntity : Revision
     {
         [Key, Column(Order = 0)]
         public long ResultsFilterId { get; set; }

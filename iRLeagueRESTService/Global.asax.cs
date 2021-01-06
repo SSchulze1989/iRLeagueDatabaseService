@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iRLeagueRESTService.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,6 +21,9 @@ namespace iRLeagueRESTService
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalConfiguration.Configuration.EnsureInitialized();
+
+            // Start watchers for statistic calculation
+            StatisticCalculationWatcher.RegisterWatcher("SkippyCup_leagueDb");
 
             using (var context = new iRLeagueUserDatabase.UsersDbContext())
             {

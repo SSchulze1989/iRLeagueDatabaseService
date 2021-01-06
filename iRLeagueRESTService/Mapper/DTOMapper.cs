@@ -41,6 +41,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterReviewsTypeMaps();
             RegisterSessionsTypeMaps();
             RegisterFiltersTypeMaps();
+            RegisterStatisticsTypeMaps();
         }
 
         public TTarget MapTo<TTarget>(MappableEntity source) where TTarget : MappableDTO, new()
@@ -131,18 +132,6 @@ namespace iRLeagueDatabase.Mapper
             }
 
             return target;
-        }
-    }
-    public static class TimeSpanConverter
-    {
-        public static TimeSpan Convert(long source)
-        {
-            return TimeSpan.FromTicks(source);
-        }
-
-        public static long Convert(TimeSpan source)
-        {
-            return source.Ticks;
         }
     }
 }

@@ -114,12 +114,21 @@ namespace iRLeagueDatabase.Entities.Results
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
 
             var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
-            var previousStandingsRows = previousScoredRows.AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            var previousStandingsRows = previousScoredRows
+                .AggregateByDriver(maxRacesCount, true)
+                .OrderBy(x => -x.TotalPoints)
+                .ThenBy(x => x.PenaltyPoints)
+                .ThenBy(x => -x.Wins);
             previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
             allScoredResults = previousScoredResults.ToList();
             allScoredResults.Add(currentScoredResult);
-            var currentStandingsRows = allScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            var currentStandingsRows = allScoredResults
+                .SelectMany(x => x.FinalResults)
+                .AggregateByDriver(maxRacesCount, true)
+                .OrderBy(x => -x.TotalPoints)
+                .ThenBy(x => x.PenaltyPoints)
+                .ThenBy(x => -x.Wins);
             currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
             standings.StandingsRows = currentStandingsRows
