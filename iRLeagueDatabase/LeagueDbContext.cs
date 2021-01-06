@@ -30,7 +30,7 @@ namespace iRLeagueDatabase
 
         private static bool AllowMultipleResultSets = true;
 
-        private const string defaultDb = "SkippyCup_leagueDb";
+        private const string defaultDb = "TestDatabase_leagueDb";
 
         public LeagueDbContext() : this(GetConnectionString(defaultDb))
         {
