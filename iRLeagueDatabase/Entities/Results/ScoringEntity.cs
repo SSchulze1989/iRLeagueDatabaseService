@@ -17,6 +17,7 @@ using iRLeagueDatabase;
 using iRLeagueDatabase.Entities.Filters;
 using iRLeagueDatabase.Filters;
 using System.Runtime.CompilerServices;
+using iRLeagueManager.Timing;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -277,6 +278,16 @@ namespace iRLeagueDatabase.Entities.Results
         //public IEnumerable<ScoredResultRowEntity> CalculateResults(long sessionId, LeagueDbContext dbContext)
         public ScoredResultEntity CalculateResults(long sessionId, LeagueDbContext dbContext)
         {
+            if (Season.Finished)
+            {
+                var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == sessionId);
+                if (scoredResult != null)
+                {
+                    scoredResult.Result.RequiresRecalculation = false;
+                    return scoredResult;
+                }
+            }
+
             UpdateSessionList();
             if (!Sessions.Any(x => x.SessionId == sessionId))
                 return null;
@@ -311,12 +322,19 @@ namespace iRLeagueDatabase.Entities.Results
         //public IEnumerable<ScoredResultRowEntity> CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         public ScoredResultEntity CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         {
-            UpdateSessionList();
             if (session == null || session.SessionResult == null)
                 return null;
 
             //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
             var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
+
+            if (Season.Finished && scoredResult != null)
+            {
+                scoredResult.Result.RequiresRecalculation = false;
+                return scoredResult;
+            }
+
+            UpdateSessionList();
 
             if (ScoringKind == ScoringKindEnum.Member)
             {
@@ -569,8 +587,35 @@ namespace iRLeagueDatabase.Entities.Results
                 }
             }
 
+            // Calculate hard chargers and cleanest drivers
+            var contenders = GetHardChargerContenders(scoredResult);
+            if (contenders.Count() > 0)
+            {
+                var maxPlacesGained = contenders.Max(x => x.FinalPositionChange);
+                var hardChargers = contenders.Where(x => x.FinalPositionChange == maxPlacesGained).Select(x => x.ResultRow.Member);
+                scoredResult.HardChargers.RemoveAll(x => hardChargers.Contains(x) == false);
+                scoredResult.HardChargers.AddRange(hardChargers.Except(scoredResult.HardChargers));
+            }
+            contenders = GetCleanesDriverContenders(scoredResult);
+            if (contenders.Count() > 0)
+            {
+                var minIncidents = contenders.Min(x => x.ResultRow.Incidents);
+                var cleanestDrivers = contenders.Where(x => x.ResultRow.Incidents == minIncidents).Select(x => x.ResultRow.Member);
+                scoredResult.CleanestDrivers.RemoveAll(x => cleanestDrivers.Contains(x) == false);
+                scoredResult.CleanestDrivers.AddRange(cleanestDrivers.Except(scoredResult.CleanestDrivers));
+            }
             //return scoredResultRows;
             return scoredResult;
+        }
+
+        private IEnumerable<ScoredResultRowEntity> GetHardChargerContenders(ScoredResultEntity scoredResult)
+        {
+            return scoredResult.FinalResults.Where(x => x.ResultRow.QualifyingTime > 0 && x.ResultRow.Status == RaceStatusEnum.Running && x.ResultRow.QualifyingTime <= x.ResultRow.Result.PoleLaptime * 1.04);
+        }
+
+        private IEnumerable<ScoredResultRowEntity> GetCleanesDriverContenders(ScoredResultEntity scoredResult)
+        {
+            return scoredResult.FinalResults.Where(x => (new LapInterval(iRLeagueManager.Timing.TimeSpanConverter.Convert(x.ResultRow.Interval))).Laps == 0 && x.ResultRow.Status == RaceStatusEnum.Running);
         }
 
         public IEnumerable<ScoredResultEntity> GetResultsFromSource()

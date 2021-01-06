@@ -23,6 +23,7 @@
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Extensions;
+using iRLeagueManager.Timing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -47,22 +48,31 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// </summary>
         public virtual SeasonEntity Season { get; set; }
 
+        ///// <summary>
+        ///// List of <see cref="ScoringEntity"/> that are used as data source for calculating the season statistic.
+        ///// </summary>
+        //public virtual List<ScoringEntity> Scorings { get; set; }
+
+        [ForeignKey(nameof(ScoringTable))]
+        public long? ScoringTableId { get; set; }
         /// <summary>
-        /// List of <see cref="ScoringEntity"/> that are used as data source for calculating the season statistic.
+        /// <see cref="ScoringTableEntity"/> that are used as data source for calculating the season statistics.
         /// </summary>
-        public virtual List<ScoringEntity> Scorings { get; set; }
+        public virtual ScoringTableEntity ScoringTable { get; set; }
+
+
+        /// <summary>
+        /// Number of races with results
+        /// </summary>
+        public int FinishedRaces { get; set; }
+
+        public bool IsSeasonFinished { get; set; }
 
         public SeasonStatisticSetEntity()
         {
-            Scorings = new List<ScoringEntity>();
         }
 
-        /// <summary>
-        /// <para>Load all data required for calculating the statistics from the database.</para>
-        /// <para>Must be called prior to <see cref="Calculate"/> if lazy loading is disabled!</para>
-        /// </summary>
-        /// <param name="dbContext">Database context from EntityFramework.</param>
-        /// <param name="force">Force loading data again even if IsDataLoaded is true.</param>
+
         public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
         {
             if (IsDataLoaded && force == false)
@@ -72,12 +82,6 @@ namespace iRLeagueDatabase.Entities.Statistics
 
             await base.LoadRequiredDataAsync(dbContext, force);
 
-            if (Scorings == null || Scorings.Count == 0)
-            {
-                await dbContext.Entry(this)
-                .Collection(x => x.Scorings)
-                .LoadAsync();
-            }
             if (Season == null)
             {
                 await dbContext.Entry(this)
@@ -91,7 +95,37 @@ namespace iRLeagueDatabase.Entities.Statistics
             //        .LoadAsync();
             //}
 
-            foreach(var scoring in Scorings)
+            if (ScoringTableId == null || ScoringTableId == 0)
+            {
+                return;
+            }
+
+            var scoringTable = dbContext.Set<ScoringTableEntity>()
+                .Where(x => x.ScoringTableId == ScoringTableId)
+                .Include(x => x.Scorings.Select(y => y.ExtScoringSource))
+                //.Include(x => x.Scorings.Select(y => y.Sessions.Select(z => z.SessionResult)))
+                //.Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
+                //.Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
+                .FirstOrDefault();
+            var loadScoringEntityIds = dbContext.Set<ScoringEntity>().Local.Select(y => y.ScoringId);
+
+            if (loadScoringEntityIds.Count() > 0)
+            {
+                var loadScorings = dbContext.Set<ScoringEntity>()
+                    .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
+                    .Include(x => x.Sessions.Select(y => y.SessionResult))
+                    .ToList();
+                var loadScoredResults = dbContext.Set<ScoredResultEntity>()
+                    .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
+                    .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                    .Include(x => x.CleanestDrivers)
+                    .Include(x => x.HardChargers)
+                    .ToList();
+            }
+
+            var scorings = scoringTable.Scorings;
+
+            foreach(var scoring in scorings)
             {
                 await dbContext.Entry(scoring)
                     .Reference(x => x.ConnectedSchedule)
@@ -104,7 +138,7 @@ namespace iRLeagueDatabase.Entities.Statistics
                 scoring.GetAllSessions();
             }
 
-            var scoringIds = Scorings.Select(y => y.ScoringId);
+            var scoringIds = scorings.Select(y => y.ScoringId);
 
             await dbContext.Set<ScoredResultEntity>()
                 .Where(x => scoringIds.Contains(x.ScoringId))
@@ -112,7 +146,7 @@ namespace iRLeagueDatabase.Entities.Statistics
                 .Include(x => x.FinalResults.Select(y => y.ReviewPenalties))
                 .LoadAsync();
 
-            var resultIds = Scorings.SelectMany(x => x.ScoredResults.Select(y => y.ResultId));
+            var resultIds = scorings.SelectMany(x => x.ScoredResults.Select(y => y.ResultId));
 
             await dbContext.Set<ResultEntity>()
                 .Where(x => resultIds.Contains(x.ResultId))
@@ -126,21 +160,27 @@ namespace iRLeagueDatabase.Entities.Statistics
             IsDataLoaded = true;
         }
 
-        /// <summary>
-        /// Calculate statistic data based on the current data set.
-        /// <para>Make sure either lazy-loading is enabled on the context or run <see cref="LoadRequiredDataAsync(LeagueDbContext, bool)"/> before execution.</para>
-        /// </summary>
-        /// <param name="dbContext">Database context from EntityFramework</param>
         public override void Calculate(LeagueDbContext dbContext)
         {
+            if (ScoringTable == null)
+            {
+                return;
+            }
+
+            // Get standings
+            var standings = ScoringTable.GetSeasonStandings(dbContext);
+
+            // Get all connected scorings
+            var scorings = ScoringTable.Scorings;
+
             // Get all scored races
-            var scoredRaces = Scorings.SelectMany(x => x.GetAllSessions().Where(y => y.SessionResult != null).Select(y => new { x, y })).GroupBy(x => x.x, x => x.y);
+            var scoredRaces = scorings.SelectMany(x => x.GetAllSessions().Where(y => y.SessionResult != null).Select(y => new { x, y })).GroupBy(x => x.x, x => x.y);
 
             // Get races that need recalculation and recalculate results
             scoredRaces.ForEach(x => x.Where(y => y.SessionResult.RequiresRecalculation).ForEach(y => x.Key.CalculateResults(y.SessionId, dbContext)));
 
             // Get all scored resultrows and group by driver
-            var scoredResultsRows = Scorings.SelectMany(x => x.ScoredResults).SelectMany(x => x.FinalResults).OrderBy(x => x.ResultRow.Date).GroupBy(x => x.ResultRow.Member);
+            var scoredResultsRows = scorings.SelectMany(x => x.ScoredResults).SelectMany(x => x.FinalResults).OrderBy(x => x.ResultRow.Date).GroupBy(x => x.ResultRow.Member);
 
             if (DriverStatistic == null)
             {
@@ -149,10 +189,15 @@ namespace iRLeagueDatabase.Entities.Statistics
 
             List<DriverStatisticRowEntity> removeDriverStatisticRows = DriverStatistic.ToList();
 
+            // Calculate common season statistics
+            FinishedRaces = scoredRaces.Count();
+            IsSeasonFinished = Season.Finished;
+
             // Calculate statistics per driver
             foreach(var memberResultRows in scoredResultsRows)
             {
                 var member = memberResultRows.Key;
+                var memberStandingsRow = standings.StandingsRows.SingleOrDefault(x => x.Member.MemberId == member.MemberId);
                 DriverStatisticRowEntity driverStatRow;
                 if (DriverStatistic.Any(x => x.Member == member))
                 {
@@ -174,9 +219,12 @@ namespace iRLeagueDatabase.Entities.Statistics
                     continue;
                 }
 
+                driverStatRow.CurrentSeasonPosition = (standings.StandingsRows.SingleOrDefault(x => x.Member.MemberId == member.MemberId)?.Position).GetValueOrDefault(99999);
+
                 // Calculate accumulative statistics                 
                 foreach (var resultRow in memberResultRows)
                 {
+                    var result = resultRow.ResultRow.Result;
                     driverStatRow.CompletedLaps += resultRow.ResultRow.CompletedLaps;
                     driverStatRow.DrivenKm += resultRow.ResultRow.CompletedLaps * resultRow.ResultRow.Result.IRSimSessionDetails?.KmDistPerLap ?? 0;
                     driverStatRow.FastestLaps += resultRow.ScoredResult.FastestAvgLapDriver == member ? 1 : 0;
@@ -198,6 +246,9 @@ namespace iRLeagueDatabase.Entities.Statistics
                     driverStatRow.RacePoints += resultRow.RacePoints;
                     driverStatRow.TotalPoints += resultRow.TotalPoints;
                     driverStatRow.BonusPoints += resultRow.BonusPoints;
+                    driverStatRow.HardChargerAwards += resultRow.ScoredResult.HardChargers.Contains(member) ? 1 : 0;
+                    driverStatRow.CleanestDriverAwards += resultRow.ScoredResult.CleanestDrivers.Contains(member) ? 1 : 0;
+                    driverStatRow.IncidentsWithPenalty += (resultRow.ReviewPenalties?.Count).GetValueOrDefault();
                 }
 
                 // Calculate min/max statistics
@@ -231,6 +282,8 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.EndIRating = lastResult.ResultRow.NewIRating;
                 driverStatRow.StartSRating = firstResult.ResultRow.OldSafetyRating;
                 driverStatRow.EndSRating = lastResult.ResultRow.NewSafetyRating;
+                driverStatRow.CurrentSeasonPosition = memberStandingsRow?.Position ?? 0;
+                driverStatRow.Titles = IsSeasonFinished && driverStatRow.CurrentSeasonPosition == 1 ? 1 : 0;
 
                 // Calculate average statistics
                 driverStatRow.AvgFinalPosition = memberResultRows.Average(x => x.FinalPosition);
@@ -274,7 +327,11 @@ namespace iRLeagueDatabase.Entities.Statistics
                 await LoadRequiredDataAsync(dbContext);
             }
 
-            RequiresRecalculation = Scorings.SelectMany(x => x.Sessions.Where(y => y.SessionResult != null).Select(y => y.SessionResult)).Any(x => x.RequiresRecalculation || x.LastModifiedOn > LastModifiedOn);
+            var Scorings = ScoringTable?.Scorings;
+
+            RequiresRecalculation = (Scorings
+                ?.SelectMany(x => x.Sessions.Where(y => y.SessionResult != null).Select(y => y.SessionResult))
+                ?.Any(x => x.Season.Finished == false && (x.RequiresRecalculation || x.LastModifiedOn > LastModifiedOn))).GetValueOrDefault();
 
             return RequiresRecalculation;
         }

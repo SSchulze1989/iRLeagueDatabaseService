@@ -308,6 +308,7 @@
     <Compile Include="Data\IModelDataProvider.cs" />
     <Compile Include="Data\LeagueActionProvider.cs" />
     <Compile Include="Data\ModelDataProvider.cs" />
+    <Compile Include="Data\StatisticCalculationWatcher.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\HttpAuthenticationChallengeContextExtensions.cs" />

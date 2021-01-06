@@ -22,6 +22,8 @@ namespace iRLeagueDatabase.Entities
         public override object MappingId => SeasonId;
 
         public string SeasonName { get; set; }
+
+        public bool Finished { get; set; }
         
         public virtual List<ScheduleEntity> Schedules { get; set; }
 

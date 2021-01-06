@@ -69,6 +69,7 @@ namespace iRLeagueDatabase.Mapper
             MapToSeasonInfoDTO(source, target);
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
+            target.Finished = source.Finished;
             target.Results = source.Results?.Select(x => MapToResultInfoDTO(x)).ToList();
             target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y));
             target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToList();
@@ -182,6 +183,7 @@ namespace iRLeagueDatabase.Mapper
                 return target;
 
             target.SeasonName = source.SeasonName;
+            target.Finished = source.Finished;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             if (target.Schedules == null)

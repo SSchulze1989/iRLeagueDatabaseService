@@ -20,9 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +37,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// List of <see cref="StatisticSetEntity"/> that are used as data source for calculating the league statistic
         /// </summary>
         public virtual List<StatisticSetEntity> StatisticSets { get; set; }
+
+        [ForeignKey(nameof(CurrentChamp))]
+        public long? CurrentChampId { get; set; }
+        public LeagueMemberEntity CurrentChamp { get; set; }
 
         public LeagueStatisticSetEntity()
         {
@@ -96,6 +102,9 @@ namespace iRLeagueDatabase.Entities.Statistics
                     driverStatRow.RacePoints += statisticRow.RacePoints;
                     driverStatRow.TotalPoints += statisticRow.TotalPoints;
                     driverStatRow.BonusPoints += statisticRow.BonusPoints;
+                    driverStatRow.HardChargerAwards += statisticRow.HardChargerAwards;
+                    driverStatRow.CleanestDriverAwards += statisticRow.CleanestDriverAwards;
+                    driverStatRow.Titles += statisticRow.Titles;
                 }
 
                 // Calculate min/max statistics
@@ -107,28 +116,29 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.WorstStartPosition = memberStatisticRows.Max(x => x.WorstStartPosition);
 
                 // Calculate start/end statistics
-                var firstResult = memberStatisticRows.Select(x => x.FirstResult).OrderBy(x => x.ResultRow.Result.Session.Date).FirstOrDefault();
-                var lastResult = memberStatisticRows.Select(x => x.LastResult).OrderBy(x => x.ResultRow.Result.Session.Date).LastOrDefault();
-                driverStatRow.FirstResult = firstResult;
-                driverStatRow.LastResult = lastResult;
-                driverStatRow.FirstRace = memberStatisticRows.Select(x => x.FirstRace).OrderBy(x => x.Date).FirstOrDefault();
+                var firstResultRow = memberStatisticRows.OrderBy(x => x.FirstRaceDate).FirstOrDefault();
+                var lastResultRow = memberStatisticRows.OrderBy(x => x.LastRaceDate).LastOrDefault();
+                driverStatRow.FirstResult = firstResultRow.FirstResult;
+                driverStatRow.LastResult = lastResultRow.LastResult;
+                driverStatRow.FirstRace = firstResultRow.FirstRace;
                 driverStatRow.FirstRaceDate = memberStatisticRows.Min(x => x.FirstRaceDate);
-                driverStatRow.FirstRaceFinalPosition = firstResult.FinalPosition;
-                driverStatRow.FirstRaceFinishPosition = lastResult.ResultRow.FinishPosition;
-                driverStatRow.FirstRaceStartPosition = firstResult.ResultRow.StartPosition;
-                driverStatRow.FirstSession = memberStatisticRows.Select(x => x.FirstSession).OrderBy(x => x.Date).FirstOrDefault();
+                driverStatRow.FirstRaceFinalPosition = firstResultRow.FirstRaceFinalPosition;
+                driverStatRow.FirstRaceFinishPosition = firstResultRow.FirstRaceFinishPosition;
+                driverStatRow.FirstRaceStartPosition = firstResultRow.FirstRaceStartPosition;
+                driverStatRow.FirstSession = memberStatisticRows.Select(x => x.FirstSession).Where(x => x != null).OrderBy(x => x.Date).FirstOrDefault();
                 driverStatRow.FirstSessionDate = memberStatisticRows.Min(x => x.FirstSessionDate);
-                driverStatRow.LastRace = memberStatisticRows.Select(x => x.LastRace).OrderBy(x => x.Date).LastOrDefault();
+                driverStatRow.LastRace = lastResultRow.LastRace;
                 driverStatRow.LastRaceDate = memberStatisticRows.Max(x => x.LastRaceDate);
-                driverStatRow.LastRaceFinalPosition = lastResult.FinalPosition;
-                driverStatRow.LastRaceFinishPosition = lastResult.ResultRow.FinishPosition;
-                driverStatRow.LastRaceStartPosition = lastResult.ResultRow.StartPosition;
-                driverStatRow.LastSession = memberStatisticRows.Select(x => x.LastSession).LastOrDefault();
+                driverStatRow.LastRaceFinalPosition = lastResultRow.LastRaceFinalPosition;
+                driverStatRow.LastRaceFinishPosition = lastResultRow.LastRaceFinishPosition;
+                driverStatRow.LastRaceStartPosition = lastResultRow.LastRaceStartPosition;
+                driverStatRow.LastSession = memberStatisticRows.Select(x => x.LastSession).Where(x => x != null).LastOrDefault();
                 driverStatRow.LastSessionDate = memberStatisticRows.Max(x => x.LastSessionDate);
-                driverStatRow.StartIRating = firstResult.ResultRow.OldIRating;
-                driverStatRow.EndIRating = lastResult.ResultRow.NewIRating;
-                driverStatRow.StartSRating = firstResult.ResultRow.OldSafetyRating;
-                driverStatRow.EndSRating = lastResult.ResultRow.NewSafetyRating;
+                driverStatRow.StartIRating = firstResultRow.StartIRating;
+                driverStatRow.EndIRating = lastResultRow.EndIRating;
+                driverStatRow.StartSRating = firstResultRow.StartSRating;
+                driverStatRow.EndSRating = lastResultRow.EndSRating;
+                driverStatRow.CurrentSeasonPosition = lastResultRow.CurrentSeasonPosition;
 
                 // Calculate average statistics
                 driverStatRow.AvgFinalPosition = memberStatisticRows.WeightedAverage(x => x.AvgFinalPosition, x => x.Races);
@@ -144,6 +154,22 @@ namespace iRLeagueDatabase.Entities.Statistics
                 driverStatRow.AvgSRating = memberStatisticRows.WeightedAverage(x => x.AvgSRating, x => x.Races);
                 driverStatRow.AvgStartPosition = memberStatisticRows.WeightedAverage(x => x.AvgStartPosition, x => x.Races);
             }
+
+            // Calculate current champ
+            var seasonStatisticSets = StatisticSets.OfType<SeasonStatisticSetEntity>().Where(x => x.IsSeasonFinished);
+            var importedStatisticSets = StatisticSets.OfType<ImportedStatisticSetEntity>();
+            var lastSeasonStatistic = seasonStatisticSets.OrderBy(x => x.Season.SeasonEnd).LastOrDefault();
+            var lastImportedStatistic = importedStatisticSets.OrderBy(x => x.LastDate).LastOrDefault();
+            if (lastSeasonStatistic?.Season.SeasonEnd >= lastImportedStatistic?.LastDate)
+            {
+                CurrentChamp = lastSeasonStatistic?.DriverStatistic?.SingleOrDefault(x => x.CurrentSeasonPosition == 1)?.Member;
+            }
+            else
+            {
+                CurrentChamp = lastImportedStatistic?.DriverStatistic?.SingleOrDefault(x => x.CurrentSeasonPosition == 1)?.Member;
+            }
+
+            DriverStatistic.Remove(removeDriverStatisticRows);
         }
 
         /// <summary>

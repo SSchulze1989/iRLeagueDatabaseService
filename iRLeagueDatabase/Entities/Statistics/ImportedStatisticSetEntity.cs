@@ -87,7 +87,11 @@ namespace iRLeagueDatabase.Entities.Statistics
         public override async Task LoadRequiredDataAsync(LeagueDbContext dbContext, bool force = false)
 #pragma warning restore CS1998 // Bei der asynchronen Methode fehlen "await"-Operatoren. Die Methode wird synchron ausgeführt.
         {
-            
+            if (IsDataLoaded && force == false)
+            {
+                return;
+            }
+            await base.LoadRequiredDataAsync(dbContext, force);
         }
     }
 }

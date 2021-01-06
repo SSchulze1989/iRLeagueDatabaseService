@@ -31,12 +31,23 @@ namespace iRLeagueDatabase.Entities.Results
         public long FastestQualyLap { get; set; }
         public virtual LeagueMemberEntity FastestAvgLapDriver { get; set; }
         public long FastestAvgLap { get; set; }
+        public virtual List<LeagueMemberEntity> HardChargers { get; set; }
+        public virtual List<LeagueMemberEntity> CleanestDrivers { get; set; }
+
         [InverseProperty(nameof(ScoredResultRowEntity.ScoredResult))]
         public virtual List<ScoredResultRowEntity> FinalResults { get; set; }
+
+        public ScoredResultEntity()
+        {
+            HardChargers = new List<LeagueMemberEntity>();
+            CleanestDrivers = new List<LeagueMemberEntity>();
+        }
 
         public override void Delete(LeagueDbContext dbContext)
         {
             FinalResults?.ToList().ForEach(x => x.Delete(dbContext));
+            HardChargers.Clear();
+            CleanestDrivers.Clear();
             base.Delete(dbContext);
         }
     }

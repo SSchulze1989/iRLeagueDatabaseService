@@ -30,11 +30,13 @@ namespace iRLeagueDatabase
 
         private static bool AllowMultipleResultSets = true;
 
-        public LeagueDbContext() : this(GetConnectionString("TestDatabase_leagueDb"))
+        private const string defaultDb = "SkippyCup_leagueDb";
+
+        public LeagueDbContext() : this(GetConnectionString(defaultDb))
         {
         }
 
-        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString("TestDatabase_leagueDb"))
+        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString(defaultDb))
         {
             if (createDb)
                 Database.SetInitializer(new CreateDatabaseIfNotExists<LeagueDbContext>());
@@ -134,6 +136,24 @@ namespace iRLeagueDatabase
 
             modelBuilder.Entity<ScoredResultEntity>()
                 .ToTable("ScoredResultEntities");
+            modelBuilder.Entity<ScoredResultEntity>()
+                .HasMany(r => r.HardChargers)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ResultRefId", "ScoringRefId");
+                    rm.MapRightKey("LeagueMemberRefId");
+                    rm.ToTable("ScoredResult_HardChargers");
+                });
+            modelBuilder.Entity<ScoredResultEntity>()
+                .HasMany(r => r.CleanestDrivers)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ResultRefId", "ScoringRefId");
+                    rm.MapRightKey("LeagueMemberRefId");
+                    rm.ToTable("ScoredResult_CleanestDrivers");
+                });
 
             modelBuilder.Entity<ScoredTeamResultRowEntity>()
                 .HasMany(r => r.ScoredResultRows)
@@ -143,16 +163,6 @@ namespace iRLeagueDatabase
                     rm.MapLeftKey("ScoredTeamResultRowRefId");
                     rm.MapRightKey("ScoredResultRowRefId");
                     rm.ToTable("ScoredTeamResultRowsGroup");
-                });
-
-            modelBuilder.Entity<SeasonStatisticSetEntity>()
-                .HasMany(r => r.Scorings)
-                .WithMany()
-                .Map(rm =>
-                {
-                    rm.MapLeftKey("SeasonStatisticSetRefId");
-                    rm.MapRightKey("ScoringRefId");
-                    rm.ToTable("SeasonStatisticSet_Scoring");
                 });
 
             modelBuilder.Entity<LeagueStatisticSetEntity>()

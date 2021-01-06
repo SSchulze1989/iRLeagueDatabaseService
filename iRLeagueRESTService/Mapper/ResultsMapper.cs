@@ -9,6 +9,7 @@ using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using System.Data.Entity;
 using iRLeagueDatabase.Extensions;
+using iRLeagueManager.Timing;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -477,12 +478,16 @@ namespace iRLeagueDatabase.Mapper
 
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
-            MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId });
+            MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId }, autoAddMissing: true, removeFromCollection: true, removeFromDatabase: true);
             MapCollection(source.Reviews, target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.Session = GetSessionBaseEntity(source.Session);
             target.Season = target.Session.Schedule.Season;
             target.RequiresRecalculation = true;
             target.IRSimSessionDetails = MapToSimSessionDetailsEntity(source.SimSessionDetails, target.IRSimSessionDetails);
+            if (target.RawResults?.Count > 0)
+            {
+                target.PoleLaptime = (target.RawResults?.Select(x => x.QualifyingTime).Where(x => x > 0).Min()).GetValueOrDefault();
+            }
 
             return target;
         }

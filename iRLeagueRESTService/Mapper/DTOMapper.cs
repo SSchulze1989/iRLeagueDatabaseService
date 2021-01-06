@@ -134,16 +134,4 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
     }
-    public static class TimeSpanConverter
-    {
-        public static TimeSpan Convert(long source)
-        {
-            return TimeSpan.FromTicks(source);
-        }
-
-        public static long Convert(TimeSpan source)
-        {
-            return source.Ticks;
-        }
-    }
 }

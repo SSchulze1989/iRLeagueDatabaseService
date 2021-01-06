@@ -98,6 +98,7 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int IncidentsWithPenalty { get; set; }
         public int LeadingLaps { get; set; }
         public int CompletedLaps { get; set; }
+        public int CurrentSeasonPosition { get; set; }
         public double DrivenKm { get; set; }
         public double LeadingKm { get; set; }
         public double AvgFinishPosition { get; set; }
@@ -124,6 +125,9 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int WorstStartPosition { get; set; }
         public int FirstRaceStartPosition { get; set; }
         public int LastRaceStartPosition { get; set; }
+        public int Titles { get; set; }
+        public int HardChargerAwards { get; set; }
+        public int CleanestDriverAwards { get; set; }
 
         public override object MappingId => new { StatisticSetId, MemberId };
 
@@ -150,6 +154,7 @@ namespace iRLeagueDatabase.Entities.Statistics
             IncidentsWithPenalty = default;
             LeadingLaps = default;
             CompletedLaps = default;
+            CurrentSeasonPosition = default;
             DrivenKm = default;
             LeadingKm = default;
             AvgFinishPosition = default;
@@ -188,6 +193,9 @@ namespace iRLeagueDatabase.Entities.Statistics
             LastRaceDate = default;
             LastSession = default;
             LastSessionDate = default;
+            Titles = default;
+            HardChargerAwards = default;
+            CleanestDriverAwards = default;
         }
     }
 }

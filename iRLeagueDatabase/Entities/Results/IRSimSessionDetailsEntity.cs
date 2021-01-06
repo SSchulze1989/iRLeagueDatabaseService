@@ -11,7 +11,7 @@ namespace iRLeagueDatabase.Entities.Results
     /// <summary>
     /// Detailed information from iracing JSON result
     /// </summary>
-    public class IRSimSessionDetailsEntity
+    public class IRSimSessionDetailsEntity : MappableEntity
     {
         [Key, ForeignKey(nameof(Result))]
         public long ResultId { get; set; }
@@ -72,5 +72,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int QualifyGripCompund { get; set; }
         public int WarmupGripCompound { get; set; }
         public int RaceGripCompound { get; set; }
+
+        public override object MappingId => ResultId;
     }
 }

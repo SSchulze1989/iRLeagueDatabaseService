@@ -25,6 +25,8 @@ using iRLeagueDatabase.DataTransfer.Statistics;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Statistics;
+using iRLeagueDatabase.Extensions;
+using iRLeagueManager.Timing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,10 +43,11 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<SeasonStatisticSetEntity, StatisticSetDTO>(src => new SeasonStatisticSetDTO(), (src, trg) => MapToSeasonStatisticSetDTO(src, (SeasonStatisticSetDTO)trg), DefaultCompare);
             RegisterTypeMap<LeagueStatisticSetEntity, LeagueStatisticSetDTO>(MapToLeagueStatisticSetDTO);
             RegisterTypeMap<LeagueStatisticSetEntity, StatisticSetDTO>(src => new LeagueStatisticSetDTO(), (src, trg) => MapToLeagueStatisticSetDTO(src, (LeagueStatisticSetDTO)trg), DefaultCompare);
+            RegisterTypeMap<ImportedStatisticSetEntity, ImportedStatisticSetDTO>(MapToImportedStatisticSetDTO);
+            RegisterTypeMap<ImportedStatisticSetEntity, StatisticSetDTO>(src => new ImportedStatisticSetDTO(), (src, trg) => MapToImportedStatisticSetDTO(src, (ImportedStatisticSetDTO)trg), DefaultCompare);
             RegisterTypeMap<StatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
             RegisterTypeMap<SeasonStatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
             RegisterTypeMap<LeagueStatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
-            RegisterTypeMap<ImportedStatisticSetEntity, ImportedStatisticSetDTO>(MapToImportedStatisticSetDTO);
             RegisterTypeMap<ImportedStatisticSetEntity, DriverStatisticDTO>(MapToDriverStatisticDTO);
         }
 
@@ -61,6 +64,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToVersionDTO(source, target);
             target.Id = source.Id;
+            target.Name = source.Name;
             target.UpdateInterval = TimeSpanConverter.Convert(source.UpdateInterval);
             target.UpdateTime = source.UpdateTime.GetValueOrDefault();
 
@@ -80,7 +84,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToStatisticSetDTO(source, target);
 
-            target.ScoringIds = source.Scorings.Select(x => x.ScoringId).ToArray();
+            target.ScoringTableId = source.ScoringTableId;
             target.SeasonId = source.SeasonId;
 
             return target;
@@ -164,11 +168,13 @@ namespace iRLeagueDatabase.Mapper
             target.AvgPointsPerRace = source.AvgPointsPerRace;
             target.AvgSRating = source.AvgSRating;
             target.AvgStartPosition = source.AvgStartPosition;
+            target.RacesCompletedPct = ((double)source.RacesCompleted / source.Races).GetZeroWhenInvalid();
             target.BestFinalPosition = source.BestFinalPosition;
             target.BestFinishPosition = source.BestFinishPosition;
             target.BestStartPosition = source.BestStartPosition;
             target.BonusPoints = source.BonusPoints;
             target.CompletedLaps = source.CompletedLaps;
+            target.CurrentSeasonPosition = source.CurrentSeasonPosition;
             target.DrivenKm = source.DrivenKm;
             target.EndIRating = source.EndIRating;
             target.EndSRating = source.EndSRating;
@@ -215,6 +221,9 @@ namespace iRLeagueDatabase.Mapper
             target.WorstFinalPosition = source.WorstFinalPosition;
             target.WorstFinishPosition = source.WorstFinishPosition;
             target.WorstStartPosition = source.WorstStartPosition;
+            target.Titles = source.Titles;
+            target.HardChargerAwards = source.HardChargerAwards;
+            target.CleanestDriverAwards = source.CleanestDriverAwards;
 
             return target;
         }
@@ -225,7 +234,44 @@ namespace iRLeagueDatabase.Mapper
     {
         public void RegisterStatisticsTypeMaps()
         {
-            RegisterTypeMap<StatisticSetDTO, StatisticSetEntity>((src, trg) => MapToStatisticSetEntity(src, trg));
+            //RegisterTypeMap<StatisticSetDTO, StatisticSetEntity>((src, trg) => MapToStatisticSetEntity(src, trg));
+            RegisterTypeMap<StatisticSetDTO, StatisticSetEntity>(src =>
+            {
+                if (src is SeasonStatisticSetDTO)
+                {
+                    return DefaultGet<SeasonStatisticSetEntity>(src);
+                }
+                else if (src is LeagueStatisticSetDTO)
+                {
+                    return DefaultGet<LeagueStatisticSetEntity>(src);
+                }
+                else if (src is ImportedStatisticSetDTO)
+                {
+                    return DefaultGet<ImportedStatisticSetEntity>(src);
+                }
+                else
+                {
+                    return DefaultGet<StatisticSetEntity>(src);
+                }
+            }, (src, trg) =>
+            {
+                if (src is SeasonStatisticSetDTO seasonStatisticSet)
+                {
+                    return MapToSeasonStatisticSetEntity(seasonStatisticSet, (SeasonStatisticSetEntity)trg);
+                }
+                else if (src is LeagueStatisticSetDTO leagueStatisticSet)
+                {
+                    return MapToLeagueStatisticSetEntity(leagueStatisticSet, (LeagueStatisticSetEntity)trg);
+                }
+                else if (src is ImportedStatisticSetDTO importedStatisticSet)
+                {
+                    return MapToImportedStatisticSetEntity(importedStatisticSet, (ImportedStatisticSetEntity)trg);
+                }
+                else
+                {
+                    return MapToStatisticSetEntity(src, trg);
+                }
+            }, DefaultCompare);
             RegisterTypeMap<SeasonStatisticSetDTO, SeasonStatisticSetEntity>(MapToSeasonStatisticSetEntity);
             RegisterTypeMap<LeagueStatisticSetDTO, LeagueStatisticSetEntity>(MapToLeagueStatisticSetEntity);
             RegisterTypeMap<ImportedStatisticSetDTO, ImportedStatisticSetEntity>(MapToImportedStatisticSetEntity);
@@ -249,7 +295,7 @@ namespace iRLeagueDatabase.Mapper
                 return target;
             }
 
-            target.Id = source.Id;
+            target.Name = source.Name;
             target.UpdateInterval = TimeSpanConverter.Convert(source.UpdateInterval);
             target.UpdateTime = source.UpdateTime;
             target.RequiresRecalculation = true;
@@ -274,8 +320,7 @@ namespace iRLeagueDatabase.Mapper
             }
 
             MapToStatisticSetEntity(source, target, force: true);
-            MapCollection(source.ScoringIds.Select(x => new ScoringInfoDTO() { ScoringId = x }), target.Scorings, DefaultGet<ScoringInfoDTO, ScoringEntity>, x => x.Keys,
-                removeFromCollection: true);
+            target.ScoringTable = DefaultGet<ScoringTableEntity>(new object[] { source.ScoringTableId });
             target.Season = DefaultGet<SeasonEntity>(new object[] { source.SeasonId });
 
             return target;
@@ -298,7 +343,7 @@ namespace iRLeagueDatabase.Mapper
             }
 
             MapToStatisticSetEntity(source, target, force: true);
-            MapCollection(source.SeasonStatisticSetIds.Select(x => new SeasonStatisticSetDTO() { Id = x }), target.StatisticSets, DefaultGet<SeasonStatisticSetDTO, SeasonStatisticSetEntity>, x => x.Keys,
+            MapCollection(source.SeasonStatisticSetIds.Select(x => new StatisticSetDTO() { Id = x }), target.StatisticSets, DefaultGet<StatisticSetDTO, StatisticSetEntity>, x => x.Keys,
                 removeFromCollection: true);
 
             return target;
@@ -376,6 +421,7 @@ namespace iRLeagueDatabase.Mapper
             target.BestStartPosition = source.BestStartPosition;
             target.BonusPoints = source.BonusPoints;
             target.CompletedLaps = source.CompletedLaps;
+            target.CurrentSeasonPosition = source.CurrentSeasonPosition;
             target.DrivenKm = source.DrivenKm;
             target.EndIRating = source.EndIRating;
             target.EndSRating = source.EndSRating;
@@ -422,6 +468,9 @@ namespace iRLeagueDatabase.Mapper
             target.WorstFinalPosition = source.WorstFinalPosition;
             target.WorstFinishPosition = source.WorstFinishPosition;
             target.WorstStartPosition = source.WorstStartPosition;
+            target.Titles = source.Titles;
+            target.HardChargerAwards = source.HardChargerAwards;
+            target.CleanestDriverAwards = source.CleanestDriverAwards;
 
             return target;
         }

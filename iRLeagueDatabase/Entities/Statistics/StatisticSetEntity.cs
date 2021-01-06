@@ -1,8 +1,11 @@
 ﻿using iRLeagueDatabase.Entities.Members;
+using iRLeagueDatabase.Entities.Results;
+using iRLeagueDatabase.Entities.Sessions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +22,8 @@ namespace iRLeagueDatabase.Entities.Statistics
         [Key]
         public long Id { get; set; }
 
+        public string Name { get; set; }
+
         /// <summary>
         /// List of <see cref="DriverStatisticRowEntity"/> holding the calculated statistic data for each driver that had an appearance in the related data.
         /// <para>Can be empty if the implemented statistic set does not have any driver statistics.</para>
@@ -29,12 +34,12 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// <summary>
         /// Time between two database updates for the statistics set
         /// </summary>
-        public long UpdateInterval;
+        public long UpdateInterval { get; set; }
         /// <summary>
         /// DateTime for the first/next update of the statistic set. 
         /// <para>The next update can be calculated from: <see cref="UpdateTime"/> + x * <see cref="UpdateInterval"/>.</para>
         /// </summary>
-        public DateTime? UpdateTime;
+        public DateTime? UpdateTime { get; set; }
 
         /// <summary>
         /// If true, statistics will be recalculated at the next update time. If false, calculation will be skipped.
@@ -67,6 +72,28 @@ namespace iRLeagueDatabase.Entities.Statistics
                 await dbContext.Entry(this)
                     .Collection(x => x.DriverStatistic)
                     .LoadAsync();
+
+                var memberIds = DriverStatistic.Select(x => x.MemberId);
+                var sessionIds = DriverStatistic
+                    .SelectMany(x => new long?[] { x.FirstSessionId, x.LastSessionId, x.FirstRaceId, x.LastRaceId })
+                    .Where(x => x != null)
+                    .Select(x => x.Value);
+                var resultRowIds = DriverStatistic
+                    .SelectMany(x => new long?[] { x.FirstResultRowId, x.LastResultRowId })
+                    .Where(x => x != null)
+                    .Select(x => x.Value);
+
+                await dbContext.Set<LeagueMemberEntity>()
+                    .Where(x => memberIds.Contains(x.MemberId))
+                    .LoadAsync();
+                await dbContext.Set<SessionBaseEntity>()
+                    .Where(x => sessionIds.Contains(x.SessionId))
+                    .LoadAsync();
+                await dbContext.Set<ResultRowEntity>()
+                    .Where(x => resultRowIds.Contains(x.ResultRowId))
+                    .LoadAsync();
+
+                dbContext.ChangeTracker.DetectChanges();
             }
         }
         /// <summary>
