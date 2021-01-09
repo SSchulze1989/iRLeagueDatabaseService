@@ -124,6 +124,8 @@ namespace iRLeagueDatabase.Mapper
             target.Vote = source.Vote;
             target.MemberAtFault = MapToMemberInfoDTO(source.MemberAtFault);
             target.VoteCategoryId = source.CustomVoteCatId;
+            target.CatText = source.CustomVoteCat?.Text;
+            target.CatPenalty = source.CustomVoteCat?.DefaultPenalty ?? 0;
 
             return target;
         }
