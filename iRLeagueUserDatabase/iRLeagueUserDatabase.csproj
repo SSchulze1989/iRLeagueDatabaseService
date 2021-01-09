@@ -76,6 +76,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Communication\Communication.csproj">
+      <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
+      <Name>Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
       <Name>iRLeagueDatabase</Name>

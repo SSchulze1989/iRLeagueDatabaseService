@@ -419,7 +419,7 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\iRLeagueManager\Communication\Communication.csproj">
+    <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
       <Name>Communication</Name>
     </ProjectReference>
