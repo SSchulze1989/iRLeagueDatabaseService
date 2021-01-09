@@ -599,6 +599,7 @@
           <Property Name="ColumnPropertyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Comparator" Type="Self.ComparatorTypeEnum" Nullable="false" />
           <Property Name="Exclude" Type="Boolean" Nullable="false" />
+          <Property Name="FilterPointsOnly" Type="Boolean" Nullable="false" />
           <Property Name="FilterValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
@@ -2070,6 +2071,7 @@
                 <ScalarProperty Name="ColumnPropertyName" ColumnName="ColumnPropertyName" />
                 <ScalarProperty Name="Comparator" ColumnName="Comparator" />
                 <ScalarProperty Name="Exclude" ColumnName="Exclude" />
+                <ScalarProperty Name="FilterPointsOnly" ColumnName="FilterPointsOnly" />
                 <ScalarProperty Name="FilterValues" ColumnName="FilterValues" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
@@ -2744,6 +2746,7 @@
           <Property Name="ColumnPropertyName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Comparator" Type="int" Nullable="false" />
           <Property Name="Exclude" Type="bit" Nullable="false" />
+          <Property Name="FilterPointsOnly" Type="bit" Nullable="false" />
           <Property Name="FilterValues" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />

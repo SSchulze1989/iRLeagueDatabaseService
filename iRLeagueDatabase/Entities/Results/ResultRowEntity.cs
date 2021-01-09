@@ -14,7 +14,7 @@ using iRLeagueDatabase.Entities.Members;
 namespace iRLeagueDatabase.Entities.Results
 {
     [Serializable]
-    public class ResultRowEntity : MappableEntity
+    public class ResultRowEntity : MappableEntity, IResultRow
     {
         [Key, Column(Order = 0), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ResultRowId { get; set; }

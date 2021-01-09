@@ -33,10 +33,10 @@ namespace iRLeagueDatabase.Filters
             return filter;
         }
 
-        public static IResultsFilter GetFilter(string filterTypeName, string columnPropertyName, bool exclude, ComparatorTypeEnum comparator)
+        public static IResultsFilter GetFilter(string filterTypeName, string columnPropertyName, bool exclude, bool onlyPoints, ComparatorTypeEnum comparator)
         {
             var filter = GetFilter(filterTypeName);
-            filter.SetFilterOptions(columnPropertyName, comparator, exclude);
+            filter.SetFilterOptions(columnPropertyName, comparator, exclude, onlyPoints);
             return filter;
         }
 

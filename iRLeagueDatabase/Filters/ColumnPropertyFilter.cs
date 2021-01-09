@@ -15,11 +15,12 @@ namespace iRLeagueDatabase.Filters
         public ComparatorTypeEnum Comparator { get; set; }
         public List<string> FilterValues { get; set; } = new List<string>();
         public bool Exclude { get; set; }
+        public bool FilterPointsOnly { get; set; }
 
-        public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows)
+        public IEnumerable<T> GetFilteredRows<T>(IEnumerable<T> resultRows) where T : IResultRow
         {
             // get property by columnPropertyName
-            var nestedColumnProperty = typeof(ResultRowEntity).GetNestedPropertyInfo(ColumnPropertyName);
+            var nestedColumnProperty = typeof(IResultRow).GetNestedPropertyInfo(ColumnPropertyName);
             if (nestedColumnProperty == null)
             {
                 throw new InvalidFilterValueException($"Column property witht the name {ColumnPropertyName} not found");
@@ -80,11 +81,12 @@ namespace iRLeagueDatabase.Filters
             return FilterValues;
         }
 
-        public void SetFilterOptions(string columnPropertyName, ComparatorTypeEnum comparator, bool exclude)
+        public void SetFilterOptions(string columnPropertyName, ComparatorTypeEnum comparator, bool exclude, bool onlyPoints)
         {
             ColumnPropertyName = columnPropertyName;
             Comparator = comparator;
             Exclude = exclude;
+            FilterPointsOnly = onlyPoints;
         }
 
         public void SetFilterValueStrings(params string[] filterValues)

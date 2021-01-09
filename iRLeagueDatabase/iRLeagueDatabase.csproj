@@ -57,6 +57,7 @@
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
     <Compile Include="Entities\Filters\FilterValueBaseEntity.cs" />
     <Compile Include="Entities\Filters\IntFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\IResultRow.cs" />
     <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
     <Compile Include="Entities\Filters\MemberFilterValueEntity.cs" />
     <Compile Include="Entities\Filters\ResultsFilterOptionEntity.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Filters\FilterTypeEnum.cs" />
     <Compile Include="Filters\InvalidFilterValueException.cs" />
     <Compile Include="Filters\IResultsFilter.cs" />
+    <Compile Include="Filters\IResultsFilterRow.cs" />
     <Compile Include="Filters\MemberListFilter.cs" />
     <Compile Include="Filters\SeasonStartIRatingFilter.cs" />
     <Compile Include="LeagueDbConfiguration.cs" />
@@ -143,6 +145,10 @@
     <Compile Include="Migrations\202012291901576_AddStatistics.designer.cs">
       <DependentUpon>202012291901576_AddStatistics.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101082034374_AddFilterPointsOnlyOption.cs" />
+    <Compile Include="Migrations\202101082034374_AddFilterPointsOnlyOption.designer.cs">
+      <DependentUpon>202101082034374_AddFilterPointsOnlyOption.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -177,6 +183,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012291901576_AddStatistics.resx">
       <DependentUpon>202012291901576_AddStatistics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101082034374_AddFilterPointsOnlyOption.resx">
+      <DependentUpon>202101082034374_AddFilterPointsOnlyOption.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
