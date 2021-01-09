@@ -53,6 +53,7 @@ namespace iRLeagueDatabase.Mapper
             target.ResultsFilterType = source.ResultsFilterType;
             target.Exclude = source.Exclude;
             target.ScoringId = source.ScoringId;
+            target.FilterPointsOnly = source.FilterPointsOnly;
 
             return target;
         }
@@ -149,6 +150,7 @@ namespace iRLeagueDatabase.Mapper
                 target.Scoring = DefaultGet<ScoringEntity>(new object[] { source.ScoringId });
             }
             target.Scoring?.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
+            target.FilterPointsOnly = source.FilterPointsOnly;
 
             return target;
         }

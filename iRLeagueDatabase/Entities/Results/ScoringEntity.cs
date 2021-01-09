@@ -18,6 +18,7 @@ using iRLeagueDatabase.Entities.Filters;
 using iRLeagueDatabase.Filters;
 using System.Runtime.CompilerServices;
 using iRLeagueManager.Timing;
+using iRLeagueDatabase.Extensions;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -405,7 +406,7 @@ namespace iRLeagueDatabase.Entities.Results
             List<IResultsFilter> resultsFilters = new List<IResultsFilter>();
             foreach(var filterOption in ResultsFilterOptions)
             {
-                var filter = FilterFactoryHelper.GetFilter(filterOption.ResultsFilterType, filterOption.ColumnPropertyName, filterOption.Exclude, filterOption.Comparator);
+                var filter = FilterFactoryHelper.GetFilter(filterOption.ResultsFilterType, filterOption.ColumnPropertyName, filterOption.Exclude, filterOption.FilterPointsOnly, filterOption.Comparator);
                 filter.SetFilterValueStrings(filterOption.FilterValues.Split(';'));
                 resultsFilters.Add(filter);
             }
@@ -431,11 +432,19 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 IEnumerable<ResultRowEntity> resultRows = session.SessionResult.RawResults;
 
-                // Apply filters
-                foreach(var filter in resultsFilters)
+                // Recaclulate completed pct
+                var maxLaps = resultRows.Max(x => x.CompletedLaps);
+                if (maxLaps > 0)
                 {
-                    resultRows = filter.GetFilteredRows(resultRows).OrderBy(x => x.FinishPosition);
+                    resultRows.ForEach(x => x.CompletedPct = (double)x.CompletedLaps / maxLaps);
                 }
+
+                // Apply filters
+                foreach(var filter in resultsFilters.Where(x => x.FilterPointsOnly == false))
+                {
+                    resultRows = filter.GetFilteredRows(resultRows);
+                }
+                resultRows = resultRows.OrderBy(x => x.FinishPosition);
 
                 IDictionary<int, int> basePoints = new Dictionary<int, int>();
                 if (BasePoints != "" && BasePoints != null)
@@ -500,9 +509,25 @@ namespace iRLeagueDatabase.Entities.Results
                         removePenalty.ForEach(x => x.Delete(dbContext));
                         //dbContext.SaveChanges();
                     }
+                    scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
+                    scoredResultRow.RacePoints = 0;
+                    scoredResultRow.BonusPoints = 0;
+                    scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
+                }
+
+                IEnumerable<ScoredResultRowEntity> pointScoringRows = scoredResultRows.ToArray();
+                foreach(var filter in resultsFilters.Where(x => x.FilterPointsOnly))
+                {
+                    pointScoringRows = filter.GetFilteredRows(pointScoringRows);
+                }
+                pointScoringRows = pointScoringRows.OrderBy(x => x.FinishPosition);
+
+                foreach (var scoredResultRowObj in pointScoringRows.Select((row, index) => new { index, row }))
+                {
+                    var scoredResultRow = scoredResultRowObj.row;
+                    var position = scoredResultRowObj.index + 1;
                     scoredResultRow.RacePoints = basePoints.ContainsKey(position) ? basePoints[position] : 0;
                     scoredResultRow.BonusPoints = bonusPoints.ContainsKey(position) ? bonusPoints[position] : 0;
-                    scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 

@@ -52,10 +52,9 @@ namespace iRLeagueRESTService
                 // set common log path for application
                 log4net.GlobalContext.Properties["LogPath"] = "C:\\Logging";
                 log4net.Config.XmlConfigurator.Configure(new FileInfo(file));
-
             }
             else
-                throw new FileNotFoundException(file);
+                return;
         }
     }
 }

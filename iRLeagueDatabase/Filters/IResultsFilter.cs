@@ -11,9 +11,10 @@ namespace iRLeagueDatabase.Filters
 {
     public interface IResultsFilter : IResultsFilterDescription
     {
-        void SetFilterOptions(string ColumnPropertyName, ComparatorTypeEnum comparator, bool exclude);
+        void SetFilterOptions(string ColumnPropertyName, ComparatorTypeEnum comparator, bool exclude, bool filterPointsOnly);
         IEnumerable<string> GetFilterValues();
         void SetFilterValueStrings(params string[] filterValues);
-        IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows);
+        bool FilterPointsOnly { get; set; }
+        IEnumerable<T> GetFilteredRows<T>(IEnumerable<T> resultRows) where T : IResultRow;
     }
 }
