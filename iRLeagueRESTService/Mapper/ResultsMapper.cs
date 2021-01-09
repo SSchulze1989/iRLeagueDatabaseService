@@ -33,6 +33,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ScoredTeamResultEntity, ScoredResultDataDTO>(src => new ScoredTeamResultDataDTO(), (src, trg) => MapToScoredTeamResultDataDTO(src, trg as ScoredTeamResultDataDTO), DefaultCompare);
             RegisterTypeMap<TeamStandingsEntity, TeamStandingsDataDTO>(MapToTeamStandingsDTO);
             RegisterTypeMap<TeamStandingsEntity, StandingsDataDTO>(src => new TeamStandingsDataDTO(), (src, trg) => MapToTeamStandingsDTO(src, trg as TeamStandingsDataDTO), DefaultCompare);
+            RegisterTypeMap<IRSimSessionDetailsEntity, SimSessionDetailsDTO>(MapToSimSessionDetailsDTO);
         }
 
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
@@ -379,6 +380,7 @@ namespace iRLeagueDatabase.Mapper
                 target = new SimSessionDetailsDTO();
             }
 
+            target.ResultId = source.ResultId;
             target.IRSubsessionId = source.IRSubsessionId;
             target.IRTrackId = source.IRTrackId;
             target.IRSeasonName = source.IRSeasonName;
