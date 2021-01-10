@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -35,16 +36,44 @@ namespace iRLeagueDatabase.DataTransfer
     {
         public List<PropertyInfo> serializableProperties { get; set; }
 
-        public void SetSerializableProperties(string fields)
+        public void SetSerializableProperties(string[] fields)
         {
-            if (!string.IsNullOrEmpty(fields))
+            serializableProperties = new List<PropertyInfo>();
+            if (fields != null && fields.Count() > 0)
             {
-                var returnFields = fields.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var fieldGrouping = fields
+                    .Select(x => x.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries))
+                    .Where(x => x.Count() > 0)
+                    .GroupBy(x => x[0], x => string.Join(".", x.Skip(1)));
                 var type = this.GetType();
-                serializableProperties = returnFields.Select(x => type.GetProperty(x)).Where(x => x != null).ToList();
+
+                foreach(var field in fieldGrouping)
+                {
+                    var key = field.Key;
+                    var property = type.GetProperty(key);
+                    if (property != null)
+                    {
+                        var obj = property.GetValue(this);
+                        if (obj is IEnumerable enumerable )
+                        {
+                            var array = enumerable.OfType<object>();
+                            foreach(var arrObj in array)
+                            {
+                                if (arrObj is BaseDTO dto)
+                                {
+                                    dto.SetSerializableProperties(field.ToArray());
+                                }
+                            }
+                        }
+                        else if (obj is BaseDTO dto)
+                        {
+                            dto.SetSerializableProperties(field.ToArray());
+                        }
+                        serializableProperties.Add(property);
+                    }
+                }
                 return;
             }
-            serializableProperties = new List<PropertyInfo>();
         }
     }
 }

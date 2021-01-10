@@ -52,9 +52,9 @@ namespace iRLeagueDatabase.Mapper
             target.IncidentKind = source.IncidentKind;
             target.FullDescription = source.FullDescription;
             target.AuthorName = source.AuthorName;
-            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToList();
+            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToArray();
             target.Corner = source.Corner;
-            target.InvolvedMembers = source.InvolvedMembers?.Select(x => MapToMemberInfoDTO(x)).ToList();
+            target.InvolvedMembers = source.InvolvedMembers?.Select(x => MapToMemberInfoDTO(x)).ToArray();
             target.OnLap = source.OnLap;
             target.ReviewId = source.ReviewId;
             target.Session = MapToSessionInfoDTO(source.Session);

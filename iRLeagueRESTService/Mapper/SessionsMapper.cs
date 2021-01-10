@@ -123,7 +123,7 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Name = source.Name;
-            target.Sessions = source.Sessions.Select(MapTo<SessionDataDTO>).ToList();
+            target.Sessions = source.Sessions.Select(MapTo<SessionDataDTO>).ToArray();
 
             return target;
         }

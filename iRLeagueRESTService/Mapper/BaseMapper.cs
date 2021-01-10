@@ -70,11 +70,11 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Finished = source.Finished;
-            target.Results = source.Results?.Select(x => MapToResultInfoDTO(x)).ToList();
-            target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y));
-            target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToList();
-            target.Scorings = source.Scorings?.Select(x => MapToScoringDataDTO(x)).ToList();
-            target.ScoringTables = source.ScoringTables?.Select(x => MapToScoringTableDataDTO(x)).ToList();
+            target.Results = source.Results?.Select(x => MapToResultInfoDTO(x)).ToArray();
+            target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y)).ToArray();
+            target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToArray();
+            target.Scorings = source.Scorings?.Select(x => MapToScoringDataDTO(x)).ToArray();
+            target.ScoringTables = source.ScoringTables?.Select(x => MapToScoringTableDataDTO(x)).ToArray();
             target.SeasonEnd = source.SeasonEnd.GetValueOrDefault();
             target.SeasonId = source.SeasonId;
             target.SeasonName = source.SeasonName;

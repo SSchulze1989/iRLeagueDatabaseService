@@ -138,13 +138,66 @@ namespace iRLeagueRESTService.Controllers
         }
 
         [HttpGet]
+        [ActionName("Get")]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult GetModel(string requestId, string requestType, string leagueName, string fields)
+        {
+            try
+            {
+                logger.Info($"Get Model Fields request || type: {requestType} - league: {leagueName} - id: [{requestId}] - fields: {fields}");
+                CheckLeagueRole(User, leagueName);
+
+                if (requestId == null || requestType == null || leagueName == null)
+                {
+                    return BadRequest("Parameter requestType or leagueName can not be null!");
+                }
+
+                string[] fieldValues = new string[0];
+                try
+                {
+                    fieldValues = fields?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? fieldValues;
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException("Invalid field names", e);
+                }
+
+                long[] requestIdValue = GetIdFromString(requestId);
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                MappableDTO data;
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                {
+                    data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                }
+                //GC.Collect();
+
+                data.SetSerializableProperties(fieldValues);
+
+                var response = SelectFieldsHelper.GetSelectedFieldObject(data);
+
+                logger.Info($"Get Model Fields request || send data: {data} - fields: {string.Join(",", fieldValues)}");
+
+                return Json(response);
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error in GetModel Fields", e);
+                throw;
+            }
+        }
+
+        [HttpGet]
         [ActionName("GetArray")]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetModelsSelectFields([FromUri] string[] requestIds, string requestType, string leagueName, string fields)
         {
             try
             {
-                logger.Info($"Get Models Fields request || type: {requestType} - league: {leagueName} - fields: {fields} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))}");
+                logger.Info($"Get Models Fields request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))} - fields: {fields}");
 
                 CheckLeagueRole(User, leagueName);
 
@@ -156,7 +209,7 @@ namespace iRLeagueRESTService.Controllers
                 string[] fieldValues = new string[0];
                 try
                 {
-                    fieldValues = fields?.Split(',') ?? fieldValues;
+                    fieldValues = fields?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? fieldValues;
                 }
                 catch(Exception e)
                 {
@@ -189,17 +242,17 @@ namespace iRLeagueRESTService.Controllers
                 }
                 //GC.Collect();
 
-                data.ForEach(x => x.SetSerializableProperties(fields));
+                data.ForEach(x => x.SetSerializableProperties(fieldValues));
 
                 var response = data.Select(x => SelectFieldsHelper.GetSelectedFieldObject(x));
 
-                logger.Info($"Get Models request || send data: {string.Join("/", (object[])data)} - fields: {string.Join(",", fieldValues)}");
+                logger.Info($"Get Models Fields request || send data: {string.Join("/", (object[])data)} - fields: {string.Join(",", fieldValues)}");
 
                 return Json(response);
             }
             catch (Exception e)
             {
-                logger.Error("Error in GetModels", e);
+                logger.Error("Error in GetModels Fields", e);
                 throw;
             }
         }

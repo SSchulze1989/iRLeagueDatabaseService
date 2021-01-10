@@ -48,19 +48,19 @@ namespace iRLeagueDatabase.DataTransfer
         public bool Finished { get; set; }
 
         [DataMember]
-        public IEnumerable<ScheduleInfoDTO> Schedules { get; set; }
+        public ScheduleInfoDTO[] Schedules { get; set; }
 
         [DataMember]
-        public ICollection<ScoringDataDTO> Scorings { get; set; }
+        public ScoringDataDTO[] Scorings { get; set; }
 
         [DataMember]
-        public ICollection<ScoringTableDataDTO> ScoringTables { get; set; }
+        public ScoringTableDataDTO[] ScoringTables { get; set; }
 
         [DataMember]
-        public IEnumerable<IncidentReviewInfoDTO> Reviews { get; set; }
+        public IncidentReviewInfoDTO[] Reviews { get; set; }
 
         [DataMember]
-        public IEnumerable<ResultInfoDTO> Results { get; set; }
+        public ResultInfoDTO[] Results { get; set; }
 
         [DataMember]
         public long[] SeasonStatisticSetIds { get; set; }
