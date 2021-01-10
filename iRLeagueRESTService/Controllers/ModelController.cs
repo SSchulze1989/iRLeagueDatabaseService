@@ -36,6 +36,10 @@ using iRLeagueRESTService.Filters;
 using System.Security.Principal;
 using System.Net;
 using log4net;
+using System.Dynamic;
+using System.Reflection;
+using iRLeagueDatabase.Extensions;
+using System.Net.PeerToPeer.Collaboration;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -123,6 +127,116 @@ namespace iRLeagueRESTService.Controllers
                 logger.Info($"Get Models request || send data: {string.Join("/", (object[])data)}");
 
                 return Ok(data);
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error in GetModels", e);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("GetArray")]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult GetModelsSelectFields([FromUri] string[] requestIds, string requestType, string leagueName, string fields)
+        {
+            try
+            {
+                logger.Info($"Get Models Fields request || type: {requestType} - league: {leagueName} - fields: {fields} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))}");
+
+                CheckLeagueRole(User, leagueName);
+
+                if (requestType == null || leagueName == null)
+                {
+                    return BadRequest("Parameter requestType or leagueName can not be null!");
+                }
+
+                string[] fieldValues = new string[0];
+                try
+                {
+                    fieldValues = fields?.Split(',') ?? fieldValues;
+                }
+                catch(Exception e)
+                {
+                    throw new ArgumentException("Invalid field names", e);
+                }
+
+                long[][] requestIdValues;
+                if (requestIds != null && requestIds.Count() > 0)
+                {
+                    requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+                }
+                else
+                {
+                    requestIdValues = null;
+                }
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                if (requestTypeType == null)
+                {
+                    throw new InvalidOperationException($"Requested type {requestType} not found");
+                }
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                MappableDTO[] data;
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                {
+                    data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                }
+                //GC.Collect();
+
+                dynamic response = data;
+
+                if (fieldValues.Count() > 0)
+                {
+                    response = new List<dynamic>();
+                    // get properties with reflection
+                    List<PropertyInfo> properties = new List<PropertyInfo>();
+                    foreach(var fieldValue in fieldValues)
+                    {
+                        var property = requestTypeType.GetNestedPropertyInfo(fieldValue);
+                        if (property != null && property.CanRead)
+                        {
+                            properties.Add(property);
+                        }
+                    }
+
+                    //properties = NestedPropertyHelper.OrderNestedProperties(properties).ToList();
+
+                    for(int i = 0; i<data.Count(); i++)
+                    {
+                        var origin = data[i];
+                        var item = new ExpandoObject() as IDictionary<string, object>;
+                        item.Add(nameof(origin.MappingId),origin.MappingId);
+                        foreach(var property in properties)
+                        {
+                            if (property is NestedPropertyInfo nestedProperty)
+                            {
+                                // get parent item and make it an ExpandoObject if it is not yet one
+                                var parent = item[nestedProperty.ParentProperty.Name] as IDictionary<string, object>;
+                                if (parent is ExpandoObject == false)
+                                {
+                                    item.Remove(nestedProperty.ParentProperty.Name);
+                                    parent = new ExpandoObject();
+                                    item.Add(nestedProperty.ParentProperty.Name, parent);
+                                }
+                                var nestedValue = nestedProperty.Property.GetValue(parent);
+                                parent.Add(nestedProperty.Property.Name, nestedValue);
+                            }
+                            else
+                            {
+                                item.Add(property.Name, property.GetValue(origin));
+                            }
+                        }
+                        response.Add(item);
+                    }
+                }
+
+                logger.Info($"Get Models request || send data: {string.Join("/", (object[])data)} - fields: {string.Join(",", fieldValues)}");
+
+                return Json(response);
             }
             catch (Exception e)
             {
