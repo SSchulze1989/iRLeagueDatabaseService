@@ -40,6 +40,8 @@ using System.Dynamic;
 using System.Reflection;
 using iRLeagueDatabase.Extensions;
 using System.Net.PeerToPeer.Collaboration;
+using System.Web.Http.Results;
+using Newtonsoft.Json;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -148,7 +150,7 @@ namespace iRLeagueRESTService.Controllers
 
                 if (requestType == null || leagueName == null)
                 {
-                    return BadRequest("Parameter requestType or leagueName can not be null!");
+                    //return BadRequest("Parameter requestType or leagueName can not be null!");
                 }
 
                 string[] fieldValues = new string[0];
@@ -187,52 +189,9 @@ namespace iRLeagueRESTService.Controllers
                 }
                 //GC.Collect();
 
-                dynamic response = data;
+                data.ForEach(x => x.SetSerializableProperties(fields));
 
-                if (fieldValues.Count() > 0)
-                {
-                    response = new List<dynamic>();
-                    // get properties with reflection
-                    List<PropertyInfo> properties = new List<PropertyInfo>();
-                    foreach(var fieldValue in fieldValues)
-                    {
-                        var property = requestTypeType.GetNestedPropertyInfo(fieldValue);
-                        if (property != null && property.CanRead)
-                        {
-                            properties.Add(property);
-                        }
-                    }
-
-                    //properties = NestedPropertyHelper.OrderNestedProperties(properties).ToList();
-
-                    for(int i = 0; i<data.Count(); i++)
-                    {
-                        var origin = data[i];
-                        var item = new ExpandoObject() as IDictionary<string, object>;
-                        item.Add(nameof(origin.MappingId),origin.MappingId);
-                        foreach(var property in properties)
-                        {
-                            if (property is NestedPropertyInfo nestedProperty)
-                            {
-                                // get parent item and make it an ExpandoObject if it is not yet one
-                                var parent = item[nestedProperty.ParentProperty.Name] as IDictionary<string, object>;
-                                if (parent is ExpandoObject == false)
-                                {
-                                    item.Remove(nestedProperty.ParentProperty.Name);
-                                    parent = new ExpandoObject();
-                                    item.Add(nestedProperty.ParentProperty.Name, parent);
-                                }
-                                var nestedValue = nestedProperty.Property.GetValue(parent);
-                                parent.Add(nestedProperty.Property.Name, nestedValue);
-                            }
-                            else
-                            {
-                                item.Add(property.Name, property.GetValue(origin));
-                            }
-                        }
-                        response.Add(item);
-                    }
-                }
+                var response = data.Select(x => SelectFieldsHelper.GetSelectedFieldObject(x));
 
                 logger.Info($"Get Models request || send data: {string.Join("/", (object[])data)} - fields: {string.Join(",", fieldValues)}");
 
