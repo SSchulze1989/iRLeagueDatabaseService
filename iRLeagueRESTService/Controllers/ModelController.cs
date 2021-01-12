@@ -78,7 +78,7 @@ namespace iRLeagueRESTService.Controllers
                 }
                 //GC.Collect();
 
-                logger.Info($"Get Model request || send data: {data.ToString()}");
+                logger.Info($"Get Model request || send data: {data?.ToString()}");
 
                 return Ok(data);
             }

@@ -60,9 +60,9 @@ namespace iRLeagueDatabase.Mapper
             MapToResultInfoDTO(source, target);
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
-            target.RawResults = source.RawResults.Select(x => MapToResultRowDataDTO(x)).ToList();
+            target.RawResults = source.RawResults.Select(x => MapToResultRowDataDTO(x)).ToArray();
             target.ResultId = source.ResultId;
-            target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x));
+            target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x)).ToArray();
             target.Season = MapToSeasonInfoDTO(source.Session.Schedule.Season);
             target.Session = MapToSessionInfoDTO(source.Session);
             target.SimSessionDetails = MapToSimSessionDetailsDTO(source.IRSimSessionDetails);
@@ -123,7 +123,7 @@ namespace iRLeagueDatabase.Mapper
             MapToResultInfoDTO(source.Result, target);
             target.Scoring = MapToScoringInfoDTO(source.Scoring);
             target.ScoringName = source.Scoring.Name;
-            target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
+            target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToArray();
 
             return target;
         }
