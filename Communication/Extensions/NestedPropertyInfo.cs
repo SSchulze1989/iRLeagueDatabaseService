@@ -106,13 +106,22 @@ namespace iRLeagueDatabase.Extensions
             {
                 throw new ArgumentNullException("Could not set nested property value: Parent object was null");
             }
-            Property.SetValue(ParentProperty.GetValue(obj, invokeAttr, binder, index, culture), value, invokeAttr, binder, index, culture);
+            Property.SetValue(parentObject, value, invokeAttr, binder, index, culture);
         }
 
         public NestedPropertyInfo(PropertyInfo property, PropertyInfo parentProperty)
         {
             Property = property;
             ParentProperty = parentProperty;
+        }
+
+        public IEnumerable<PropertyInfo> GetPropertyTree()
+        {
+            if (ParentProperty is NestedPropertyInfo nestedParentProperty)
+            {
+                return nestedParentProperty.GetPropertyTree().Concat(new PropertyInfo[] { this });
+            }
+            return new PropertyInfo[] { ParentProperty, Property };
         }
 
         public override string ToString()

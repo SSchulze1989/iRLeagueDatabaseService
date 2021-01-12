@@ -42,13 +42,15 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         //[DataMember]
         //public SeasonInfoDTO Season { get; set; }
         [DataMember]
-        public ICollection<SessionDataDTO> Sessions { get; set; } = new List<SessionDataDTO>();
+        public SessionDataDTO[] Sessions { get; set; }
 
         [DataMember]
         public LeagueMemberInfoDTO CreatedBy { get; set; }
         [DataMember]
         public LeagueMemberInfoDTO LastModifiedBy { get; set; }
 
-        public ScheduleDataDTO() { }
+        public ScheduleDataDTO() 
+        {
+        }
     }
 }

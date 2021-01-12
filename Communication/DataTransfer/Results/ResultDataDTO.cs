@@ -51,9 +51,9 @@ namespace iRLeagueDatabase.DataTransfer.Results
 
 
         [DataMember]
-        public IEnumerable<ResultRowDataDTO> RawResults { get; set; }
+        public ResultRowDataDTO[] RawResults { get; set; }
         [DataMember]
-        public IEnumerable<IncidentReviewInfoDTO> Reviews { get; set; }
+        public IncidentReviewInfoDTO[] Reviews { get; set; }
 
         [DataMember]
         public LeagueMemberInfoDTO CreatedBy { get; set; }
