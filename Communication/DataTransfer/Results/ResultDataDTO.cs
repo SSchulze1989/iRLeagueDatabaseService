@@ -42,7 +42,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public override Type Type => typeof(ResultDataDTO);
 
         [DataMember]
-        public SeasonInfoDTO Season { get; set; }
+        //public SeasonInfoDTO Season { get; set; }
+        public long SeasonId { get; set; }
 
         // Detailed information from iracing JSON result
         // Session details
@@ -53,12 +54,13 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public ResultRowDataDTO[] RawResults { get; set; }
         [DataMember]
-        public IncidentReviewInfoDTO[] Reviews { get; set; }
+        //public IncidentReviewInfoDTO[] Reviews { get; set; }
+        public long[] ReviewIds { get; set; }
 
-        [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
-        [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO CreatedBy { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO LastModifiedBy { get; set; }
 
         #region Version Info
         [DataMember]

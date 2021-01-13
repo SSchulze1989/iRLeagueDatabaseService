@@ -47,7 +47,8 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         //[DataMember]
         //public LeagueMemberDTO Author { get; set; }
         [DataMember]
-        public SessionInfoDTO Session { get; set; }
+        //public SessionInfoDTO Session { get; set; }
+        public long SessionId { get; set; }
         [DataMember]
         public string IncidentNr { get; set; }
         [DataMember]
@@ -63,7 +64,7 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         [DataMember]
         public TimeSpan TimeStamp { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO[] InvolvedMembers { get; set; }
+        public long[] InvolvedMemberIds { get; set; }
         [DataMember]
         public ReviewCommentDataDTO[] Comments { get; set; }
         [DataMember]

@@ -35,7 +35,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         //[DataMember]
         //public long? ScoredResultId { get; set; }
         [DataMember]
-        public ScoringInfoDTO Scoring { get; set; }
+        //public ScoringInfoDTO Scoring { get; set; }
+        public long ScoringId { get; set; }
 
         [DataMember]
         public string ScoringName { get; set; }

@@ -36,9 +36,10 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class StandingsRowDataDTO : MappableDTO
     {
         [DataMember]
-        public ScoringInfoDTO Scoring { get; set; }
-        public override object MappingId => new long[] { Scoring.ScoringId.GetValueOrDefault(), Member.MemberId.GetValueOrDefault() };
-        public override object[] Keys => new object[] { Scoring.ScoringId.GetValueOrDefault(), Member.MemberId.GetValueOrDefault() };
+        //public ScoringInfoDTO Scoring { get; set; }
+        public long ScoringId { get; set; }
+        public override object MappingId => new long[] { ScoringId, MemberId };
+        public override object[] Keys => new object[] { ScoringId, MemberId };
         [DataMember]
         public int Position { get; set; }
         [DataMember]
@@ -46,7 +47,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         //[ForeignKey(nameof(Member))]
         //public int MemberId { get; set; }
         [DataMember]
-        public virtual LeagueMemberInfoDTO Member { get; set; }
+        //public virtual LeagueMemberInfoDTO Member { get; set; }
+        public long MemberId { get; set; }
         [DataMember]
         public int ClassId { get; set; }
         [DataMember]

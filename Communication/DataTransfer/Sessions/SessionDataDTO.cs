@@ -47,13 +47,16 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         //public int SessionId { get; set; }
 
         [DataMember]
-        public ScheduleInfoDTO Schedule { get; set; }
+        //public ScheduleInfoDTO Schedule { get; set; }
+        public long ScheduleId { get; set; }
 
         [DataMember]
-        public ResultInfoDTO SessionResult { get; set; }
+        //public ResultInfoDTO SessionResult { get; set; }
+        public long? SessionResultId { get; set; }
 
         [DataMember]
-        public IncidentReviewInfoDTO[] Reviews { get; set; }
+        //public IncidentReviewInfoDTO[] Reviews { get; set; }
+        public long[] ReviewIds { get; set; }
 
         [DataMember]
         /// <summary>
@@ -72,71 +75,6 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// Duration of the session. In case of a race with attached qualy, this also includes the times of free practice and qualifiying.
         /// </summary>
         public TimeSpan Duration { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Result of the session
-        ///// </summary>
-        //public ResultDataDTO SessionResult { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Unique race id for the league
-        ///// </summary>
-        //public int RaceId { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Number of laps for the race. Set to 0 for time based races.
-        ///// </summary>
-        //public int Laps { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Length of the free practice. Set to 0:00:00 for no practice or warmup.
-        ///// </summary>
-        //public TimeSpan PracticeLength { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Length of the attached qualifying. Set to 0:00:00 for no attached qualy.
-        ///// </summary>
-        //public TimeSpan QualyLength { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Length of the race. If length is not time limited - set to 0:00:00
-        ///// </summary>
-        //public TimeSpan RaceLength { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Session id from iracing.com service
-        ///// </summary>
-        //public string IrSessionId { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Link to the iracing.com results page.
-        ///// </summary>
-        //public string IrResultLink { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Check if session has attached qualifying
-        ///// </summary>
-        //public bool QualyAttached { get; set; }
-
-        //[DataMember]
-        ///// <summary>
-        ///// Check if session has attached free-practice or warmup
-        ///// </summary>
-        //public bool PracticeAttached { get; set; }
-
-        [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
-        [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
 
         #region Version Info
         [DataMember]

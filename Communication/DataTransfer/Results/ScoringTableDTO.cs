@@ -45,13 +45,16 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int AverageRaceNr { get; set; }
         [DataMember]
-        public SeasonInfoDTO Season { get; set; }
+        //public SeasonInfoDTO Season { get; set; }
+        public long SeasonId { get; set; }
         [DataMember]
         public string ScoringFactors { get; set; }
         [DataMember]
-        public ScoringInfoDTO[] Scorings { get; set; }
+        //public ScoringInfoDTO[] Scorings { get; set; }
+        public long[] ScoringIds { get; set; }
         [DataMember]
-        public SessionInfoDTO[] Sessions { get; set; }
+        //public SessionInfoDTO[] Sessions { get; set; }
+        public long[] SessionIds { get; set; }
         #region Version Info
         [DataMember]
         public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }

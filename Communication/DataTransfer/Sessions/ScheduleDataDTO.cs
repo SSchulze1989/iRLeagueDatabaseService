@@ -44,11 +44,6 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         [DataMember]
         public SessionDataDTO[] Sessions { get; set; }
 
-        [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
-        [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
-
         #region Version Info
         [DataMember]
         public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }

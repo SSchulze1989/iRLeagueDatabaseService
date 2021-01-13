@@ -55,11 +55,12 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public bool TakeGroupAverage { get; set; }
         [DataMember]
-        public virtual SessionInfoDTO[] Sessions { get; set; }
+        //public virtual SessionInfoDTO[] Sessions { get; set; }
+        public long[] SessionIds { get; set; }
         [DataMember]
         public long SeasonId { get; set; }
-        [DataMember]
-        public virtual SeasonInfoDTO Season { get; set; }
+        //[DataMember]
+        //public virtual SeasonInfoDTO Season { get; set; } }
         [DataMember]
         public string BasePoints { get; set; }
         [DataMember]
@@ -67,15 +68,18 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string IncPenaltyPoints { get; set; }
         [DataMember]
-        public virtual ResultInfoDTO[] Results { get; set; }
+        //public virtual ResultInfoDTO[] Results { get; set; }
+        public long[] ResultIds { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO CreatedBy { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO LastModifiedBy { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
+        //public ScheduleInfoDTO ConnectedSchedule { get; set; }
+        public long? ConnectedScheduleId { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
-        [DataMember]
-        public ScheduleInfoDTO ConnectedSchedule { get; set; }
-        [DataMember]
-        public ScoringInfoDTO ExtScoringSource { get; set; }
+        //public ScoringInfoDTO ExtScoringSource { get; set; }
+        public long? ExtScoringSourceId { get; set; }
         [DataMember]
         public bool TakeResultsFromExtSource { get; set; }
         [DataMember]
