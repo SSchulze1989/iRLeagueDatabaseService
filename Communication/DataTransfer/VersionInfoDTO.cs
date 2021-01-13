@@ -34,17 +34,17 @@ namespace iRLeagueDatabase.DataTransfer
     {
         public virtual Type Type { get => this.GetType(); }
 
-        [DataMember]
+        [IgnoreDataMember]
         public DateTime? CreatedOn { get; set; } = null;
-        [DataMember]
+        [IgnoreDataMember]
         public DateTime? LastModifiedOn { get; set; } = null;
-        [DataMember]
+        [IgnoreDataMember]
         public string CreatedByUserId { get; set; }
-        [DataMember]
+        [IgnoreDataMember]
         public string LastModifiedByUserId { get; set; }
-        [DataMember]
+        [IgnoreDataMember]
         public string CreatedByUserName { get; set; }
-        [DataMember]
+        [IgnoreDataMember]
         public string LastModifiedByUserName { get; set; }
 
         [DataMember]
