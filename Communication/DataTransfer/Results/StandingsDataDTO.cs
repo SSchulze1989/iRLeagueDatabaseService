@@ -57,6 +57,6 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public long? CleanestDriverId { get; set; }
         [DataMember]
         //public virtual LeagueMemberInfoDTO MostPenaltiesDriver { get; set; }
-        public long? MostPolesDriverId { get; set; }
+        public long? MostPenaltiesDriverId { get; set; }
     }
 }

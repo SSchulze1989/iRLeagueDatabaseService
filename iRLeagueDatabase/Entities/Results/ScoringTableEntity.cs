@@ -20,6 +20,8 @@ namespace iRLeagueDatabase.Entities.Results
         public string Name { get; set; }
         public int DropWeeks { get; set; }
         public int AverageRaceNr { get; set; }
+        [ForeignKey(nameof(Season))]
+        public long SeasonId { get; set; }
         [Required]
         public virtual SeasonEntity Season { get; set; }
         public string ScoringFactors { get; set; }

@@ -69,6 +69,8 @@ namespace iRLeagueDatabase.Entities.Results
 
         //[ForeignKey(nameof(Season))]
         //public long SeasonId { get; set; }
+        [ForeignKey(nameof(Season))]
+        public long SeasonId { get; set; }
         [Required]
         public virtual SeasonEntity Season { get; set; }
         public string BasePoints { get; set; }
@@ -79,6 +81,8 @@ namespace iRLeagueDatabase.Entities.Results
         //public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
         [InverseProperty(nameof(ScoredResultEntity.Scoring))]
         public virtual List<ScoredResultEntity> ScoredResults { get; set; }
+        [ForeignKey(nameof(ConnectedSchedule))]
+        public long? ConnectedScheduleId { get; set; }
         public virtual ScheduleEntity ConnectedSchedule { get; set; }
 
         //public ScoringRuleBase Rule { get; set; }

@@ -12,8 +12,8 @@ namespace iRLeagueDatabase.Entities.Results
     [NotMapped]
     public class StandingsEntity : MappableEntity
     {
-        public ScoringTableEntity ScoringTable { get; set; }
-        public ScoringEntity Scoring { get; set; }
+        public virtual ScoringTableEntity ScoringTable { get; set; }
+        public virtual ScoringEntity Scoring { get; set; }
         public override object MappingId => new long[] { Scoring.ScoringId };
         public virtual List<StandingsRowEntity> StandingsRows { get; set; }
         public virtual LeagueMemberEntity MostWinsDriver { get; set; }

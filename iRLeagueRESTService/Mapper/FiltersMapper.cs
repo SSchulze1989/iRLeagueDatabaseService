@@ -37,7 +37,7 @@ namespace iRLeagueDatabase.Mapper
             switch (source.ColumnPropertyName)
             {
                 case nameof(ResultRowEntity.MemberId):
-                    target.ColumnPropertyName = nameof(ResultRowDataDTO.Member);
+                    target.ColumnPropertyName = nameof(ResultRowDataDTO.MemberId);
                     break;
                 case nameof(ResultRowEntity.Member)+"."+nameof(LeagueMemberEntity.Team)+"."+nameof(TeamEntity.Name):
                     target.ColumnPropertyName = nameof(ResultRowDataDTO.TeamName);
@@ -128,7 +128,7 @@ namespace iRLeagueDatabase.Mapper
 
             switch (source.ColumnPropertyName)
             {
-                case nameof(ResultRowDataDTO.Member):
+                case nameof(ResultRowDataDTO.MemberId):
                     target.ColumnPropertyName = nameof(ResultRowEntity.MemberId);
                     break;
                 case nameof(ResultRowDataDTO.TeamName):

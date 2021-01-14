@@ -41,9 +41,9 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string ScoringName { get; set; }
 
-        public override object MappingId => new long[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
+        public override object MappingId => new long[] { ResultId.GetValueOrDefault(), ScoringId };
 
-        public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
+        public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), ScoringId };
 
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;

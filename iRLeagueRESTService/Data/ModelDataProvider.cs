@@ -311,7 +311,7 @@ namespace iRLeagueRESTService.Data
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,
-                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    ScoringId = scoringId
                 };
             }
             else if (result.RequiresRecalculation)
@@ -333,7 +333,7 @@ namespace iRLeagueRESTService.Data
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,
-                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    ScoringId = scoringId
                 };
             //DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
             //         .Include(x => x.Session).Load();
