@@ -39,7 +39,8 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         [DataMember]
         public VoteEnum Vote { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO MemberAtFault { get; set; }
+        //public LeagueMemberInfoDTO MemberAtFault { get; set; }
+        public long? MemberAtFaultId { get; set; }
         [DataMember]
         public long? VoteCategoryId { get; set; }
         [DataMember]

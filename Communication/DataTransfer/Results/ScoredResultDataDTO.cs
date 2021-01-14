@@ -35,18 +35,34 @@ namespace iRLeagueDatabase.DataTransfer.Results
         //[DataMember]
         //public long? ScoredResultId { get; set; }
         [DataMember]
-        public ScoringInfoDTO Scoring { get; set; }
+        //public ScoringInfoDTO Scoring { get; set; }
+        public long ScoringId { get; set; }
 
         [DataMember]
         public string ScoringName { get; set; }
 
-        public override object MappingId => new long[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
+        public override object MappingId => new long[] { ResultId.GetValueOrDefault(), ScoringId };
 
-        public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), (Scoring?.ScoringId).GetValueOrDefault() };
+        public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), ScoringId };
 
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;
         [DataMember]
         public ScoredResultRowDataDTO[] FinalResults { get; set; }
+
+        #region Version Info
+        [DataMember]
+        public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }
+        [DataMember]
+        public new DateTime? LastModifiedOn { get => base.LastModifiedOn; set => base.LastModifiedOn = value; }
+        [DataMember]
+        public new string CreatedByUserId { get => base.CreatedByUserId; set => base.CreatedByUserId = value; }
+        [DataMember]
+        public new string LastModifiedByUserId { get => base.LastModifiedByUserId; set => base.LastModifiedByUserId = value; }
+        [DataMember]
+        public new string CreatedByUserName { get => base.CreatedByUserName; set => base.CreatedByUserName = value; }
+        [DataMember]
+        public new string LastModifiedByUserName { get => base.LastModifiedByUserName; set => base.LastModifiedByUserName = value; }
+        #endregion
     }
 }

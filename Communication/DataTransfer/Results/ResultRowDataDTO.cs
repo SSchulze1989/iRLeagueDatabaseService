@@ -47,7 +47,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int FinishPosition { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO Member { get; set; }
+        //public LeagueMemberInfoDTO Member { get; set; }
+        public long MemberId { get; set; }
 
         [DataMember]
         public int OldIRating { get; set; }

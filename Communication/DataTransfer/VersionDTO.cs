@@ -32,10 +32,20 @@ namespace iRLeagueDatabase.DataTransfer
 {
     [DataContract]
     public abstract class VersionDTO : VersionInfoDTO
-    {        
+    {
+        #region Version Info
         [DataMember]
-        public new long? CreatedByUserId { get; set; }
+        public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }
         [DataMember]
-        public new long? LastModifiedByUserId { get; set; }
+        public new DateTime? LastModifiedOn { get => base.LastModifiedOn; set => base.LastModifiedOn = value; }
+        [DataMember]
+        public new long CreatedByUserId { get; set; }
+        [DataMember]
+        public new long LastModifiedByUserId { get; set; }
+        [DataMember]
+        public new string CreatedByUserName { get => base.CreatedByUserName; set => base.CreatedByUserName = value; }
+        [DataMember]
+        public new string LastModifiedByUserName { get => base.LastModifiedByUserName; set => base.LastModifiedByUserName = value; }
+        #endregion
     }
 }

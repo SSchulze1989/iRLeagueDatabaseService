@@ -55,11 +55,12 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public bool TakeGroupAverage { get; set; }
         [DataMember]
-        public virtual SessionInfoDTO[] Sessions { get; set; }
+        //public virtual SessionInfoDTO[] Sessions { get; set; }
+        public long[] SessionIds { get; set; }
         [DataMember]
         public long SeasonId { get; set; }
-        [DataMember]
-        public virtual SeasonInfoDTO Season { get; set; }
+        //[DataMember]
+        //public virtual SeasonInfoDTO Season { get; set; } }
         [DataMember]
         public string BasePoints { get; set; }
         [DataMember]
@@ -67,19 +68,37 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string IncPenaltyPoints { get; set; }
         [DataMember]
-        public virtual ResultInfoDTO[] Results { get; set; }
+        //public virtual ResultInfoDTO[] Results { get; set; }
+        public long[] ResultIds { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO CreatedBy { get; set; }
+        //[DataMember]
+        //public LeagueMemberInfoDTO LastModifiedBy { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO CreatedBy { get; set; }
+        //public ScheduleInfoDTO ConnectedSchedule { get; set; }
+        public long? ConnectedScheduleId { get; set; }
         [DataMember]
-        public LeagueMemberInfoDTO LastModifiedBy { get; set; }
-        [DataMember]
-        public ScheduleInfoDTO ConnectedSchedule { get; set; }
-        [DataMember]
-        public ScoringInfoDTO ExtScoringSource { get; set; }
+        //public ScoringInfoDTO ExtScoringSource { get; set; }
+        public long? ExtScoringSourceId { get; set; }
         [DataMember]
         public bool TakeResultsFromExtSource { get; set; }
         [DataMember]
         public long[] ResultsFilterOptionIds { get; set; }
+
+        #region Version Info
+        [DataMember]
+        public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }
+        [DataMember]
+        public new DateTime? LastModifiedOn { get => base.LastModifiedOn; set => base.LastModifiedOn = value; }
+        [DataMember]
+        public new string CreatedByUserId { get => base.CreatedByUserId; set => base.CreatedByUserId = value; }
+        [DataMember]
+        public new string LastModifiedByUserId { get => base.LastModifiedByUserId; set => base.LastModifiedByUserId = value; }
+        [DataMember]
+        public new string CreatedByUserName { get => base.CreatedByUserName; set => base.CreatedByUserName = value; }
+        [DataMember]
+        public new string LastModifiedByUserName { get => base.LastModifiedByUserName; set => base.LastModifiedByUserName = value; }
+        #endregion
 
         public ScoringDataDTO() { }
     }

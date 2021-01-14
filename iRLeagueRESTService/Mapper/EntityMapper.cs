@@ -164,8 +164,12 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
-        private TTarget DefaultGet<TTarget>(object[] keys) where TTarget : MappableEntity
+        private TTarget DefaultGet<TTarget>(params object[] keys) where TTarget : MappableEntity
         {
+            if (keys == null || keys.Any(x => x == null))
+            {
+                return null;
+            }
             return DbContext.Set<TTarget>().Find(keys);
         }
 

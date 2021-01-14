@@ -149,6 +149,10 @@
     <Compile Include="Migrations\202101082034374_AddFilterPointsOnlyOption.designer.cs">
       <DependentUpon>202101082034374_AddFilterPointsOnlyOption.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101140104453_AddMissingForeignKeys.cs" />
+    <Compile Include="Migrations\202101140104453_AddMissingForeignKeys.designer.cs">
+      <DependentUpon>202101140104453_AddMissingForeignKeys.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -186,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202101082034374_AddFilterPointsOnlyOption.resx">
       <DependentUpon>202101082034374_AddFilterPointsOnlyOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101140104453_AddMissingForeignKeys.resx">
+      <DependentUpon>202101140104453_AddMissingForeignKeys.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -39,7 +39,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public long? ResultId { get; set; }
         [DataMember]
-        public SessionInfoDTO Session { get; set; }
+        //public SessionInfoDTO Session { get; set; }
+        public long SessionId { get; set; }
 
         public override object MappingId => ResultId;
 

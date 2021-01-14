@@ -38,7 +38,8 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
     public class ReviewCommentDataDTO : CommentDataDTO
     {
         [DataMember]
-        public IncidentReviewInfoDTO Review { get; set; }
+        //public IncidentReviewInfoDTO Review { get; set; }
+        public long ReviewId { get; set; }
         [DataMember]
         public ReviewVoteDataDTO[] CommentReviewVotes { get; set; }
 

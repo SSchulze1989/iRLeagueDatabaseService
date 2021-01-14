@@ -35,7 +35,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class StandingsDataDTO : MappableDTO
     {
         [DataMember]
-        public ScoringInfoDTO Scoring { get; set; }
+        //public ScoringInfoDTO Scoring { get; set; }
+        public long ScoringId { get; set; }
         [DataMember]
         public long ScoringTableId { get; set; }
         public override object MappingId => new long[] { ScoringTableId, SessionId.GetValueOrDefault() };
@@ -46,12 +47,16 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public virtual StandingsRowDataDTO[] StandingsRows { get; set; }
         [DataMember]
-        public virtual LeagueMemberInfoDTO MostWinsDriver { get; set; }
+        //public virtual LeagueMemberInfoDTO MostWinsDriver { get; set; }
+        public long? MostWinsDriverId { get; set; }
         [DataMember]
-        public virtual LeagueMemberInfoDTO MostPolesDriver { get; set; }
+        //public virtual LeagueMemberInfoDTO MostPolesDriver { get; set; }
+        public long? MostPolesDriverId { get; set; }
         [DataMember]
-        public virtual LeagueMemberInfoDTO CleanestDriver { get; set; }
+        //public virtual LeagueMemberInfoDTO CleanestDriver { get; set; }
+        public long? CleanestDriverId { get; set; }
         [DataMember]
-        public virtual LeagueMemberInfoDTO MostPenaltiesDriver { get; set; }
+        //public virtual LeagueMemberInfoDTO MostPenaltiesDriver { get; set; }
+        public long? MostPenaltiesDriverId { get; set; }
     }
 }
