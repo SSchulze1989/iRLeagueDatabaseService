@@ -42,6 +42,7 @@ using iRLeagueDatabase.Extensions;
 using System.Net.PeerToPeer.Collaboration;
 using System.Web.Http.Results;
 using Newtonsoft.Json;
+using iRLeagueRESTService.Models;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -344,6 +345,10 @@ namespace iRLeagueRESTService.Controllers
                 using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
                 {
                     data = modelDataProvider.PostArray(requestTypeType, data);
+                    if (dbContext.DbChanged)
+                    {
+                        UpdateLeague(leagueName, User);
+                    }
                 }
                 //GC.Collect();
 
@@ -442,6 +447,10 @@ namespace iRLeagueRESTService.Controllers
                 using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
                 {
                     data = modelDataProvider.PutArray(requestTypeType, data);
+                    if (dbContext.DbChanged)
+                    {
+                        UpdateLeague(leagueName, User);
+                    }
                 }
                 //GC.Collect();
                 logger.Info($"Put Models request || send data: {string.Join("/", (object[])data)}");
@@ -517,6 +526,10 @@ namespace iRLeagueRESTService.Controllers
                 using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
+                    if (dbContext.DbChanged)
+                    {
+                        UpdateLeague(leagueName, User);
+                    }
                 }
                 //GC.Collect();
                 logger.Info($"Delete Models request || send answer: {data}");
@@ -595,6 +608,32 @@ namespace iRLeagueRESTService.Controllers
                 return;
             
             throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        }
+
+        private void UpdateLeague(string leagueName, IPrincipal principal)
+        {
+            var register = LeagueRegister.Get();
+
+            LeagueEntry leagueEntry = null;
+            if (register.Leagues.Any(x => x.Name == leagueName) == false)
+            {
+                leagueEntry = new LeagueEntry()
+                {
+                    Name = leagueName,
+                    CreatorName = principal.Identity.Name,
+                    CreatorId = Guid.Parse(principal.Identity.GetUserId()),
+                    CreatedOn = DateTime.Now,
+                    PrettyName = leagueName
+                };
+                register.Leagues.Add(leagueEntry);
+            }
+            else
+            {
+                leagueEntry = register.Leagues.SingleOrDefault(x => x.Name == leagueName);
+            }
+            leagueEntry.LastUpdate = DateTime.Now;
+
+            register.Save();
         }
     }
 }

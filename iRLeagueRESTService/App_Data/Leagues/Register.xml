@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LeagueRegister xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Leagues>
+    <LeagueEntry name="SkippyCup" pretty_name="DE-AT-CH Skippy Cup League">
+      <CreatedOn>2021-01-15T02:50:33.1339156+01:00</CreatedOn>
+      <CreatorId>45a14df3-b6b8-4be8-9e93-38041c803482</CreatorId>
+      <CreatorName>SimonSchulze</CreatorName>
+      <LastUpdate>2021-01-15T02:56:43.262314+01:00</LastUpdate>
+    </LeagueEntry>
+  </Leagues>
+</LeagueRegister>

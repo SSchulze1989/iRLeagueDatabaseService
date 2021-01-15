@@ -32,6 +32,11 @@ namespace iRLeagueDatabase
 
         private const string defaultDb = "TestDatabase_leagueDb";
 
+        /// <summary>
+        /// Indicates that SaveChanges() operation performed a change while working with the current dbContext
+        /// </summary>
+        public bool DbChanged { get; private set; } = false;
+
         public LeagueDbContext() : this(GetConnectionString(defaultDb))
         {
         }
@@ -179,6 +184,10 @@ namespace iRLeagueDatabase
         public override int SaveChanges()
         {
             //while (!HandleOrphans()) { }
+            if (ChangeTracker.HasChanges())
+            {
+                DbChanged = true;
+            }
             HandleOrphans();
             return base.SaveChanges();
         }
