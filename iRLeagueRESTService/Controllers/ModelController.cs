@@ -72,7 +72,8 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 MappableDTO data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.Get(requestTypeType, requestIdValue);
                 }
@@ -120,7 +121,8 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 MappableDTO[] data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
                 }
@@ -169,7 +171,8 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 MappableDTO data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.Get(requestTypeType, requestIdValue);
                 }
@@ -236,7 +239,8 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 MappableDTO[] data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
                 }
@@ -336,7 +340,8 @@ namespace iRLeagueRESTService.Controllers
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
                 {
                     data = modelDataProvider.PostArray(requestTypeType, data);
                 }
@@ -432,8 +437,9 @@ namespace iRLeagueRESTService.Controllers
                 }
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
+                
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
                 {
                     data = modelDataProvider.PutArray(requestTypeType, data);
                 }
@@ -507,7 +513,8 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 bool data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
                 }
