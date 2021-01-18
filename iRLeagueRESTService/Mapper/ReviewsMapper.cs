@@ -8,6 +8,7 @@ using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.DataTransfer.Members;
+using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -327,7 +328,7 @@ namespace iRLeagueDatabase.Mapper
             if (source == null || target == null)
                 return null;
 
-            target.MemberAtFault = GetMemberEntity(new LeagueMemberInfoDTO() { MemberId = source.MemberAtFaultId });
+            target.MemberAtFault = DefaultGet<LeagueMemberEntity>(source.MemberAtFaultId);
             target.Vote = source.Vote;
             target.CustomVoteCat = DefaultGet<VoteCategoryEntity>(source.VoteCategoryId);
 
