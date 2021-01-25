@@ -489,10 +489,11 @@ namespace iRLeagueDatabase.Entities.Results
                     var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
                     if (scoredResultRow.ReviewPenalties != null)
                     {
+                        scoredResultRow.ReviewPenalties.Clear();
                         var removePenalty = scoredResultRow.ReviewPenalties.ToList();
                         foreach (var reviewVote in scoredResultRowReviewVotes)
                         {
-                            var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.ReviewId == reviewVote.ReviewId);
+                            var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.Review?.ReviewId == reviewVote.ReviewId);
                             if (reviewPenalty == null)
                             {
                                 reviewPenalty = new ReviewPenaltyEntity()
@@ -508,7 +509,7 @@ namespace iRLeagueDatabase.Entities.Results
                                 reviewPenalty.ReviewVote = reviewVote;
                                 removePenalty.Remove(reviewPenalty);
                             }
-                            reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote);
+                            reviewPenalty.PenaltyPoints += GetReviewPenaltyPoints(reviewVote);
                         }
                         removePenalty.ForEach(x => x.Delete(dbContext));
                         //dbContext.SaveChanges();
