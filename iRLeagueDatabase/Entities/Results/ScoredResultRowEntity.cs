@@ -8,6 +8,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueManager.Enums;
 using iRLeagueDatabase.Entities.Members;
+using iRLeagueDatabase.Entities.Statistics;
+using System.Data.Entity;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -135,6 +137,9 @@ namespace iRLeagueDatabase.Entities.Results
         {
             AddPenalty?.Delete(dbContext);
             ReviewPenalties?.ToList().ForEach(x => x.Delete(dbContext));
+            dbContext.Set<DriverStatisticRowEntity>()
+                .Where(x => x.LastResultRowId == ScoredResultRowId || x.FirstResultRowId == ScoredResultRowId)
+                .Load();
 
             base.Delete(dbContext);
         }
