@@ -45,7 +45,7 @@ namespace iRLeagueRESTService.Controllers
         [HttpGet]
         [ActionName("Get")]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        public IHttpActionResult GetTracks([FromUri]int[] ids)
+        public IHttpActionResult GetTracks([FromUri]int[] ids = null)
         {
             try
             {
