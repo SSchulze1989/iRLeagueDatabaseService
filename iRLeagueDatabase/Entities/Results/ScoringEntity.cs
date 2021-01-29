@@ -597,14 +597,20 @@ namespace iRLeagueDatabase.Entities.Results
                 if (scoredTeamResult.TeamResults == null)
                     scoredTeamResult.TeamResults = new List<ScoredTeamResultRowEntity>();
 
+                var removeRows = scoredTeamResult.TeamResults.ToList();
+
                 foreach (var teamGroup in groupedResultRows.Where(x => x.Key != null))
                 {
                     var team = teamGroup.Key;
-                    var teamResultRow = scoredTeamResult.TeamResults.SingleOrDefault(x => x.Team.TeamId == team.TeamId);
+                    var teamResultRow = scoredTeamResult.TeamResults.Where(x => x.Team != null).SingleOrDefault(x => x.Team.TeamId == team.TeamId);
                     if (teamResultRow == null)
                     {
                         teamResultRow = new ScoredTeamResultRowEntity();
                         scoredTeamResult.TeamResults.Add(teamResultRow);
+                    }
+                    else
+                    {
+                        removeRows.Remove(teamResultRow);
                     }
                     teamResultRow.RemoveAllRows();
                     teamGroup.AggregateTeamResults(maxRacesCount: MaxResultsPerGroup, teamResultRow);
@@ -617,6 +623,9 @@ namespace iRLeagueDatabase.Entities.Results
                         teamResultRow.FastestLapTime = teamResultRow.ScoredResultRows.Select(x => x.ResultRow.FastestLapTime).Min();
                     }
                 }
+
+                removeRows.ForEach(x => x.Delete(dbContext));
+                scoredTeamResult.TeamResults.Remove(removeRows);
 
                 var scoredTeamResultRows = scoredTeamResult.TeamResults.OrderByDescending(x => x.TotalPoints);
                 for (int i = 0; i < scoredTeamResultRows.Count(); i++)
@@ -725,7 +734,15 @@ namespace iRLeagueDatabase.Entities.Results
             foreach (var row in source)
             {
                 StandingsRowEntity standingsRow;
-                var compRow = compare.SingleOrDefault(x => x.Member.MemberId == row.Member.MemberId);
+                T compRow;
+                if (typeof(T).Equals(typeof(TeamStandingsRowEntity)))
+                {
+                    compRow = compare.SingleOrDefault(x => (x as TeamStandingsRowEntity).Team.TeamId == (row as TeamStandingsRowEntity).Team.TeamId);
+                }
+                else
+                {
+                    compRow = compare.SingleOrDefault(x => x.Member.MemberId == row.Member.MemberId);
+                }
                 if (compRow != null)
                 {
                     if (row is TeamStandingsRowEntity teamStandingsRow && compRow is TeamStandingsRowEntity compTeamStandingsRow)
