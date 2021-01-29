@@ -489,15 +489,41 @@ namespace iRLeagueDatabase.Mapper
 
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
-            MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId }, autoAddMissing: true, removeFromCollection: true, removeFromDatabase: true);
-            MapCollection(source.ReviewIds.Select(x => new IncidentReviewInfoDTO() { ReviewId = x }), target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.Session = GetSessionBaseEntity(new SessionInfoDTO() { SessionId = source.SessionId });
             target.Season = target.Session.Schedule.Season;
+            MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId }, autoAddMissing: true, removeFromCollection: true, removeFromDatabase: true);
+            MapCollection(source.ReviewIds.Select(x => new IncidentReviewInfoDTO() { ReviewId = x }), target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.RequiresRecalculation = true;
             target.IRSimSessionDetails = MapToSimSessionDetailsEntity(source.SimSessionDetails, target.IRSimSessionDetails);
             if (target.RawResults?.Count > 0)
             {
                 target.PoleLaptime = (target.RawResults?.Select(x => x.QualifyingTime).Where(x => x > 0).Min()).GetValueOrDefault();
+            }
+
+
+            if (target.RawResults != null)
+            {
+                foreach (var resultRow in target.RawResults)
+                {
+                    //compare with other resultrows in this season and determine SeasonStartIRating
+                    DbContext.Configuration.LazyLoadingEnabled = false;
+                    DbContext.Set<ResultEntity>()
+                        .Where(x => x.SeasonId == target.Season.SeasonId)
+                        .Include(x => x.RawResults)
+                        .Include(x => x.Session)
+                        .Load();
+                    var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
+
+                    if (seasonResultRows.Any(x => x.MemberId == resultRow.Member.MemberId && x.Date < target.Session.Date))
+                    {
+                        resultRow.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == resultRow.Member.MemberId && x.Date < target.Session.Date).SeasonStartIRating;
+                    }
+                    else
+                    {
+                        resultRow.SeasonStartIRating = resultRow.OldIRating;
+                    }
+                    DbContext.Configuration.LazyLoadingEnabled = true;
+                }
             }
 
             return target;
@@ -573,25 +599,6 @@ namespace iRLeagueDatabase.Mapper
             target.NewLicenseLevel = source.NewLicenseLevel;
             target.OldCpi = source.OldCpi;
             target.NewCpi = source.NewCpi;
-
-            //compare with other resultrows in this season and determine SeasonStartIRating
-            DbContext.Configuration.LazyLoadingEnabled = false;
-            DbContext.Set<ResultEntity>()
-                .Where(x => x.SeasonId == target.Result.SeasonId)
-                .Include(x => x.RawResults)
-                .Include(x => x.Session)
-                .Load();
-            var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
-
-            if (seasonResultRows.Any(x => x.MemberId == target.MemberId && x.Date < target.Date))
-            {
-                target.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == target.MemberId && x.Date < target.Date).SeasonStartIRating;
-            }
-            else
-            {
-                target.SeasonStartIRating = target.OldIRating;
-            }
-            DbContext.Configuration.LazyLoadingEnabled = true;
 
             return target;
         }
