@@ -13,8 +13,9 @@ namespace iRLeagueDatabase.Filters
     {
         public List<long> FilterValues { get; set; } = new List<long>();
         public bool Exclude { get; set; }
+        public bool FilterPointsOnly { get; set; }
 
-        public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows)
+        public IEnumerable<T> GetFilteredRows<T>(IEnumerable<T> resultRows) where T : IResultRow
         {
             var memberIdList = FilterValues;
 
@@ -26,7 +27,7 @@ namespace iRLeagueDatabase.Filters
             return FilterValues.Select(x => x.ToString());
         }
 
-        public void SetFilterOptions(string ColumnPropertyName, ComparatorTypeEnum comparator, bool exclude)
+        public void SetFilterOptions(string ColumnPropertyName, ComparatorTypeEnum comparator, bool exclude, bool onlyPoints)
         {
             throw new NotImplementedException();
         }

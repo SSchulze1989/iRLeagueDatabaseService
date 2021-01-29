@@ -12,7 +12,7 @@ using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Filters
 {
-    public class ResultsFilterOptionEntity : MappableEntity
+    public class ResultsFilterOptionEntity : Revision
     {
         [Key, Column(Order = 0)]
         public long ResultsFilterId { get; set; }
@@ -24,6 +24,7 @@ namespace iRLeagueDatabase.Entities.Filters
         public string ColumnPropertyName { get; set; }
         public ComparatorTypeEnum Comparator { get; set; }
         public bool Exclude { get; set; }
+        public bool FilterPointsOnly { get; set; }
 
         //[InverseProperty(nameof(FilterValueBaseEntity.ResultsFilterOption))]
         //public virtual List<FilterValueBaseEntity> FilterValues { get; set; }

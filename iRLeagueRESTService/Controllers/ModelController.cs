@@ -1,4 +1,26 @@
-﻿using System;
+﻿// MIT License
+
+// Copyright (c) 2020 Simon Schulze
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,6 +36,13 @@ using iRLeagueRESTService.Filters;
 using System.Security.Principal;
 using System.Net;
 using log4net;
+using System.Dynamic;
+using System.Reflection;
+using iRLeagueDatabase.Extensions;
+using System.Net.PeerToPeer.Collaboration;
+using System.Web.Http.Results;
+using Newtonsoft.Json;
+using iRLeagueRESTService.Models;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -44,13 +73,14 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 MappableDTO data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.Get(requestTypeType, requestIdValue);
                 }
                 //GC.Collect();
 
-                logger.Info($"Get Model request || send data: {data.ToString()}");
+                logger.Info($"Get Model request || send data: {data?.ToString()}");
 
                 return Ok(data);
             }
@@ -92,7 +122,8 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 MappableDTO[] data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
                 }
@@ -105,6 +136,128 @@ namespace iRLeagueRESTService.Controllers
             catch (Exception e)
             {
                 logger.Error("Error in GetModels", e);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("Get")]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult GetModel(string requestId, string requestType, string leagueName, string fields)
+        {
+            try
+            {
+                logger.Info($"Get Model Fields request || type: {requestType} - league: {leagueName} - id: [{requestId}] - fields: {fields}");
+                CheckLeagueRole(User, leagueName);
+
+                if (requestId == null || requestType == null || leagueName == null)
+                {
+                    return BadRequest("Parameter requestType or leagueName can not be null!");
+                }
+
+                string[] fieldValues = new string[0];
+                try
+                {
+                    fieldValues = fields?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? fieldValues;
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException("Invalid field names", e);
+                }
+
+                long[] requestIdValue = GetIdFromString(requestId);
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                MappableDTO data;
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
+                {
+                    data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                }
+                //GC.Collect();
+
+                data.SetSerializableProperties(fieldValues);
+
+                var response = SelectFieldsHelper.GetSelectedFieldObject(data);
+
+                logger.Info($"Get Model Fields request || send data: {data} - fields: {string.Join(",", fieldValues)}");
+
+                return Json(response);
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error in GetModel Fields", e);
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [ActionName("GetArray")]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult GetModelsSelectFields([FromUri] string[] requestIds, string requestType, string leagueName, string fields)
+        {
+            try
+            {
+                logger.Info($"Get Models Fields request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))} - fields: {fields}");
+
+                CheckLeagueRole(User, leagueName);
+
+                if (requestType == null || leagueName == null)
+                {
+                    //return BadRequest("Parameter requestType or leagueName can not be null!");
+                }
+
+                string[] fieldValues = new string[0];
+                try
+                {
+                    fieldValues = fields?.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? fieldValues;
+                }
+                catch(Exception e)
+                {
+                    throw new ArgumentException("Invalid field names", e);
+                }
+
+                long[][] requestIdValues;
+                if (requestIds != null && requestIds.Count() > 0)
+                {
+                    requestIdValues = requestIds.Select(x => GetIdFromString(x)).ToArray();
+                }
+                else
+                {
+                    requestIdValues = null;
+                }
+
+                Type requestTypeType = GetRequestType(requestType);
+
+                if (requestTypeType == null)
+                {
+                    throw new InvalidOperationException($"Requested type {requestType} not found");
+                }
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                MappableDTO[] data;
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
+                {
+                    data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                }
+                //GC.Collect();
+
+                data.ForEach(x => x.SetSerializableProperties(fieldValues));
+
+                var response = data.Select(x => SelectFieldsHelper.GetSelectedFieldObject(x));
+
+                logger.Info($"Get Models Fields request || send data: {string.Join("/", (object[])data)} - fields: {string.Join(",", fieldValues)}");
+
+                return Json(response);
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error in GetModels Fields", e);
                 throw;
             }
         }
@@ -188,9 +341,14 @@ namespace iRLeagueRESTService.Controllers
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
                 {
                     data = modelDataProvider.PostArray(requestTypeType, data);
+                    if (dbContext.DbChanged)
+                    {
+                        UpdateLeague(leagueName, User);
+                    }
                 }
                 //GC.Collect();
 
@@ -284,10 +442,15 @@ namespace iRLeagueRESTService.Controllers
                 }
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName), User.Identity.Name, User.Identity.GetUserId()))
+                
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
                 {
                     data = modelDataProvider.PutArray(requestTypeType, data);
+                    if (dbContext.DbChanged)
+                    {
+                        UpdateLeague(leagueName, User);
+                    }
                 }
                 //GC.Collect();
                 logger.Info($"Put Models request || send data: {string.Join("/", (object[])data)}");
@@ -359,9 +522,14 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 bool data;
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(new LeagueDbContext(databaseName)))
+                using (var dbContext = new LeagueDbContext(databaseName))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
                     data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
+                    if (dbContext.DbChanged)
+                    {
+                        UpdateLeague(leagueName, User);
+                    }
                 }
                 //GC.Collect();
                 logger.Info($"Delete Models request || send answer: {data}");
@@ -393,7 +561,8 @@ namespace iRLeagueRESTService.Controllers
                 "iRLeagueDatabase.DataTransfer.Results.",
                 "iRLeagueDatabase.DataTransfer.Reviews.",
                 "iRLeagueDatabase.DataTransfer.Sessions.",
-                "iRLeagueDatabase.DataTransfer.Filters."
+                "iRLeagueDatabase.DataTransfer.Filters.",
+                "iRLeagueDatabase.DataTransfer.Statistics."
             };
 
             var assemblyName = typeof(iRLeagueDatabase.DataTransfer.MappableDTO).Assembly.FullName;
@@ -439,6 +608,32 @@ namespace iRLeagueRESTService.Controllers
                 return;
             
             throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        }
+
+        private void UpdateLeague(string leagueName, IPrincipal principal)
+        {
+            var register = LeagueRegister.Get();
+
+            LeagueEntry leagueEntry = null;
+            if (register.Leagues.Any(x => x.Name == leagueName) == false)
+            {
+                leagueEntry = new LeagueEntry()
+                {
+                    Name = leagueName,
+                    CreatorName = principal.Identity.Name,
+                    CreatorId = Guid.Parse(principal.Identity.GetUserId()),
+                    CreatedOn = DateTime.Now,
+                    PrettyName = leagueName
+                };
+                register.Leagues.Add(leagueEntry);
+            }
+            else
+            {
+                leagueEntry = register.Leagues.SingleOrDefault(x => x.Name == leagueName);
+            }
+            leagueEntry.LastUpdate = DateTime.Now;
+
+            register.Save();
         }
     }
 }

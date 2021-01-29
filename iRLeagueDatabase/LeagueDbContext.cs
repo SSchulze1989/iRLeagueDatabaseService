@@ -13,6 +13,7 @@ using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
+using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase
 {
@@ -23,16 +24,24 @@ namespace iRLeagueDatabase
         public virtual DbSet<LeagueMemberEntity> Members { get; set; }
         public virtual DbSet<CustomIncidentEntity> CustomIncidentKinds { get; set; }
         public virtual DbSet<VoteCategoryEntity> CustomVoteCategories { get; set; }
+        public virtual DbSet<LeagueStatisticSetEntity> LeagueStatistics { get; set; }
 
         private readonly OrphansToHandle OrphansToHandle;
 
         private static bool AllowMultipleResultSets = true;
 
-        public LeagueDbContext() : this(GetConnectionString("TestDatabase_leagueDb"))
+        private const string defaultDb = "TestDatabase_leagueDb";
+
+        /// <summary>
+        /// Indicates that SaveChanges() operation performed a change while working with the current dbContext
+        /// </summary>
+        public bool DbChanged { get; private set; } = false;
+
+        public LeagueDbContext() : this(GetConnectionString(defaultDb))
         {
         }
 
-        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString("TestDatabase_leagueDb"))
+        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString(defaultDb))
         {
             if (createDb)
                 Database.SetInitializer(new CreateDatabaseIfNotExists<LeagueDbContext>());
@@ -50,6 +59,7 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultEntity, ScoringEntity>(x => x.Scoring);
             OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
+
         }
 
         private static string GetConnectionString(string dbName)
@@ -131,6 +141,24 @@ namespace iRLeagueDatabase
 
             modelBuilder.Entity<ScoredResultEntity>()
                 .ToTable("ScoredResultEntities");
+            modelBuilder.Entity<ScoredResultEntity>()
+                .HasMany(r => r.HardChargers)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ResultRefId", "ScoringRefId");
+                    rm.MapRightKey("LeagueMemberRefId");
+                    rm.ToTable("ScoredResult_HardChargers");
+                });
+            modelBuilder.Entity<ScoredResultEntity>()
+                .HasMany(r => r.CleanestDrivers)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("ResultRefId", "ScoringRefId");
+                    rm.MapRightKey("LeagueMemberRefId");
+                    rm.ToTable("ScoredResult_CleanestDrivers");
+                });
 
             modelBuilder.Entity<ScoredTeamResultRowEntity>()
                 .HasMany(r => r.ScoredResultRows)
@@ -141,11 +169,25 @@ namespace iRLeagueDatabase
                     rm.MapRightKey("ScoredResultRowRefId");
                     rm.ToTable("ScoredTeamResultRowsGroup");
                 });
+
+            modelBuilder.Entity<LeagueStatisticSetEntity>()
+                .HasMany(r => r.StatisticSets)
+                .WithMany()
+                .Map(rm =>
+                {
+                    rm.MapLeftKey("LeagueStatisticSetRefId");
+                    rm.MapRightKey("SeasonStatisticSetRefId");
+                    rm.ToTable("LeagueStatisticSet_SeasonStatisticSet");
+                });
         }
 
         public override int SaveChanges()
         {
             //while (!HandleOrphans()) { }
+            if (ChangeTracker.HasChanges())
+            {
+                DbChanged = true;
+            }
             HandleOrphans();
             return base.SaveChanges();
         }

@@ -9,6 +9,14 @@ using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Reviews;
 using System.Data.Entity;
 using iRLeagueDatabase.Extensions;
+using iRLeagueManager.Timing;
+using iRLeagueDatabase.DataTransfer.Sessions;
+using Microsoft.AspNetCore.Http.Features.Authentication;
+using iRLeagueDatabase.DataTransfer.Members;
+using System.Security.Cryptography.Xml;
+using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.Entities.Sessions;
+using iRLeagueDatabase.Entities;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -32,6 +40,7 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<ScoredTeamResultEntity, ScoredResultDataDTO>(src => new ScoredTeamResultDataDTO(), (src, trg) => MapToScoredTeamResultDataDTO(src, trg as ScoredTeamResultDataDTO), DefaultCompare);
             RegisterTypeMap<TeamStandingsEntity, TeamStandingsDataDTO>(MapToTeamStandingsDTO);
             RegisterTypeMap<TeamStandingsEntity, StandingsDataDTO>(src => new TeamStandingsDataDTO(), (src, trg) => MapToTeamStandingsDTO(src, trg as TeamStandingsDataDTO), DefaultCompare);
+            RegisterTypeMap<IRSimSessionDetailsEntity, SimSessionDetailsDTO>(MapToSimSessionDetailsDTO);
         }
 
         public ResultInfoDTO MapToResultInfoDTO(ResultEntity source, ResultInfoDTO target = null)
@@ -43,7 +52,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToVersionInfoDTO(source, target);
             target.ResultId = source.ResultId;
-            target.Session = MapToSessionInfoDTO(source.Session);
+            target.SessionId = source.Session.SessionId;//MapToSessionInfoDTO(source.Session);
 
             return target;
         }
@@ -58,11 +67,12 @@ namespace iRLeagueDatabase.Mapper
             MapToResultInfoDTO(source, target);
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
-            target.RawResults = source.RawResults.Select(x => MapToResultRowDataDTO(x)).ToList();
+            target.RawResults = source.RawResults.Select(x => MapToResultRowDataDTO(x)).ToArray();
             target.ResultId = source.ResultId;
-            target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x));
-            target.Season = MapToSeasonInfoDTO(source.Session.Schedule.Season);
-            target.Session = MapToSessionInfoDTO(source.Session);
+            target.ReviewIds = source.Reviews.Select(x => x.ReviewId).ToArray();//source.Reviews.Select(x => MapToReviewInfoDTO(x)).ToArray();
+            target.SeasonId = source.SeasonId.GetValueOrDefault();//MapToSeasonInfoDTO(source.Session.Schedule.Season);
+            target.SessionId = source.ResultId; MapToSessionInfoDTO(source.Session);
+            target.SimSessionDetails = MapToSimSessionDetailsDTO(source.IRSimSessionDetails);
 
             return target;
         }
@@ -86,7 +96,7 @@ namespace iRLeagueDatabase.Mapper
             target.Incidents = source.Incidents;
             target.Interval = TimeSpanConverter.Convert(source.Interval);
             target.LeadLaps = source.LeadLaps;
-            target.Member = MapToMemberInfoDTO(source.Member);
+            target.MemberId = source.MemberId; // MapToMemberInfoDTO(source.Member);
             target.PositionChange = source.PositionChange;
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.ResultRowId = source.ResultRowId;
@@ -118,9 +128,9 @@ namespace iRLeagueDatabase.Mapper
                 target = new ScoredResultDataDTO();
 
             MapToResultInfoDTO(source.Result, target);
-            target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.ScoringId = source.ScoringId; // MapToScoringInfoDTO(source.Scoring);
             target.ScoringName = source.Scoring.Name;
-            target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToList();
+            target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToArray();
 
             return target;
         }
@@ -141,6 +151,7 @@ namespace iRLeagueDatabase.Mapper
             target.RacePoints = source.RacePoints;
             target.ScoringId = source.ScoringId;
             target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
+            target.TotalPoints = source.TotalPoints;
 
             return target;
         }
@@ -174,14 +185,14 @@ namespace iRLeagueDatabase.Mapper
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.Name = source.Name;
-            target.Season = MapToSeasonInfoDTO(source.Season);
-            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
-            target.Results = source.Results.Select(x => MapToResultInfoDTO(x)).ToArray();
-            target.ConnectedSchedule = MapToScheduleInfoDTO(source.ConnectedSchedule);
+            target.SeasonId = source.SeasonId; // MapToSeasonInfoDTO(source.Season);
+            target.SessionIds = source.Sessions.Select(x => x.SessionId).ToArray();
+            target.ResultIds = source.Results.Where(x => x != null).Select(x => x.ResultId).ToArray();
+            target.ConnectedScheduleId = source.ConnectedScheduleId; // MapToScheduleInfoDTO(source.ConnectedSchedule);
             target.ScoringKind = source.ScoringKind;
             target.MaxResultsPerGroup = source.MaxResultsPerGroup;
             target.TakeGroupAverage = source.TakeGroupAverage;
-            target.ExtScoringSource = MapToScoringInfoDTO(source.ExtScoringSource);
+            target.ExtScoringSourceId = source.ExtScoringSourceId; // MapToScoringInfoDTO(source.ExtScoringSource);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             //target.ResultsFilterOptions = source.ResultsFilterOptions.Select(x => MapToResultsFilterOptionDTO(x)).ToArray();
             target.ResultsFilterOptionIds = source.ResultsFilterOptions.Select(x => x.ResultsFilterId).ToArray();
@@ -217,9 +228,9 @@ namespace iRLeagueDatabase.Mapper
             target.DropWeeks = source.DropWeeks;
             target.ScoringFactors = source.ScoringFactors;
             target.ScoringKind = source.ScoringKind;
-            target.Scorings = source.Scorings.Select(x => MapToScoringInfoDTO(x)).ToArray();
-            target.Season = MapToSeasonInfoDTO(source.Season);
-            target.Sessions = source.Sessions.Select(x => MapToSessionInfoDTO(x)).ToArray();
+            target.ScoringIds = source.Scorings.Select(x => x.ScoringId).ToArray();
+            target.SeasonId = source.SeasonId; // MapToSeasonInfoDTO(source.Season);
+            target.SessionIds = source.Sessions.Select(x => x.SessionId).ToArray();
             target.DropRacesOption = source.DropRacesOption;
             target.ResultsPerRaceCount = source.ResultsPerRaceCount;
 
@@ -233,11 +244,11 @@ namespace iRLeagueDatabase.Mapper
             if (target == null)
                 target = new StandingsDataDTO();
 
-            target.CleanestDriver = MapToMemberInfoDTO(source.CleanestDriver);
-            target.MostPenaltiesDriver = MapToMemberInfoDTO(source.MostPenaltiesDriver);
-            target.MostPolesDriver = MapToMemberInfoDTO(source.MostPolesDriver);
-            target.MostWinsDriver = MapToMemberInfoDTO(source.MostWinsDriver);
-            target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            target.CleanestDriverId = source.CleanestDriver?.MemberId; // MapToMemberInfoDTO(source.CleanestDriver);
+            target.MostPenaltiesDriverId = source.MostPenaltiesDriver?.MemberId; // MapToMemberInfoDTO(source.MostPenaltiesDriver);
+            target.MostPolesDriverId = source.MostPolesDriver?.MemberId; // MapToMemberInfoDTO(source.MostPolesDriver);
+            target.MostWinsDriverId = source.MostWinsDriver?.MemberId; // MapToMemberInfoDTO(source.MostWinsDriver);
+            target.ScoringId = (source.Scoring?.ScoringId).GetValueOrDefault(); // MapToScoringInfoDTO(source.Scoring);
             target.ScoringTableId = source.ScoringTable.ScoringTableId;
             target.StandingsRows = source.StandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
 
@@ -263,7 +274,7 @@ namespace iRLeagueDatabase.Mapper
             target.LastPosition = source.LastPosition;
             target.LeadLaps = source.LeadLaps;
             target.LeadLapsChange = source.LeadLapsChange;
-            target.Member = MapToMemberInfoDTO(source.Member);
+            target.MemberId = source.Member.MemberId; // MapToMemberInfoDTO(source.Member);
             target.PenaltyPoints = source.PenaltyPoints;
             target.PenaltyPointsChange = source.PenaltyPointsChange;
             target.PolePositions = source.PolePositions;
@@ -274,7 +285,7 @@ namespace iRLeagueDatabase.Mapper
             target.RacePointsChange = source.RacePointsChange;
             target.Races = source.Races;
             target.RacesCounted = source.RacesCounted;
-            target.Scoring = MapToScoringInfoDTO(source.Scoring);
+            //target.ScoringId = source.Scoring.ScoringId; // MapToScoringInfoDTO(source.Scoring);
             target.Top10 = source.Top10;
             target.Top3 = source.Top3;
             target.Top5 = source.Top5;
@@ -332,6 +343,7 @@ namespace iRLeagueDatabase.Mapper
             target.FastestLapTime = TimeSpanConverter.Convert(source.FastestLapTime);
             target.AvgLapTime = TimeSpanConverter.Convert(source.AvgLapTime);
             target.ScoredResultRows = source.ScoredResultRows.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
+            target.TotalPoints = source.TotalPoints;
 
             return target;
         }
@@ -361,6 +373,76 @@ namespace iRLeagueDatabase.Mapper
 
             target.TeamId = (source.Team?.TeamId).GetValueOrDefault();
             target.DriverStandingsRows = source.DriverStandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
+
+            return target;
+        }
+
+        public SimSessionDetailsDTO MapToSimSessionDetailsDTO(IRSimSessionDetailsEntity source, SimSessionDetailsDTO target = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                target = new SimSessionDetailsDTO();
+            }
+
+            target.ResultId = source.ResultId;
+            target.IRSubsessionId = source.IRSubsessionId;
+            target.IRTrackId = source.IRTrackId;
+            target.IRSeasonName = source.IRSeasonName;
+            target.IRSeasonYear = source.IRSeasonYear;
+            target.IRSeasonQuarter = source.IRSeasonQuarter;
+            target.IRRaceWeek = source.IRRaceWeek;
+            target.IRSessionId = source.IRSessionId;
+            target.LicenseCategory = source.LicenseCategory;
+            target.SessionName = source.SessionName;
+            target.StartTime = source.StartTime;
+            target.EndTime = source.EndTime;
+            target.CornersPerLap = source.CornersPerLap;
+            target.KmDistPerLap = source.KmDistPerLap;
+            target.MaxWeeks = source.MaxWeeks;
+            target.EventStrengthOfField = source.EventStrengthOfField;
+            target.EventAverageLap = source.EventAverageLap;
+            target.EventLapsComplete = source.EventLapsComplete;
+            target.NumCautions = source.NumCautions;
+            target.NumCautionLaps = source.NumCautionLaps;
+            target.NumLeadChanges = source.NumLeadChanges;
+            target.TimeOfDay = source.TimeOfDay;
+            target.DamageModel = source.DamageModel;
+
+            // Track details
+            target.IRTrackId = source.IRTrackId;
+            target.TrackName = source.TrackName;
+            target.ConfigName = source.ConfigName;
+            target.TrackCategoryId = source.TrackCategoryId;
+            target.Category = source.Category;
+
+            // Weather details
+            target.WeatherType = source.WeatherType;
+            target.TempUnits = source.TempUnits;
+            target.TempValue = source.TempValue;
+            target.RelHumidity = source.RelHumidity;
+            target.Fog = source.Fog;
+            target.WindDir = source.WindDir;
+            target.WindUnits = source.WindUnits;
+            target.Skies = source.Skies;
+            target.WeatherVarInitial = source.WeatherVarInitial;
+            target.WeatherVarOngoing = source.WeatherVarOngoing;
+            target.SimStartUTCTime = source.SimStartUTCTime;
+            target.SimStartUTCOffset = source.SimStartUTCOffset;
+
+            // Track state details 
+            target.LeaveMarbles = source.LeaveMarbles;
+            target.PracticeRubber = source.PracticeRubber;
+            target.QualifyRubber = source.QualifyRubber;
+            target.WarmupRubber = source.WarmupRubber;
+            target.RaceRubber = source.RaceRubber;
+            target.PracticeGripCompound = source.PracticeGripCompound;
+            target.QualifyGripCompund = source.QualifyGripCompund;
+            target.WarmupGripCompound = source.WarmupGripCompound;
+            target.RaceGripCompound = source.RaceGripCompound;
 
             return target;
         }
@@ -407,11 +489,42 @@ namespace iRLeagueDatabase.Mapper
 
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
-            MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId });
-            MapCollection(source.Reviews, target.Reviews, GetReviewEntity, x => x.ReviewId);
-            target.Session = GetSessionBaseEntity(source.Session);
+            target.Session = GetSessionBaseEntity(new SessionInfoDTO() { SessionId = source.SessionId });
             target.Season = target.Session.Schedule.Season;
+            MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId }, autoAddMissing: true, removeFromCollection: true, removeFromDatabase: true);
+            MapCollection(source.ReviewIds.Select(x => new IncidentReviewInfoDTO() { ReviewId = x }), target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.RequiresRecalculation = true;
+            target.IRSimSessionDetails = MapToSimSessionDetailsEntity(source.SimSessionDetails, target.IRSimSessionDetails);
+            if (target.RawResults?.Count > 0)
+            {
+                target.PoleLaptime = (target.RawResults?.Select(x => x.QualifyingTime).Where(x => x > 0).Min()).GetValueOrDefault();
+            }
+
+
+            if (target.RawResults != null)
+            {
+                foreach (var resultRow in target.RawResults)
+                {
+                    //compare with other resultrows in this season and determine SeasonStartIRating
+                    DbContext.Configuration.LazyLoadingEnabled = false;
+                    DbContext.Set<ResultEntity>()
+                        .Where(x => x.SeasonId == target.Season.SeasonId)
+                        .Include(x => x.RawResults)
+                        .Include(x => x.Session)
+                        .Load();
+                    var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
+
+                    if (seasonResultRows.Any(x => x.MemberId == resultRow.Member.MemberId && x.Date < target.Session.Date))
+                    {
+                        resultRow.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == resultRow.Member.MemberId && x.Date < target.Session.Date).SeasonStartIRating;
+                    }
+                    else
+                    {
+                        resultRow.SeasonStartIRating = resultRow.OldIRating;
+                    }
+                    DbContext.Configuration.LazyLoadingEnabled = true;
+                }
+            }
 
             return target;
         }
@@ -471,7 +584,7 @@ namespace iRLeagueDatabase.Mapper
             target.Incidents = source.Incidents;
             target.Interval = TimeSpanConverter.Convert(source.Interval);
             target.LeadLaps = source.LeadLaps;
-            target.Member = GetMemberEntity(source.Member);
+            target.Member = GetMemberEntity(new LeagueMemberInfoDTO() { MemberId = source.MemberId });
             target.PositionChange = source.PositionChange;
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.StartPosition = source.StartPosition;
@@ -486,25 +599,6 @@ namespace iRLeagueDatabase.Mapper
             target.NewLicenseLevel = source.NewLicenseLevel;
             target.OldCpi = source.OldCpi;
             target.NewCpi = source.NewCpi;
-
-            //compare with other resultrows in this season and determine SeasonStartIRating
-            DbContext.Configuration.LazyLoadingEnabled = false;
-            DbContext.Set<ResultEntity>()
-                .Where(x => x.SeasonId == target.Result.SeasonId)
-                .Include(x => x.RawResults)
-                .Include(x => x.Session)
-                .Load();
-            var seasonResultRows = DbContext.Set<ResultRowEntity>().Local;
-
-            if (seasonResultRows.Any(x => x.MemberId == target.MemberId && x.Date < target.Date))
-            {
-                target.SeasonStartIRating = seasonResultRows.First(x => x.MemberId == target.MemberId && x.Date < target.Date).SeasonStartIRating;
-            }
-            else
-            {
-                target.SeasonStartIRating = target.OldIRating;
-            }
-            DbContext.Configuration.LazyLoadingEnabled = true;
 
             return target;
         }
@@ -545,12 +639,17 @@ namespace iRLeagueDatabase.Mapper
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.Name = source.Name;
-            target.Season = GetSeasonEntity(source.Season);
+            if (target.Season == null && source.SeasonId != 0)
+            {
+                //target.Season = GetSeasonEntity(new SeasonInfoDTO() { SeasonId = source.SeasonId });
+                target.Season = DefaultGet<SeasonEntity>(source.SeasonId);
+            }
             if (target.Sessions == null)
                 target.Sessions = new List<Entities.Sessions.SessionBaseEntity>();
             else
-                MapCollection(source.Sessions, target.Sessions, GetSessionBaseEntity, x => x.SessionId);
-            target.ConnectedSchedule = GetScheduleEntity(source.ConnectedSchedule);
+                MapCollection(source.SessionIds.Select(x => new SessionInfoDTO() { SessionId = x }), target.Sessions, GetSessionBaseEntity, x => x.SessionId);
+            //target.ConnectedSchedule = GetScheduleEntity(source.ConnectedScheduleId != null ? new ScheduleInfoDTO() { ScheduleId = source.ConnectedScheduleId } : null);
+            target.ConnectedSchedule = DefaultGet<ScheduleEntity>(source.ConnectedScheduleId);
             if (target.ConnectedSchedule != null)
             {
                 target.Sessions = target.ConnectedSchedule.Sessions;
@@ -558,7 +657,8 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringKind = source.ScoringKind;
             target.MaxResultsPerGroup = source.MaxResultsPerGroup;
             target.TakeGroupAverage = source.TakeGroupAverage;
-            target.ExtScoringSource = GetScoringEntity(source.ExtScoringSource);
+            //target.ExtScoringSource = GetScoringEntity(source.ExtScoringSourceId != null ? new ScoringInfoDTO() { ScoringId = source.ExtScoringSourceId } : null);
+            target.ExtScoringSource = DefaultGet<ScoringEntity>(source.ExtScoringSourceId);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             target.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
 
@@ -587,7 +687,7 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringFactors = source.ScoringFactors;
             if (target.Scorings == null)
                 target.Scorings = new List<ScoringEntity>();
-            MapCollection(source.Scorings, target.Scorings, GetScoringEntity, x => x.Keys, removeFromCollection: true);
+            MapCollection(source.ScoringIds.Select(x => new ScoringInfoDTO() { ScoringId = x }), target.Scorings, GetScoringEntity, x => x.Keys, removeFromCollection: true);
             target.ResultsPerRaceCount = source.ResultsPerRaceCount;
             target.DropRacesOption = source.DropRacesOption;
 
@@ -607,6 +707,7 @@ namespace iRLeagueDatabase.Mapper
             target.FinalPositionChange = source.FinalPositionChange;
             target.PenaltyPoints = source.PenaltyPoints;
             target.RacePoints = source.RacePoints;
+            target.TotalPoints = source.TotalPoints;
 
             return target;
         }
@@ -632,6 +733,75 @@ namespace iRLeagueDatabase.Mapper
             {
                 target.ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
             }
+
+            return target;
+        }
+
+        public IRSimSessionDetailsEntity MapToSimSessionDetailsEntity(SimSessionDetailsDTO source, IRSimSessionDetailsEntity target = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                target = new IRSimSessionDetailsEntity();
+            }
+
+            target.IRSubsessionId = source.IRSubsessionId;
+            target.IRTrackId = source.IRTrackId;
+            target.IRSeasonName = source.IRSeasonName;
+            target.IRSeasonYear = source.IRSeasonYear;
+            target.IRSeasonQuarter = source.IRSeasonQuarter;
+            target.IRRaceWeek = source.IRRaceWeek;
+            target.IRSessionId = source.IRSessionId;
+            target.LicenseCategory = source.LicenseCategory;
+            target.SessionName = source.SessionName;
+            target.StartTime = source.StartTime;
+            target.EndTime = source.EndTime;
+            target.CornersPerLap = source.CornersPerLap;
+            target.KmDistPerLap = source.KmDistPerLap;
+            target.MaxWeeks = source.MaxWeeks;
+            target.EventStrengthOfField = source.EventStrengthOfField;
+            target.EventAverageLap = source.EventAverageLap;
+            target.EventLapsComplete = source.EventLapsComplete;
+            target.NumCautions = source.NumCautions;
+            target.NumCautionLaps = source.NumCautionLaps;
+            target.NumLeadChanges = source.NumLeadChanges;
+            target.TimeOfDay = source.TimeOfDay;
+            target.DamageModel = source.DamageModel;
+
+            // Track details
+            target.IRTrackId = source.IRTrackId;
+            target.TrackName = source.TrackName;
+            target.ConfigName = source.ConfigName;
+            target.TrackCategoryId = source.TrackCategoryId;
+            target.Category = source.Category;
+
+            // Weather details
+            target.WeatherType = source.WeatherType;
+            target.TempUnits = source.TempUnits;
+            target.TempValue = source.TempValue;
+            target.RelHumidity = source.RelHumidity;
+            target.Fog = source.Fog;
+            target.WindDir = source.WindDir;
+            target.WindUnits = source.WindUnits;
+            target.Skies = source.Skies;
+            target.WeatherVarInitial = source.WeatherVarInitial;
+            target.WeatherVarOngoing = source.WeatherVarOngoing;
+            target.SimStartUTCTime = source.SimStartUTCTime;
+            target.SimStartUTCOffset = source.SimStartUTCOffset;
+
+            // Track state details 
+            target.LeaveMarbles = source.LeaveMarbles;
+            target.PracticeRubber = source.PracticeRubber;
+            target.QualifyRubber = source.QualifyRubber;
+            target.WarmupRubber = source.WarmupRubber;
+            target.RaceRubber = source.RaceRubber;
+            target.PracticeGripCompound = source.PracticeGripCompound;
+            target.QualifyGripCompund = source.QualifyGripCompund;
+            target.WarmupGripCompound = source.WarmupGripCompound;
+            target.RaceGripCompound = source.RaceGripCompound;
 
             return target;
         }

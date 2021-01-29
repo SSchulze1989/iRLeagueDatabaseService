@@ -17,6 +17,8 @@ using iRLeagueDatabase;
 using iRLeagueDatabase.Entities.Filters;
 using iRLeagueDatabase.Filters;
 using System.Runtime.CompilerServices;
+using iRLeagueManager.Timing;
+using iRLeagueDatabase.Extensions;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -67,6 +69,8 @@ namespace iRLeagueDatabase.Entities.Results
 
         //[ForeignKey(nameof(Season))]
         //public long SeasonId { get; set; }
+        [ForeignKey(nameof(Season))]
+        public long SeasonId { get; set; }
         [Required]
         public virtual SeasonEntity Season { get; set; }
         public string BasePoints { get; set; }
@@ -77,6 +81,8 @@ namespace iRLeagueDatabase.Entities.Results
         //public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
         [InverseProperty(nameof(ScoredResultEntity.Scoring))]
         public virtual List<ScoredResultEntity> ScoredResults { get; set; }
+        [ForeignKey(nameof(ConnectedSchedule))]
+        public long? ConnectedScheduleId { get; set; }
         public virtual ScheduleEntity ConnectedSchedule { get; set; }
 
         //public ScoringRuleBase Rule { get; set; }
@@ -98,6 +104,7 @@ namespace iRLeagueDatabase.Entities.Results
             return Sessions;
         }
 
+        [Obsolete]
         public StandingsEntity GetSeasonStandings()
         {
             var allSessions = GetAllSessions();
@@ -116,7 +123,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             return GetSeasonStandings(session, allSessions.Count - DropWeeks);
         }
-
+        [Obsolete]
         public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession)
         {
             var allSessions = GetAllSessions();
@@ -277,6 +284,16 @@ namespace iRLeagueDatabase.Entities.Results
         //public IEnumerable<ScoredResultRowEntity> CalculateResults(long sessionId, LeagueDbContext dbContext)
         public ScoredResultEntity CalculateResults(long sessionId, LeagueDbContext dbContext)
         {
+            if (Season.Finished)
+            {
+                var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == sessionId);
+                if (scoredResult != null)
+                {
+                    scoredResult.Result.RequiresRecalculation = false;
+                    return scoredResult;
+                }
+            }
+
             UpdateSessionList();
             if (!Sessions.Any(x => x.SessionId == sessionId))
                 return null;
@@ -290,19 +307,41 @@ namespace iRLeagueDatabase.Entities.Results
         {
             if (ConnectedSchedule != null)
             {
-                Sessions = ConnectedSchedule.Sessions;
+                if (Sessions == null)
+                {
+                    Sessions = new List<SessionBaseEntity>();
+                }
+                var remove = Sessions.ToList();
+
+                foreach(var session in ConnectedSchedule.Sessions)
+                {
+                    if (Sessions.Contains(session) == false)
+                    {
+                        Sessions.Add(session);
+                    }
+                    remove.Remove(session);
+                }
+                remove.ForEach(x => Sessions.Remove(x));
             }
         }
 
         //public IEnumerable<ScoredResultRowEntity> CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         public ScoredResultEntity CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         {
-            UpdateSessionList();
             if (session == null || session.SessionResult == null)
                 return null;
 
             //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
             var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
+            var firstResult = ScoredResults.Select(x => x?.Result).OrderBy(x => x?.Session.Date).FirstOrDefault();
+
+            if (Season.Finished && scoredResult != null)
+            {
+                scoredResult.Result.RequiresRecalculation = false;
+                return scoredResult;
+            }
+
+            UpdateSessionList();
 
             if (ScoringKind == ScoringKindEnum.Member)
             {
@@ -371,7 +410,7 @@ namespace iRLeagueDatabase.Entities.Results
             List<IResultsFilter> resultsFilters = new List<IResultsFilter>();
             foreach(var filterOption in ResultsFilterOptions)
             {
-                var filter = FilterFactoryHelper.GetFilter(filterOption.ResultsFilterType, filterOption.ColumnPropertyName, filterOption.Exclude, filterOption.Comparator);
+                var filter = FilterFactoryHelper.GetFilter(filterOption.ResultsFilterType, filterOption.ColumnPropertyName, filterOption.Exclude, filterOption.FilterPointsOnly, filterOption.Comparator);
                 filter.SetFilterValueStrings(filterOption.FilterValues.Split(';'));
                 resultsFilters.Add(filter);
             }
@@ -397,11 +436,19 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 IEnumerable<ResultRowEntity> resultRows = session.SessionResult.RawResults;
 
-                // Apply filters
-                foreach(var filter in resultsFilters)
+                // Recaclulate completed pct
+                var maxLaps = resultRows.Max(x => x.CompletedLaps);
+                if (maxLaps > 0)
                 {
-                    resultRows = filter.GetFilteredRows(resultRows).OrderBy(x => x.FinishPosition);
+                    resultRows.ForEach(x => x.CompletedPct = (double)x.CompletedLaps / maxLaps);
                 }
+
+                // Apply filters
+                foreach(var filter in resultsFilters.Where(x => x.FilterPointsOnly == false))
+                {
+                    resultRows = filter.GetFilteredRows(resultRows);
+                }
+                resultRows = resultRows.OrderBy(x => x.FinishPosition);
 
                 IDictionary<int, int> basePoints = new Dictionary<int, int>();
                 if (BasePoints != "" && BasePoints != null)
@@ -433,13 +480,20 @@ namespace iRLeagueDatabase.Entities.Results
                         scoredResultRows.Add(scoredResultRow);
                     }
 
+                    var firstResultMemberRow = firstResult?.RawResults.SingleOrDefault(x => x.MemberId == resultRow.MemberId);
+                    if (firstResultMemberRow != null)
+                    {
+                        resultRow.SeasonStartIRating = firstResultMemberRow.SeasonStartIRating;
+                    }
+
                     var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
                     if (scoredResultRow.ReviewPenalties != null)
                     {
+                        scoredResultRow.ReviewPenalties.Clear();
                         var removePenalty = scoredResultRow.ReviewPenalties.ToList();
                         foreach (var reviewVote in scoredResultRowReviewVotes)
                         {
-                            var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.ReviewId == reviewVote.ReviewId);
+                            var reviewPenalty = scoredResultRow.ReviewPenalties.SingleOrDefault(x => x.Review?.ReviewId == reviewVote.ReviewId);
                             if (reviewPenalty == null)
                             {
                                 reviewPenalty = new ReviewPenaltyEntity()
@@ -455,14 +509,30 @@ namespace iRLeagueDatabase.Entities.Results
                                 reviewPenalty.ReviewVote = reviewVote;
                                 removePenalty.Remove(reviewPenalty);
                             }
-                            reviewPenalty.PenaltyPoints = GetReviewPenaltyPoints(reviewVote);
+                            reviewPenalty.PenaltyPoints += GetReviewPenaltyPoints(reviewVote);
                         }
                         removePenalty.ForEach(x => x.Delete(dbContext));
                         //dbContext.SaveChanges();
                     }
+                    scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
+                    scoredResultRow.RacePoints = 0;
+                    scoredResultRow.BonusPoints = 0;
+                    scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
+                }
+
+                IEnumerable<ScoredResultRowEntity> pointScoringRows = scoredResultRows.ToArray();
+                foreach(var filter in resultsFilters.Where(x => x.FilterPointsOnly))
+                {
+                    pointScoringRows = filter.GetFilteredRows(pointScoringRows);
+                }
+                pointScoringRows = pointScoringRows.OrderBy(x => x.FinishPosition);
+
+                foreach (var scoredResultRowObj in pointScoringRows.Select((row, index) => new { index, row }))
+                {
+                    var scoredResultRow = scoredResultRowObj.row;
+                    var position = scoredResultRowObj.index + 1;
                     scoredResultRow.RacePoints = basePoints.ContainsKey(position) ? basePoints[position] : 0;
                     scoredResultRow.BonusPoints = bonusPoints.ContainsKey(position) ? bonusPoints[position] : 0;
-                    scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 
@@ -527,14 +597,20 @@ namespace iRLeagueDatabase.Entities.Results
                 if (scoredTeamResult.TeamResults == null)
                     scoredTeamResult.TeamResults = new List<ScoredTeamResultRowEntity>();
 
+                var removeRows = scoredTeamResult.TeamResults.ToList();
+
                 foreach (var teamGroup in groupedResultRows.Where(x => x.Key != null))
                 {
                     var team = teamGroup.Key;
-                    var teamResultRow = scoredTeamResult.TeamResults.SingleOrDefault(x => x.Team.TeamId == team.TeamId);
+                    var teamResultRow = scoredTeamResult.TeamResults.Where(x => x.Team != null).SingleOrDefault(x => x.Team.TeamId == team.TeamId);
                     if (teamResultRow == null)
                     {
                         teamResultRow = new ScoredTeamResultRowEntity();
                         scoredTeamResult.TeamResults.Add(teamResultRow);
+                    }
+                    else
+                    {
+                        removeRows.Remove(teamResultRow);
                     }
                     teamResultRow.RemoveAllRows();
                     teamGroup.AggregateTeamResults(maxRacesCount: MaxResultsPerGroup, teamResultRow);
@@ -548,6 +624,9 @@ namespace iRLeagueDatabase.Entities.Results
                     }
                 }
 
+                removeRows.ForEach(x => x.Delete(dbContext));
+                scoredTeamResult.TeamResults.Remove(removeRows);
+
                 var scoredTeamResultRows = scoredTeamResult.TeamResults.OrderByDescending(x => x.TotalPoints);
                 for (int i = 0; i < scoredTeamResultRows.Count(); i++)
                 {
@@ -555,8 +634,35 @@ namespace iRLeagueDatabase.Entities.Results
                 }
             }
 
+            // Calculate hard chargers and cleanest drivers
+            var contenders = GetHardChargerContenders(scoredResult);
+            if (contenders.Count() > 0)
+            {
+                var maxPlacesGained = contenders.Max(x => x.FinalPositionChange);
+                var hardChargers = contenders.Where(x => x.FinalPositionChange == maxPlacesGained).Select(x => x.ResultRow.Member);
+                scoredResult.HardChargers.RemoveAll(x => hardChargers.Contains(x) == false);
+                scoredResult.HardChargers.AddRange(hardChargers.Except(scoredResult.HardChargers));
+            }
+            contenders = GetCleanesDriverContenders(scoredResult);
+            if (contenders.Count() > 0)
+            {
+                var minIncidents = contenders.Min(x => x.ResultRow.Incidents);
+                var cleanestDrivers = contenders.Where(x => x.ResultRow.Incidents == minIncidents).Select(x => x.ResultRow.Member);
+                scoredResult.CleanestDrivers.RemoveAll(x => cleanestDrivers.Contains(x) == false);
+                scoredResult.CleanestDrivers.AddRange(cleanestDrivers.Except(scoredResult.CleanestDrivers));
+            }
             //return scoredResultRows;
             return scoredResult;
+        }
+
+        private IEnumerable<ScoredResultRowEntity> GetHardChargerContenders(ScoredResultEntity scoredResult)
+        {
+            return scoredResult.FinalResults.Where(x => x.ResultRow.QualifyingTime > 0 && x.ResultRow.Status == RaceStatusEnum.Running && x.ResultRow.QualifyingTime <= x.ResultRow.Result.PoleLaptime * 1.04);
+        }
+
+        private IEnumerable<ScoredResultRowEntity> GetCleanesDriverContenders(ScoredResultEntity scoredResult)
+        {
+            return scoredResult.FinalResults.Where(x => (new LapInterval(iRLeagueManager.Timing.TimeSpanConverter.Convert(x.ResultRow.Interval))).Laps == 0 && x.ResultRow.Status == RaceStatusEnum.Running);
         }
 
         public IEnumerable<ScoredResultEntity> GetResultsFromSource()
@@ -628,7 +734,15 @@ namespace iRLeagueDatabase.Entities.Results
             foreach (var row in source)
             {
                 StandingsRowEntity standingsRow;
-                var compRow = compare.SingleOrDefault(x => x.Member.MemberId == row.Member.MemberId);
+                T compRow;
+                if (typeof(T).Equals(typeof(TeamStandingsRowEntity)))
+                {
+                    compRow = compare.SingleOrDefault(x => (x as TeamStandingsRowEntity).Team.TeamId == (row as TeamStandingsRowEntity).Team.TeamId);
+                }
+                else
+                {
+                    compRow = compare.SingleOrDefault(x => x.Member.MemberId == row.Member.MemberId);
+                }
                 if (compRow != null)
                 {
                     if (row is TeamStandingsRowEntity teamStandingsRow && compRow is TeamStandingsRowEntity compTeamStandingsRow)

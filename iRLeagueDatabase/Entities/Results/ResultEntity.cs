@@ -45,6 +45,8 @@ namespace iRLeagueDatabase.Entities.Results
         [InverseProperty(nameof(ScoredResultEntity.Result))]
         public virtual List<ScoredResultEntity> ScoredResults { get; set; }
 
+        public long PoleLaptime { get; set; }
+
         public bool RequiresRecalculation { get; set; }
 
         [NotMapped]
@@ -60,8 +62,9 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            RawResults.ToList().ForEach(x => x.Delete(dbContext));
-            ScoredResults.ToList().ForEach(x =>  x.Delete(dbContext));
+            IRSimSessionDetails?.Delete(dbContext);
+            RawResults?.ToList().ForEach(x => x.Delete(dbContext));
+            ScoredResults?.ToList().ForEach(x =>  x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

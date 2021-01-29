@@ -5,6 +5,7 @@ using iRLeagueDatabase.Entities.Filters;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Extensions;
+using iRLeagueManager.Timing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,13 +29,15 @@ namespace iRLeagueDatabase.Mapper
             if (target == null)
                 target = new ResultsFilterOptionDTO();
 
+            MapToVersionDTO(source, target);
+
             target.ColumnPropertyName = source.ColumnPropertyName;
             target.Comparator = source.Comparator;
 
             switch (source.ColumnPropertyName)
             {
                 case nameof(ResultRowEntity.MemberId):
-                    target.ColumnPropertyName = nameof(ResultRowDataDTO.Member);
+                    target.ColumnPropertyName = nameof(ResultRowDataDTO.MemberId);
                     break;
                 case nameof(ResultRowEntity.Member)+"."+nameof(LeagueMemberEntity.Team)+"."+nameof(TeamEntity.Name):
                     target.ColumnPropertyName = nameof(ResultRowDataDTO.TeamName);
@@ -50,6 +53,7 @@ namespace iRLeagueDatabase.Mapper
             target.ResultsFilterType = source.ResultsFilterType;
             target.Exclude = source.Exclude;
             target.ScoringId = source.ScoringId;
+            target.FilterPointsOnly = source.FilterPointsOnly;
 
             return target;
         }
@@ -117,9 +121,14 @@ namespace iRLeagueDatabase.Mapper
             if (target == null)
                 target = DefaultGet<ResultsFilterOptionDTO, ResultsFilterOptionEntity>(source);
 
+            if (MapToRevision(source, target) == false)
+            {
+                return target;
+            }
+
             switch (source.ColumnPropertyName)
             {
-                case nameof(ResultRowDataDTO.Member):
+                case nameof(ResultRowDataDTO.MemberId):
                     target.ColumnPropertyName = nameof(ResultRowEntity.MemberId);
                     break;
                 case nameof(ResultRowDataDTO.TeamName):
@@ -141,6 +150,7 @@ namespace iRLeagueDatabase.Mapper
                 target.Scoring = DefaultGet<ScoringEntity>(new object[] { source.ScoringId });
             }
             target.Scoring?.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
+            target.FilterPointsOnly = source.FilterPointsOnly;
 
             return target;
         }

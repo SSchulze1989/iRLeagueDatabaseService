@@ -13,8 +13,9 @@ namespace iRLeagueDatabase.Filters
     {
         public List<int> FilterValues { get; set; } = new List<int>();
         public bool Exclude { get; set; }
+        public bool FilterPointsOnly { get; set; }
 
-        public IEnumerable<ResultRowEntity> GetFilteredRows(IEnumerable<ResultRowEntity> resultRows)
+        public IEnumerable<T> GetFilteredRows<T>(IEnumerable<T> resultRows) where T : IResultRow
         {
             int cutoffIrating;
             try
@@ -35,7 +36,7 @@ namespace iRLeagueDatabase.Filters
             throw new NotImplementedException();
         }
 
-        public void SetFilterOptions(string ColumnPropertyName, ComparatorTypeEnum comparator, bool exclude)
+        public void SetFilterOptions(string ColumnPropertyName, ComparatorTypeEnum comparator, bool exclude, bool onlyPoints)
         {
             throw new NotImplementedException();
         }

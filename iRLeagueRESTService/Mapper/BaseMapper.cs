@@ -69,11 +69,12 @@ namespace iRLeagueDatabase.Mapper
             MapToSeasonInfoDTO(source, target);
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
-            target.Results = source.Results?.Select(x => MapToResultInfoDTO(x)).ToList();
-            target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y));
-            target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToList();
-            target.Scorings = source.Scorings?.Select(x => MapToScoringDataDTO(x)).ToList();
-            target.ScoringTables = source.ScoringTables?.Select(x => MapToScoringTableDataDTO(x)).ToList();
+            target.Finished = source.Finished;
+            target.Results = source.Results?.Select(x => MapToResultInfoDTO(x)).ToArray();
+            target.Reviews = source.Results?.Select(x => x.Reviews?.Select(y => MapToReviewInfoDTO(y))).Aggregate((x, y) => x.Concat(y)).ToArray();
+            target.Schedules = source.Schedules?.Select(x => MapToScheduleInfoDTO(x)).ToArray();
+            target.Scorings = source.Scorings?.Select(x => MapToScoringDataDTO(x)).ToArray();
+            target.ScoringTables = source.ScoringTables?.Select(x => MapToScoringTableDataDTO(x)).ToArray();
             target.SeasonEnd = source.SeasonEnd.GetValueOrDefault();
             target.SeasonId = source.SeasonId;
             target.SeasonName = source.SeasonName;
@@ -82,6 +83,7 @@ namespace iRLeagueDatabase.Mapper
             target.VoteCategories = LeagueDbContext.CustomVoteCategories.AsEnumerable().Select(x => MapToVoteCategoryDTO(x)).ToArray();
             target.CustomIncidents = LeagueDbContext.CustomIncidentKinds.AsEnumerable().Select(x => MapToCustomIncidentDTO(x)).ToArray();
             target.HideCommentsBeforeVoted = source.HideCommentsBeforeVoted;
+            target.SeasonStatisticSetIds = source.SeasonStatistics.Select(x => x.Id).ToArray();
 
             return target;
         }
@@ -96,12 +98,20 @@ namespace iRLeagueDatabase.Mapper
             RegisterTypeMap<SeasonInfoDTO, SeasonEntity>(MapToSeasonEntity);
         }
 
+        /// <summary>
+        /// Checks if source version is newer than target version and maps 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public bool MapToRevision(VersionInfoDTO source, Revision target)
         {
             if (source == null)
                 return false;
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
+
+            target.Version = source.Version;
 
             if (target.CreatedOn == null)
             {
@@ -173,6 +183,7 @@ namespace iRLeagueDatabase.Mapper
                 return target;
 
             target.SeasonName = source.SeasonName;
+            target.Finished = source.Finished;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             if (target.Schedules == null)

@@ -20,6 +20,8 @@ namespace iRLeagueDatabase.Entities.Results
         public string Name { get; set; }
         public int DropWeeks { get; set; }
         public int AverageRaceNr { get; set; }
+        [ForeignKey(nameof(Season))]
+        public long SeasonId { get; set; }
         [Required]
         public virtual SeasonEntity Season { get; set; }
         public string ScoringFactors { get; set; }
@@ -114,12 +116,21 @@ namespace iRLeagueDatabase.Entities.Results
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
 
             var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
-            var previousStandingsRows = previousScoredRows.AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            var previousStandingsRows = previousScoredRows
+                .AggregateByDriver(maxRacesCount, true)
+                .OrderBy(x => -x.TotalPoints)
+                .ThenBy(x => x.PenaltyPoints)
+                .ThenBy(x => -x.Wins);
             previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
             allScoredResults = previousScoredResults.ToList();
             allScoredResults.Add(currentScoredResult);
-            var currentStandingsRows = allScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
+            var currentStandingsRows = allScoredResults
+                .SelectMany(x => x.FinalResults)
+                .AggregateByDriver(maxRacesCount, true)
+                .OrderBy(x => -x.TotalPoints)
+                .ThenBy(x => x.PenaltyPoints)
+                .ThenBy(x => -x.Wins);
             currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
 
             standings.StandingsRows = currentStandingsRows
@@ -243,6 +254,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             foreach (var team in teams)
             {
+                
                 IEnumerable<T> teamResultRows = source.Where(x => x.Team == team).OrderBy(x => x.Date).OrderBy(x => -x.TotalPoints);
                 if (dropRacesOption == DropRacesOption.PerTeamResults)
                     teamResultRows = teamResultRows.Take(maxRacesCount);
@@ -257,7 +269,9 @@ namespace iRLeagueDatabase.Entities.Results
                     var drivers= teamDriverResultRows.GroupBy(x => x.ResultRow.Member);
                     foreach (var driver in drivers)
                     {
-                        var driverResultRows = driver.OrderBy(x => x.ResultRow.Date).OrderBy(x => -x.ResultRow.Interval).OrderBy(x => -x.TotalPoints);
+                        // #### Hotfix for interval not being defined fix to positiv or negative values! This needs to be changed when final implementation is done!
+                        var driverResultRows = driver.OrderBy(x => x.ResultRow.Date).OrderBy(x => Math.Abs(x.ResultRow.Interval)).OrderBy(x => -x.TotalPoints);
+                        // ####
 
                         if (!canDropPenaltyRace)
                         {

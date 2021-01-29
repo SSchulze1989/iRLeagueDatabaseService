@@ -153,7 +153,9 @@ namespace iRLeagueRESTService.Data
                 .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
                 .Include(x => x.Replies).Load();
             DbContext.Set<AcceptedReviewVoteEntity>().Where(x => keys.Contains(x.ReviewId))
-                .Include(x => x.MemberAtFault).Load();
+                .Include(x => x.MemberAtFault)
+                .Include(x => x.CustomVoteCat)
+                .Load();
 
             DbContext.ChangeTracker.DetectChanges();
 
@@ -181,16 +183,6 @@ namespace iRLeagueRESTService.Data
 
             if (items == null)
                 return null;
-
-            var searchNames = new string[]
-            {
-                "iRLeagueDatabase.DataTransfer.",
-                "iRLeagueDatabase.DataTransfer.Members.",
-                "iRLeagueDatabase.DataTransfer.Results.",
-                "iRLeagueDatabase.DataTransfer.Reviews.",
-                "iRLeagueDatabase.DataTransfer.Sessions.",
-                "iRLeagueDatabase.DataTransfer.Filters"
-            };
 
             var entityMapper = new EntityMapper(DbContext) { UserName = UserName, UserId = UserId };
             var dtoMapper = new DTOMapper(DbContext);
@@ -319,7 +311,7 @@ namespace iRLeagueRESTService.Data
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,
-                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    ScoringId = scoringId
                 };
             }
             else if (result.RequiresRecalculation)
@@ -341,7 +333,7 @@ namespace iRLeagueRESTService.Data
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,
-                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    ScoringId = scoringId
                 };
             //DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
             //         .Include(x => x.Session).Load();
@@ -394,6 +386,7 @@ namespace iRLeagueRESTService.Data
 
             DbContext.Configuration.LazyLoadingEnabled = false;
             List<StandingsDataDTO> responseItems = new List<StandingsDataDTO>();
+            List<long> loadedScoringEntityIds = new List<long>();
             foreach (var requestId in requestIds)
             {
                 var scoringTableId = requestId[0];
@@ -409,12 +402,19 @@ namespace iRLeagueRESTService.Data
                         //.Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                         //.Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                         .FirstOrDefault();
-                    var localScoringEntityIds = DbContext.Set<ScoringEntity>().Local.Select(y => y.ScoringId);
+                    var loadScoringEntityIds = DbContext.Set<ScoringEntity>().Local.Select(y => y.ScoringId).Except(loadedScoringEntityIds);
 
-                    DbContext.Set<ScoringEntity>().Where(x => localScoringEntityIds.Contains(x.ScoringId))
-                        .Include(x => x.Sessions.Select(y => y.SessionResult)).Load();
-                    DbContext.Set<ScoredResultEntity>().Where(x => localScoringEntityIds.Contains(x.ScoringId))
-                        .Include(x => x.FinalResults.Select(y => y.ResultRow.Member)).Load();
+                    if (loadScoringEntityIds.Count() > 0)
+                    {
+                        var loadScorings = DbContext.Set<ScoringEntity>()
+                            .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
+                            .Include(x => x.Sessions.Select(y => y.SessionResult))
+                            .ToList();
+                        var loadScoredResults = DbContext.Set<ScoredResultEntity>()
+                            .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
+                            .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                            .ToList();
+                    }
 
                     DbContext.ChangeTracker.DetectChanges();
                 }
