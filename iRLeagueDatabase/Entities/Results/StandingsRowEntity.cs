@@ -49,6 +49,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int IncidentsChange { get; set; }
         public int PositionChange { get; set; }
         public virtual List<ScoredResultRowEntity> CountedResults { get; set; }
+        public virtual TeamEntity Team { get; set; }
 
         public StandingsRowEntity()
         {
@@ -161,7 +162,8 @@ namespace iRLeagueDatabase.Entities.Results
                 TotalPointsChange = source.TotalPoints - compare.TotalPoints,
                 Wins = source.Wins,
                 WinsChange = source.Wins - compare.Wins,
-                CountedResults = source.CountedResults
+                CountedResults = source.CountedResults,
+                Team = source.Team
             };
 
             return standingsRow;

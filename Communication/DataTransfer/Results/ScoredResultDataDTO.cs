@@ -45,6 +45,11 @@ namespace iRLeagueDatabase.DataTransfer.Results
 
         public override object[] Keys => new object[] { ResultId.GetValueOrDefault(), ScoringId };
 
+        [DataMember(Name = "HrdChrgIds")]
+        public long[] HardChargerMemberIds { get; set; }
+        [DataMember(Name = "CleanDrvIds")]
+        public long[] CleanesDriverMemberIds { get; set; }
+
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;
         [DataMember]

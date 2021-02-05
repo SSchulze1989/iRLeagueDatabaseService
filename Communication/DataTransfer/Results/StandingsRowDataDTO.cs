@@ -105,5 +105,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int PositionChange { get; set; }
         [DataMember]
         public ScoredResultRowDataDTO[] CountedResults { get; set; }
+        [DataMember]
+        public long? TeamId { get; set; }
     }
 }

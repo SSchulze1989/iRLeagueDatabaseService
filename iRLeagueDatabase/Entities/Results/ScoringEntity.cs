@@ -52,14 +52,6 @@ namespace iRLeagueDatabase.Entities.Results
         {
             get
             {
-                //if (ConnectedSchedule != null)
-                //{
-                //    sessions = ConnectedSchedule.Sessions;
-                //}
-                //else
-                //{
-                //    return sessions?.Distinct().ToList();
-                //}
                 return sessions;
             }
             set => sessions = value;
@@ -84,6 +76,8 @@ namespace iRLeagueDatabase.Entities.Results
         [ForeignKey(nameof(ConnectedSchedule))]
         public long? ConnectedScheduleId { get; set; }
         public virtual ScheduleEntity ConnectedSchedule { get; set; }
+        public bool UseResultSetTeam { get; set; }
+        public bool UpdateTeamOnRecalculation { get; set; }
 
         //public ScoringRuleBase Rule { get; set; }
         public ScoringEntity() 
@@ -190,98 +184,7 @@ namespace iRLeagueDatabase.Entities.Results
             standings.Calculate();
 
             return standings;
-
-            // Get unique Standings row per driver
-
-            //foreach (var driver in drivers)
-            //{
-            //    var standingsRow = new StandingsRowEntity
-            //    {
-            //        Member = driver
-            //    };
-            //    previousStandingsRows.Add(standingsRow);
-
-
-            //    var driverPreviousResults = ScoredResults
-            //        .Where(x => x.Result.DriverList.Contains(driver));
-            //    var driverPreviousResultRows = driverPreviousResults
-            //        .Select(x => x.FinalResults.SingleOrDefault(y => y.ResultRow.Member == driver))
-            //        .OrderBy(x => -x.TotalPoints).ToArray();
-            //    var driverCurrentResultRow = currentScoredResult?.FinalResults.SingleOrDefault(x => x.ResultRow.Member == driver);
-
-            //    var driverDropRaces = driverPreviousResultRows.Count() - (Sessions.Count() - DropWeeks) + 1;
-            //    bool dropCurrentRace = false;
-
-            //    var driverScoredResultRows = driverPreviousResultRows;
-
-            //    if (driverDropRaces > 0)
-            //    {
-            //        if (driverPreviousResultRows[-driverDropRaces].TotalPoints >= driverCurrentResultRow.TotalPoints)
-            //        {
-            //            dropCurrentRace = true;
-            //            driverDropRaces--;
-            //        }
-            //        driverScoredResultRows = driverScoredResultRows.Take(driverScoredResultRows.Count() - driverDropRaces).ToArray();
-            //    }
-
-            //    foreach (var scoredResult in driverPreviousResults)
-            //    {
-            //        standingsRow.FastestLaps += (scoredResult.FastestLapDriver == driver) ? 1 : 0;
-            //    }
-
-            //    foreach (var scoredResultRow in driverScoredResultRows)
-            //    {
-            //        standingsRow.CompletedLaps += scoredResultRow.ResultRow.CompletedLaps;
-            //        standingsRow.Incidents += scoredResultRow.ResultRow.Incidents;
-            //        standingsRow.PenaltyPoints += scoredResultRow.PenaltyPoints;
-            //        standingsRow.PolePositions += (scoredResultRow.ResultRow.StartPosition == 1) ? 1 : 0;
-            //        standingsRow.RacePoints += scoredResultRow.RacePoints;
-            //        standingsRow.Top10 += (scoredResultRow.FinalPosition <= 10) ? 1 : 0;
-            //        standingsRow.Top5 += (scoredResultRow.FinalPosition <= 5) ? 1 : 0;
-            //        standingsRow.Top3 += (scoredResultRow.FinalPosition <= 3) ? 1 : 0;
-            //        standingsRow.TotalPoints += scoredResultRow.TotalPoints;
-            //        standingsRow.Wins += (scoredResultRow.FinalPosition == 1) ? 1 : 0;
-            //    }
-
-            //    // Correct Total points for not dropped Penalties:
-            //    standingsRow.PenaltyPoints = driverPreviousResultRows.Sum(x => x.PenaltyPoints);
-
-            //    StandingsRowEntity currentStandingsRow;
-            //    if (!dropCurrentRace)
-            //    {
-            //        currentStandingsRow = new StandingsRowEntity
-            //        {
-            //            Member = driver,
-            //            CarClass = driverCurrentResultRow.ResultRow.CarClass,
-            //            ClassId = driverCurrentResultRow.ResultRow.ClassId
-            //        };
-            //        currentStandingsRow.CompletedLapsChange = driverCurrentResultRow.ResultRow.CompletedLaps;
-            //        currentStandingsRow.CompletedLaps += driverCurrentResultRow.ResultRow.CompletedLaps;
-            //        currentStandingsRow.IncidentsChange = driverCurrentResultRow.ResultRow.Incidents;
-            //        currentStandingsRow.Incidents += driverCurrentResultRow.ResultRow.Incidents;
-            //        currentStandingsRow.PenaltyPointsChange = driverCurrentResultRow.PenaltyPoints;
-            //        currentStandingsRow.PenaltyPoints += driverCurrentResultRow.PenaltyPoints;
-            //        currentStandingsRow.PolePositions += (driverCurrentResultRow.ResultRow.StartPosition == 1) ? 1 : 0;
-            //        currentStandingsRow.RacePointsChange = driverCurrentResultRow.RacePoints;
-            //        currentStandingsRow.RacePoints += driverCurrentResultRow.RacePoints;
-            //        currentStandingsRow.Top10 += (driverCurrentResultRow.FinalPosition <= 10) ? 1 : 0;
-            //        currentStandingsRow.Top5 += (driverCurrentResultRow.FinalPosition <= 5) ? 1 : 0;
-            //        currentStandingsRow.Top3 += (driverCurrentResultRow.FinalPosition <= 3) ? 1 : 0;
-            //        currentStandingsRow.TotalPointsChange = currentStandingsRow.TotalPoints + driverCurrentResultRow.TotalPoints;
-            //        currentStandingsRow.TotalPoints += driverCurrentResultRow.TotalPoints;
-            //        currentStandingsRow.Wins += (driverCurrentResultRow.FinalPosition == 1) ? 1 : 0;
-            //    }
-            //    else
-            //    {
-            //        currentStandingsRow = standingsRow;
-            //    }
-            //    currentStandingsRows.Add(currentStandingsRow);
-            //}
-
-            //previousStandingsRows = previousStandingsRows.OrderBy(x => -x.TotalPoints).ToList();
         }
-
-        //public IEnumerable<ScoredResultRowEntity> CalculateResults(long sessionId, LeagueDbContext dbContext)
         public ScoredResultEntity CalculateResults(long sessionId, LeagueDbContext dbContext)
         {
             if (Season.Finished)
@@ -415,8 +318,6 @@ namespace iRLeagueDatabase.Entities.Results
                 resultsFilters.Add(filter);
             }
 
-            //dbContext.SaveChanges();
-
             List<ScoredResultRowEntity> scoredResultRows = scoredResult.FinalResults;
             if (TakeResultsFromExtSource && ExtScoringSource != null)
             {
@@ -477,13 +378,36 @@ namespace iRLeagueDatabase.Entities.Results
                             ReviewPenalties = new List<ReviewPenaltyEntity>()
                             //Scoring = this,
                         };
+
+                        // get team information
+                        if (UseResultSetTeam)
+                        {
+                            scoredResultRow.Team = resultRow.Team;
+                        }
+                        else
+                        {
+                            scoredResultRow.Team = resultRow.Member.Team;
+                        }
                         scoredResultRows.Add(scoredResultRow);
                     }
 
-                    var firstResultMemberRow = firstResult?.RawResults.SingleOrDefault(x => x.MemberId == resultRow.MemberId);
-                    if (firstResultMemberRow != null)
+                    // update team information on recalculation
+                    if (UpdateTeamOnRecalculation)
                     {
-                        resultRow.SeasonStartIRating = firstResultMemberRow.SeasonStartIRating;
+                        if (UseResultSetTeam)
+                        {
+                            scoredResultRow.Team = resultRow.Team;
+                        }
+                        else
+                        {
+                            scoredResultRow.Team = resultRow.Member.Team;
+                        }
+                    }
+
+                    var memberFirstResultRow = firstResult?.RawResults.SingleOrDefault(x => x.MemberId == resultRow.MemberId);
+                    if (memberFirstResultRow != null)
+                    {
+                        resultRow.SeasonStartIRating = memberFirstResultRow.SeasonStartIRating;
                     }
 
                     var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
@@ -587,7 +511,8 @@ namespace iRLeagueDatabase.Entities.Results
             if (ScoringKind == ScoringKindEnum.Team)
             {
                 // Group scored result rows by team
-                var groupedResultRows = scoredResultRows.GroupBy(x => x.ResultRow.Member.Team);
+
+                var groupedResultRows = scoredResultRows.GroupBy(x => x.Team);
                 var scoredTeamResult = (ScoredTeamResultEntity)scoredResult;
                 
                 if (dbContext.Entry(scoredTeamResult).State != System.Data.Entity.EntityState.Added)
@@ -779,7 +704,8 @@ namespace iRLeagueDatabase.Entities.Results
                 //Scoring = source.First().ScoredResult.Scoring,
                 Member = source.First().ResultRow.Member,
                 ClassId = source.Last().ResultRow.ClassId,
-                CarClass = source.Last().ResultRow.CarClass
+                CarClass = source.Last().ResultRow.CarClass,
+                Team = source.Last().Team
             };
 
             standingsRow.AddRows(source.Skip(maxRacesCount).ToArray(), countPoints: false);
