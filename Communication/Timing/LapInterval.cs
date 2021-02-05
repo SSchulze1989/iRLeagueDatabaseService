@@ -70,6 +70,15 @@ namespace iRLeagueManager.Timing
             return XmlConvert.ToString(time);
         }
 
+        public override int CompareTo(object obj)
+        {
+            if (obj is LapInterval lapInterval)
+            {
+                return Time.CompareTo(lapInterval.Time);
+            }
+            throw new ArgumentException($"Object must be of type {typeof(LapInterval)}.");
+        }
+
         new static public LapInterval FromXmlString(string xmlString)
         {
             TimeSpan time = (string.IsNullOrEmpty(xmlString)) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(xmlString);

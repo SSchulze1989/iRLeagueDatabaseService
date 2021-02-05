@@ -33,7 +33,7 @@ using iRLeagueManager.Enums;
 namespace iRLeagueManager.Timing
 {
     [Serializable()]
-    public class LapTime : IXmlSerializable, ILapTime
+    public class LapTime : IXmlSerializable, ILapTime, IComparable
     {
         //private DateTime _time { get => DateTime.MinValue + Time; set => Time = value.TimeOfDay; }
 
@@ -101,6 +101,27 @@ namespace iRLeagueManager.Timing
         static public LapTime FromXmlString(string xmlString)
         {
             return new LapTime((string.IsNullOrEmpty(xmlString)) ? TimeSpan.Zero : XmlConvert.ToTimeSpan(xmlString));
+        }
+
+        public virtual int CompareTo(object obj)
+        {
+            if (obj is LapTime lapTime)
+            {
+                int result = Time.CompareTo(lapTime.Time);
+                if (result !=0)
+                {
+                    if (lapTime.Time <= TimeSpan.Zero)
+                    {
+                        result = -1;
+                    }
+                    else if (Time <= TimeSpan.Zero)
+                    {
+                        result = 1;
+                    }
+                }
+                return result;
+            }
+            throw new ArgumentException($"Object must be of type {typeof(LapTime)}.");
         }
     }
 }
