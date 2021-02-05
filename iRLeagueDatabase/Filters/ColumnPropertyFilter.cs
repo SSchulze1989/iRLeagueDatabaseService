@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace iRLeagueDatabase.Filters
 {
@@ -40,7 +41,7 @@ namespace iRLeagueDatabase.Filters
             }
             else
             { 
-                comparableFilterValues = FilterValues.Select(x => Convert.ChangeType(x, propertyType)).Cast<IComparable>(); 
+                comparableFilterValues = FilterValues.Select(x => Convert.ChangeType(x, propertyType, CultureInfo.InvariantCulture)).Cast<IComparable>(); 
             }
 
             Func<IComparable, IEnumerable<IComparable>, bool> compare;
