@@ -7,13 +7,13 @@ namespace iRLeagueDatabase.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class AddTeamInfoToResults : IMigrationMetadata
+    public sealed partial class AddAdditionalTeamInfo : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddTeamInfoToResults));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(AddAdditionalTeamInfo));
         
         string IMigrationMetadata.Id
         {
-            get { return "202101311826220_AddTeamInfoToResults"; }
+            get { return "202102052252475_AddAdditionalTeamInfo"; }
         }
         
         string IMigrationMetadata.Source

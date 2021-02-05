@@ -3,13 +3,13 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddTeamInfoToResults : DbMigration
+    public partial class AddAdditionalTeamInfo : DbMigration
     {
         public override void Up()
         {
             AddColumn("dbo.ScoredResultRowEntities", "TeamId", c => c.Long());
             AddColumn("dbo.ResultRowEntities", "TeamId", c => c.Long());
-            AddColumn("dbo.ScoringEntities", "TakeTeamFromResulSet", c => c.Boolean(nullable: false));
+            AddColumn("dbo.ScoringEntities", "UseResultSetTeam", c => c.Boolean(nullable: false));
             AddColumn("dbo.ScoringEntities", "UpdateTeamOnRecalculation", c => c.Boolean(nullable: false));
             CreateIndex("dbo.ScoredResultRowEntities", "TeamId");
             CreateIndex("dbo.ResultRowEntities", "TeamId");
@@ -24,7 +24,7 @@
             DropIndex("dbo.ResultRowEntities", new[] { "TeamId" });
             DropIndex("dbo.ScoredResultRowEntities", new[] { "TeamId" });
             DropColumn("dbo.ScoringEntities", "UpdateTeamOnRecalculation");
-            DropColumn("dbo.ScoringEntities", "TakeTeamFromResulSet");
+            DropColumn("dbo.ScoringEntities", "UseResultSetTeam");
             DropColumn("dbo.ResultRowEntities", "TeamId");
             DropColumn("dbo.ScoredResultRowEntities", "TeamId");
         }

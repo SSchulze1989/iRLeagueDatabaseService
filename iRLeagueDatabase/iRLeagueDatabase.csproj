@@ -153,13 +153,9 @@
     <Compile Include="Migrations\202101140104453_AddMissingForeignKeys.designer.cs">
       <DependentUpon>202101140104453_AddMissingForeignKeys.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202101311826220_AddTeamInfoToResults.cs" />
-    <Compile Include="Migrations\202101311826220_AddTeamInfoToResults.designer.cs">
-      <DependentUpon>202101311826220_AddTeamInfoToResults.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202102052141159_RenameColumn.cs" />
-    <Compile Include="Migrations\202102052141159_RenameColumn.designer.cs">
-      <DependentUpon>202102052141159_RenameColumn.cs</DependentUpon>
+    <Compile Include="Migrations\202102052252475_AddAdditionalTeamInfo.cs" />
+    <Compile Include="Migrations\202102052252475_AddAdditionalTeamInfo.designer.cs">
+      <DependentUpon>202102052252475_AddAdditionalTeamInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,11 +198,8 @@
     <EmbeddedResource Include="Migrations\202101140104453_AddMissingForeignKeys.resx">
       <DependentUpon>202101140104453_AddMissingForeignKeys.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202101311826220_AddTeamInfoToResults.resx">
-      <DependentUpon>202101311826220_AddTeamInfoToResults.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202102052141159_RenameColumn.resx">
-      <DependentUpon>202102052141159_RenameColumn.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202102052252475_AddAdditionalTeamInfo.resx">
+      <DependentUpon>202102052252475_AddAdditionalTeamInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
