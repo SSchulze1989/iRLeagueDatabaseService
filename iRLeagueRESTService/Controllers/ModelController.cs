@@ -143,7 +143,7 @@ namespace iRLeagueRESTService.Controllers
         [HttpGet]
         [ActionName("Get")]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        public IHttpActionResult GetModel(string requestId, string requestType, string leagueName, string fields)
+        public IHttpActionResult GetModel(string requestId, string requestType, string leagueName, string fields, bool excludeFields = false)
         {
             try
             {
@@ -179,7 +179,7 @@ namespace iRLeagueRESTService.Controllers
                 }
                 //GC.Collect();
 
-                data.SetSerializableProperties(fieldValues);
+                data.SetSerializableProperties(fieldValues, excludeFields);
 
                 var response = SelectFieldsHelper.GetSelectedFieldObject(data);
 
@@ -197,7 +197,7 @@ namespace iRLeagueRESTService.Controllers
         [HttpGet]
         [ActionName("GetArray")]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        public IHttpActionResult GetModelsSelectFields([FromUri] string[] requestIds, string requestType, string leagueName, string fields)
+        public IHttpActionResult GetModelsSelectFields([FromUri] string[] requestIds, string requestType, string leagueName, string fields, bool excludeFields = false)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace iRLeagueRESTService.Controllers
                 }
                 //GC.Collect();
 
-                data.ForEach(x => x.SetSerializableProperties(fieldValues));
+                data.ForEach(x => x.SetSerializableProperties(fieldValues, excludeFields));
 
                 var response = data.Select(x => SelectFieldsHelper.GetSelectedFieldObject(x));
 

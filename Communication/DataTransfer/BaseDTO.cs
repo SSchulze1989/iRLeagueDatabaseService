@@ -36,11 +36,26 @@ namespace iRLeagueDatabase.DataTransfer
     {
         public List<PropertyInfo> serializableProperties { get; set; }
 
-        public void SetSerializableProperties(string[] fields)
+        public void SetSerializableProperties(string[] fields, bool exclude = false)
         {
-            serializableProperties = new List<PropertyInfo>();
+            // get all properties that are declared as DataMember
+            var dataMembers = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(DataMemberAttribute)) != null).ToList();
+
+            if (exclude == true)
+            {
+                // if in exclude mode get all properties that should be serialized by default
+                serializableProperties = dataMembers.ToList();
+            }
+            else
+            {
+                // else start with a blank list
+                serializableProperties = new List<PropertyInfo>();
+            }
+
             if (fields != null && fields.Count() > 0)
             {
+                // if some fields where provided group by first field
+                // this will make sure that if multiple children are selected on the same field the first field value will still be unique
                 var fieldGrouping = fields
                     .Select(x => x.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries))
                     .Where(x => x.Count() > 0)
@@ -49,10 +64,13 @@ namespace iRLeagueDatabase.DataTransfer
 
                 foreach(var field in fieldGrouping)
                 {
+                    // check for each field and see if it is a valid DataMember
                     var key = field.Key;
-                    var property = type.GetProperty(key);
+                    var property = dataMembers.SingleOrDefault(x => x.Name == key);
+
                     if (property != null)
                     {
+                        // if field is a valid DataMember check if object is of type BaseDTO too and set the given child properties
                         var obj = property.GetValue(this);
                         if (obj is IEnumerable enumerable )
                         {
@@ -61,15 +79,27 @@ namespace iRLeagueDatabase.DataTransfer
                             {
                                 if (arrObj is BaseDTO dto)
                                 {
-                                    dto.SetSerializableProperties(field.ToArray());
+                                    dto.SetSerializableProperties(field.ToArray(), exclude);
                                 }
                             }
                         }
                         else if (obj is BaseDTO dto)
                         {
-                            dto.SetSerializableProperties(field.ToArray());
+                            dto.SetSerializableProperties(field.ToArray(), exclude);
                         }
-                        serializableProperties.Add(property);
+
+                        if (exclude)
+                        {
+                            // if in exclude mode check if only this field is specifically excluded (e.g. it has no children specified)
+                            if (field.Any(x => string.IsNullOrEmpty(x)))
+                            {
+                                serializableProperties.Remove(property);
+                            }
+                        }
+                        else
+                        {
+                            serializableProperties.Add(property);
+                        }
                     }
                 }
                 return;
