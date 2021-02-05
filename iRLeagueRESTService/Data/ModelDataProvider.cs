@@ -324,6 +324,8 @@ namespace iRLeagueRESTService.Data
                 //.AsNoTracking()
                 //.Include(x => x.Result.Session)
                 .Include(x => x.Scoring)
+                .Include(x => x.HardChargers)
+                .Include(x => x.CleanestDrivers)
                 //.Include(x => x.Result.RawResults.Select(y => y.Member))
                 //.Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
                 //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
@@ -413,6 +415,7 @@ namespace iRLeagueRESTService.Data
                         var loadScoredResults = DbContext.Set<ScoredResultEntity>()
                             .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
                             .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                            .Include(x => x.FinalResults.Select(y => y.Team))
                             .ToList();
                     }
 
