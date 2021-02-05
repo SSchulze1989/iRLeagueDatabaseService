@@ -263,7 +263,7 @@ namespace iRLeagueDatabase.Entities.Results
                 if (dropRacesOption == DropRacesOption.PerDriverResults)
                 {
                     if (allScoredResultRows != null)
-                        teamDriverResultRows = allScoredResultRows.Where(x => team.Members.Contains(x.ResultRow.Member));
+                        teamDriverResultRows = allScoredResultRows.Where(x => x.TeamId == team.TeamId);
 
                     List<ScoredResultRowEntity> excludeResultRows = new List<ScoredResultRowEntity>();
                     var drivers= teamDriverResultRows.GroupBy(x => x.ResultRow.Member);

@@ -84,6 +84,10 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public bool TakeResultsFromExtSource { get; set; }
         [DataMember]
         public long[] ResultsFilterOptionIds { get; set; }
+        [DataMember]
+        public bool UseResultSetTeam { get; set; }
+        [DataMember]
+        public bool UpdateTeamOnRecalculation { get; set; }
 
         #region Version Info
         [DataMember]

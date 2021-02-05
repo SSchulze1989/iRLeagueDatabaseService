@@ -34,6 +34,11 @@ namespace iRLeagueDatabase.Entities.Results
         //public long ScoredResultId { get; set; }
         [Required]
         public virtual ScoredResultEntity ScoredResult { get; set; }
+
+        [ForeignKey(nameof(Team))]
+        public long? TeamId { get; set; }
+        public virtual TeamEntity Team { get; set; }
+
         public int RacePoints { get; set; }
         public int BonusPoints { get; set; }
         //public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }

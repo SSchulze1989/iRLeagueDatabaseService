@@ -17,6 +17,7 @@ using System.Security.Cryptography.Xml;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -103,7 +104,8 @@ namespace iRLeagueDatabase.Mapper
             target.ResultId = source.ResultId;
             target.StartPosition = source.StartPosition;
             target.Status = source.Status;
-            target.TeamName = source.Member.Team?.Name;
+            target.TeamId = source.Team?.TeamId;
+            target.TeamName = source.Team?.Name;
             target.LocationId = source.Result.Session.LocationId;
             target.Date = source.Date.GetValueOrDefault();
             target.OldIRating = source.OldIRating;
@@ -131,6 +133,8 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringId = source.ScoringId; // MapToScoringInfoDTO(source.Scoring);
             target.ScoringName = source.Scoring.Name;
             target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToArray();
+            target.CleanesDriverMemberIds = source.CleanestDrivers?.Select(x => x.MemberId).ToArray() ?? new long[0];
+            target.HardChargerMemberIds = source.HardChargers?.Select(x => x.MemberId).ToArray() ?? new long[0];
 
             return target;
         }
@@ -152,6 +156,8 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringId = source.ScoringId;
             target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
             target.TotalPoints = source.TotalPoints;
+            target.TeamId = source.Team?.TeamId;
+            target.TeamName = source.Team?.Name;
 
             return target;
         }
@@ -196,6 +202,8 @@ namespace iRLeagueDatabase.Mapper
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             //target.ResultsFilterOptions = source.ResultsFilterOptions.Select(x => MapToResultsFilterOptionDTO(x)).ToArray();
             target.ResultsFilterOptionIds = source.ResultsFilterOptions.Select(x => x.ResultsFilterId).ToArray();
+            target.UseResultSetTeam = source.UseResultSetTeam;
+            target.UpdateTeamOnRecalculation = source.UpdateTeamOnRecalculation;
 
             return target;
         }
@@ -294,6 +302,7 @@ namespace iRLeagueDatabase.Mapper
             target.Wins = source.Wins;
             target.WinsChange = source.WinsChange;
             target.CountedResults = source.CountedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
+            target.TeamId = source.Team?.TeamId;
 
             return target;
         }
@@ -585,6 +594,7 @@ namespace iRLeagueDatabase.Mapper
             target.Interval = TimeSpanConverter.Convert(source.Interval);
             target.LeadLaps = source.LeadLaps;
             target.Member = GetMemberEntity(new LeagueMemberInfoDTO() { MemberId = source.MemberId });
+            target.Team = DefaultGet<TeamEntity>(source.TeamId);
             target.PositionChange = source.PositionChange;
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.StartPosition = source.StartPosition;
@@ -661,6 +671,8 @@ namespace iRLeagueDatabase.Mapper
             target.ExtScoringSource = DefaultGet<ScoringEntity>(source.ExtScoringSourceId);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             target.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
+            target.UseResultSetTeam = source.UseResultSetTeam;
+            target.UpdateTeamOnRecalculation = source.UpdateTeamOnRecalculation;
 
             return target;
         }
