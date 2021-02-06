@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueManager.Enums;
+using System.IO;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -31,7 +32,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int TotalPointsChange { get; set; }
         public int Races { get; set; }
         public int RacesCounted { get; set; }
-        public int DroppedResults { get; set; }
+        public int DroppedResultCount { get; set; }
         public int CompletedLaps { get; set; }
         public int CompletedLapsChange { get; set; }
         public int LeadLaps { get; set; }
@@ -49,6 +50,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int IncidentsChange { get; set; }
         public int PositionChange { get; set; }
         public virtual List<ScoredResultRowEntity> CountedResults { get; set; }
+        public virtual List<ScoredResultRowEntity> DroppedResults { get; set; }
         public virtual TeamEntity Team { get; set; }
 
         public StandingsRowEntity()
@@ -57,7 +59,7 @@ namespace iRLeagueDatabase.Entities.Results
             ClassId = 0;
             CompletedLaps = 0;
             CompletedLapsChange = 0;
-            DroppedResults = 0;
+            DroppedResultCount = 0;
             FastestLaps = 0;
             Incidents = 0;
             IncidentsChange = 0;
@@ -79,6 +81,7 @@ namespace iRLeagueDatabase.Entities.Results
             TotalPointsChange = 0;
             Wins = 0;
             CountedResults = new List<ScoredResultRowEntity>();
+            DroppedResults = new List<ScoredResultRowEntity>();
         }
 
         public StandingsRowEntity AddRows(ScoredResultRowEntity resultRow, bool countStats = true,  bool countPoints = true)
@@ -113,6 +116,10 @@ namespace iRLeagueDatabase.Entities.Results
                     this.RacesCounted += 1;
                     this.CountedResults.Add(scoredResultRow);
                 }
+                else
+                {
+                    this.DroppedResults.Add(scoredResultRow);
+                }
             }
 
             return this;
@@ -137,7 +144,7 @@ namespace iRLeagueDatabase.Entities.Results
                 CompletedLapsChange = source.CompletedLaps - compare.CompletedLaps,
                 Incidents = source.Incidents,
                 IncidentsChange = source.Incidents - compare.Incidents,
-                DroppedResults = source.DroppedResults,
+                DroppedResultCount = source.DroppedResultCount,
                 FastestLaps = source.FastestLaps,
                 FastestLapsChange = source.FastestLaps - compare.FastestLaps,
                 LastPosition = compare.Position,
@@ -163,6 +170,7 @@ namespace iRLeagueDatabase.Entities.Results
                 Wins = source.Wins,
                 WinsChange = source.Wins - compare.Wins,
                 CountedResults = source.CountedResults,
+                DroppedResults = source.DroppedResults,
                 Team = source.Team
             };
 

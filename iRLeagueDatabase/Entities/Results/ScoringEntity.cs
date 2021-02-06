@@ -710,6 +710,7 @@ namespace iRLeagueDatabase.Entities.Results
 
             standingsRow.AddRows(source.Skip(maxRacesCount).ToArray(), countPoints: false);
             standingsRow.AddRows(source.Take(maxRacesCount).ToArray(), countPoints: true);
+            standingsRow.DroppedResultCount = standingsRow.DroppedResults.Count;
 
             return standingsRow;
         }

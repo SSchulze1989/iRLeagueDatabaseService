@@ -274,7 +274,7 @@ namespace iRLeagueDatabase.Mapper
             target.ClassId = source.ClassId;
             target.CompletedLaps = source.CompletedLaps;
             target.CompletedLapsChange = source.CompletedLapsChange;
-            target.DroppedResults = source.DroppedResults;
+            target.DroppedResultCount = source.DroppedResultCount;
             target.FastestLaps = source.FastestLaps;
             target.FastestLapsChange = source.FastestLapsChange;
             target.Incidents = source.Incidents;
@@ -302,6 +302,7 @@ namespace iRLeagueDatabase.Mapper
             target.Wins = source.Wins;
             target.WinsChange = source.WinsChange;
             target.CountedResults = source.CountedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
+            target.DroppedResults = source.DroppedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
             target.TeamId = source.Team?.TeamId;
 
             return target;

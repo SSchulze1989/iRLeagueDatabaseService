@@ -70,7 +70,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int RacesCounted { get; set; }
         [DataMember]
-        public int DroppedResults { get; set; }
+        public int DroppedResultCount { get; set; }
         [DataMember]
         public int CompletedLaps { get; set; }
         [DataMember]
@@ -105,6 +105,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int PositionChange { get; set; }
         [DataMember]
         public ScoredResultRowDataDTO[] CountedResults { get; set; }
+        [DataMember]
+        public ScoredResultRowDataDTO[] DroppedResults { get; set; }
         [DataMember]
         public long? TeamId { get; set; }
     }
