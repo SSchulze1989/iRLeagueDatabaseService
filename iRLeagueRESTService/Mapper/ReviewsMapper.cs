@@ -129,6 +129,7 @@ namespace iRLeagueDatabase.Mapper
             target.VoteCategoryId = source.CustomVoteCatId;
             target.CatText = source.CustomVoteCat?.Text;
             target.CatPenalty = source.CustomVoteCat?.DefaultPenalty ?? 0;
+            target.Description = source.Description;
 
             return target;
         }
@@ -331,6 +332,7 @@ namespace iRLeagueDatabase.Mapper
             target.MemberAtFault = DefaultGet<LeagueMemberEntity>(source.MemberAtFaultId);
             target.Vote = source.Vote;
             target.CustomVoteCat = DefaultGet<VoteCategoryEntity>(source.VoteCategoryId);
+            target.Description = source.Description;
 
             return target;
         }

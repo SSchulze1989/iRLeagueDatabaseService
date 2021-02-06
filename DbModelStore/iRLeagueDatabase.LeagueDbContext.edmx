@@ -496,6 +496,7 @@
           <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="Int64" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CustomVoteCat" Relationship="Self.AcceptedReviewVoteEntity_CustomVoteCat" FromRole="AcceptedReviewVoteEntity_CustomVoteCat_Source" ToRole="AcceptedReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="IncidentReview" Relationship="Self.IncidentReviewEntity_AcceptedReviewVotes" FromRole="IncidentReviewEntity_AcceptedReviewVotes_Target" ToRole="IncidentReviewEntity_AcceptedReviewVotes_Source" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.AcceptedReviewVoteEntity_MemberAtFault" FromRole="AcceptedReviewVoteEntity_MemberAtFault_Source" ToRole="AcceptedReviewVoteEntity_MemberAtFault_Target" />
@@ -528,6 +529,7 @@
           <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="Int64" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CustomVoteCat" Relationship="Self.CommentReviewVoteEntity_CustomVoteCat" FromRole="CommentReviewVoteEntity_CustomVoteCat_Source" ToRole="CommentReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.CommentReviewVoteEntity_MemberAtFault" FromRole="CommentReviewVoteEntity_MemberAtFault_Source" ToRole="CommentReviewVoteEntity_MemberAtFault_Target" />
           <NavigationProperty Name="ReviewComment" Relationship="Self.ReviewCommentEntity_CommentReviewVotes" FromRole="ReviewCommentEntity_CommentReviewVotes_Target" ToRole="ReviewCommentEntity_CommentReviewVotes_Source" />
@@ -2088,6 +2090,7 @@
                 <ScalarProperty Name="MemberAtFaultId" ColumnName="MemberAtFaultId" />
                 <ScalarProperty Name="Vote" ColumnName="Vote" />
                 <ScalarProperty Name="CustomVoteCatId" ColumnName="CustomVoteCatId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2141,6 +2144,7 @@
                 <ScalarProperty Name="MemberAtFaultId" ColumnName="MemberAtFaultId" />
                 <ScalarProperty Name="Vote" ColumnName="Vote" />
                 <ScalarProperty Name="CustomVoteCatId" ColumnName="CustomVoteCatId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2748,6 +2752,7 @@
           <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
         <EntityType Name="ReviewPenaltyEntity">
           <Key>
@@ -2788,6 +2793,7 @@
           <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
         <EntityType Name="ResultsFilterOptionEntity">
           <Key>
