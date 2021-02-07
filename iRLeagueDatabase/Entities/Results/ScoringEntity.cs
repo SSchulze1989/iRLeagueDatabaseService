@@ -491,15 +491,15 @@ namespace iRLeagueDatabase.Entities.Results
                         previousRow = row;
                     }
 
-                    var fastestLapRow = scoredResultRows.MinBy(x => x.ResultRow.FastestLapTime);
+                    var fastestLapRow = scoredResultRows.Where(x => x.ResultRow.FastestLapTime > 0).MinBy(x => x.ResultRow.FastestLapTime);
                     scoredResult.FastestLap = fastestLapRow.ResultRow.FastestLapTime;
                     scoredResult.FastestLapDriver = fastestLapRow.ResultRow.Member;
 
-                    var fastestAvgLapRow = scoredResultRows.MinBy(x => x.ResultRow.AvgLapTime);
+                    var fastestAvgLapRow = scoredResultRows.Where(x => x.ResultRow.AvgLapTime > 0).MinBy(x => x.ResultRow.AvgLapTime);
                     scoredResult.FastestAvgLap = fastestAvgLapRow.ResultRow.AvgLapTime;
                     scoredResult.FastestAvgLapDriver = fastestAvgLapRow.ResultRow.Member;
 
-                    var fastestQualyLapRow = scoredResultRows.MinBy(x => x.ResultRow.QualifyingTime);
+                    var fastestQualyLapRow = scoredResultRows.Where(x => x.ResultRow.QualifyingTime > 0).MinBy(x => x.ResultRow.QualifyingTime);
                     scoredResult.FastestQualyLap = fastestQualyLapRow.ResultRow.QualifyingTime;
                     scoredResult.FastestQualyLapDriver = fastestQualyLapRow.ResultRow.Member;
 
