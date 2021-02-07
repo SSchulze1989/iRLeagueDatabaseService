@@ -55,13 +55,14 @@ namespace iRLeagueDatabase.Entities.Results
         {
             var allSessions = GetAllSessions();
 
-            if (Scorings != null && Scorings.Count > 0)
-            {
-                foreach (var msc in Scorings)
-                {
-                    allSessions.AddRange(msc.Sessions);
-                }
-            }
+            //if (Scorings != null && Scorings.Count > 0)
+            //{
+            //    foreach (var msc in Scorings)
+            //    {
+            //        var addSessions = msc.Sessions.Except(allSessions);
+            //        allSessions.AddRange(addSessions);
+            //    }
+            //}
 
             var session = allSessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
             if (session == null)
@@ -102,7 +103,7 @@ namespace iRLeagueDatabase.Entities.Results
                 return standings;
 
             if (maxRacesCount == -1)
-                maxRacesCount = Sessions.Count() - maxRacesCount;
+                maxRacesCount = Sessions.Count() - DropWeeks;
 
             if (ScoringKind == ScoringKindEnum.Team)
             {

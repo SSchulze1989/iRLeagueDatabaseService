@@ -157,6 +157,10 @@
     <Compile Include="Migrations\202102052252475_AddAdditionalTeamInfo.designer.cs">
       <DependentUpon>202102052252475_AddAdditionalTeamInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102062147212_AddReviewVoteDescr.cs" />
+    <Compile Include="Migrations\202102062147212_AddReviewVoteDescr.designer.cs">
+      <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -200,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102052252475_AddAdditionalTeamInfo.resx">
       <DependentUpon>202102052252475_AddAdditionalTeamInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102062147212_AddReviewVoteDescr.resx">
+      <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

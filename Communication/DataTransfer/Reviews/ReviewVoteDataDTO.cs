@@ -47,6 +47,8 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         public string CatText { get; set; }
         [DataMember]
         public int CatPenalty { get; set; }
+        [DataMember]
+        public string Description { get; set; }
 
         public override object MappingId => ReviewVoteId;
         public override object[] Keys => new object[] { ReviewVoteId };
