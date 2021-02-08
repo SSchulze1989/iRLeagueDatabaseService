@@ -33,7 +33,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class TeamStandingsRowDataDTO : StandingsRowDataDTO
     {
         [DataMember]
-        public long TeamId { get; set; }
+        public new long TeamId { get; set; }
         [DataMember]
         public StandingsRowDataDTO[] DriverStandingsRows { get; set; }
     }

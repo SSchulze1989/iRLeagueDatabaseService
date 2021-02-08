@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using iRLeagueDatabase.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,12 +35,51 @@ namespace iRLeagueDatabase.DataTransfer
     [DataContract]
     public abstract class BaseDTO
     {
-        public List<PropertyInfo> serializableProperties { get; set; }
+        private static IDictionary<Type, IDictionary<string, PropertyInfo>> DerivedDataMembers { get; }
+        public List<KeyValuePair<string, PropertyInfo>> serializableProperties { get; set; }
+
+        static BaseDTO()
+        {
+            DerivedDataMembers = new Dictionary<Type, IDictionary<string, PropertyInfo>>();
+
+            // Find all derived classes in assembly
+            var derivedTypes = AppDomain.CurrentDomain
+                .GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => typeof(BaseDTO).IsAssignableFrom(x));
+
+            // Find all defined datamembers for derived types (including base class)
+            foreach(var derivedType in derivedTypes)
+            {
+                if (DerivedDataMembers.ContainsKey(derivedType) == false)
+                {
+                    var dataMemberList = derivedType.GetProperties()
+                        .Where(x => x.GetCustomAttribute<DataMemberAttribute>() != null)
+                        .Select(x => new KeyValuePair<string, PropertyInfo>(x.GetCustomAttribute<DataMemberAttribute>().Name ?? x.Name, x));
+                    IDictionary<string, PropertyInfo> dataMembers = new Dictionary<string, PropertyInfo>();
+                    try
+                    {
+                        foreach(var dataMember in dataMemberList)
+                        {
+                            if (dataMembers.ContainsKey(dataMember.Key) == false)
+                            {
+                                dataMembers.Add(dataMember);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                    DerivedDataMembers.Add(derivedType, dataMembers);
+                }
+            }
+        }
 
         public void SetSerializableProperties(string[] fields, bool exclude = false)
         {
             // get all properties that are declared as DataMember
-            var dataMembers = this.GetType().GetProperties().Where(x => x.GetCustomAttribute(typeof(DataMemberAttribute)) != null).ToList();
+            var dataMembers = DerivedDataMembers[this.GetType()];
 
             if (exclude == true)
             {
@@ -49,7 +89,7 @@ namespace iRLeagueDatabase.DataTransfer
             else
             {
                 // else start with a blank list
-                serializableProperties = new List<PropertyInfo>();
+                serializableProperties = new List<KeyValuePair<string, PropertyInfo>>();
             }
 
             if (fields != null && fields.Count() > 0)
@@ -66,12 +106,12 @@ namespace iRLeagueDatabase.DataTransfer
                 {
                     // check for each field and see if it is a valid DataMember
                     var key = field.Key;
-                    var property = dataMembers.SingleOrDefault(x => x.Name == key);
 
-                    if (property != null)
+                    if (dataMembers.ContainsKey(key))
                     {
+                        var property = new KeyValuePair<string, PropertyInfo>(key, dataMembers[key]);
                         // if field is a valid DataMember check if object is of type BaseDTO too and set the given child properties
-                        var obj = property.GetValue(this);
+                        var obj = property.Value.GetValue(this);
                         if (obj is IEnumerable enumerable )
                         {
                             var array = enumerable.OfType<object>();

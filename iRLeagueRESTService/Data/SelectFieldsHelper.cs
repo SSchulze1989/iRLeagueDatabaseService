@@ -42,7 +42,7 @@ namespace iRLeagueRESTService.Data
 
             foreach (var property in obj.serializableProperties)
             {
-                var child = property.GetValue(obj);
+                var child = property.Value.GetValue(obj);
                 if (child?.GetType().IsArray == true)
                 {
                     var array = (child as IEnumerable).OfType<object>();
@@ -55,18 +55,18 @@ namespace iRLeagueRESTService.Data
                         }
                         else
                         {
-                            resultArray.Add(property.GetValue(obj));
+                            resultArray.Add(property.Value.GetValue(obj));
                         }
                     }
-                    result.Add(property.Name, resultArray);
+                    result.Add(property.Key, resultArray);
                 }
                 else if (child is BaseDTO dto)
                 {
-                    result.Add(property.Name, SelectFieldsHelper.GetSelectedFieldObject(dto));
+                    result.Add(property.Key, SelectFieldsHelper.GetSelectedFieldObject(dto));
                 }
                 else
                 {
-                    result.Add(property.Name, property.GetValue(obj));
+                    result.Add(property.Key, property.Value.GetValue(obj));
                 }
             }
             return result;
