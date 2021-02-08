@@ -135,6 +135,9 @@ namespace iRLeagueDatabase.Mapper
             target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToArray();
             target.CleanesDriverMemberIds = source.CleanestDrivers?.Select(x => x.MemberId).ToArray() ?? new long[0];
             target.HardChargerMemberIds = source.HardChargers?.Select(x => x.MemberId).ToArray() ?? new long[0];
+            target.FastestLapDriverId = source.FastestLapDriver?.MemberId;
+            target.FastestQualyLapDriver = source.FastestQualyLapDriver?.MemberId;
+            target.FastestAvgLapDriver = source.FastestAvgLapDriver?.MemberId;
 
             return target;
         }

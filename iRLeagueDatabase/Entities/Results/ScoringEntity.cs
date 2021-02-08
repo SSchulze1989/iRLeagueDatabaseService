@@ -502,7 +502,6 @@ namespace iRLeagueDatabase.Entities.Results
                     var fastestQualyLapRow = scoredResultRows.Where(x => x.ResultRow.QualifyingTime > 0).MinBy(x => x.ResultRow.QualifyingTime);
                     scoredResult.FastestQualyLap = fastestQualyLapRow.ResultRow.QualifyingTime;
                     scoredResult.FastestQualyLapDriver = fastestQualyLapRow.ResultRow.Member;
-
                 }
 
                 dbContext.SaveChanges();

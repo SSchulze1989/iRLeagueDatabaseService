@@ -49,6 +49,12 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public long[] HardChargerMemberIds { get; set; }
         [DataMember(Name = "CleanDrvIds")]
         public long[] CleanesDriverMemberIds { get; set; }
+        [DataMember(Name = "FLapDrvId")]
+        public long? FastestLapDriverId { get; set; }
+        [DataMember(Name = "PLapDrvId")]
+        public long? FastestQualyLapDriver { get; set; }
+        [DataMember(Name = "FAvgLapDrvId")]
+        public long? FastestAvgLapDriver { get; set; }
 
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;
