@@ -231,7 +231,7 @@ namespace iRLeagueDatabase.Entities.Statistics
                     driverStatRow.Incidents += resultRow.ResultRow.Incidents;
                     driverStatRow.LeadingKm += resultRow.ResultRow.LeadLaps * resultRow.ResultRow.Result.IRSimSessionDetails?.KmDistPerLap ?? 0;
                     driverStatRow.LeadingLaps += resultRow.ResultRow.LeadLaps;
-                    driverStatRow.PenaltyPoints += resultRow.PenaltyPoints;
+                    driverStatRow.PenaltyPoints -= resultRow.PenaltyPoints;
                     driverStatRow.Poles += resultRow.ResultRow.StartPosition == 1 ? 1 : 0;
                     driverStatRow.Races += 1;
                     driverStatRow.RacesCompleted += resultRow.ResultRow.Status == iRLeagueManager.Enums.RaceStatusEnum.Running ? 1 : 0;
@@ -252,7 +252,7 @@ namespace iRLeagueDatabase.Entities.Statistics
                 }
 
                 // Quick fix for penalty points
-                driverStatRow.PenaltyPoints = driverStatRow.RacePoints + driverStatRow.BonusPoints - driverStatRow.TotalPoints;
+                // driverStatRow.PenaltyPoints = driverStatRow.RacePoints + driverStatRow.BonusPoints - driverStatRow.TotalPoints;
 
                 // Calculate min/max statistics
                 driverStatRow.BestFinalPosition = memberResultRows.Min(x => x.FinalPosition);
