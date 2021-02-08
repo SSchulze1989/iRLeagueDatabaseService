@@ -26,7 +26,7 @@ namespace iRLeagueRESTService.Data
                     property.ShouldSerialize = instance => 
                     {
                         var p = (BaseDTO)instance;
-                        return p.serializableProperties.Any(x => x.Name == property.PropertyName);
+                        return p.serializableProperties.Any(x => x.Key == property.PropertyName);
                     };
                 }
             }
