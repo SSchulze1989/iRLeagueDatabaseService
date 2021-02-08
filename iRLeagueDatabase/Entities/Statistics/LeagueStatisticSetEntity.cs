@@ -54,6 +54,12 @@ namespace iRLeagueDatabase.Entities.Statistics
         /// <param name="dbContext">Database context from EntityFramework</param>
         public override void Calculate(LeagueDbContext dbContext)
         {
+            // Fix penalty points sign
+            foreach(var statistic in StatisticSets.OfType<ImportedStatisticSetEntity>())
+            {
+                statistic.DriverStatistic.Where(x => x.PenaltyPoints < 0).ForEach(x => x.PenaltyPoints *= -1);
+            }
+
             // Get all statistic rows and group them by member
             var seasonStatisticRows = StatisticSets.SelectMany(x => x.DriverStatistic).GroupBy(x => x.Member);
 
