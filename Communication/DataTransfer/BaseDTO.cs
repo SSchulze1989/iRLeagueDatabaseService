@@ -36,15 +36,16 @@ namespace iRLeagueDatabase.DataTransfer
     public abstract class BaseDTO
     {
         private static IDictionary<Type, IDictionary<string, PropertyInfo>> DerivedDataMembers { get; }
-        public List<KeyValuePair<string, PropertyInfo>> serializableProperties { get; set; }
+        public List<KeyValuePair<string, PropertyInfo>> SerializableProperties { get; set; }
 
         static BaseDTO()
         {
             DerivedDataMembers = new Dictionary<Type, IDictionary<string, PropertyInfo>>();
 
             // Find all derived classes in assembly
-            var derivedTypes = AppDomain.CurrentDomain
-                .GetAssemblies()
+            var assemblies = new List<Assembly> { typeof(BaseDTO).Assembly };
+
+            var derivedTypes = assemblies
                 .SelectMany(x => x.GetTypes())
                 .Where(x => typeof(BaseDTO).IsAssignableFrom(x));
 
@@ -84,12 +85,12 @@ namespace iRLeagueDatabase.DataTransfer
             if (exclude == true)
             {
                 // if in exclude mode get all properties that should be serialized by default
-                serializableProperties = dataMembers.ToList();
+                SerializableProperties = dataMembers.ToList();
             }
             else
             {
                 // else start with a blank list
-                serializableProperties = new List<KeyValuePair<string, PropertyInfo>>();
+                SerializableProperties = new List<KeyValuePair<string, PropertyInfo>>();
             }
 
             if (fields != null && fields.Count() > 0)
@@ -133,12 +134,12 @@ namespace iRLeagueDatabase.DataTransfer
                             // if in exclude mode check if only this field is specifically excluded (e.g. it has no children specified)
                             if (field.Any(x => string.IsNullOrEmpty(x)))
                             {
-                                serializableProperties.Remove(property);
+                                SerializableProperties.Remove(property);
                             }
                         }
                         else
                         {
-                            serializableProperties.Add(property);
+                            SerializableProperties.Add(property);
                         }
                     }
                 }

@@ -34,13 +34,13 @@ namespace iRLeagueRESTService.Data
     {
         public static dynamic GetSelectedFieldObject(BaseDTO obj)
         {
-            if (obj.serializableProperties == null || obj.serializableProperties.Count() == 0)
+            if (obj.SerializableProperties == null || obj.SerializableProperties.Count() == 0)
             {
                 return obj;
             }
             var result = new ExpandoObject() as IDictionary<string, object>;
 
-            foreach (var property in obj.serializableProperties)
+            foreach (var property in obj.SerializableProperties)
             {
                 var child = property.Value.GetValue(obj);
                 if (child?.GetType().IsArray == true)
