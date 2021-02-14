@@ -61,6 +61,11 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         /// </summary>
         [DataMember]
         public int PenDrv { get; set; }
+        /// <summary>
+        /// List of reviews
+        /// </summary>
+        [DataMember]
+        public IncidentReviewDataDTO[] Reviews { get; set; }
 
     }
 }
