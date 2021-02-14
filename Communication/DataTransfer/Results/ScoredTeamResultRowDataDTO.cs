@@ -33,6 +33,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
     public class ScoredTeamResultRowDataDTO : ScoredResultRowDataDTO
     {
         [DataMember]
+        public new long TeamId { get; set; }
+        [DataMember]
         public ScoredResultRowDataDTO[] ScoredResultRows { get; set; }
     }
 }
