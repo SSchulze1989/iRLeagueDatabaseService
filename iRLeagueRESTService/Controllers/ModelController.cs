@@ -49,7 +49,7 @@ namespace iRLeagueRESTService.Controllers
     [IdentityBasicAuthentication]
     public class ModelController : ApiController
     {
-        private static ILog logger = log4net.LogManager.GetLogger(typeof(ModelController));
+        private static readonly ILog logger = log4net.LogManager.GetLogger(typeof(ModelController));
 
         [HttpGet]
         [ActionName("Get")]

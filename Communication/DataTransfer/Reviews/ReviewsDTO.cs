@@ -50,18 +50,7 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         /// Total number of penalties given
         /// </summary>
         [DataMember]
-        public int Penalties { get; set; }
-        /// <summary>
-        /// Total number of penalty points
-        /// </summary>
-        [DataMember]
-        public int PenPts { get; set; }
-        /// <summary>
-        /// Total number of drivers penalized
-        /// </summary>
-        [DataMember]
-        public int PenDrv { get; set; }
-        /// <summary>
+        public ReviewsPenaltySummaryDTO Penalties { get; set; }
         /// List of reviews
         /// </summary>
         [DataMember]
