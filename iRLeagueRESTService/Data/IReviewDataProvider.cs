@@ -1,4 +1,4 @@
-﻿using iRLeagueDatabase.DataTransfer.Reviews;
+﻿using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
 using System;
 using System.Collections.Generic;
 using System.Linq;
