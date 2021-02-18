@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Data.Entity;
 
 namespace iRLeagueRESTService.Data
 {
@@ -29,7 +30,25 @@ namespace iRLeagueRESTService.Data
         public ReviewsDTO GetReviewsFromSession(long sessionId)
         {
             // Load session from db
-            var session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
+            SessionBaseEntity session;
+            // if session id == 0 load latest session
+            if (sessionId == 0)
+            {
+                session = DbContext.Set<SessionBaseEntity>()
+                    .Where(x => x.SessionResult != null)
+                    .OrderByDescending(x => x.Date)
+                    .FirstOrDefault();
+            }
+            else
+            {
+                session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
+            }
+
+            if (session == null)
+            {
+                return new ReviewsDTO();
+            }
+
             var mapper = new DTOMapper(DbContext);
 
             var reviewIds = session.Reviews.Select(x => x.ReviewId);

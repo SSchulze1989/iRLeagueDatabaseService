@@ -19,7 +19,7 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpGet]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        public IHttpActionResult Get([FromUri] string leagueName, [FromUri] string sessionId, [FromUri] string fields = null, bool excludeFields = false)
+        public IHttpActionResult Get([FromUri] string leagueName, [FromUri] string sessionId = "0", [FromUri] string fields = null, bool excludeFields = false)
         {
             try
             {
@@ -27,10 +27,6 @@ namespace iRLeagueRESTService.Controllers
                 CheckLeagueRole(User, leagueName);
 
                 // check for empty parameters
-                if (string.IsNullOrEmpty(sessionId))
-                {
-                    return BadRequestEmptyParameter(nameof(sessionId));
-                }
                 if (string.IsNullOrEmpty(leagueName))
                 {
                     return BadRequestEmptyParameter(nameof(leagueName));
@@ -38,7 +34,11 @@ namespace iRLeagueRESTService.Controllers
 
                 // parse sessionId
                 long sessionIdValue;
-                if (long.TryParse(sessionId, out sessionIdValue) == false)
+                if (string.IsNullOrEmpty(sessionId))
+                {
+                    sessionIdValue = 0;
+                }
+                else if (long.TryParse(sessionId, out sessionIdValue) == false)
                 {
                     return BadRequestInvalidType(nameof(sessionId), sessionId, sessionIdValue.GetType());
                 }

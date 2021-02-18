@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace iRLeagueDatabase.DataTransfer.Reviews
+namespace iRLeagueDatabase.DataTransfer.Reviews.Convenience
 {
     [DataContract]
     public class MemberPenaltySummaryDTO : BaseDTO
