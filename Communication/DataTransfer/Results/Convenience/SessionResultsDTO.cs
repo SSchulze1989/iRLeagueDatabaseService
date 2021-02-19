@@ -32,5 +32,9 @@ namespace iRLeagueDatabase.DataTransfer.Results.Convenience
         /// Raw results data (if included)
         /// </summary>
         public ResultDataDTO RawResults { get; set; }
+        /// <summary>
+        /// Sim session details
+        /// </summary>
+        public SimSessionDetailsDTO SessionDetails { get; set; }
     }
 }

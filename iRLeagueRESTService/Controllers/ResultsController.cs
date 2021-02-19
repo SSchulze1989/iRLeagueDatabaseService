@@ -48,7 +48,7 @@ namespace iRLeagueRESTService.Controllers
                 using (var dbContext = CreateDbContext(databaseName))
                 {
                     IResultsDataProvider resultsDataProvider = new ResultsDataProvider(dbContext);
-                    data = resultsDataProvider.GetResultsFromSession(sessionId);
+                    data = resultsDataProvider.GetResultsFromSession(sessionId, includeRaw);
                 }
 
                 // return complete DTO or select fields

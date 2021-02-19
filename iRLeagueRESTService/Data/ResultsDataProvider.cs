@@ -49,6 +49,9 @@ namespace iRLeagueRESTService.Data
             }
             sessionId = session.SessionId;
 
+            // get session details
+            var sessionDetails = mapper.MapToSimSessionDetailsDTO(session.SessionResult.IRSimSessionDetails);
+
             // get session race number
             int raceNr = 0;
             if (session.SessionType == iRLeagueManager.Enums.SessionType.Race)
@@ -76,7 +79,8 @@ namespace iRLeagueRESTService.Data
                 RaceNr = raceNr,
                 RawResults = rawResults,
                 ScoredResults = scoredResults,
-                SessionId = sessionId
+                SessionId = sessionId,
+                SessionDetails = sessionDetails
             };
 
             return resultsDTO;
