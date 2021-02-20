@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using iRLeagueDatabase.Entities;
 
 namespace iRLeagueRESTService.Data
 {
@@ -38,9 +39,31 @@ namespace iRLeagueRESTService.Data
         /// </summary>
         /// <param name="seasonId">Id of the seasson</param>
         /// <returns>DTO containing all reviews and summary data</returns>
-        public ReviewsDTO GetReviewsFromSeason(long seasonId)
+        public SeasonReviewsDTO GetReviewsFromSeason(long seasonId)
         {
-            throw new NotImplementedException();
+            // load season from db
+            var season = DbContext.Set<SeasonEntity>().Find(seasonId);
+
+            if (season == null)
+            {
+                return new SeasonReviewsDTO() { SeasonId = seasonId };
+            }
+
+            // get season sessions
+            var sessions = season.Schedules.SelectMany(x => x.Sessions);
+            var sessionReviews = sessions.Select(x => GetReviewsFromSession(x.SessionId)).ToArray();
+
+            // construct DTO
+            var seasonReviews = new SeasonReviewsDTO()
+            {
+                ReviewsCount = sessionReviews.Sum(x => x.Total),
+                SessionReviews = sessionReviews,
+                SchedulesCount = season.Schedules.Count(),
+                SeasonId = seasonId,
+                SessionCount = sessions.Count()
+            };
+
+            return seasonReviews;
         }
 
         /// <summary>
@@ -48,7 +71,7 @@ namespace iRLeagueRESTService.Data
         /// </summary>
         /// <param name="sessionId">Id of the session</param>
         /// <returns>DTO containing all reviews and summary data</returns>
-        public ReviewsDTO GetReviewsFromSession(long sessionId)
+        public SessionReviewsDTO GetReviewsFromSession(long sessionId)
         {
             // Load session from db
             SessionBaseEntity session;
@@ -67,10 +90,19 @@ namespace iRLeagueRESTService.Data
 
             if (session == null)
             {
-                return new ReviewsDTO();
+                return new SessionReviewsDTO();
             }
 
             var mapper = new DTOMapper(DbContext);
+
+            // get session race number
+            int raceNr = 0;
+            if (session.SessionType == iRLeagueManager.Enums.SessionType.Race)
+            {
+                var season = session.Schedule.Season;
+                var seasonSessions = season.Schedules.SelectMany(x => x.Sessions).Where(x => x.SessionType == iRLeagueManager.Enums.SessionType.Race).OrderBy(x => x.Date);
+                raceNr = (seasonSessions.Select((x, i) => new { number = i + 1, item = x }).FirstOrDefault(x => x.item.SessionId == sessionId)?.number).GetValueOrDefault();
+            }
 
             // get all reviews ids for this session and retrieve reviews data from ModelDataProvider
             var reviewIds = session.Reviews.Select(x => x.ReviewId);
@@ -106,7 +138,7 @@ namespace iRLeagueRESTService.Data
                 DrvPenalties = driverPenalties.ToArray()
             };
             // create review convencience DTO
-            var reviewData = new ReviewsDTO()
+            var reviewData = new SessionReviewsDTO()
             {
                 Reviews = reviews,
                 Total = reviews.Count(),
@@ -121,7 +153,8 @@ namespace iRLeagueRESTService.Data
                     .GroupBy(x => x.VoteCategoryId)
                     .Select(x => new CountValue<VoteCategoryDTO>() { Count = x.Count(), Value = voteCats.SingleOrDefault(y => y.CatId == x.Key.Value) })
                     .ToArray(),
-                SessionId = sessionId
+                SessionId = sessionId,
+                RaceNr = raceNr
             };
             /* END construct DTOs */
 

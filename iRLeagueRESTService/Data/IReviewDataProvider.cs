@@ -10,7 +10,7 @@ namespace iRLeagueRESTService.Data
 {
     public interface IReviewDataProvider
     {
-        ReviewsDTO GetReviewsFromSession(long sessionId);
-        ReviewsDTO GetReviewsFromSeason(long seasonId);
+        SessionReviewsDTO GetReviewsFromSession(long sessionId);
+        SeasonReviewsDTO GetReviewsFromSeason(long seasonId);
     }
 }

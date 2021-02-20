@@ -34,7 +34,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="sessionId">Id of the session (default: null)</param>
         /// <param name="fields">Comma separated string to specify exact fields to return - JSON only! (default: null)</param>
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
-        /// <returns><see cref="ReviewsDTO"/> containing summary for the session reviews and penalties; <see cref="HttpError"/> on Error</returns>
+        /// <returns><see cref="SessionReviewsDTO"/> containing summary for the session reviews and penalties; <see cref="HttpError"/> on Error</returns>
         [HttpGet]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
         public IHttpActionResult GetSession([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] string fields = null, bool excludeFields = false)
@@ -53,7 +53,7 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 // Get reviews data from Data Access layer
-                ReviewsDTO data;
+                SessionReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
                     IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
@@ -62,6 +62,59 @@ namespace iRLeagueRESTService.Controllers
 
                 // return complete DTO or select fields
                 logger.Info($"Send data - ReviewsDTO id: {data.SessionId}");
+                if (string.IsNullOrEmpty(fields))
+                {
+                    return Ok(data);
+                }
+                else
+                {
+                    data.SetSerializableProperties(fields.Split(','), excludeFields);
+                    var response = SelectFieldsHelper.GetSelectedFieldObject(data);
+                    return Json(response);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error in get Reviews", e);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// GET Method for reviews belonging to a whole season
+        /// </summary>
+        /// <param name="leagueName">Short name of the league</param>
+        /// <param name="seasonId">Id of the season</param>
+        /// <param name="fields">Comma separated string to specify exact fields to return - JSON only! (default: null)</param>
+        /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
+        /// <returns><see cref="SessionReviewsDTO"/> containing summary for the session reviews and penalties; <see cref="HttpError"/> on Error</returns>
+        [HttpGet]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult GetSeason([FromUri] string leagueName, [FromUri] long seasonId, [FromUri] string fields = null, bool excludeFields = false)
+        {
+            try
+            {
+                logger.Info($"Get Reviews for season id: {seasonId} - league: {leagueName}");
+                CheckLeagueRole(User, leagueName);
+
+                // check for empty parameters
+                if (string.IsNullOrEmpty(leagueName))
+                {
+                    return BadRequestEmptyParameter(nameof(leagueName));
+                }
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                // Get reviews data from Data Access layer
+                SeasonReviewsDTO data;
+                using (var dbContext = CreateDbContext(databaseName))
+                {
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
+                    data = reviewDataProvider.GetReviewsFromSeason(seasonId);
+                }
+
+                // return complete DTO or select fields
+                logger.Info($"Send data - ReviewsDTO id: {data.SeasonId}");
                 if (string.IsNullOrEmpty(fields))
                 {
                     return Ok(data);
