@@ -20,6 +20,16 @@ namespace iRLeagueDatabase.DataTransfer.Results.Convenience
         [DataMember]
         public long SessionId { get; set; }
         /// <summary>
+        /// Id of the schedule
+        /// </summary>
+        [DataMember]
+        public long ScheduleId { get; set; }
+        /// <summary>
+        /// Name of the schedule
+        /// </summary>
+        [DataMember]
+        public string ScheduleName { get; set; }
+        /// <summary>
         /// Number of the race in this season in chronological order (only for race sessions)
         /// </summary>
         [DataMember]

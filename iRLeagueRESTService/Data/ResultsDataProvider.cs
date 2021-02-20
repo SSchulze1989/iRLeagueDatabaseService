@@ -1,6 +1,7 @@
 ﻿using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Results.Convenience;
+using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Mapper;
 using System;
@@ -76,6 +77,8 @@ namespace iRLeagueRESTService.Data
             var resultsDTO = new SessionResultsDTO()
             {
                 Count = scoredResults.Count(),
+                ScheduleId = session.ScheduleId,
+                ScheduleName = session.Schedule.Name,
                 RaceNr = raceNr,
                 RawResults = rawResults,
                 ScoredResults = scoredResults,
@@ -84,6 +87,43 @@ namespace iRLeagueRESTService.Data
             };
 
             return resultsDTO;
+        }
+
+        /// <summary>
+        /// Get the results of a whole season
+        /// </summary>
+        /// <param name="seasonId">Id of the season</param>
+        /// <param name="includeRawResults">If <see langword="true"/> raw result data is included</param>
+        /// <returns>Convenience DTO for all season results</returns>
+        public SeasonResultsDTO GetResultsFromSeason(long seasonId, bool includeRawResults = false)
+        {
+            var mapper = new DTOMapper(DbContext);
+
+            // get season entity from database
+            var season = DbContext.Set<SeasonEntity>().Find(seasonId);
+
+            if (season == null)
+            {
+                return new SeasonResultsDTO() { SeasonId = seasonId };
+            }
+
+            // get season results
+            var sessions = season.Schedules.SelectMany(x => x.Sessions);
+            var sessionResults = sessions
+                .Select(x => GetResultsFromSession(x.SessionId, includeRawResults))
+                .ToArray();
+
+            // Construct DTO
+            var seasonResults = new SeasonResultsDTO()
+            {
+                SeasonId = seasonId,
+                SessionCount = sessions.Count(),
+                SchedulesCount = season.Schedules.Count(),
+                ResultsCount = sessions.Where(x => x.SessionResult != null).Count(),
+                SessionResults = sessionResults
+            };
+
+            return seasonResults;
         }
     }
 }

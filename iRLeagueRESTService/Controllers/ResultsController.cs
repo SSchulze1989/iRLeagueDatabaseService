@@ -29,7 +29,7 @@ namespace iRLeagueRESTService.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        public IHttpActionResult Get([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] bool includeRaw = false, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
+        public IHttpActionResult GetSession([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] bool includeRaw = false, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace iRLeagueRESTService.Controllers
                 }
 
                 // return complete DTO or select fields
-                logger.Info($"Send data - ResultsDTO id: {data.SessionId}");
+                logger.Info($"Send data - SessionResultsDTO id: {data.SessionId}");
                 if (string.IsNullOrEmpty(fields))
                 {
                     return Ok(data);
@@ -66,7 +66,60 @@ namespace iRLeagueRESTService.Controllers
             }
             catch (Exception e)
             {
-                logger.Error("Error in get Results", e);
+                logger.Error("Error in get SessionResults", e);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// GET Method for getting all scored results for a whole season
+        /// </summary>
+        /// <param name="leagueName">Short name of the league</param>
+        /// <param name="seasonId">Id of the season</param>
+        /// <param name="includeRaw">If True, raw results are included</param>
+        /// <param name="fields">Comma separated string to specify exact fields to return - JSON only! (default: null)</param>
+        /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult GetSeason([FromUri] string leagueName, [FromUri] long seasonId, [FromUri] bool includeRaw = false, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
+        {
+            try
+            {
+                logger.Info($"Get Results for season id: {seasonId} - league: {leagueName}");
+                CheckLeagueRole(User, leagueName);
+
+                // check for empty parameters
+                if (string.IsNullOrEmpty(leagueName))
+                {
+                    return BadRequestEmptyParameter(nameof(leagueName));
+                }
+
+                var databaseName = GetDatabaseNameFromLeagueName(leagueName);
+
+                SeasonResultsDTO data;
+                using (var dbContext = CreateDbContext(databaseName))
+                {
+                    IResultsDataProvider resultsDataProvider = new ResultsDataProvider(dbContext);
+                    data = resultsDataProvider.GetResultsFromSeason(seasonId, includeRaw);
+                }
+
+                // return complete DTO or select fields
+                logger.Info($"Send data - SeasonResultsDTO id: {data.SeasonId}");
+                if (string.IsNullOrEmpty(fields))
+                {
+                    return Ok(data);
+                }
+                else
+                {
+                    data.SetSerializableProperties(fields.Split(','), excludeFields);
+                    var response = SelectFieldsHelper.GetSelectedFieldObject(data);
+                    return Json(response);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error("Error in get SeasonResults", e);
                 throw e;
             }
         }

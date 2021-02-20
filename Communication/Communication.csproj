@@ -75,6 +75,7 @@
     <Compile Include="DataTransfer\Members\TeamDataDTO.cs" />
     <Compile Include="DataTransfer\ProductDTO.cs" />
     <Compile Include="DataTransfer\Results\AddPenaltyDTO.cs" />
+    <Compile Include="DataTransfer\Results\Convenience\SeasonResultsDTO.cs" />
     <Compile Include="DataTransfer\Results\Convenience\SessionResultsDTO.cs" />
     <Compile Include="DataTransfer\Results\IRacingResultRowDTO.cs" />
     <Compile Include="DataTransfer\Results\ResultDataDTO.cs" />
