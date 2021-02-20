@@ -2,6 +2,7 @@
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Results.Convenience;
 using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Mapper;
 using System;
@@ -44,14 +45,11 @@ namespace iRLeagueRESTService.Data
                 session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
             }
 
-            if (session == null || session.SessionResult == null)
+            if (session == null)
             {
                 return new SessionResultsDTO() { SessionId = sessionId };
             }
             sessionId = session.SessionId;
-
-            // get session details
-            var sessionDetails = mapper.MapToSimSessionDetailsDTO(session.SessionResult.IRSimSessionDetails);
 
             // get session race number
             int raceNr = 0;
@@ -64,13 +62,21 @@ namespace iRLeagueRESTService.Data
 
             // get scoredResults using ModelDataProvider
             var modelDataProvider = new ModelDataProvider(DbContext);
-            ScoredResultDataDTO[] scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
-
+            ScoredResultDataDTO[] scoredResults = new ScoredResultDataDTO[0];
             ResultDataDTO rawResults = null;
-            // get rawResults if includeRawResults == true
-            if (includeRawResults)
+            SimSessionDetailsDTO sessionDetails = null;
+            if (session.SessionResult != null)
             {
-                rawResults = mapper.MapToResulDataDTO(session.SessionResult);
+                scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
+
+                // get rawResults if includeRawResults == true
+                if (includeRawResults)
+                {
+                    rawResults = mapper.MapToResulDataDTO(session.SessionResult);
+                }
+
+                // get session details
+                sessionDetails = mapper.MapToSimSessionDetailsDTO(session.SessionResult.IRSimSessionDetails);
             }
 
             // construct SessionResultsDTO
