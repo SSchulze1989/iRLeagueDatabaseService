@@ -50,16 +50,6 @@ namespace iRLeagueRESTService.Controllers
                     return BadRequestEmptyParameter(nameof(leagueName));
                 }
 
-                // parse sessionId
-                if (string.IsNullOrEmpty(sessionId))
-                {
-                    sessionId = 0;
-                }
-                else if (long.TryParse(sessionId, out sessionId) == false)
-                {
-                    return BadRequestInvalidType(nameof(sessionId), sessionId, sessionId.GetType());
-                }
-
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 // Get reviews data from Data Access layer
