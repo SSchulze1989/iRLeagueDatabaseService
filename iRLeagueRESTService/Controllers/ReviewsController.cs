@@ -37,7 +37,7 @@ namespace iRLeagueRESTService.Controllers
         /// <returns><see cref="ReviewsDTO"/> containing summary for the session reviews and penalties; <see cref="HttpError"/> on Error</returns>
         [HttpGet]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
-        public IHttpActionResult Get([FromUri] string leagueName, [FromUri] string sessionId = "0", [FromUri] string fields = null, bool excludeFields = false)
+        public IHttpActionResult GetSession([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] string fields = null, bool excludeFields = false)
         {
             try
             {
@@ -51,14 +51,13 @@ namespace iRLeagueRESTService.Controllers
                 }
 
                 // parse sessionId
-                long sessionIdValue;
                 if (string.IsNullOrEmpty(sessionId))
                 {
-                    sessionIdValue = 0;
+                    sessionId = 0;
                 }
-                else if (long.TryParse(sessionId, out sessionIdValue) == false)
+                else if (long.TryParse(sessionId, out sessionId) == false)
                 {
-                    return BadRequestInvalidType(nameof(sessionId), sessionId, sessionIdValue.GetType());
+                    return BadRequestInvalidType(nameof(sessionId), sessionId, sessionId.GetType());
                 }
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
@@ -68,7 +67,7 @@ namespace iRLeagueRESTService.Controllers
                 using (var dbContext = CreateDbContext(databaseName))
                 {
                     IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
-                    data = reviewDataProvider.GetReviewsFromSession(sessionIdValue);
+                    data = reviewDataProvider.GetReviewsFromSession(sessionId);
                 }
 
                 // return complete DTO or select fields
