@@ -111,6 +111,10 @@
     <Compile Include="DataTransfer\Reviews\ReviewVoteDataDTO.cs" />
     <Compile Include="DataTransfer\SeasonDataDTO.cs" />
     <Compile Include="DataTransfer\SeasonInfoDTO.cs" />
+    <Compile Include="DataTransfer\Sessions\Convenience\RaceSessionConvenienceDTO.cs" />
+    <Compile Include="DataTransfer\Sessions\Convenience\ScheduleSessionsDTO.cs" />
+    <Compile Include="DataTransfer\Sessions\Convenience\SeasonSessionsDTO.cs" />
+    <Compile Include="DataTransfer\Sessions\Convenience\SessionConvenienceDTO.cs" />
     <Compile Include="DataTransfer\Sessions\RaceSessionDataDTO.cs" />
     <Compile Include="DataTransfer\Sessions\ScheduleDataDTO.cs" />
     <Compile Include="DataTransfer\Sessions\ScheduleInfoDTO.cs" />
