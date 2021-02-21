@@ -40,11 +40,11 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public long? ResultRowId { get; set; }
         [DataMember]
         public long ResultId { get; set; }
-        [DataMember]
+        [DataMember(Name = "SesType")]
         public SimSessionTypeEnum SimSessionType { get; set; }
-        [DataMember]
+        [DataMember(Name = "Start")]
         public int StartPosition { get; set; }
-        [DataMember]
+        [DataMember(Name = "Fin")]
         public int FinishPosition { get; set; }
 
         [DataMember]
@@ -52,17 +52,17 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public long? TeamId { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "OldIR")]
         public int OldIRating { get; set; }
-        [DataMember]
+        [DataMember(Name = "NewIR")]
         public int NewIRating { get; set; }
-        [DataMember]
+        [DataMember(Name = "StartIR")]
         public int SeasonStartIRating { get; set; }
-        [DataMember]
+        [DataMember(Name = "Lic")]
         public string License { get; set; }
-        [DataMember]
+        [DataMember(Name = "OldSR")]
         public double OldSafetyRating { get; set; }
-        [DataMember]
+        [DataMember(Name = "NewSR")]
         public double NewSafetyRating { get; set; }
         [DataMember]
         public int OldCpi { get; set; }
@@ -74,7 +74,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public string ClubName { get; set; }
         [DataMember]
         public string TeamName { get; set; }
-        [DataMember]
+        [DataMember(Name = "CarNr")]
         public int CarNumber { get; set; }
         [DataMember]
         public int ClassId { get; set; }
@@ -84,37 +84,37 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int CarId { get; set; }
         [DataMember]
         public string CarClass { get; set; }
-        [DataMember]
+        [DataMember(Name = "ComplL")]
         public int CompletedLaps { get; set; }
-        [DataMember]
+        [DataMember(Name = "ComplPct")]
         public double CompletedPct { get; set; }
-        [DataMember]
+        [DataMember(Name = "LeadL")]
         public int LeadLaps { get; set; }
-        [DataMember]
+        [DataMember(Name = "FastL")]
         public int FastLapNr { get; set; }
-        [DataMember]
+        [DataMember(Name = "Incs")]
         public int Incidents { get; set; }
         [DataMember]
         public RaceStatusEnum Status { get; set; }
-        [DataMember]
+        [DataMember(Name = "QTime")]
         public TimeSpan QualifyingTime { get; set; }
-        [DataMember]
+        [DataMember(Name = "Intv")]
         public TimeSpan Interval { get; set; }
-        [DataMember]
+        [DataMember(Name = "AvgTime")]
         public TimeSpan AvgLapTime { get; set; }
-        [DataMember]
+        [DataMember(Name = "FlapTime")]
         public TimeSpan FastestLapTime { get; set; }
-        [DataMember]
+        [DataMember(Name = "FinChg")]
         public int PositionChange { get; set; }
-        [DataMember]
+        [DataMember(Name = "LocId")]
         public string LocationId { get; set; }
         [DataMember]
         public DateTime Date { get; set; }
-        [DataMember]
+        [DataMember(Name = "Div")]
         public int Division { get; set; }
-        [DataMember]
+        [DataMember(Name = "OldLic")]
         public int OldLicenseLevel { get; set; }
-        [DataMember]
+        [DataMember(Name = "NewLic")]
         public int NewLicenseLevel { get; set; }
 
 

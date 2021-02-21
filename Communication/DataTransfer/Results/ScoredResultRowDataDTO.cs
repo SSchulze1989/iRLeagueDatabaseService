@@ -33,23 +33,23 @@ namespace iRLeagueDatabase.DataTransfer.Results
     [DataContract]
     public class ScoredResultRowDataDTO : ResultRowDataDTO
     {
-        [DataMember]
+        [DataMember(Name = "ScrResRowId")]
         public long? ScoredResultRowId { get; set; }
         [DataMember]
         public long? ScoringId { get; set; }
-        [DataMember]
+        [DataMember(Name = "Pts")]
         public int RacePoints { get; set; }
-        [DataMember]
+        [DataMember(Name = "Bonus")]
         public int BonusPoints { get; set; }
-        [DataMember]
+        [DataMember(Name = "PenPts")]
         public int PenaltyPoints { get; set; }
-        [DataMember]
+        [DataMember(Name = "TotPts")]
         public int TotalPoints { get; set; }
-        [DataMember]
+        [DataMember(Name = "Pos")]
         public int FinalPosition { get; set; }
-        [DataMember]
+        [DataMember(Name = "PosChg")]
         public int FinalPositionChange { get; set; }
-        [DataMember]
+        [DataMember(Name = "RevPen")]
         public ReviewPenaltyDTO[] ReviewPenalties { get; set; }
 
         public override object MappingId => ScoredResultRowId;
