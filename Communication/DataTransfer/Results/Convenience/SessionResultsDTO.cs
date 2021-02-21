@@ -47,12 +47,12 @@ namespace iRLeagueDatabase.DataTransfer.Results.Convenience
         /// <summary>
         /// Raw results data (if included)
         /// </summary>
-        [DataMember] 
+        [DataMember(EmitDefaultValue = true)] 
         public ResultDataDTO RawResults { get; set; }
         /// <summary>
         /// Sim session details
         /// </summary>
-        [DataMember] 
+        [DataMember(EmitDefaultValue = true)] 
         public SimSessionDetailsDTO SessionDetails { get; set; }
     }
 }
