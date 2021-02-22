@@ -13,6 +13,9 @@ using System.Web;
 
 namespace iRLeagueRESTService.Data
 {
+    /// <summary>
+    /// Data access class for retrieving review convenience data from League database
+    /// </summary>
     public class ResultsDataProvider : DataProviderBase, IResultsDataProvider
     {
         public ResultsDataProvider(LeagueDbContext dbContext) : base(dbContext)
