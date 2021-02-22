@@ -1,5 +1,8 @@
 ﻿using iRLeagueDatabase;
+using iRLeagueDatabase.DataTransfer;
 using iRLeagueRESTService.Filters;
+using iRLeagueRESTService.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +76,81 @@ namespace iRLeagueRESTService.Controllers
         protected virtual string GetDatabaseNameFromLeagueName(string leagueName)
         {
             return $"{leagueName}_leagueDb";
+        }
+
+        /// <summary>
+        /// Get the league name from the full database name
+        /// </summary>
+        /// <param name="dbName">full database name</param>
+        /// <returns>Shortname of the league</returns>
+        public static string GetLeagueNameFromDatabaseName(string dbName)
+        {
+            return dbName.Substring(0, dbName.Length - "_leagueDb".Length);
+        }
+
+        /// <summary>
+        /// Set the update status of the current league
+        /// </summary>
+        /// <param name="leagueName">Shortname of the league</param>
+        /// <param name="principal">Principal of the current User</param>
+        protected void UpdateLeague(string leagueName, IPrincipal principal)
+        {
+            var register = LeagueRegister.Get();
+
+            LeagueEntry leagueEntry = null;
+            if (register.Leagues.Any(x => x.Name == leagueName) == false)
+            {
+                leagueEntry = new LeagueEntry()
+                {
+                    Name = leagueName,
+                    CreatorName = principal.Identity.Name,
+                    OwnerId = Guid.Parse(principal.Identity.GetUserId()),
+                    CreatorId = Guid.Parse(principal.Identity.GetUserId()),
+                    CreatedOn = DateTime.Now,
+                    PrettyName = leagueName
+                };
+                register.Leagues.Add(leagueEntry);
+            }
+            else
+            {
+                leagueEntry = register.Leagues.SingleOrDefault(x => x.Name == leagueName);
+            }
+            leagueEntry.LastUpdate = DateTime.Now;
+            if (leagueEntry.OwnerId == null)
+            {
+                leagueEntry.OwnerId = leagueEntry.CreatorId;
+            }
+
+            register.Save();
+        }
+
+        /// <summary>
+        /// Get informaiton about the league from the league register
+        /// </summary>
+        /// <param name="leagueName">Shortname of the league</param>
+        /// <returns>DTO containing league information</returns>
+        protected LeagueDTO GetLeagueRegisterInfo(string leagueName)
+        {
+            var register = LeagueRegister.Get();
+
+            var leagueEntry = register.GetLeague(leagueName);
+            if (leagueEntry == null)
+            {
+                return null;
+            }
+
+            var leagueDto = new LeagueDTO()
+            {
+                Name = leagueEntry.Name,
+                LongName = leagueEntry.PrettyName,
+                CreatedByUserId = leagueEntry.CreatorId.ToString(),
+                CreatedByUserName = leagueEntry.CreatorName,
+                CreatedOn = leagueEntry.CreatedOn,
+                LastModifiedOn = leagueEntry.LastUpdate,
+                OwnerUserId = leagueEntry.OwnerId.ToString()
+            };
+
+            return leagueDto;
         }
     }
 }

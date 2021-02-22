@@ -40,6 +40,25 @@ namespace iRLeagueRESTService.Models
             return register;
         }
 
+        /// <summary>
+        /// Get a league enty from the register by its league name
+        /// </summary>
+        /// <param name="leagueName">Shortname of the league</param>
+        /// <returns><see cref="LeagueEntry"/> of the league; <see langword="null"/> if not found;</returns>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="InvalidOperationException"/>
+        public LeagueEntry GetLeague(string leagueName)
+        {
+            // check if league exists
+            if (Leagues.Any(x => x.Name == leagueName) == false)
+            {
+                return null;
+            }
+
+            // retrieve entry from the register
+            return Leagues.Single(x => x.Name == leagueName);
+        }
+
         public void Save()
         {
             var serializer = new XmlSerializer(typeof(LeagueRegister));

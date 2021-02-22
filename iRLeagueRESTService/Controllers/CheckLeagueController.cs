@@ -16,11 +16,12 @@ using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using System.Net;
 using System.Data;
+using iRLeagueRESTService.Models;
 
 namespace iRLeagueRESTService.Controllers
 {
     [IdentityBasicAuthentication]
-    public class CheckLeagueController : ApiController
+    public class CheckLeagueController : LeagueApiController
     {    
         [HttpGet]
         [Authorize(Roles = LeagueRoles.UserOrAdmin)]
@@ -43,55 +44,84 @@ namespace iRLeagueRESTService.Controllers
 
             if (databaseExists)
             {
-                if (CheckLeagueRole(User, leagueName))
-                    return Ok();
-                else
-                    throw new HttpResponseException(HttpStatusCode.Unauthorized);
+                base.CheckLeagueRole(User, leagueName);
+                
+                var leagueInfo = GetLeagueRegisterInfo(id);
+                return Ok(leagueInfo);
             }
             else
-                return BadRequest("Database does not exist");
+                return BadRequest($"League {id} does not exist");
         }
 
         [HttpPost]
-        [Authorize(Roles = LeagueRoles.Admin)]
-        public IHttpActionResult CreateLeague([FromUri] string id)
+        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        public IHttpActionResult PostLeague([FromUri] string leagueName, [FromUri] string fullName = "")
         {
-            if (id == null)
-                return BadRequest("League name must not be empty!");
-
-            var dbName = GetDatabaseNameFromLeagueName(id);
-
-            using (var dbContext = new LeagueDbContext(dbName, createDb: true))
+            // check for empty body and invalid data
+            if (string.IsNullOrEmpty(leagueName))
             {
-                var seasons = dbContext.Seasons;
-                if (seasons == null || seasons.Count() == 0)
-                {
-                    seasons.Add(new iRLeagueDatabase.Entities.SeasonEntity()
-                    {
-                        SeasonName = "First Season",
-                        CreatedByUserName = User.Identity.Name,
-                        CreatedByUserId = User.Identity.GetUserId(),
-                        LastModifiedByUserName = User.Identity.Name,
-                        LastModifiedByUserId = User.Identity.GetUserId()
-                    });
-                    dbContext.SaveChanges();
-                    return Ok($"New League {id} with database {dbName} created!");
-                }
-                return BadRequest("League already exists");
+                return BadRequestEmptyParameter(nameof(leagueName));
             }
+            if (string.IsNullOrEmpty(fullName))
+            {
+                fullName = leagueName;
+            }
+
+            var dbName = GetDatabaseNameFromLeagueName(leagueName);
+            var register = LeagueRegister.Get();
+
+            var league = register.GetLeague(leagueName);
+
+            if (league == null)
+            {
+                // check current number of leagues for that user
+                string userId = User.Identity.GetUserId();
+                var leagueCount = register.Leagues.Count(x => x.CreatorId.ToString() == userId);
+                var maxLeagues = 3;
+                if (leagueCount >= maxLeagues)
+                {
+                    return BadRequest($"Create league failed. Maximum numbers of {maxLeagues} leagues per user reached.");
+                }
+
+                using (var dbContext = new LeagueDbContext(dbName, createDb: true))
+                {
+                    var seasons = dbContext.Seasons;
+                    if (seasons == null || seasons.Count() == 0)
+                    {
+                        seasons.Add(new iRLeagueDatabase.Entities.SeasonEntity()
+                        {
+                            SeasonName = "First Season",
+                            CreatedByUserName = User.Identity.Name,
+                            CreatedByUserId = User.Identity.GetUserId(),
+                            LastModifiedByUserName = User.Identity.Name,
+                            LastModifiedByUserId = User.Identity.GetUserId()
+                        });
+                        dbContext.SaveChanges();
+                        // Create new entry in league register
+                        UpdateLeague(leagueName, User);
+                        return Ok($"New League {leagueName} with database {dbName} created!");
+                    }
+                    return BadRequest($"League {leagueName} already exists!");
+                }
+            }
+
+            // if league exists just update fullname
+            league.PrettyName = fullName;
+            UpdateLeague(leagueName, User);
+            return Ok("League information updated");
         }
 
-        public static string GetDatabaseNameFromLeagueName(string leagueName)
-        {
-            return $"{leagueName}_leagueDb";
-        }
+        //public static string GetDatabaseNameFromLeagueName(string leagueName)
+        //{
+        //    return $"{leagueName}_leagueDb";
+        //}
 
-        public static string GetLeagueNameFromDatabaseName(string dbName)
-        {
-            return dbName.Substring(0, dbName.Length - "_leagueDb".Length);
-        }
+        //public static string GetLeagueNameFromDatabaseName(string dbName)
+        //{
+        //    return dbName.Substring(0, dbName.Length - "_leagueDb".Length);
+        //}
 
-        private bool CheckLeagueRole(IPrincipal principal, string leagueName)
+        private new bool CheckLeagueRole(IPrincipal principal, string leagueName)
         {
             if (principal.IsInRole($"{leagueName}_User") || principal.IsInRole("Administrator"))
                 return true;
