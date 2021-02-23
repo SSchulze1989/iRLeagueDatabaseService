@@ -66,7 +66,7 @@
     <Compile Include="DataTransfer\Filters\StringFilterValueDTO.cs" />
     <Compile Include="DataTransfer\IMappableDTO.cs" />
     <Compile Include="DataTransfer\CountValue.cs" />
-    <Compile Include="DataTransfer\LeagueDTOBase.cs" />
+    <Compile Include="DataTransfer\LeagueDTO.cs" />
     <Compile Include="DataTransfer\MappableDTO.cs" />
     <Compile Include="DataTransfer\Members\Convenience\DriverDTO.cs" />
     <Compile Include="DataTransfer\Members\LeagueMemberDataDTO.cs" />

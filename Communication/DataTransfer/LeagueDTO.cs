@@ -29,30 +29,38 @@ using System.Runtime.Serialization;
 
 namespace iRLeagueDatabase.DataTransfer
 {
-    //[DataContract]
-    //[KnownType(nameof(VersionInfoDTO))]
-    //[KnownType(nameof(VersionDTO))]
-    //[KnownType(nameof(SeasonInfoDTO))]
-    //[KnownType(nameof(SeasonDataDTO))]
-    //[KnownType(nameof(Sessions.SessionInfoDTO))]
-    //[KnownType(nameof(Sessions.SessionDataDTO))]
-    //[KnownType(nameof(Sessions.RaceSessionDataDTO))]
-    //[KnownType(nameof(Sessions.ScheduleInfoDTO))]
-    //[KnownType(nameof(Sessions.ScheduleDataDTO))]
-    //[KnownType(nameof(Reviews.IncidentReviewInfoDTO))]
-    //[KnownType(nameof(Reviews.IncidentReviewDataDTO))]
-    //[KnownType(nameof(Reviews.CommentInfoDTO))]
-    //[KnownType(nameof(Reviews.CommentDataDTO))]
-    //[KnownType(nameof(Reviews.ReviewCommentDataDTO))]
-    //[KnownType(nameof(Results.ResultInfoDTO))]
-    //[KnownType(nameof(Results.ResultDataDTO))]
-    //[KnownType(nameof(Results.ResultRowDataDTO))]
-    //[KnownType(nameof(Results.IRacingResultRowDTO))]
-    //[KnownType(nameof(Results.ScoringInfoDTO))]
-    //[KnownType(nameof(Results.ScoringDataDTO))]
-    //[KnownType(nameof(Results.ScoringRuleBaseDTO))]
-    //[KnownType(nameof(Results.StandardScoringRuleDTO))]
-    public class LeagueDTOBase
+    /// <summary>
+    /// DTO containing basic information about a league:
+    /// Shortname, name, crate and change info...
+    /// </summary>
+    [DataContract]
+    public class LeagueDTO : VersionDTO
     {
+        /// <summary>
+        /// Shortname of the league. To be used as "leagueName" for all API methods 
+        /// Cannot contain spaces and special characters
+        /// </summary>
+        [DataMember]
+        public string Name { get; set; }
+        /// <summary>
+        /// Long name of the league. Can contain spaces and special characters
+        /// </summary>
+        [DataMember]
+        public string LongName { get; set; }
+        /// <summary>
+        /// Current owner of the league. The ownership may be given to another user by the current owner
+        /// </summary>
+        [DataMember]
+        public string OwnerUserId { get; set; }
+
+        [IgnoreDataMember]
+        public new string LastModifiedByUserId { get; set; }
+        [IgnoreDataMember]
+        public new string LastModifiedByUserName { get; set; }
+
+        /// <summary>
+        /// No keys property for Leagues
+        /// </summary>
+        public override object[] Keys => new object[0];
     }
 }

@@ -17,5 +17,6 @@ namespace iRLeagueRESTService.Models
         public Guid? CreatorId { get; set; }
         public string CreatorName { get; set; }
         public DateTime? LastUpdate { get; set; }
+        public Guid? OwnerId { get; set; }
     }
 }

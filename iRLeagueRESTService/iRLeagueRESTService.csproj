@@ -304,7 +304,7 @@
     <Compile Include="Controllers\ChangePasswordController.cs" />
     <Compile Include="Controllers\CheckUpdateController.cs" />
     <Compile Include="Controllers\LeagueApiController.cs" />
-    <Compile Include="Controllers\LeagueController.cs" />
+    <Compile Include="Controllers\CheckLeagueController.cs" />
     <Compile Include="Controllers\ModelController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ResultsController.cs" />

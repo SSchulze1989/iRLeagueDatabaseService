@@ -39,9 +39,9 @@ namespace iRLeagueDatabase.DataTransfer
         [DataMember]
         public new DateTime? LastModifiedOn { get => base.LastModifiedOn; set => base.LastModifiedOn = value; }
         [DataMember]
-        public new long CreatedByUserId { get; set; }
+        public new string CreatedByUserId { get; set; }
         [DataMember]
-        public new long LastModifiedByUserId { get; set; }
+        public new string LastModifiedByUserId { get; set; }
         [DataMember]
         public new string CreatedByUserName { get => base.CreatedByUserName; set => base.CreatedByUserName = value; }
         [DataMember]
