@@ -8,19 +8,18 @@ using System.Threading.Tasks;
 namespace iRLeagueDatabase.DataTransfer.Reviews.Convenience
 {
     [DataContract]
-    public class ReviewsDTO : BaseDTO
+    public class SessionReviewsDTO : BaseDTO
     {
-        /// <summary>
-        /// Id of the season for the reviews
-        /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public long? SeasonId { get; set; }
         /// <summary>
         /// Id of the session for the reviews - if reviews are from multiple sessions this value is null
         /// </summary>
-        [DataMember(EmitDefaultValue = false)]
-        public long? SessionId { get; set; }
-
+        [DataMember]
+        public long SessionId { get; set; }
+        /// <summary>
+        /// Number of the race in this season in chronological order
+        /// </summary>
+        [DataMember]
+        public int RaceNr { get; set; }
         /// <summary>
         /// Total number of reviews
         /// </summary>

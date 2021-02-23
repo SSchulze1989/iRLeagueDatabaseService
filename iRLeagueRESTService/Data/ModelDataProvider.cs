@@ -20,31 +20,23 @@ using System.Threading.Tasks;
 
 namespace iRLeagueRESTService.Data
 {
-    public class ModelDataProvider<TModelDTO> : IModelDataProvider<TModelDTO, long[]>, IDisposable where TModelDTO : class, IMappableDTO
+    public class ModelDataProvider<TModelDTO> : DataProviderBase, IModelDataProvider<TModelDTO, long[]>, IDisposable where TModelDTO : class, IMappableDTO
     {
-        private LeagueDbContext DbContext { get; }
 
-        public string UserName { get; set; }
-        public string UserId { get; set; }
-
-        public ModelDataProvider()
+        public ModelDataProvider() : base(new LeagueDbContext())
         {
-            DbContext = new LeagueDbContext();
         }
 
-        public ModelDataProvider(LeagueDbContext context)
+        public ModelDataProvider(LeagueDbContext context) : base (context)
         {
-            DbContext = context;
         }
 
-        public ModelDataProvider(LeagueDbContext context, string userName) : this(context)
+        public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName)
         {
-            UserName = userName;
         }
 
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId)  : this(context, userName)
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId)
         {
-            UserId = userId;
         }
 
         public void Dispose()
@@ -295,7 +287,7 @@ namespace iRLeagueRESTService.Data
             return status;
         }
 
-        private ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId)
+        public ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId)
         {
             var scoredResultData = new ScoredResultDataDTO();
 

@@ -51,6 +51,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int FinalPositionChange { get; set; }
         [DataMember]
         public ReviewPenaltyDTO[] ReviewPenalties { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public bool? IsDroppedResult { get; set; } = null;
 
         public override object MappingId => ScoredResultRowId;
 

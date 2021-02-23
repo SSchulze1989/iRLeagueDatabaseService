@@ -108,6 +108,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public ScoredResultRowDataDTO[] DroppedResults { get; set; }
         [DataMember]
+        public ScoredResultRowDataDTO[] DriverResults { get; set; }
+        [DataMember]
         public long? TeamId { get; set; }
     }
 }

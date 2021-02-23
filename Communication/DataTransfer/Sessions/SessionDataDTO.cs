@@ -31,6 +31,7 @@ using iRLeagueManager.Enums;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Reviews;
+using iRLeagueDatabase.DataTransfer.Sessions.Convenience;
 
 namespace iRLeagueDatabase.DataTransfer.Sessions
 {
@@ -41,16 +42,18 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
     [DataContract]
     [KnownType(typeof(SeasonInfoDTO))]
     [KnownType(typeof(RaceSessionDataDTO))]
+    [KnownType(typeof(SessionConvenienceDTO))]
+    [KnownType(typeof(RaceSessionConvenienceDTO))]
     public class SessionDataDTO : SessionInfoDTO
     {
         //[DataMember]
         //public int SessionId { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         //public ScheduleInfoDTO Schedule { get; set; }
-        public long ScheduleId { get; set; }
+        public long? ScheduleId { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         //public ResultInfoDTO SessionResult { get; set; }
         public long? SessionResultId { get; set; }
 

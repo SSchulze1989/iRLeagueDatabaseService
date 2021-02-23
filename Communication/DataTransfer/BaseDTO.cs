@@ -36,7 +36,7 @@ namespace iRLeagueDatabase.DataTransfer
     public abstract class BaseDTO
     {
         private static IDictionary<Type, IDictionary<string, PropertyInfo>> DerivedDataMembers { get; }
-        public List<KeyValuePair<string, PropertyInfo>> SerializableProperties { get; set; }
+        public List<KeyValuePair<string, PropertyInfo>> SerializableProperties { get; private set; }
 
         static BaseDTO()
         {
