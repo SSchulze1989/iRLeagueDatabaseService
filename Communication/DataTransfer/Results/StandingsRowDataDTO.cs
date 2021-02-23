@@ -103,10 +103,10 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int IncidentsChange { get; set; }
         [DataMember]
         public int PositionChange { get; set; }
-        [DataMember]
-        public ScoredResultRowDataDTO[] CountedResults { get; set; }
-        [DataMember]
-        public ScoredResultRowDataDTO[] DroppedResults { get; set; }
+        //[DataMember]
+        //public ScoredResultRowDataDTO[] CountedResults { get; set; }
+        //[DataMember]
+        //public ScoredResultRowDataDTO[] DroppedResults { get; set; }
         [DataMember]
         public ScoredResultRowDataDTO[] DriverResults { get; set; }
         [DataMember]
