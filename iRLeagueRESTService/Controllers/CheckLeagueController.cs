@@ -66,6 +66,7 @@ namespace iRLeagueRESTService.Controllers
             {
                 fullName = leagueName;
             }
+            base.CheckLeagueRole(User, leagueName);
 
             var dbName = GetDatabaseNameFromLeagueName(leagueName);
             var register = LeagueRegister.Get();
@@ -98,16 +99,16 @@ namespace iRLeagueRESTService.Controllers
                         });
                         dbContext.SaveChanges();
                         // Create new entry in league register
-                        UpdateLeague(leagueName, User);
                         return Ok($"New League {leagueName} with database {dbName} created!");
                     }
+                    UpdateLeague(leagueName, User);
                     return BadRequest($"League {leagueName} already exists!");
                 }
             }
 
             // if league exists just update fullname
             league.PrettyName = fullName;
-            UpdateLeague(leagueName, User);
+            register.Save();
             return Ok("League information updated");
         }
 
