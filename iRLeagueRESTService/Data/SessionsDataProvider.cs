@@ -60,8 +60,8 @@ namespace iRLeagueRESTService.Data
             {
                 RaceSessionConvenienceDTO raceSessionDTO = (RaceSessionConvenienceDTO)mapper.MapToRaceSessionDataDTO(session as RaceSessionEntity, new RaceSessionConvenienceDTO());
                 raceSessionDTO.RaceNr = raceNr;
-                raceSessionDTO.ScheduleId = includeScheduleData ? session.ScheduleId : default;
-                raceSessionDTO.ScheduleName = includeScheduleData ? session.Schedule.Name : default;
+                raceSessionDTO.ScheduleId = includeScheduleData ? session.ScheduleId : (long?)null;
+                raceSessionDTO.ScheduleName = includeScheduleData ? session.Schedule.Name : null;
                 raceSessionDTO.HasResult = session.SessionResult != null;
                 sessionDTO = raceSessionDTO;
             }
