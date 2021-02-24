@@ -436,7 +436,6 @@ namespace iRLeagueRESTService.Data
                             standings = scoringTable.GetSeasonStandings(scoringSession, DbContext);
                         }
                         var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
-                        standingsDTO.SessionId = sessionId;
                         responseItems.Add(standingsDTO);
                     }
                 }

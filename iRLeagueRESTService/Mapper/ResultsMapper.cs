@@ -262,6 +262,7 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringId = (source.Scoring?.ScoringId).GetValueOrDefault(); // MapToScoringInfoDTO(source.Scoring);
             target.ScoringTableId = source.ScoringTable.ScoringTableId;
             target.StandingsRows = source.StandingsRows.Select(x => MapToStandingsRowDataDTO(x)).ToArray();
+            target.SessionId = source.SessionId;
             target.Name = source.ScoringTable.Name;
 
             return target;
