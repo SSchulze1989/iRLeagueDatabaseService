@@ -304,11 +304,11 @@ namespace iRLeagueDatabase.Mapper
             target.TotalPointsChange = source.TotalPointsChange;
             target.Wins = source.Wins;
             target.WinsChange = source.WinsChange;
-            target.CountedResults = source.CountedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
-            target.DroppedResults = source.DroppedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
-            target.CountedResults.ForEach(x => x.IsDroppedResult = false);
-            target.DroppedResults.ForEach(x => x.IsDroppedResult = true);
-            target.DriverResults = target.CountedResults.Concat(target.DroppedResults).OrderBy(x => x.Date).ToArray();
+            var countedResults = source.CountedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
+            var droppedResults = source.DroppedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
+            countedResults.ForEach(x => x.IsDroppedResult = false);
+            droppedResults.ForEach(x => x.IsDroppedResult = true);
+            target.DriverResults = countedResults.Concat(droppedResults).OrderBy(x => x.Date).ToArray();
             target.TeamId = source.Team?.TeamId;
 
             return target;
