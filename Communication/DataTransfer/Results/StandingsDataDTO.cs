@@ -39,6 +39,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public long ScoringId { get; set; }
         [DataMember]
         public long ScoringTableId { get; set; }
+        [DataMember]
+        public string Name { get; set; }
         public override object MappingId => new long[] { ScoringTableId, SessionId.GetValueOrDefault() };
         [DataMember]
         public long? SessionId { get; set; }
