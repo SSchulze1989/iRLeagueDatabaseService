@@ -369,12 +369,12 @@ namespace iRLeagueRESTService.Data
             return scoredResultData;
         }
 
-        private StandingsDataDTO[] GetStandings(long[] scoringIds)
+        public StandingsDataDTO[] GetStandings(long[] scoringIds)
         {
             return GetStandings(scoringIds.Select(x => new long[] { x }).ToArray());
         }
 
-        private StandingsDataDTO[] GetStandings(long[][] requestIds)
+        public StandingsDataDTO[] GetStandings(long[][] requestIds)
         {
             var mapper = new DTOMapper(DbContext);
 
