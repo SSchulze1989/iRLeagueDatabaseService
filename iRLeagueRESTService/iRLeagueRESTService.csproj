@@ -310,6 +310,7 @@
     <Compile Include="Controllers\ResultsController.cs" />
     <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\SessionsController.cs" />
+    <Compile Include="Controllers\StandingsController.cs" />
     <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="Data\IResultsDataProvider.cs" />
     <Compile Include="Data\IReviewDataProvider.cs" />
     <Compile Include="Data\ISessionsDataProvider.cs" />
+    <Compile Include="Data\IStandingsDataProvider.cs" />
     <Compile Include="Data\LeagueActionProvider.cs" />
     <Compile Include="Data\ModelDataProvider.cs" />
     <Compile Include="Data\ResultsDataProvider.cs" />
@@ -326,6 +328,7 @@
     <Compile Include="Data\SelectFieldsHelper.cs" />
     <Compile Include="Data\SessionsDataProvider.cs" />
     <Compile Include="Data\ShouldSerializeContractResolver.cs" />
+    <Compile Include="Data\StandingsDataProvider.cs" />
     <Compile Include="Data\StatisticCalculationWatcher.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
