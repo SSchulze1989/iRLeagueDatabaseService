@@ -126,6 +126,7 @@
     <Compile Include="DataTransfer\Statistics\ImportedStatisticSetDTO.cs" />
     <Compile Include="DataTransfer\Statistics\LeagueStatisticSetDTO.cs" />
     <Compile Include="DataTransfer\Statistics\SeasonStatisticSetDTO.cs" />
+    <Compile Include="DataTransfer\Statistics\Special\StatisticRowCSV.cs" />
     <Compile Include="DataTransfer\User\AddUserDTO.cs" />
     <Compile Include="DataTransfer\User\UserDataDTO.cs" />
     <Compile Include="DataTransfer\User\UserProfileDTO.cs" />
