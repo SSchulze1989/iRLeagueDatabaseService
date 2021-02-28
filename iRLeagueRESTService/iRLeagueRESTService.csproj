@@ -311,6 +311,7 @@
     <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\SessionsController.cs" />
     <Compile Include="Controllers\StandingsController.cs" />
+    <Compile Include="Controllers\StatisticsCSVController.cs" />
     <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />

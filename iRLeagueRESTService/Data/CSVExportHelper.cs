@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace iRLeagueRESTService.Data
@@ -16,98 +17,58 @@ namespace iRLeagueRESTService.Data
     {
         public char Delimiter { get; set; } = '\t';
         public bool UseAttributeNames { get; set; }
+        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
-        public void WriteToFile<T>(StreamWriter writer, IEnumerable<T> data)
+        public void WriteToStream(Stream stream, IEnumerable<object> data)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = Culture;
 
             var stringBuilder = new StringBuilder();
 
-            // get header row
-            stringBuilder.AppendLine(string.Join(Delimiter.ToString(), GetCSVHeader(data.FirstOrDefault()).ToArray()));
+            // get column properties
+            var columns = GetCSVColumns(data.First());
 
-            // get properties to export for each item
-            foreach(var item in data)
+            // write headers
+            stringBuilder.AppendLine(columns.Select(x => x.Key).Aggregate((x, y) => x + Delimiter + y));
+
+            // write data rows
+            foreach (var item in data)
             {
-                PropertyInfo
-                if (item is BaseDTO baseDTO)
-                {
-                    properties = baseDTO.SerializableProperties;
-                }
-                else
-                {
-                    properties = item.GetType().GetProperties();
-                }
+                var columnData = columns.Select(x => x.Value.GetValue(item)?.ToString() ?? "");
+                stringBuilder.AppendLine(columnData.Aggregate((x, y) => x + Delimiter + y));
             }
 
-            if (typeof(ICSVExport).IsAssignableFrom(typeof(T)))
-            {
-                var first = ((ICSVExport)entity.FirstOrDefault());
-                if (first == null)
-                    return;
-                buffer += first.GetCSVHeader(Delimiter);
-            }
-            else
-            {
-                foreach (var field in typeof(T).GetProperties())
-                {
-                    buffer += field.Name + Delimiter;
-                }
-            }
-            buffer += "\n";
-            foreach (T Row in entity.GetRows())
-            {
-                if (Row is ICSVExport csvExport)
-                {
-                    buffer += csvExport.GetCSVString(Delimiter);
-                }
-                else
-                {
-                    foreach (var field in typeof(T).GetProperties())
-                    {
-                        if (field.GetValue(Row) == null)
-                        {
-                            buffer += "" + Delimiter;
-                        }
-                        else if (field.PropertyType.Equals(typeof(Enum)))
-                        {
-                            buffer += ((Enum)field.GetValue(Row)).ToCSVString() + Delimiter;
-                        }
-                        else
-                        {
-                            buffer += field.GetValue(Row).ToString() + Delimiter;
-                        }
-                    }
-                }
-                buffer += "\n";
-            }
+            // write data as binary to stream writer
+            var writer = new BinaryWriter(stream);
+            byte[] bytes = Encoding.UTF8.GetBytes(stringBuilder.ToString());
+            writer.Write(bytes, 0, bytes.Length);
         }
 
-        private IEnumerable<string> GetCSVHeader(object item)
+        private IEnumerable<KeyValuePair<string, PropertyInfo>> GetCSVColumns(object item)
         {
             if (item is BaseDTO baseDTO)
             {
-                return baseDTO.SerializableProperties.Select(x => x.Key);
+                return baseDTO.SerializableProperties;
             }
             else
             {
                 var properties = item.GetType()
                     .GetProperties();
 
-                List<string> names = new List<string>();
+                List<KeyValuePair<string, PropertyInfo>> columns = new List<KeyValuePair<string, PropertyInfo>>();
                 foreach(var property in properties)
                 {
                     var dataMemberAttribute = (DataMemberAttribute)property.GetCustomAttribute(typeof(DataMemberAttribute));
                     if (dataMemberAttribute != null && dataMemberAttribute.IsNameSetExplicitly)
                     {
-                        names.Add(dataMemberAttribute.Name);
+                        columns.Add(new KeyValuePair<string, PropertyInfo>(dataMemberAttribute.Name, property));
                     }
                     else
                     {
-                        names.Add(property.Name);
+                        columns.Add(new KeyValuePair<string, PropertyInfo>(property.Name, property));
                     }
                 }
-                return names;
+                return columns;
             }
         }
     }
