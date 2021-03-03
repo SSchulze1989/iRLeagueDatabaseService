@@ -76,6 +76,7 @@ namespace iRLeagueRESTService.Controllers
                         }
                         csvRow.Name = row.Member.Fullname;
                         csvRow.IRacingId = row.Member.IRacingId;
+                        csvRow.TeamName = row.Member.Team?.Name;
                         csvStatisticRows.Add(csvRow);
                     }
 

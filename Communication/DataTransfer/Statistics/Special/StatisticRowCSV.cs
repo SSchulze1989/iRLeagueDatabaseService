@@ -15,6 +15,8 @@ namespace iRLeagueDatabase.DataTransfer.Statistics.Special
         [DataMember]
         public string IRacingId { get; set; }
         [DataMember]
+        public string TeamName { get; set; }
+        [DataMember]
         public double FairPlayRating { get; set; }
         [DataMember]
         public string DriverRank { get; set; }
