@@ -1,6 +1,7 @@
 ﻿using iRLeagueDatabase.DataTransfer;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,38 @@ namespace iRLeagueRESTService.Data
         public bool UseAttributeNames { get; set; }
         public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
+        private static Dictionary<Type, Func<object, string>> typeConversions;
+        public static ReadOnlyDictionary<Type, Func<object, string>> TypeConversions => new ReadOnlyDictionary<Type, Func<object, string>>(typeConversions);
+
+        static CSVExportHelper()
+        {
+            typeConversions = new Dictionary<Type, Func<object, string>>
+            {
+                { typeof(double), x => ((double?)x)?.ToString("0.00") },
+                { typeof(DateTime), x => ((DateTime?)x)?.ToShortDateString() },
+                { typeof(DateTime?), x => ((DateTime?)x)?.ToShortDateString() }
+            };
+        }
+
+        private string ColumnValueToString(Type type, string columnName, object value)
+        {
+            if (type != null && TypeConversions.ContainsKey(type))
+            {
+                var conversion = TypeConversions[type];
+                return conversion.Invoke(value);
+            }
+            else
+            {
+                return value?.ToString();
+            }
+        }
+
+        private string GetRow(IEnumerable<KeyValuePair<string, PropertyInfo>> columns, object rowItem)
+        {
+            var columnsData = columns.Select(x => ColumnValueToString(x.Value.PropertyType, x.Key, x.Value.GetValue(rowItem)));
+            return columnsData.Aggregate((x, y) => x + Delimiter + y);
+        }
+
         public void WriteToStream(Stream stream, IEnumerable<object> data)
         {
             Thread.CurrentThread.CurrentCulture = Culture;
@@ -34,8 +67,7 @@ namespace iRLeagueRESTService.Data
             // write data rows
             foreach (var item in data)
             {
-                var columnData = columns.Select(x => x.Value.GetValue(item)?.ToString() ?? "");
-                stringBuilder.AppendLine(columnData.Aggregate((x, y) => x + Delimiter + y));
+                stringBuilder.AppendLine(GetRow(columns, item));
             }
 
             // write data as binary to stream writer
@@ -59,14 +91,16 @@ namespace iRLeagueRESTService.Data
                 foreach(var property in properties)
                 {
                     var dataMemberAttribute = (DataMemberAttribute)property.GetCustomAttribute(typeof(DataMemberAttribute));
+                    string columnName;
                     if (dataMemberAttribute != null && dataMemberAttribute.IsNameSetExplicitly)
                     {
-                        columns.Add(new KeyValuePair<string, PropertyInfo>(dataMemberAttribute.Name, property));
+                        columnName = dataMemberAttribute.Name;
                     }
                     else
                     {
-                        columns.Add(new KeyValuePair<string, PropertyInfo>(property.Name, property));
+                        columnName = property.Name;
                     }
+                    columns.Add(new KeyValuePair<string, PropertyInfo>(columnName, property));
                 }
                 return columns;
             }
