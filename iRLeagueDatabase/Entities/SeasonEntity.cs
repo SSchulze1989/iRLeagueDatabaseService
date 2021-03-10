@@ -43,10 +43,8 @@ namespace iRLeagueDatabase.Entities
         //public int? MainScoringId { get; set; }
         public ScoringEntity MainScoring { get; set; }
 
-        [NotMapped]
-        public DateTime? SeasonStart => Schedules.Select(x => x.ScheduleStart).Min();
-        [NotMapped]
-        public DateTime? SeasonEnd => Schedules.Select(x => x.ScheduleEnd)?.Max();
+        public DateTime? SeasonStart { get => Schedules.Select(x => x.ScheduleStart).Min(); set { } }
+        public DateTime? SeasonEnd { get => Schedules.Select(x => x.ScheduleEnd)?.Max(); set { } }
 
         public bool HideCommentsBeforeVoted { get; set; }
 

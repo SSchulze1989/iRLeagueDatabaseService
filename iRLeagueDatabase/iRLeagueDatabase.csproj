@@ -161,6 +161,10 @@
     <Compile Include="Migrations\202102062147212_AddReviewVoteDescr.designer.cs">
       <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.cs" />
+    <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.designer.cs">
+      <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -207,6 +211,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102062147212_AddReviewVoteDescr.resx">
       <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103102204011_AddSeasonStartEndDate.resx">
+      <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -110,7 +110,18 @@ namespace iRLeagueRESTService.Data
         public SeasonSessionsDTO GetSessionsFromSeason(long seasonId)
         {
             // get season entity from database
-            var season = DbContext.Set<SeasonEntity>().Find(seasonId);
+            SeasonEntity season;
+            if (seasonId == 0)
+            {
+                // if season id is 0 get last (current) season
+                season = DbContext.Set<SeasonEntity>().OrderByDescending(x => x.SeasonStart).FirstOrDefault();
+            }
+            else
+            {
+                // get season by id
+                season = DbContext.Set<SeasonEntity>().Find(seasonId);
+            }
+
             if (season == null)
             {
                 return null;

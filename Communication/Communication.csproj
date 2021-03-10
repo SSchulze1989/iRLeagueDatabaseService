@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="Attributes\EqualtyCheckPropertyAttribute.cs" />
     <Compile Include="DataTransfer\BaseDTO.cs" />
+    <Compile Include="DataTransfer\Convenience\LeagueConvenienceDTO.cs" />
+    <Compile Include="DataTransfer\Convenience\SeasonConvenieneDTO.cs" />
     <Compile Include="DataTransfer\Filters\FilterValueBaseDTO.cs" />
     <Compile Include="DataTransfer\Filters\IntFilterValue.cs" />
     <Compile Include="DataTransfer\Filters\ResultsFilterOptionDTO.cs" />
