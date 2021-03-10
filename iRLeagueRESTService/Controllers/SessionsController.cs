@@ -157,10 +157,6 @@ namespace iRLeagueRESTService.Controllers
                 {
                     return BadRequestEmptyParameter(nameof(leagueName));
                 }
-                if (seasonId == 0)
-                {
-                    return BadRequestEmptyParameter(nameof(seasonId));
-                }
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
