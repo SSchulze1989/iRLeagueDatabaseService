@@ -73,6 +73,7 @@ namespace iRLeagueDatabase.Mapper
             target.ReviewIds = source.Reviews.Select(x => x.ReviewId).ToArray();//source.Reviews.Select(x => MapToReviewInfoDTO(x)).ToArray();
             target.SeasonId = source.SeasonId.GetValueOrDefault();//MapToSeasonInfoDTO(source.Session.Schedule.Season);
             target.SessionId = source.ResultId; MapToSessionInfoDTO(source.Session);
+            target.LocationId = source.Session?.LocationId;
             target.SimSessionDetails = MapToSimSessionDetailsDTO(source.IRSimSessionDetails);
 
             return target;

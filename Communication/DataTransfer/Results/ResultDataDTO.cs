@@ -57,6 +57,9 @@ namespace iRLeagueDatabase.DataTransfer.Results
         //public IncidentReviewInfoDTO[] Reviews { get; set; }
         public long[] ReviewIds { get; set; }
 
+        [DataMember]
+        public string LocationId { get; set; }
+
         //[DataMember]
         //public LeagueMemberInfoDTO CreatedBy { get; set; }
         //[DataMember]

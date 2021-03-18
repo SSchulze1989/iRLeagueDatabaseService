@@ -92,7 +92,8 @@ namespace iRLeagueRESTService.Data
                 RawResults = rawResults,
                 ScoredResults = scoredResults,
                 SessionId = sessionId,
-                SessionDetails = sessionDetails
+                SessionDetails = sessionDetails,
+                LocationId = session.LocationId
             };
 
             return resultsDTO;

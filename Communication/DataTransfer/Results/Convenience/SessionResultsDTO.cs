@@ -30,6 +30,11 @@ namespace iRLeagueDatabase.DataTransfer.Results.Convenience
         [DataMember]
         public string ScheduleName { get; set; }
         /// <summary>
+        /// Id of the session location "trackid-configid"
+        /// </summary>
+        [DataMember]
+        public string LocationId { get; set; }
+        /// <summary>
         /// Number of the race in this season in chronological order (only for race sessions)
         /// </summary>
         [DataMember]
