@@ -57,5 +57,9 @@ namespace iRLeagueDatabase.Entities.Results
         string OfftrackLaps { get; }
         int NumContactLaps { get; }
         string ContactLaps { get; }
+        int RacePoints { get; }
+        int BonusPoints { get; }
+        int PenaltyPoints { get; }
+        int TotalPoints { get; }
     }
 }

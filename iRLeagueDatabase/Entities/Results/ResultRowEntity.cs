@@ -90,6 +90,11 @@ namespace iRLeagueDatabase.Entities.Results
         [InverseProperty(nameof(ScoredResultRowEntity.ResultRow))]
         public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
 
+        int IResultRow.RacePoints => 0;
+        int IResultRow.BonusPoints => 0;
+        int IResultRow.PenaltyPoints => 0;
+        int IResultRow.TotalPoints => 0;
+
         public ResultRowEntity() { }
 
         public override void Delete(LeagueDbContext dbContext)

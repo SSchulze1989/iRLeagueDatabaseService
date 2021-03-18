@@ -19,6 +19,8 @@ using iRLeagueDatabase.Filters;
 using System.Runtime.CompilerServices;
 using iRLeagueManager.Timing;
 using iRLeagueDatabase.Extensions;
+using iRLeagueDatabase.Enums;
+using System.CodeDom;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -26,6 +28,9 @@ namespace iRLeagueDatabase.Entities.Results
     {
         [Key]
         public long ScoringId { get; set; }
+        [ForeignKey(nameof(ParentScoring))]
+        public long? ParentScoringId { get; set; }
+        public virtual ScoringEntity ParentScoring { get; set; }
         public ScoringKindEnum ScoringKind { get; set; }
         public string Name { get; set; }
         public override object MappingId => ScoringId;
@@ -46,6 +51,9 @@ namespace iRLeagueDatabase.Entities.Results
 
         [InverseProperty(nameof(ResultsFilterOptionEntity.Scoring))]
         public virtual List<ResultsFilterOptionEntity> ResultsFilterOptions { get; set; }
+
+        [InverseProperty(nameof(ScoringEntity.ParentScoring))] 
+        public virtual List<ScoringEntity> SubSessionScorings { get; set; }
 
         public List<SessionBaseEntity> sessions;
         public virtual List<SessionBaseEntity> Sessions
@@ -79,6 +87,10 @@ namespace iRLeagueDatabase.Entities.Results
         public bool UseResultSetTeam { get; set; }
         public bool UpdateTeamOnRecalculation { get; set; }
 
+        private const char OptionsDelimiter = ',';
+        public string PointsSortOptions { get; set; }
+        public string FinalSortOptions { get; set; }
+
         //public ScoringRuleBase Rule { get; set; }
         public ScoringEntity() 
         { 
@@ -98,93 +110,59 @@ namespace iRLeagueDatabase.Entities.Results
             return Sessions;
         }
 
-        [Obsolete]
-        public StandingsEntity GetSeasonStandings()
+        public IEnumerable<SortOption> GetPointsSortOptions()
         {
-            var allSessions = GetAllSessions();
+            // get values from string
+            var optionValues = PointsSortOptions
+                .Split(OptionsDelimiter)
+                .Select(x => int.TryParse(x, out int val) ? val : 0);
 
-            //if (MultiScoringResults != null && MultiScoringResults.Count > 0)
-            //{
-            //    foreach(var msc in MultiScoringResults)
-            //    {
-            //        allSessions.AddRange(msc.Sessions);
-            //    }
-            //}
-
-            var session = allSessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
-            if (session == null)
-                return null;
-
-            return GetSeasonStandings(session, allSessions.Count - DropWeeks);
-        }
-        [Obsolete]
-        public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession)
-        {
-            var allSessions = GetAllSessions();
-            return GetSeasonStandings(currentSession, allSessions.Count - DropWeeks);
-        }
-
-        /// <summary>
-        /// Remove after testing
-        /// </summary>
-        /// <param name="currentSession"></param>
-        /// <param name="maxRacesCount"></param>
-        /// <returns></returns>
-        [Obsolete]
-        public StandingsEntity GetSeasonStandings(SessionBaseEntity currentSession, int maxRacesCount = -1)
-        {
-
-            //var currentSession = Sessions.SingleOrDefault(x => x.SessionId == sessionId);
-
-            //if (currentSession == null)
-            //    currentSession = Sessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
-
-            if (currentSession == null)
-                return null;
-
-            if (maxRacesCount == -1)
-                maxRacesCount = Sessions.Count - maxRacesCount;
-
-            //var previousSessions = Sessions.Where(x => x.Date < currentSession.Date);
-            //var previousResults = previousSessions.Where(x => x.SessionResult != null).Select(x => x.SessionResult);
-            
-            var allScoredResults = ScoredResults.ToList();
-            var previousScoredResults = allScoredResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
-
-            //if (MultiScoringResults != null && MultiScoringResults.Count > 0)
-            //{
-            //    foreach (var msc in MultiScoringResults)
-            //    {
-            //        previousScoredResults.AddRange(msc.ScoredResults.Where(x => x.Result?.Session.Date < currentSession.Date));
-            //        allScoredResults.AddRange(msc.ScoredResults);
-            //    }
-            //}
-
-            var currentResult = currentSession.SessionResult;
-            var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
-
-            StandingsEntity standings = new StandingsEntity()
+            // cast to sort options
+            var sortOptions = new List<SortOption>();
+            foreach(var value in optionValues)
             {
-                Scoring = this,
-            };
-
-            var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
-            //previousScoredRows.ForEach(x => x.ResultRow = x.ResultRow);
-            var previousStandingsRows = previousScoredRows.AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
-            //var previousStandingsRows = previousScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
-            previousStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
-
-            allScoredResults = previousScoredResults.ToList();
-            allScoredResults.Add(currentScoredResult);
-            var currentStandingsRows = allScoredResults.SelectMany(x => x.FinalResults).AggregateByDriver(maxRacesCount, true).OrderBy(x => -x.TotalPoints);
-            currentStandingsRows.Select((value, index) => new { index, value }).ToList().ForEach(x => x.value.Position = x.index + 1);
-
-            standings.StandingsRows = currentStandingsRows.Diff(previousStandingsRows).OrderBy(x => -x.TotalPoints).ToList();
-            standings.StandingsRows.ForEach(x => x.Scoring = this);
-            standings.Calculate();
-
-            return standings;
+                var option = new SortOption()
+                {
+                    Option = (SortOptionEnum)(Math.Abs(value)),
+                    SortDirection = Math.Sign(value)
+                };
+                sortOptions.Add(option);
+            }
+            return sortOptions;
         }
+
+        public void SetPointsSortOptions(IEnumerable<SortOption> sortOptions)
+        {
+            var optionStrings = sortOptions.Select(x => ((int)x.Option * x.SortDirection).ToString());
+            PointsSortOptions = string.Join(OptionsDelimiter.ToString(), optionStrings.ToArray());
+        }
+
+        public IEnumerable<SortOption> GetFinalSortOptions()
+        {
+            // get values from string
+            var optionValues = FinalSortOptions
+                .Split(OptionsDelimiter)
+                .Select(x => int.TryParse(x, out int val) ? val : 0);
+
+            // cast to sort options
+            var sortOptions = new List<SortOption>();
+            foreach (var value in optionValues)
+            {
+                var option = new SortOption()
+                {
+                    Option = (SortOptionEnum)(Math.Abs(value)),
+                    SortDirection = Math.Sign(value)
+                };
+                sortOptions.Add(option);
+            }
+            return sortOptions;
+        }
+        public void SetFinalSortOptions(IEnumerable<SortOption> sortOptions)
+        {
+            var optionStrings = sortOptions.Select(x => ((int)x.Option * x.SortDirection).ToString());
+            FinalSortOptions = string.Join(OptionsDelimiter.ToString(), optionStrings.ToArray());
+        }
+
         public ScoredResultEntity CalculateResults(long sessionId, LeagueDbContext dbContext)
         {
             if (Season.Finished)
@@ -234,75 +212,18 @@ namespace iRLeagueDatabase.Entities.Results
             if (session == null || session.SessionResult == null)
                 return null;
 
-            //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
-            var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
-            var firstResult = ScoredResults.Select(x => x?.Result).OrderBy(x => x?.Session.Date).FirstOrDefault();
+            UpdateSessionList();
 
-            if (Season.Finished && scoredResult != null)
+            //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
+            var scoredResult = GetCurrentScoredResult(session, dbContext);
+            var firstResult = ScoredResults.Select(x => x?.Result).OrderBy(x => x?.Session.Date).FirstOrDefault();
+            
+            if (scoredResult == null || scoredResult.Result.RequiresRecalculation == false)
             {
-                scoredResult.Result.RequiresRecalculation = false;
                 return scoredResult;
             }
 
-            UpdateSessionList();
-
-            if (ScoringKind == ScoringKindEnum.Member)
-            {
-                if (scoredResult == null)
-                {
-                    scoredResult = new ScoredResultEntity()
-                    {
-                        Result = session.SessionResult,
-                        Scoring = this,
-                        FinalResults = new List<ScoredResultRowEntity>(),
-                    };
-                    ScoredResults.Add(scoredResult);
-                }
-            }
-            else if (ScoringKind == ScoringKindEnum.Team)
-            {
-                if (scoredResult != null && scoredResult is ScoredTeamResultEntity == false)
-                {
-                    ScoredResults.Remove(scoredResult);
-                    scoredResult.Delete(dbContext);
-                    dbContext.SaveChanges();
-                    scoredResult = null;
-                }
-
-                if (scoredResult == null)
-                {
-                    scoredResult = new ScoredTeamResultEntity()
-                    {
-                        Result = session.SessionResult,
-                        Scoring = this,
-                        FinalResults = new List<ScoredResultRowEntity>(),
-                        TeamResults = new List<ScoredTeamResultRowEntity>()
-                    };
-                    ScoredResults.Add(scoredResult);
-                }
-            }
-            else
-            {
-                if (scoredResult != null)
-                {
-                    ScoredResults.Remove(scoredResult);
-                    scoredResult.Delete(dbContext);
-                }
-                return null;
-            }
-
-            var reviewVotes = new List<AcceptedReviewVoteEntity>();
-
-            if (session.Reviews != null)
-            {
-                foreach(var review in session.Reviews)
-                {
-                    if (review.AcceptedReviewVotes != null && review.AcceptedReviewVotes.Count > 0)
-                    {
-                        reviewVotes.AddRange(review.AcceptedReviewVotes);
-                    }
-                }
-            }
+            var reviewVotes = GetReviewVotes(session);
 
             // Get filters
             if (ResultsFilterOptions == null)
@@ -344,12 +265,8 @@ namespace iRLeagueDatabase.Entities.Results
                     resultRows.ForEach(x => x.CompletedPct = (double)x.CompletedLaps / maxLaps);
                 }
 
-                // Apply filters
-                foreach(var filter in resultsFilters.Where(x => x.FilterPointsOnly == false))
-                {
-                    resultRows = filter.GetFilteredRows(resultRows);
-                }
-                resultRows = resultRows.OrderBy(x => x.FinishPosition);
+                // Apply filters for whole result
+                resultRows = FilterRows(resultRows, resultsFilters.Where(x => x.FilterPointsOnly == false));
 
                 IDictionary<int, int> basePoints = new Dictionary<int, int>();
                 if (BasePoints != "" && BasePoints != null)
@@ -444,12 +361,11 @@ namespace iRLeagueDatabase.Entities.Results
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 
-                IEnumerable<ScoredResultRowEntity> pointScoringRows = scoredResultRows.ToArray();
-                foreach(var filter in resultsFilters.Where(x => x.FilterPointsOnly))
-                {
-                    pointScoringRows = filter.GetFilteredRows(pointScoringRows);
-                }
-                pointScoringRows = pointScoringRows.OrderBy(x => x.FinishPosition);
+                // Apply filters for points only
+                var pointScoringRows = FilterRows(scoredResultRows.ToArray(), resultsFilters.Where(x => x.FilterPointsOnly));
+                // Sort rows before points
+                var sortOptions = GetPointsSortOptions();
+                scoredResultRows = SortRows(scoredResultRows, sortOptions).ToList();
 
                 foreach (var scoredResultRowObj in pointScoringRows.Select((row, index) => new { index, row }))
                 {
@@ -462,11 +378,14 @@ namespace iRLeagueDatabase.Entities.Results
 
                 removeRows.ForEach(x => { x.Delete(dbContext); scoredResultRows.Remove(x); });
 
+                // sort rows after points
+                sortOptions = GetFinalSortOptions();
+                scoredResultRows = SortRows(scoredResultRows, sortOptions).ToList();
+
                 //var droppedRows = scoredResultRows.Where(x => x.ResultRow.CompletedLaps == 0).ToList();
                 //scoredResultRows = scoredResultRows.Except(droppedRows).ToList();
                 //dbContext.Set<ScoredResultRowEntity>().RemoveRange(droppedRows.Where(x => dbContext.Entry(x).State != System.Data.Entity.EntityState.Detached));
 
-                scoredResultRows = scoredResultRows.OrderBy(x => x.PenaltyPoints).OrderBy(x => -x.TotalPoints).ToList();
                 //scoredResultRows.Select((x, i) => new { Item = x, Index = i }).ToList().ForEach(x =>
                 //{
                 //    x.Item.FinalPosition = x.Index + 1;
@@ -577,6 +496,131 @@ namespace iRLeagueDatabase.Entities.Results
             }
             //return scoredResultRows;
             return scoredResult;
+        }
+
+        private ScoredResultEntity GetCurrentScoredResult(SessionBaseEntity session, LeagueDbContext dbContext)
+        {
+            var scoredResult = ScoredResults.SingleOrDefault(x => x.ResultId == session.SessionId);
+
+            if (Season.Finished && scoredResult != null)
+            {
+                scoredResult.Result.RequiresRecalculation = false;
+                return scoredResult;
+            }
+
+            if (ScoringKind == ScoringKindEnum.Member)
+            {
+                if (scoredResult == null)
+                {
+                    scoredResult = new ScoredResultEntity()
+                    {
+                        Result = session.SessionResult,
+                        Scoring = this,
+                        FinalResults = new List<ScoredResultRowEntity>(),
+                    };
+                    ScoredResults.Add(scoredResult);
+                }
+            }
+            else if (ScoringKind == ScoringKindEnum.Team)
+            {
+                if (scoredResult != null && scoredResult is ScoredTeamResultEntity == false)
+                {
+                    ScoredResults.Remove(scoredResult);
+                    scoredResult.Delete(dbContext);
+                    dbContext.SaveChanges();
+                    scoredResult = null;
+                }
+
+                if (scoredResult == null)
+                {
+                    scoredResult = new ScoredTeamResultEntity()
+                    {
+                        Result = session.SessionResult,
+                        Scoring = this,
+                        FinalResults = new List<ScoredResultRowEntity>(),
+                        TeamResults = new List<ScoredTeamResultRowEntity>()
+                    };
+                    ScoredResults.Add(scoredResult);
+                }
+            }
+            else
+            {
+                if (scoredResult != null)
+                {
+                    ScoredResults.Remove(scoredResult);
+                    scoredResult.Delete(dbContext);
+                    scoredResult = null;
+                }
+            }
+
+            return scoredResult;
+        }
+
+        private IEnumerable<AcceptedReviewVoteEntity> GetReviewVotes(SessionBaseEntity session)
+        {
+            var reviewVotes = new List<AcceptedReviewVoteEntity>();
+
+            if (session.Reviews != null)
+            {
+                foreach (var review in session.Reviews)
+                {
+                    if (review.AcceptedReviewVotes != null && review.AcceptedReviewVotes.Count > 0)
+                    {
+                        reviewVotes.AddRange(review.AcceptedReviewVotes);
+                    }
+                }
+            }
+
+            return reviewVotes;
+        }
+
+        private IEnumerable<T> FilterRows<T>(IEnumerable<T> resultRows, IEnumerable<IResultsFilter> resultsFilters) where T : IResultRow
+        {
+            foreach (var filter in resultsFilters)
+            {
+                resultRows = filter.GetFilteredRows(resultRows);
+            }
+            return resultRows;
+        }
+
+        private IEnumerable<T> SortRows<T>(IEnumerable<T> rows, IEnumerable<SortOption> sortOptions) where T : IResultRow
+        {
+            foreach(var option in sortOptions.Reverse())
+            {
+                switch (option.Option)
+                {
+                    case SortOptionEnum.AverageLap:
+                        rows = rows.OrderBy(x => x.AvgLapTime * option.SortDirection);
+                        break;
+                    case SortOptionEnum.BonusPoints:
+                        rows = rows.OrderBy(x => x.BonusPoints * option.SortDirection);
+                        break;
+                    case SortOptionEnum.FastestLap:
+                        rows = rows.OrderBy(x => x.FastestLapTime * option.SortDirection);
+                        break;
+                    case SortOptionEnum.FinishPosition:
+                        rows = rows.OrderBy(x => x.FinishPosition * option.SortDirection);
+                        break;
+                    case SortOptionEnum.Interval:
+                        rows = rows.OrderBy(x => x.Interval * option.SortDirection);
+                        break;
+                    case SortOptionEnum.PenaltyPoints:
+                        rows = rows.OrderBy(x => x.PenaltyPoints * option.SortDirection);
+                        break;
+                    case SortOptionEnum.RacePoints:
+                        rows = rows.OrderBy(x => x.FastestLapTime * option.SortDirection);
+                        break;
+                    case SortOptionEnum.StartPosition:
+                        rows = rows.OrderBy(x => x.StartPosition * option.SortDirection);
+                        break;
+                    case SortOptionEnum.TotalPoints:
+                        rows = rows.OrderBy(x => x.TotalPoints * option.SortDirection);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return rows;
         }
 
         private IEnumerable<ScoredResultRowEntity> GetHardChargerContenders(ScoredResultEntity scoredResult)
