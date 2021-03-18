@@ -75,6 +75,9 @@ namespace iRLeagueDatabase.Entities.Sessions
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
+        [InverseProperty(nameof(SubSessionEntity.ParentSession))]
+        public virtual List<SubSessionEntity> SubSessions { get; set; }
+
         /// <summary>
         /// Create a new Session object
         /// </summary>

@@ -268,6 +268,7 @@
             <PropertyRef Name="ScoringId" />
           </Key>
           <Property Name="ScoringId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ParentScoringId" Type="Int64" />
           <Property Name="ScoringKind" Type="Self.ScoringKindEnum" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropWeeks" Type="Int32" Nullable="false" />
@@ -293,11 +294,13 @@
           <NavigationProperty Name="ConnectedSchedule" Relationship="Self.ScoringEntity_ConnectedSchedule" FromRole="ScoringEntity_ConnectedSchedule_Source" ToRole="ScoringEntity_ConnectedSchedule_Target" />
           <NavigationProperty Name="DependendScorings" Relationship="Self.ScoringEntity_DependendScorings" FromRole="ScoringEntity_DependendScorings_Source" ToRole="ScoringEntity_DependendScorings_Target" />
           <NavigationProperty Name="ExtScoringSource" Relationship="Self.ScoringEntity_DependendScorings" FromRole="ScoringEntity_DependendScorings_Target" ToRole="ScoringEntity_DependendScorings_Source" />
+          <NavigationProperty Name="ParentScoring" Relationship="Self.ScoringEntity_SubSessionScorings" FromRole="ScoringEntity_SubSessionScorings_Target" ToRole="ScoringEntity_SubSessionScorings_Source" />
           <NavigationProperty Name="ResultsFilterOptions" Relationship="Self.ScoringEntity_ResultsFilterOptions" FromRole="ScoringEntity_ResultsFilterOptions_Source" ToRole="ScoringEntity_ResultsFilterOptions_Target" />
           <NavigationProperty Name="ScoredResults" Relationship="Self.ScoringEntity_ScoredResults" FromRole="ScoringEntity_ScoredResults_Source" ToRole="ScoringEntity_ScoredResults_Target" />
           <NavigationProperty Name="ScoringTables" Relationship="Self.ScoringTableEntity_Scorings" FromRole="ScoringTableEntity_Scorings_Target" ToRole="ScoringTableEntity_Scorings_Source" />
           <NavigationProperty Name="Season" Relationship="Self.ScoringEntity_Season" FromRole="ScoringEntity_Season_Source" ToRole="ScoringEntity_Season_Target" />
           <NavigationProperty Name="Sessions" Relationship="Self.ScoringEntity_Sessions" FromRole="ScoringEntity_Sessions_Source" ToRole="ScoringEntity_Sessions_Target" />
+          <NavigationProperty Name="SubSessionScorings" Relationship="Self.ScoringEntity_SubSessionScorings" FromRole="ScoringEntity_SubSessionScorings_Source" ToRole="ScoringEntity_SubSessionScorings_Target" />
         </EntityType>
         <EntityType Name="ScheduleEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Sessions.ScheduleEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
@@ -576,6 +579,11 @@
           <NavigationProperty Name="Schedule" Relationship="Self.SessionBaseEntity_Schedule" FromRole="SessionBaseEntity_Schedule_Source" ToRole="SessionBaseEntity_Schedule_Target" />
           <NavigationProperty Name="Scorings" Relationship="Self.ScoringEntity_Sessions" FromRole="ScoringEntity_Sessions_Target" ToRole="ScoringEntity_Sessions_Source" />
           <NavigationProperty Name="SessionResult" Relationship="Self.SessionBaseEntity_SessionResult" FromRole="SessionBaseEntity_SessionResult_Source" ToRole="SessionBaseEntity_SessionResult_Target" />
+          <NavigationProperty Name="SubSessions" Relationship="Self.SessionBaseEntity_SubSessions" FromRole="SessionBaseEntity_SubSessions_Source" ToRole="SessionBaseEntity_SubSessions_Target" />
+        </EntityType>
+        <EntityType Name="SubSessionEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Sessions.SubSessionEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.SessionBaseEntity">
+          <Property Name="ParentSessionId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="ParentSession" Relationship="Self.SessionBaseEntity_SubSessions" FromRole="SessionBaseEntity_SubSessions_Target" ToRole="SessionBaseEntity_SubSessions_Source" />
         </EntityType>
         <EntityType Name="StatisticSetEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.StatisticSetEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" Abstract="true">
           <Key>
@@ -655,6 +663,7 @@
           <Member Name="Practice" Value="1" />
           <Member Name="Qualifying" Value="2" />
           <Member Name="Race" Value="3" />
+          <Member Name="HeatEvent" Value="4" />
         </EnumType>
         <EnumType Name="VoteEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.VoteEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="NoVote" Value="0" />
@@ -961,6 +970,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="SessionBaseEntity_SubSessions">
+          <End Role="SessionBaseEntity_SubSessions_Source" Type="Self.SessionBaseEntity" Multiplicity="1" />
+          <End Role="SessionBaseEntity_SubSessions_Target" Type="Self.SubSessionEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SessionBaseEntity_SubSessions_Source">
+              <PropertyRef Name="SessionId" />
+            </Principal>
+            <Dependent Role="SessionBaseEntity_SubSessions_Target">
+              <PropertyRef Name="ParentSessionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="IncidentReviewEntity_Session">
           <End Role="IncidentReviewEntity_Session_Source" Type="Self.IncidentReviewEntity" Multiplicity="*" />
           <End Role="IncidentReviewEntity_Session_Target" Type="Self.SessionBaseEntity" Multiplicity="1">
@@ -1170,6 +1191,18 @@
         <Association Name="ScoringEntity_Sessions">
           <End Role="ScoringEntity_Sessions_Source" Type="Self.ScoringEntity" Multiplicity="*" />
           <End Role="ScoringEntity_Sessions_Target" Type="Self.SessionBaseEntity" Multiplicity="*" />
+        </Association>
+        <Association Name="ScoringEntity_SubSessionScorings">
+          <End Role="ScoringEntity_SubSessionScorings_Source" Type="Self.ScoringEntity" Multiplicity="0..1" />
+          <End Role="ScoringEntity_SubSessionScorings_Target" Type="Self.ScoringEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringEntity_SubSessionScorings_Source">
+              <PropertyRef Name="ScoringId" />
+            </Principal>
+            <Dependent Role="ScoringEntity_SubSessionScorings_Target">
+              <PropertyRef Name="ParentScoringId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="ScoredTeamResultEntity_TeamResults">
           <End Role="ScoredTeamResultEntity_TeamResults_Source" Type="Self.ScoredTeamResultEntity" Multiplicity="1">
@@ -1436,6 +1469,10 @@
             <End Role="SessionBaseEntity_SessionResult_Source" EntitySet="SessionBaseEntities" />
             <End Role="SessionBaseEntity_SessionResult_Target" EntitySet="ResultEntities" />
           </AssociationSet>
+          <AssociationSet Name="SessionBaseEntity_SubSessions" Association="Self.SessionBaseEntity_SubSessions">
+            <End Role="SessionBaseEntity_SubSessions_Source" EntitySet="SessionBaseEntities" />
+            <End Role="SessionBaseEntity_SubSessions_Target" EntitySet="SessionBaseEntities" />
+          </AssociationSet>
           <AssociationSet Name="IncidentReviewEntity_Session" Association="Self.IncidentReviewEntity_Session">
             <End Role="IncidentReviewEntity_Session_Source" EntitySet="IncidentReviewEntities" />
             <End Role="IncidentReviewEntity_Session_Target" EntitySet="SessionBaseEntities" />
@@ -1503,6 +1540,10 @@
           <AssociationSet Name="ScoringEntity_Sessions" Association="Self.ScoringEntity_Sessions">
             <End Role="ScoringEntity_Sessions_Source" EntitySet="ScoringEntities" />
             <End Role="ScoringEntity_Sessions_Target" EntitySet="SessionBaseEntities" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringEntity_SubSessionScorings" Association="Self.ScoringEntity_SubSessionScorings">
+            <End Role="ScoringEntity_SubSessionScorings_Source" EntitySet="ScoringEntities" />
+            <End Role="ScoringEntity_SubSessionScorings_Target" EntitySet="ScoringEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoredTeamResultEntity_TeamResults" Association="Self.ScoredTeamResultEntity_TeamResults">
             <End Role="ScoredTeamResultEntity_TeamResults_Source" EntitySet="ScoredResultEntities" />
@@ -1865,6 +1906,7 @@
             <EntityTypeMapping TypeName="iRLeagueDatabase.ScoringEntity">
               <MappingFragment StoreEntitySet="ScoringEntity">
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <ScalarProperty Name="ParentScoringId" ColumnName="ParentScoringId" />
                 <ScalarProperty Name="ScoringKind" ColumnName="ScoringKind" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
@@ -2049,6 +2091,13 @@
                 <ScalarProperty Name="CreatedByUserName" ColumnName="CreatedByUserName" />
                 <ScalarProperty Name="LastModifiedByUserId" ColumnName="LastModifiedByUserId" />
                 <ScalarProperty Name="LastModifiedByUserName" ColumnName="LastModifiedByUserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="iRLeagueDatabase.SubSessionEntity">
+              <MappingFragment StoreEntitySet="SessionBaseEntity">
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="ParentSessionId" ColumnName="ParentSessionId" />
+                <Condition Value="SubSessionEntity" ColumnName="Discriminator" />
               </MappingFragment>
             </EntityTypeMapping>
             <EntityTypeMapping TypeName="iRLeagueDatabase.SessionBaseEntity">
@@ -2542,6 +2591,7 @@
             <PropertyRef Name="ScoringId" />
           </Key>
           <Property Name="ScoringId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ParentScoringId" Type="bigint" customannotation:Index="{ Name: IX_ParentScoringId, Order: 0 }" Nullable="true" />
           <Property Name="ScoringKind" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropWeeks" Type="int" Nullable="false" />
@@ -2718,6 +2768,7 @@
           <Property Name="IrResultLink" Type="nvarchar(max)" Nullable="true" />
           <Property Name="QualyAttached" Type="bit" Nullable="true" />
           <Property Name="PracticeAttached" Type="bit" Nullable="true" />
+          <Property Name="ParentSessionId" Type="bigint" customannotation:Index="{ Name: IX_ParentSessionId, Order: 0 }" Nullable="true" />
           <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="IncidentReviewEntity">
@@ -3303,6 +3354,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="SessionBaseEntity_SubSessions">
+          <End Role="SessionBaseEntity" Type="Self.SessionBaseEntity" Multiplicity="0..1" />
+          <End Role="SessionBaseEntitySelf" Type="Self.SessionBaseEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SessionBaseEntity">
+              <PropertyRef Name="SessionId" />
+            </Principal>
+            <Dependent Role="SessionBaseEntitySelf">
+              <PropertyRef Name="ParentSessionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="IncidentReviewEntity_Session">
           <End Role="SessionBaseEntity" Type="Self.SessionBaseEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3534,6 +3597,18 @@
             </Principal>
             <Dependent Role="ScoringEntitySessionBaseEntity">
               <PropertyRef Name="SessionRefId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoringEntity_SubSessionScorings">
+          <End Role="ScoringEntity" Type="Self.ScoringEntity" Multiplicity="0..1" />
+          <End Role="ScoringEntitySelf" Type="Self.ScoringEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringEntity">
+              <PropertyRef Name="ScoringId" />
+            </Principal>
+            <Dependent Role="ScoringEntitySelf">
+              <PropertyRef Name="ParentScoringId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3869,6 +3944,10 @@
             <End Role="SessionBaseEntity" EntitySet="SessionBaseEntity" />
             <End Role="ResultEntity" EntitySet="ResultEntity" />
           </AssociationSet>
+          <AssociationSet Name="SessionBaseEntity_SubSessions" Association="Self.SessionBaseEntity_SubSessions">
+            <End Role="SessionBaseEntity" EntitySet="SessionBaseEntity" />
+            <End Role="SessionBaseEntitySelf" EntitySet="SessionBaseEntity" />
+          </AssociationSet>
           <AssociationSet Name="IncidentReviewEntity_Session" Association="Self.IncidentReviewEntity_Session">
             <End Role="SessionBaseEntity" EntitySet="SessionBaseEntity" />
             <End Role="IncidentReviewEntity" EntitySet="IncidentReviewEntity" />
@@ -3940,6 +4019,10 @@
           <AssociationSet Name="ScoringEntity_Sessions_Target" Association="Self.ScoringEntity_Sessions_Target">
             <End Role="SessionBaseEntity" EntitySet="SessionBaseEntity" />
             <End Role="ScoringEntitySessionBaseEntity" EntitySet="ScoringEntitySessionBaseEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringEntity_SubSessionScorings" Association="Self.ScoringEntity_SubSessionScorings">
+            <End Role="ScoringEntity" EntitySet="ScoringEntity" />
+            <End Role="ScoringEntitySelf" EntitySet="ScoringEntity" />
           </AssociationSet>
           <AssociationSet Name="ScoredTeamResultEntity_TeamResults" Association="Self.ScoredTeamResultEntity_TeamResults">
             <End Role="ScoredResultEntity" EntitySet="ScoredResultEntity" />
