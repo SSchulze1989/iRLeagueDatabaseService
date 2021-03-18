@@ -137,6 +137,7 @@
     <Compile Include="Enums\ConnectionStatusEnum.cs" />
     <Compile Include="Enums\DropRacesOption.cs" />
     <Compile Include="Enums\LicenseLevelEnum.cs" />
+    <Compile Include="Enums\SortOptionEnum.cs" />
     <Compile Include="Enums\RaceStatusEnum.cs" />
     <Compile Include="Enums\SaveSelect.cs" />
     <Compile Include="Enums\ScoringKindEnum.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Filters\ColumnPropertyFilterDescription.cs" />
     <Compile Include="Filters\IResultsFilterDescription.cs" />
     <Compile Include="Filters\MemberListFilterDescription.cs" />
+    <Compile Include="Filters\SortOption.cs" />
     <Compile Include="Filters\SeasonStartIRatingFilterDescription.cs" />
     <Compile Include="Interfaces\IAdmin.cs" />
     <Compile Include="Interfaces\IAdminData.cs" />
