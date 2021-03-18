@@ -79,7 +79,12 @@ namespace iRLeagueDatabase.DataTransfer
 
         public BaseDTO()
         {
-            SerializableProperties = DerivedDataMembers[this.GetType()].ToList();
+            var type = this.GetType();
+            if (type.IsGenericType)
+            {
+                type = type.GetGenericTypeDefinition();
+            }
+            SerializableProperties = DerivedDataMembers[type].ToList();
         }
 
         public void SetSerializableProperties(string[] fields, bool exclude = false)
