@@ -14,9 +14,9 @@ namespace iRLeagueDatabase.Entities.Results
 
         DateTime? Date { get; }
 
-        int StartPosition { get; }
+        double StartPosition { get; }
 
-        int FinishPosition { get; }
+        double FinishPosition { get; }
 
         long MemberId { get; }
         LeagueMemberEntity Member { get; }
@@ -36,18 +36,18 @@ namespace iRLeagueDatabase.Entities.Results
         string Car { get; }
         int CarId { get; }
         string CarClass { get; }
-        int CompletedLaps { get; }
+        double CompletedLaps { get; }
         double CompletedPct { get; }
-        int LeadLaps { get; }
+        double LeadLaps { get; }
         int FastLapNr { get; }
-        int Incidents { get; }
+        double Incidents { get; }
         RaceStatusEnum Status { get; }
         DateTime? QualifyingTimeAt { get; }
         long QualifyingTime { get; }
         long Interval { get; }
         long AvgLapTime { get; }
         long FastestLapTime { get; }
-        int PositionChange { get; }
+        double PositionChange { get; }
         int Division { get; }
         int OldLicenseLevel { get; }
         int NewLicenseLevel { get; }
@@ -57,9 +57,9 @@ namespace iRLeagueDatabase.Entities.Results
         string OfftrackLaps { get; }
         int NumContactLaps { get; }
         string ContactLaps { get; }
-        int RacePoints { get; }
-        int BonusPoints { get; }
-        int PenaltyPoints { get; }
-        int TotalPoints { get; }
+        double RacePoints { get; }
+        double BonusPoints { get; }
+        double PenaltyPoints { get; }
+        double TotalPoints { get; }
     }
 }

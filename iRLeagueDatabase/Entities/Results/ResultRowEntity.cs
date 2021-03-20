@@ -33,9 +33,9 @@ namespace iRLeagueDatabase.Entities.Results
 
         //public int FinalPosition { get; set; }
 
-        public int StartPosition { get; set; }
+        public double StartPosition { get; set; }
 
-        public int FinishPosition { get; set; }
+        public double FinishPosition { get; set; }
 
         [ForeignKey(nameof(Member))]
         public long MemberId { get; set; }
@@ -60,18 +60,18 @@ namespace iRLeagueDatabase.Entities.Results
         public string Car { get; set; }
         public int CarId { get; set; }
         public string CarClass { get; set; }
-        public int CompletedLaps { get; set; } 
+        public double CompletedLaps { get; set; } 
         public double CompletedPct { get; set; }
-        public int LeadLaps { get; set; }
+        public double LeadLaps { get; set; }
         public int FastLapNr { get; set; }
-        public int Incidents { get; set; }
+        public double Incidents { get; set; }
         public RaceStatusEnum Status { get; set; }
         public DateTime? QualifyingTimeAt { get; set; }
         public long QualifyingTime { get; set; }
         public long Interval { get; set; }
         public long AvgLapTime { get; set; }
         public long FastestLapTime { get; set; }
-        public int PositionChange { get; set; }
+        public double PositionChange { get; set; }
         public int Division { get; set; }
         public int OldLicenseLevel { get; set; }
         public int NewLicenseLevel { get; set; }
@@ -90,10 +90,10 @@ namespace iRLeagueDatabase.Entities.Results
         [InverseProperty(nameof(ScoredResultRowEntity.ResultRow))]
         public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
 
-        int IResultRow.RacePoints => 0;
-        int IResultRow.BonusPoints => 0;
-        int IResultRow.PenaltyPoints => 0;
-        int IResultRow.TotalPoints => 0;
+        double IResultRow.RacePoints => 0;
+        double IResultRow.BonusPoints => 0;
+        double IResultRow.PenaltyPoints => 0;
+        double IResultRow.TotalPoints => 0;
 
         public ResultRowEntity() { }
 
