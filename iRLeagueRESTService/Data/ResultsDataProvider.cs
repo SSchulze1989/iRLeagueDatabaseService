@@ -3,10 +3,12 @@ using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Results.Convenience;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Results;
+using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Mapper;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web;
@@ -70,7 +72,9 @@ namespace iRLeagueRESTService.Data
             SimSessionDetailsDTO sessionDetails = null;
             if (session.SessionResult != null)
             {
-                scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
+                var ids = session.Scorings.Select(x => new KeyValuePair<long, long>(x.ScoringId, session.SessionId));
+                //scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
+                scoredResults = GetScoredResults(ids);
 
                 // get rawResults if includeRawResults == true
                 if (includeRawResults)
@@ -133,6 +137,66 @@ namespace iRLeagueRESTService.Data
             };
 
             return seasonResults;
+        }
+
+        public ScoredResultDataDTO[] GetScoredResults(IEnumerable<KeyValuePair<long, long>> scoringSessionIds)
+        {
+            var scoredResultData = new ScoredResultDataDTO[0];
+            var sessionIds = scoringSessionIds.Select(x => x.Value);
+            var scoringIds = scoringSessionIds.Select(x => x.Key);
+
+            DbContext.Configuration.LazyLoadingEnabled = false;
+
+            /// Load results and check if recalculation needed
+            var results = DbContext.Set<ResultEntity>().Where(x => sessionIds.Contains(x.ResultId))
+                .Include(x => x.Session);
+
+            foreach (var result in results)
+            {
+                if (result.RequiresRecalculation)
+                {
+                    ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(DbContext);
+                    leagueActionProvider.CalculateScoredResult(result.ResultId);
+                }
+            }
+
+            IEnumerable<ScoredResultEntity> scoredResultEntities = DbContext.Set<ScoredResultEntity>()
+                .Include(x => x.Scoring)
+                .Include(x => x.HardChargers)
+                .Include(x => x.CleanestDrivers)
+                .Where(x => sessionIds.Contains(x.ResultId))
+                .ToArray(); // Filter data before fetching from database
+
+            scoredResultEntities = scoringSessionIds
+                .Select(x => scoredResultEntities
+                    .SingleOrDefault(y => x.Key == y.ScoringId && x.Value == y.ResultId)).ToArray(); // Filter data after fetching from database to the exact needed scoredResults
+
+            DbContext.Set<ScoredResultRowEntity>().Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
+                     .Include(x => x.AddPenalty)
+                     .Include(x => x.ResultRow.Member.Team)
+                     .Include(x => x.ReviewPenalties).Load();
+
+            DbContext.Set<IncidentReviewEntity>()
+                     .Where(x => sessionIds.Contains(x.SessionId))
+                     .Include(x => x.AcceptedReviewVotes)
+                     .Load();
+
+            foreach (var scoredResultEntity in scoredResultEntities)
+            {
+                if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
+                {
+                    DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
+                        .Include(x => x.ScoredResultRows).Load();
+                }
+            }
+
+            DbContext.ChangeTracker.DetectChanges();
+
+            var mapper = new DTOMapper(DbContext);
+            scoredResultData = scoredResultEntities.Select(x => mapper.MapTo<ScoredResultDataDTO>(x)).ToArray();
+            DbContext.Configuration.LazyLoadingEnabled = true;
+
+            return scoredResultData;
         }
     }
 }
