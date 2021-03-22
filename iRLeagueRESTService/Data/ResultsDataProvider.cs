@@ -2,6 +2,7 @@
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Results.Convenience;
 using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
@@ -133,7 +134,7 @@ namespace iRLeagueRESTService.Data
             }
 
             // get season results
-            var sessions = season.Schedules.SelectMany(x => x.Sessions);
+            var sessions = season.Schedules.SelectMany(x => x.Sessions).Where(x => x.SessionResult != null);
             var ids = sessions.SelectMany(x => x.Scorings.Select(y => new KeyValuePair<long, long>(y.ScoringId, x.SessionId))).ToArray();
             var results = GetScoredResults(ids);
             var sessionResults = sessions
@@ -176,8 +177,6 @@ namespace iRLeagueRESTService.Data
 
             IEnumerable<ScoredResultEntity> scoredResultEntities = DbContext.Set<ScoredResultEntity>()
                 .Include(x => x.Scoring)
-                .Include(x => x.HardChargers)
-                .Include(x => x.CleanestDrivers)
                 .Where(x => sessionIds.Contains(x.ResultId))
                 .ToArray(); // Filter data before fetching from database
 
@@ -185,24 +184,60 @@ namespace iRLeagueRESTService.Data
                 .Select(x => scoredResultEntities
                     .SingleOrDefault(y => x.Key == y.ScoringId && x.Value == y.ResultId)).ToArray(); // Filter data after fetching from database to the exact needed scoredResults
 
-            DbContext.Set<ScoredResultRowEntity>().Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
-                     .Include(x => x.AddPenalty)
-                     .Include(x => x.ResultRow.Member.Team)
-                     .Include(x => x.ReviewPenalties).Load();
+            DbContext.Set<ScoredResultRowEntity>()
+                .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
+                .Include(x => x.ResultRow)
+                .Include(x => x.AddPenalty)
+                .Include(x => x.ReviewPenalties)
+                .Load();
+
+            DbContext.Set<ScoredTeamResultRowEntity>()
+                .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
+                .Include(x => x.ScoredResultRows)
+                .Load();
 
             DbContext.Set<IncidentReviewEntity>()
-                     .Where(x => sessionIds.Contains(x.SessionId))
-                     .Include(x => x.AcceptedReviewVotes)
-                     .Load();
+                .Where(x => sessionIds.Contains(x.SessionId))
+                .Include(x => x.AcceptedReviewVotes)
+                .Load();
 
-            foreach (var scoredResultEntity in scoredResultEntities)
+            DbContext.ChangeTracker.DetectChanges();
+
+            var memberIds = new List<long>();
+            foreach(var scoredResult in scoredResultEntities)
             {
-                if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
+                if (scoredResult.FinalResults != null)
                 {
-                    DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
-                        .Include(x => x.ScoredResultRows).Load();
+                    foreach (var row in scoredResult.FinalResults)
+                    {
+                        memberIds.Add(row.MemberId);
+                    }
+                }
+                if (scoredResult is ScoredTeamResultEntity scoredTeamResultEntity && scoredTeamResultEntity.TeamResults != null)
+                {
+                    var scoredTeamResultRows = scoredTeamResultEntity.TeamResults
+                        .SelectMany(x => x.ScoredResultRows)
+                        .Where(x => x != null);
+                    foreach(var row in scoredTeamResultRows)
+                    {
+                        memberIds.Add(row.MemberId);
+                    }
                 }
             }
+            memberIds = memberIds.Distinct().ToList();
+
+            DbContext.Set<LeagueMemberEntity>()
+                .Where(x => memberIds.Contains(x.MemberId))
+                .Load();
+
+            //foreach (var scoredResultEntity in scoredResultEntities)
+            //{
+            //    if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
+            //    {
+            //        DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
+            //            .Include(x => x.ScoredResultRows).Load();
+            //    }
+            //}
 
             DbContext.ChangeTracker.DetectChanges();
 
