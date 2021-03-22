@@ -1,4 +1,5 @@
-﻿using iRLeagueDatabase.DataTransfer.Results.Convenience;
+﻿using iRLeagueDatabase.DataTransfer.Results;
+using iRLeagueDatabase.DataTransfer.Results.Convenience;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace iRLeagueRESTService.Data
         /// <param name="sessionId">Id of the session</param>
         /// <param name="includeRawResults">If <see langword="true"/> raw result data is included</param>
         /// <returns>Convenience DTO for all session results</returns>
-        SessionResultsDTO GetResultsFromSession(long sessionId, bool includeRawResults = false);
+        SessionResultsDTO GetResultsFromSession(long sessionId, bool includeRawResults = false, ScoredResultDataDTO[] scoredResults = null);
         /// <summary>
         /// Get the results of a whole season
         /// </summary>

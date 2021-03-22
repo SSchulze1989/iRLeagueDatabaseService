@@ -30,7 +30,7 @@ namespace iRLeagueRESTService.Data
         /// </summary>
         /// <param name="sessionId">Id of the session</param>
         /// <returns>Convenience DTO for all session results</returns>
-        public SessionResultsDTO GetResultsFromSession(long sessionId, bool includeRawResults = false)
+        public SessionResultsDTO GetResultsFromSession(long sessionId, bool includeRawResults = false, ScoredResultDataDTO[] scoredResults = null)
         {
             var mapper = new DTOMapper(DbContext);
 
@@ -67,14 +67,17 @@ namespace iRLeagueRESTService.Data
 
             // get scoredResults using ModelDataProvider
             var modelDataProvider = new ModelDataProvider(DbContext);
-            ScoredResultDataDTO[] scoredResults = new ScoredResultDataDTO[0];
             ResultDataDTO rawResults = null;
             SimSessionDetailsDTO sessionDetails = null;
             if (session.SessionResult != null)
             {
-                var ids = session.Scorings.Select(x => new KeyValuePair<long, long>(x.ScoringId, session.SessionId));
-                //scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
-                scoredResults = GetScoredResults(ids);
+                if (scoredResults == null)
+                {
+                    scoredResults = new ScoredResultDataDTO[0];
+                    var ids = session.Scorings.Select(x => new KeyValuePair<long, long>(x.ScoringId, session.SessionId));
+                    //scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
+                    scoredResults = GetScoredResults(ids);
+                }
 
                 // get rawResults if includeRawResults == true
                 if (includeRawResults)
@@ -122,8 +125,10 @@ namespace iRLeagueRESTService.Data
 
             // get season results
             var sessions = season.Schedules.SelectMany(x => x.Sessions);
+            var ids = sessions.SelectMany(x => x.Scorings.Select(y => new KeyValuePair<long, long>(y.ScoringId, x.SessionId))).ToArray();
+            var results = GetScoredResults(ids);
             var sessionResults = sessions
-                .Select(x => GetResultsFromSession(x.SessionId, includeRawResults))
+                .Select(x => GetResultsFromSession(x.SessionId, includeRawResults, results.Where(y => x.SessionId == y.SessionId).ToArray()))
                 .ToArray();
 
             // Construct DTO
