@@ -99,7 +99,8 @@ namespace iRLeagueRESTService.Data
                 RawResults = rawResults,
                 ScoredResults = scoredResults,
                 SessionId = sessionId,
-                SessionDetails = sessionDetails
+                SessionDetails = sessionDetails,
+                LocationId = session.LocationId
             };
 
             return resultsDTO;
@@ -116,7 +117,15 @@ namespace iRLeagueRESTService.Data
             var mapper = new DTOMapper(DbContext);
 
             // get season entity from database
-            var season = DbContext.Set<SeasonEntity>().Find(seasonId);
+            SeasonEntity season;
+            if (seasonId == 0)
+            {
+                season = DbContext.Set<SeasonEntity>().OrderByDescending(x => x.SeasonStart).FirstOrDefault();
+            }
+            else
+            {
+                season = DbContext.Set<SeasonEntity>().Find(seasonId);
+            }
 
             if (season == null)
             {

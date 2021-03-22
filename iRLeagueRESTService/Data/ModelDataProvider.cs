@@ -61,14 +61,17 @@ namespace iRLeagueRESTService.Data
 
         public TModelDTO[] GetArray(Type requestType, long[][] requestIds)
         {
-            TModelDTO[] items = null;
+            TModelDTO[] items = new TModelDTO[0];
 
             var mapper = new DTOMapper(DbContext);
 
             if (requestType.Equals(typeof(ScoredResultDataDTO)))
             {
                 //var leagueService = new LeagueDBService.LeagueDBService();
-                items = requestIds.Select(x => GetScoredResult(x[0], x[1])).Cast<TModelDTO>().ToArray();
+                if (requestIds != null && requestIds.Count() > 0)
+                {
+                    items = requestIds.Select(x => GetScoredResult(x[0], x[1])).Cast<TModelDTO>().ToArray();
+                }
             }
             else if (requestType.Equals(typeof(StandingsDataDTO)))
             {

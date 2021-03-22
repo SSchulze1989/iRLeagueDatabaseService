@@ -323,6 +323,8 @@
           <Property Name="SeasonId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SeasonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Finished" Type="Boolean" Nullable="false" />
+          <Property Name="SeasonStart" Type="DateTime" />
+          <Property Name="SeasonEnd" Type="DateTime" />
           <Property Name="HideCommentsBeforeVoted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
@@ -1911,6 +1913,8 @@
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="SeasonName" ColumnName="SeasonName" />
                 <ScalarProperty Name="Finished" ColumnName="Finished" />
+                <ScalarProperty Name="SeasonStart" ColumnName="SeasonStart" />
+                <ScalarProperty Name="SeasonEnd" ColumnName="SeasonEnd" />
                 <ScalarProperty Name="HideCommentsBeforeVoted" ColumnName="HideCommentsBeforeVoted" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
@@ -2587,6 +2591,8 @@
           <Property Name="SeasonId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SeasonName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Finished" Type="bit" Nullable="false" />
+          <Property Name="SeasonStart" Type="datetime" Nullable="true" />
+          <Property Name="SeasonEnd" Type="datetime" Nullable="true" />
           <Property Name="HideCommentsBeforeVoted" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
