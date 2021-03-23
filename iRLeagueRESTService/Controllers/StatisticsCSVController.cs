@@ -90,11 +90,6 @@ namespace iRLeagueRESTService.Controllers
                         .OfType<SeasonStatisticSetEntity>()
                         .Select(x => x.SeasonId);
 
-                    // seasons
-                    dbContext.Set<SeasonEntity>()
-                        .Where(x => seasonIds.Contains(x.SeasonId))
-                        .Load();
-
                     dbContext.ChangeTracker.DetectChanges();
 
                     foreach (var row in leagueSet.DriverStatistic)
@@ -116,7 +111,7 @@ namespace iRLeagueRESTService.Controllers
                     var lastChamp = leagueSet.StatisticSets
                         .OfType<SeasonStatisticSetEntity>()
                         .Where(x => x.IsSeasonFinished)
-                        .OrderBy(x => x.Season.SeasonEnd)
+                        .OrderBy(x => x.EndDate)
                         .LastOrDefault()?.DriverStatistic
                         .Where(x => x.CurrentSeasonPosition > 0)
                         .OrderBy(x => x.CurrentSeasonPosition)
@@ -124,7 +119,7 @@ namespace iRLeagueRESTService.Controllers
                     var lastHeChamp = heSet.StatisticSets
                         .OfType<SeasonStatisticSetEntity>()
                         .Where(x => x.IsSeasonFinished)
-                        .OrderBy(x => x.Season.SeasonEnd)
+                        .OrderBy(x => x.EndDate)
                         .LastOrDefault()?.DriverStatistic
                         .Where(x => x.CurrentSeasonPosition > 0)
                         .OrderBy(x => x.CurrentSeasonPosition)
