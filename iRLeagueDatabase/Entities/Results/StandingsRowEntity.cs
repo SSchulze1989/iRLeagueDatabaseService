@@ -24,19 +24,19 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual LeagueMemberEntity Member { get; set; }
         public int ClassId { get; set; }
         public string CarClass { get; set; }
-        public int RacePoints { get; set; }
-        public int RacePointsChange { get; set; }
-        public int PenaltyPoints { get; set; }
-        public int PenaltyPointsChange { get; set; }
-        public int TotalPoints { get; set; }
-        public int TotalPointsChange { get; set; }
+        public double RacePoints { get; set; }
+        public double RacePointsChange { get; set; }
+        public double PenaltyPoints { get; set; }
+        public double PenaltyPointsChange { get; set; }
+        public double TotalPoints { get; set; }
+        public double TotalPointsChange { get; set; }
         public int Races { get; set; }
         public int RacesCounted { get; set; }
         public int DroppedResultCount { get; set; }
-        public int CompletedLaps { get; set; }
-        public int CompletedLapsChange { get; set; }
-        public int LeadLaps { get; set; }
-        public int LeadLapsChange { get; set; }
+        public double CompletedLaps { get; set; }
+        public double CompletedLapsChange { get; set; }
+        public double LeadLaps { get; set; }
+        public double LeadLapsChange { get; set; }
         public int FastestLaps { get; set; }
         public int FastestLapsChange { get; set; }
         public int PolePositions { get; set; }
@@ -46,8 +46,8 @@ namespace iRLeagueDatabase.Entities.Results
         public int Top3 { get; set; }
         public int Top5 { get; set; }
         public int Top10 { get; set; }
-        public int Incidents { get; set; }
-        public int IncidentsChange { get; set; }
+        public double Incidents { get; set; }
+        public double IncidentsChange { get; set; }
         public int PositionChange { get; set; }
         public virtual List<ScoredResultRowEntity> CountedResults { get; set; }
         public virtual List<ScoredResultRowEntity> DroppedResults { get; set; }

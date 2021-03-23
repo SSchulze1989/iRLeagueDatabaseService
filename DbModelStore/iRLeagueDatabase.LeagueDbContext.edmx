@@ -68,12 +68,12 @@
           <Property Name="Date" Type="DateTime" />
           <Property Name="ClassId" Type="Int32" Nullable="false" />
           <Property Name="CarClass" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="RacePoints" Type="Int32" Nullable="false" />
-          <Property Name="BonusPoints" Type="Int32" Nullable="false" />
-          <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <Property Name="RacePoints" Type="Double" Nullable="false" />
+          <Property Name="BonusPoints" Type="Double" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="Double" Nullable="false" />
           <Property Name="FinalPosition" Type="Int32" Nullable="false" />
           <Property Name="FinalPositionChange" Type="Int32" Nullable="false" />
-          <Property Name="TotalPoints" Type="Int32" Nullable="false" />
+          <Property Name="TotalPoints" Type="Double" Nullable="false" />
           <Property Name="AvgLapTime" Type="Int64" Nullable="false" />
           <Property Name="FastestLapTime" Type="Int64" Nullable="false" />
           <NavigationProperty Name="ScoredResultRows" Relationship="Self.ScoredTeamResultRowEntity_ScoredResultRows" FromRole="ScoredTeamResultRowEntity_ScoredResultRows_Source" ToRole="ScoredTeamResultRowEntity_ScoredResultRows_Target" />
@@ -89,12 +89,12 @@
           <Property Name="ScoredResultId" Type="Int64" Nullable="false" />
           <Property Name="ScoringId" Type="Int64" Nullable="false" />
           <Property Name="TeamId" Type="Int64" />
-          <Property Name="RacePoints" Type="Int32" Nullable="false" />
-          <Property Name="BonusPoints" Type="Int32" Nullable="false" />
-          <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <Property Name="RacePoints" Type="Double" Nullable="false" />
+          <Property Name="BonusPoints" Type="Double" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="Double" Nullable="false" />
           <Property Name="FinalPosition" Type="Int32" Nullable="false" />
-          <Property Name="FinalPositionChange" Type="Int32" Nullable="false" />
-          <Property Name="TotalPoints" Type="Int32" Nullable="false" />
+          <Property Name="FinalPositionChange" Type="Double" Nullable="false" />
+          <Property Name="TotalPoints" Type="Double" Nullable="false" />
           <NavigationProperty Name="AddPenalty" Relationship="Self.ScoredResultRowEntity_AddPenalty" FromRole="ScoredResultRowEntity_AddPenalty_Source" ToRole="ScoredResultRowEntity_AddPenalty_Target" />
           <NavigationProperty Name="ResultRow" Relationship="Self.ResultRowEntity_ScoredResultRows" FromRole="ResultRowEntity_ScoredResultRows_Target" ToRole="ResultRowEntity_ScoredResultRows_Source" />
           <NavigationProperty Name="ReviewPenalties" Relationship="Self.ScoredResultRowEntity_ReviewPenalties" FromRole="ScoredResultRowEntity_ReviewPenalties_Source" ToRole="ScoredResultRowEntity_ReviewPenalties_Target" />
@@ -116,8 +116,8 @@
           <Property Name="ResultRowId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ResultId" Type="Int64" Nullable="false" />
           <Property Name="SimSessionType" Type="Self.SimSessionTypeEnum" Nullable="false" />
-          <Property Name="StartPosition" Type="Int32" Nullable="false" />
-          <Property Name="FinishPosition" Type="Int32" Nullable="false" />
+          <Property Name="StartPosition" Type="Double" Nullable="false" />
+          <Property Name="FinishPosition" Type="Double" Nullable="false" />
           <Property Name="MemberId" Type="Int64" Nullable="false" />
           <Property Name="TeamId" Type="Int64" />
           <Property Name="OldIRating" Type="Int32" Nullable="false" />
@@ -135,18 +135,18 @@
           <Property Name="Car" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CarId" Type="Int32" Nullable="false" />
           <Property Name="CarClass" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="CompletedLaps" Type="Int32" Nullable="false" />
+          <Property Name="CompletedLaps" Type="Double" Nullable="false" />
           <Property Name="CompletedPct" Type="Double" Nullable="false" />
-          <Property Name="LeadLaps" Type="Int32" Nullable="false" />
+          <Property Name="LeadLaps" Type="Double" Nullable="false" />
           <Property Name="FastLapNr" Type="Int32" Nullable="false" />
-          <Property Name="Incidents" Type="Int32" Nullable="false" />
+          <Property Name="Incidents" Type="Double" Nullable="false" />
           <Property Name="Status" Type="Self.RaceStatusEnum" Nullable="false" />
           <Property Name="QualifyingTimeAt" Type="DateTime" />
           <Property Name="QualifyingTime" Type="Int64" Nullable="false" />
           <Property Name="Interval" Type="Int64" Nullable="false" />
           <Property Name="AvgLapTime" Type="Int64" Nullable="false" />
           <Property Name="FastestLapTime" Type="Int64" Nullable="false" />
-          <Property Name="PositionChange" Type="Int32" Nullable="false" />
+          <Property Name="PositionChange" Type="Double" Nullable="false" />
           <Property Name="Division" Type="Int32" Nullable="false" />
           <Property Name="OldLicenseLevel" Type="Int32" Nullable="false" />
           <Property Name="NewLicenseLevel" Type="Int32" Nullable="false" />
@@ -277,6 +277,8 @@
           <Property Name="TakeGroupAverage" Type="Boolean" Nullable="false" />
           <Property Name="ExtScoringSourceId" Type="Int64" />
           <Property Name="TakeResultsFromExtSource" Type="Boolean" Nullable="false" />
+          <Property Name="ScoringWeightValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AccumulateResultsOption" Type="Self.AccumulateResultsOption" Nullable="false" />
           <Property Name="SeasonId" Type="Int64" Nullable="false" />
           <Property Name="BasePoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BonusPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -284,6 +286,8 @@
           <Property Name="ConnectedScheduleId" Type="Int64" />
           <Property Name="UseResultSetTeam" Type="Boolean" Nullable="false" />
           <Property Name="UpdateTeamOnRecalculation" Type="Boolean" Nullable="false" />
+          <Property Name="PointsSortOptions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FinalSortOptions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -392,9 +396,9 @@
           <Property Name="LastRaceId" Type="Int64" />
           <Property Name="LastRaceDate" Type="DateTime" />
           <Property Name="LastResultRowId" Type="Int64" />
-          <Property Name="RacePoints" Type="Int32" Nullable="false" />
-          <Property Name="TotalPoints" Type="Int32" Nullable="false" />
-          <Property Name="BonusPoints" Type="Int32" Nullable="false" />
+          <Property Name="RacePoints" Type="Double" Nullable="false" />
+          <Property Name="TotalPoints" Type="Double" Nullable="false" />
+          <Property Name="BonusPoints" Type="Double" Nullable="false" />
           <Property Name="Races" Type="Int32" Nullable="false" />
           <Property Name="Wins" Type="Int32" Nullable="false" />
           <Property Name="Poles" Type="Int32" Nullable="false" />
@@ -406,13 +410,13 @@
           <Property Name="Top25" Type="Int32" Nullable="false" />
           <Property Name="RacesInPoints" Type="Int32" Nullable="false" />
           <Property Name="RacesCompleted" Type="Int32" Nullable="false" />
-          <Property Name="Incidents" Type="Int32" Nullable="false" />
-          <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <Property Name="Incidents" Type="Double" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="Double" Nullable="false" />
           <Property Name="FastestLaps" Type="Int32" Nullable="false" />
           <Property Name="IncidentsUnderInvestigation" Type="Int32" Nullable="false" />
           <Property Name="IncidentsWithPenalty" Type="Int32" Nullable="false" />
-          <Property Name="LeadingLaps" Type="Int32" Nullable="false" />
-          <Property Name="CompletedLaps" Type="Int32" Nullable="false" />
+          <Property Name="LeadingLaps" Type="Double" Nullable="false" />
+          <Property Name="CompletedLaps" Type="Double" Nullable="false" />
           <Property Name="CurrentSeasonPosition" Type="Int32" Nullable="false" />
           <Property Name="DrivenKm" Type="Double" Nullable="false" />
           <Property Name="LeadingKm" Type="Double" Nullable="false" />
@@ -428,18 +432,18 @@
           <Property Name="AvgPenaltyPointsPerKm" Type="Double" Nullable="false" />
           <Property Name="AvgIRating" Type="Double" Nullable="false" />
           <Property Name="AvgSRating" Type="Double" Nullable="false" />
-          <Property Name="BestFinishPosition" Type="Int32" Nullable="false" />
-          <Property Name="WorstFinishPosition" Type="Int32" Nullable="false" />
-          <Property Name="FirstRaceFinishPosition" Type="Int32" Nullable="false" />
-          <Property Name="LastRaceFinishPosition" Type="Int32" Nullable="false" />
+          <Property Name="BestFinishPosition" Type="Double" Nullable="false" />
+          <Property Name="WorstFinishPosition" Type="Double" Nullable="false" />
+          <Property Name="FirstRaceFinishPosition" Type="Double" Nullable="false" />
+          <Property Name="LastRaceFinishPosition" Type="Double" Nullable="false" />
           <Property Name="BestFinalPosition" Type="Int32" Nullable="false" />
           <Property Name="WorstFinalPosition" Type="Int32" Nullable="false" />
           <Property Name="FirstRaceFinalPosition" Type="Int32" Nullable="false" />
           <Property Name="LastRaceFinalPosition" Type="Int32" Nullable="false" />
-          <Property Name="BestStartPosition" Type="Int32" Nullable="false" />
-          <Property Name="WorstStartPosition" Type="Int32" Nullable="false" />
-          <Property Name="FirstRaceStartPosition" Type="Int32" Nullable="false" />
-          <Property Name="LastRaceStartPosition" Type="Int32" Nullable="false" />
+          <Property Name="BestStartPosition" Type="Double" Nullable="false" />
+          <Property Name="WorstStartPosition" Type="Double" Nullable="false" />
+          <Property Name="FirstRaceStartPosition" Type="Double" Nullable="false" />
+          <Property Name="LastRaceStartPosition" Type="Double" Nullable="false" />
           <Property Name="Titles" Type="Int32" Nullable="false" />
           <Property Name="HardChargerAwards" Type="Int32" Nullable="false" />
           <Property Name="CleanestDriverAwards" Type="Int32" Nullable="false" />
@@ -653,6 +657,13 @@
           <Member Name="Member" Value="0" />
           <Member Name="Team" Value="1" />
           <Member Name="Custom" Value="3" />
+        </EnumType>
+        <EnumType Name="AccumulateResultsOption" IsFlags="false" customannotation:ClrType="iRLeagueDatabase.Enums.AccumulateResultsOption, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="None" Value="0" />
+          <Member Name="Best" Value="1" />
+          <Member Name="Worst" Value="2" />
+          <Member Name="Average" Value="3" />
+          <Member Name="WeightedAverage" Value="4" />
         </EnumType>
         <EnumType Name="DropRacesOption" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.DropRacesOption, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="PerTeamResults" Value="0" />
@@ -1915,6 +1926,8 @@
                 <ScalarProperty Name="TakeGroupAverage" ColumnName="TakeGroupAverage" />
                 <ScalarProperty Name="ExtScoringSourceId" ColumnName="ExtScoringSourceId" />
                 <ScalarProperty Name="TakeResultsFromExtSource" ColumnName="TakeResultsFromExtSource" />
+                <ScalarProperty Name="ScoringWeightValues" ColumnName="ScoringWeightValues" />
+                <ScalarProperty Name="AccumulateResultsOption" ColumnName="AccumulateResultsOption" />
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="BasePoints" ColumnName="BasePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
@@ -1922,6 +1935,8 @@
                 <ScalarProperty Name="ConnectedScheduleId" ColumnName="ConnectedScheduleId" />
                 <ScalarProperty Name="UseResultSetTeam" ColumnName="UseResultSetTeam" />
                 <ScalarProperty Name="UpdateTeamOnRecalculation" ColumnName="UpdateTeamOnRecalculation" />
+                <ScalarProperty Name="PointsSortOptions" ColumnName="PointsSortOptions" />
+                <ScalarProperty Name="FinalSortOptions" ColumnName="FinalSortOptions" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -2412,12 +2427,12 @@
           <Property Name="Date" Type="datetime" Nullable="true" />
           <Property Name="ClassId" Type="int" Nullable="false" />
           <Property Name="CarClass" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="RacePoints" Type="int" Nullable="false" />
-          <Property Name="BonusPoints" Type="int" Nullable="false" />
-          <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+          <Property Name="RacePoints" Type="float" Nullable="false" />
+          <Property Name="BonusPoints" Type="float" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="float" Nullable="false" />
           <Property Name="FinalPosition" Type="int" Nullable="false" />
           <Property Name="FinalPositionChange" Type="int" Nullable="false" />
-          <Property Name="TotalPoints" Type="int" Nullable="false" />
+          <Property Name="TotalPoints" Type="float" Nullable="false" />
           <Property Name="AvgLapTime" Type="bigint" Nullable="false" />
           <Property Name="FastestLapTime" Type="bigint" Nullable="false" />
         </EntityType>
@@ -2430,12 +2445,12 @@
           <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 1 }" Nullable="false" />
           <Property Name="ResultRowId" Type="bigint" customannotation:Index="{ Name: IX_ResultRowId, Order: 0 }" Nullable="false" />
           <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="true" />
-          <Property Name="RacePoints" Type="int" Nullable="false" />
-          <Property Name="BonusPoints" Type="int" Nullable="false" />
-          <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+          <Property Name="RacePoints" Type="float" Nullable="false" />
+          <Property Name="BonusPoints" Type="float" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="float" Nullable="false" />
           <Property Name="FinalPosition" Type="int" Nullable="false" />
-          <Property Name="FinalPositionChange" Type="int" Nullable="false" />
-          <Property Name="TotalPoints" Type="int" Nullable="false" />
+          <Property Name="FinalPositionChange" Type="float" Nullable="false" />
+          <Property Name="TotalPoints" Type="float" Nullable="false" />
         </EntityType>
         <EntityType Name="AddPenaltyEntity">
           <Key>
@@ -2451,8 +2466,8 @@
           <Property Name="ResultRowId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ResultId" Type="bigint" customannotation:Index="{ Name: IX_ResultId, Order: 0 }" Nullable="false" />
           <Property Name="SimSessionType" Type="int" Nullable="false" />
-          <Property Name="StartPosition" Type="int" Nullable="false" />
-          <Property Name="FinishPosition" Type="int" Nullable="false" />
+          <Property Name="StartPosition" Type="float" Nullable="false" />
+          <Property Name="FinishPosition" Type="float" Nullable="false" />
           <Property Name="MemberId" Type="bigint" customannotation:Index="{ Name: IX_MemberId, Order: 0 }" Nullable="false" />
           <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="true" />
           <Property Name="OldIRating" Type="int" Nullable="false" />
@@ -2470,18 +2485,18 @@
           <Property Name="Car" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CarId" Type="int" Nullable="false" />
           <Property Name="CarClass" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="CompletedLaps" Type="int" Nullable="false" />
+          <Property Name="CompletedLaps" Type="float" Nullable="false" />
           <Property Name="CompletedPct" Type="float" Nullable="false" />
-          <Property Name="LeadLaps" Type="int" Nullable="false" />
+          <Property Name="LeadLaps" Type="float" Nullable="false" />
           <Property Name="FastLapNr" Type="int" Nullable="false" />
-          <Property Name="Incidents" Type="int" Nullable="false" />
+          <Property Name="Incidents" Type="float" Nullable="false" />
           <Property Name="Status" Type="int" Nullable="false" />
           <Property Name="QualifyingTimeAt" Type="datetime" Nullable="true" />
           <Property Name="QualifyingTime" Type="bigint" Nullable="false" />
           <Property Name="Interval" Type="bigint" Nullable="false" />
           <Property Name="AvgLapTime" Type="bigint" Nullable="false" />
           <Property Name="FastestLapTime" Type="bigint" Nullable="false" />
-          <Property Name="PositionChange" Type="int" Nullable="false" />
+          <Property Name="PositionChange" Type="float" Nullable="false" />
           <Property Name="Division" Type="int" Nullable="false" />
           <Property Name="OldLicenseLevel" Type="int" Nullable="false" />
           <Property Name="NewLicenseLevel" Type="int" Nullable="false" />
@@ -2600,6 +2615,8 @@
           <Property Name="TakeGroupAverage" Type="bit" Nullable="false" />
           <Property Name="ExtScoringSourceId" Type="bigint" customannotation:Index="{ Name: IX_ExtScoringSourceId, Order: 0 }" Nullable="true" />
           <Property Name="TakeResultsFromExtSource" Type="bit" Nullable="false" />
+          <Property Name="ScoringWeightValues" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="AccumulateResultsOption" Type="int" Nullable="false" />
           <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="false" />
           <Property Name="BasePoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="BonusPoints" Type="nvarchar(max)" Nullable="true" />
@@ -2607,6 +2624,8 @@
           <Property Name="ConnectedScheduleId" Type="bigint" customannotation:Index="{ Name: IX_ConnectedScheduleId, Order: 0 }" Nullable="true" />
           <Property Name="UseResultSetTeam" Type="bit" Nullable="false" />
           <Property Name="UpdateTeamOnRecalculation" Type="bit" Nullable="false" />
+          <Property Name="PointsSortOptions" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="FinalSortOptions" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -2689,9 +2708,9 @@
           <Property Name="LastSessionDate" Type="datetime" Nullable="true" />
           <Property Name="LastRaceId" Type="bigint" customannotation:Index="{ Name: IX_LastRaceId, Order: 0 }" Nullable="true" />
           <Property Name="LastRaceDate" Type="datetime" Nullable="true" />
-          <Property Name="RacePoints" Type="int" Nullable="false" />
-          <Property Name="TotalPoints" Type="int" Nullable="false" />
-          <Property Name="BonusPoints" Type="int" Nullable="false" />
+          <Property Name="RacePoints" Type="float" Nullable="false" />
+          <Property Name="TotalPoints" Type="float" Nullable="false" />
+          <Property Name="BonusPoints" Type="float" Nullable="false" />
           <Property Name="Races" Type="int" Nullable="false" />
           <Property Name="Wins" Type="int" Nullable="false" />
           <Property Name="Poles" Type="int" Nullable="false" />
@@ -2703,13 +2722,13 @@
           <Property Name="Top25" Type="int" Nullable="false" />
           <Property Name="RacesInPoints" Type="int" Nullable="false" />
           <Property Name="RacesCompleted" Type="int" Nullable="false" />
-          <Property Name="Incidents" Type="int" Nullable="false" />
-          <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+          <Property Name="Incidents" Type="float" Nullable="false" />
+          <Property Name="PenaltyPoints" Type="float" Nullable="false" />
           <Property Name="FastestLaps" Type="int" Nullable="false" />
           <Property Name="IncidentsUnderInvestigation" Type="int" Nullable="false" />
           <Property Name="IncidentsWithPenalty" Type="int" Nullable="false" />
-          <Property Name="LeadingLaps" Type="int" Nullable="false" />
-          <Property Name="CompletedLaps" Type="int" Nullable="false" />
+          <Property Name="LeadingLaps" Type="float" Nullable="false" />
+          <Property Name="CompletedLaps" Type="float" Nullable="false" />
           <Property Name="CurrentSeasonPosition" Type="int" Nullable="false" />
           <Property Name="DrivenKm" Type="float" Nullable="false" />
           <Property Name="LeadingKm" Type="float" Nullable="false" />
@@ -2725,18 +2744,18 @@
           <Property Name="AvgPenaltyPointsPerKm" Type="float" Nullable="false" />
           <Property Name="AvgIRating" Type="float" Nullable="false" />
           <Property Name="AvgSRating" Type="float" Nullable="false" />
-          <Property Name="BestFinishPosition" Type="int" Nullable="false" />
-          <Property Name="WorstFinishPosition" Type="int" Nullable="false" />
-          <Property Name="FirstRaceFinishPosition" Type="int" Nullable="false" />
-          <Property Name="LastRaceFinishPosition" Type="int" Nullable="false" />
+          <Property Name="BestFinishPosition" Type="float" Nullable="false" />
+          <Property Name="WorstFinishPosition" Type="float" Nullable="false" />
+          <Property Name="FirstRaceFinishPosition" Type="float" Nullable="false" />
+          <Property Name="LastRaceFinishPosition" Type="float" Nullable="false" />
           <Property Name="BestFinalPosition" Type="int" Nullable="false" />
           <Property Name="WorstFinalPosition" Type="int" Nullable="false" />
           <Property Name="FirstRaceFinalPosition" Type="int" Nullable="false" />
           <Property Name="LastRaceFinalPosition" Type="int" Nullable="false" />
-          <Property Name="BestStartPosition" Type="int" Nullable="false" />
-          <Property Name="WorstStartPosition" Type="int" Nullable="false" />
-          <Property Name="FirstRaceStartPosition" Type="int" Nullable="false" />
-          <Property Name="LastRaceStartPosition" Type="int" Nullable="false" />
+          <Property Name="BestStartPosition" Type="float" Nullable="false" />
+          <Property Name="WorstStartPosition" Type="float" Nullable="false" />
+          <Property Name="FirstRaceStartPosition" Type="float" Nullable="false" />
+          <Property Name="LastRaceStartPosition" Type="float" Nullable="false" />
           <Property Name="Titles" Type="int" Nullable="false" />
           <Property Name="HardChargerAwards" Type="int" Nullable="false" />
           <Property Name="CleanestDriverAwards" Type="int" Nullable="false" />

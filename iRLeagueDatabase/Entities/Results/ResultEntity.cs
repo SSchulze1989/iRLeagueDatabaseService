@@ -48,6 +48,8 @@ namespace iRLeagueDatabase.Entities.Results
 
         public long PoleLaptime { get; set; }
 
+        public double CompletedLaps => RawResults.Max(x => x.CompletedLaps);
+
         public bool RequiresRecalculation { get; set; }
 
         [NotMapped]
@@ -58,6 +60,7 @@ namespace iRLeagueDatabase.Entities.Results
         public ResultEntity()
         {
             RawResults = new List<ResultRowEntity>();
+            ScoredResults = new List<ScoredResultEntity>();
             //FinalResults = new List<ResultRow>();
         }
 

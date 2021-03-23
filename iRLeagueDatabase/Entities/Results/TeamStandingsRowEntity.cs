@@ -10,7 +10,6 @@ namespace iRLeagueDatabase.Entities.Results
 {
     public class TeamStandingsRowEntity : StandingsRowEntity
     {
-        public TeamEntity Team { get; set; }
         public virtual List<StandingsRowEntity> DriverStandingsRows { get; set; }
 
         public TeamStandingsRowEntity Diff(TeamStandingsRowEntity compare)

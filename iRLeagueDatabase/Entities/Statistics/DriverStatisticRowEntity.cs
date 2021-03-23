@@ -77,9 +77,9 @@ namespace iRLeagueDatabase.Entities.Statistics
         public long? LastResultRowId { get; set; }
         public virtual ScoredResultRowEntity LastResult { get; set; }
 
-        public int RacePoints { get; set; }
-        public int TotalPoints { get; set; }
-        public int BonusPoints { get; set; }
+        public double RacePoints { get; set; }
+        public double TotalPoints { get; set; }
+        public double BonusPoints { get; set; }
         public int Races { get; set; }
         public int Wins { get; set; }
         public int Poles { get; set; }
@@ -91,13 +91,13 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int Top25 { get; set; }
         public int RacesInPoints { get; set; }
         public int RacesCompleted { get; set; }
-        public int Incidents { get; set; }
-        public int PenaltyPoints { get; set; }
+        public double Incidents { get; set; }
+        public double PenaltyPoints { get; set; }
         public int FastestLaps { get; set; }
         public int IncidentsUnderInvestigation { get; set; }
         public int IncidentsWithPenalty { get; set; }
-        public int LeadingLaps { get; set; }
-        public int CompletedLaps { get; set; }
+        public double LeadingLaps { get; set; }
+        public double CompletedLaps { get; set; }
         public int CurrentSeasonPosition { get; set; }
         public double DrivenKm { get; set; }
         public double LeadingKm { get; set; }
@@ -113,18 +113,18 @@ namespace iRLeagueDatabase.Entities.Statistics
         public double AvgPenaltyPointsPerKm { get; set; }
         public double AvgIRating { get; set; }
         public double AvgSRating { get; set; }
-        public int BestFinishPosition { get; set; }
-        public int WorstFinishPosition { get; set; }
-        public int FirstRaceFinishPosition { get; set; }
-        public int LastRaceFinishPosition { get; set; }
+        public double BestFinishPosition { get; set; }
+        public double WorstFinishPosition { get; set; }
+        public double FirstRaceFinishPosition { get; set; }
+        public double LastRaceFinishPosition { get; set; }
         public int BestFinalPosition { get; set; }
         public int WorstFinalPosition { get; set; }
         public int FirstRaceFinalPosition { get; set; }
         public int LastRaceFinalPosition { get; set; }
-        public int BestStartPosition { get; set; }
-        public int WorstStartPosition { get; set; }
-        public int FirstRaceStartPosition { get; set; }
-        public int LastRaceStartPosition { get; set; }
+        public double BestStartPosition { get; set; }
+        public double WorstStartPosition { get; set; }
+        public double FirstRaceStartPosition { get; set; }
+        public double LastRaceStartPosition { get; set; }
         public int Titles { get; set; }
         public int HardChargerAwards { get; set; }
         public int CleanestDriverAwards { get; set; }

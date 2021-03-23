@@ -10,6 +10,7 @@ using iRLeagueManager.Enums;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Statistics;
 using System.Data.Entity;
+using System.CodeDom;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -50,7 +51,7 @@ namespace iRLeagueDatabase.Entities.Results
         //[ForeignKey(nameof(TeamResultRow))]
         //public long? TeamResultRowId { get; set; }
         //public virtual ScoredTeamResultRowEntity TeamResultRow { get; set; }
-        public double FinalPosition { get; set; }
+        public int FinalPosition { get; set; }
         public double FinalPositionChange { get; set; }
         public double TotalPoints { get; set; }
 

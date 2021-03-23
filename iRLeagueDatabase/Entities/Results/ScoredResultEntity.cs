@@ -39,6 +39,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public ScoredResultEntity()
         {
+            FinalResults = new List<ScoredResultRowEntity>();
             HardChargers = new List<LeagueMemberEntity>();
             CleanestDrivers = new List<LeagueMemberEntity>();
         }

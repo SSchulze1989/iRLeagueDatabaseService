@@ -37,10 +37,10 @@ namespace iRLeagueDatabase.Entities.Results
         public DateTime? Date { get; set; }
         public int ClassId { get; set; }
         public string CarClass { get; set; }
-        public int RacePoints { get; set; }
-        public int BonusPoints { get; set; }
+        public double RacePoints { get; set; }
+        public double BonusPoints { get; set; }
         //public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }
-        public int PenaltyPoints { get; set; }
+        public double PenaltyPoints { get; set; }
         //[InverseProperty(nameof(AddPenaltyEntity.ScoredResultRow))]
         //public virtual AddPenaltyEntity AddPenalty { get; set; }
         //[InverseProperty(nameof(ReviewPenaltyEntity.ScoredResultRow))]
@@ -48,7 +48,7 @@ namespace iRLeagueDatabase.Entities.Results
         public virtual List<ScoredResultRowEntity> ScoredResultRows { get; set; }
         public int FinalPosition { get; set; }
         public int FinalPositionChange { get; set; }
-        public int TotalPoints { get; set; }
+        public double TotalPoints { get; set; }
         public long AvgLapTime { get; set; }
         public long FastestLapTime { get; set; }
 

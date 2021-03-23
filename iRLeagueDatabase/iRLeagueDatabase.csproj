@@ -52,11 +52,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculation\Accumulator.cs" />
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
     <Compile Include="Entities\Filters\FilterValueBaseEntity.cs" />
     <Compile Include="Entities\Filters\IntFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\Accumulator.cs" />
     <Compile Include="Entities\Results\IResultRow.cs" />
     <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
     <Compile Include="Entities\Filters\MemberFilterValueEntity.cs" />
@@ -84,6 +86,8 @@
     <Compile Include="Entities\Statistics\LeagueStatisticSetEntity.cs" />
     <Compile Include="Entities\Statistics\SeasonStatisticSetEntity.cs" />
     <Compile Include="Entities\Statistics\StatisticSetEntity.cs" />
+    <Compile Include="Exceptions\LeagueDatabaseException.cs" />
+    <Compile Include="Exceptions\ResultsCalculationException.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
     <Compile Include="Filters\FilterFactoryHelper.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />
@@ -162,6 +166,10 @@
     <Compile Include="Migrations\202102062147212_AddReviewVoteDescr.designer.cs">
       <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103202126476_AddSubsessionScoring.cs" />
+    <Compile Include="Migrations\202103202126476_AddSubsessionScoring.designer.cs">
+      <DependentUpon>202103202126476_AddSubsessionScoring.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -209,6 +217,9 @@
     <EmbeddedResource Include="Migrations\202102062147212_AddReviewVoteDescr.resx">
       <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103202126476_AddSubsessionScoring.resx">
+      <DependentUpon>202103202126476_AddSubsessionScoring.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Communication\Communication.csproj">
@@ -216,6 +227,7 @@
       <Name>Communication</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

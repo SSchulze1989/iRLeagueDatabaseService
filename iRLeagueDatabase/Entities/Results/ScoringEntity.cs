@@ -21,6 +21,9 @@ using iRLeagueManager.Timing;
 using iRLeagueDatabase.Extensions;
 using iRLeagueDatabase.Enums;
 using System.CodeDom;
+using System.Globalization;
+using iRLeagueDatabase.Entities.Members;
+using iRLeagueDatabase.Calculation;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -52,8 +55,24 @@ namespace iRLeagueDatabase.Entities.Results
         [InverseProperty(nameof(ResultsFilterOptionEntity.Scoring))]
         public virtual List<ResultsFilterOptionEntity> ResultsFilterOptions { get; set; }
 
+        #region SubSessionOptions
         [InverseProperty(nameof(ScoringEntity.ParentScoring))] 
         public virtual List<ScoringEntity> SubSessionScorings { get; set; }
+        public string ScoringWeightValues { get; set; }
+        [NotMapped]
+        public IEnumerable<double> ScoringWeights
+        {
+            get => ScoringWeightValues
+                .Split(OptionsDelimiter)
+                .Select(x => double.TryParse(x, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out double val) ? val : 0.0);
+            set => ScoringWeightValues = string.Join(OptionsDelimiter.ToString(), value.Select(x => x.ToString(CultureInfo.InvariantCulture)));
+        }
+
+        public AccumulateByOption AccumulateBy { get; set; }
+
+        public AccumulateResultsOption AccumulateResultsOption { get; set; }
+
+        #endregion
 
         public List<SessionBaseEntity> sessions;
         public virtual List<SessionBaseEntity> Sessions
@@ -256,7 +275,16 @@ namespace iRLeagueDatabase.Entities.Results
             }
             else
             {
-                IEnumerable<ResultRowEntity> resultRows = session.SessionResult.RawResults;
+                ResultEntity result = session.SessionResult;
+                
+                // Get Result and result rows -- this will create or update a new result in case of accumulated scoring:
+                if (AccumulateResultsOption != AccumulateResultsOption.None && 
+                    SubSessionScorings?.Count > 0)
+                {
+                    scoredResult = CalculateAccumulatedResult(session, dbContext, scoredResult);
+                }
+
+                IEnumerable<ResultRowEntity> resultRows = result.RawResults;
 
                 // Recaclulate completed pct
                 var maxLaps = resultRows.Max(x => x.CompletedLaps);
@@ -496,6 +524,184 @@ namespace iRLeagueDatabase.Entities.Results
             }
             //return scoredResultRows;
             return scoredResult;
+        }
+
+        /// <summary>
+        /// Calculate the accumulated results based on the configured SubSessionScorings
+        /// </summary>
+        /// <param name="session">Session entity to calculate the result for</param>
+        /// <param name="dbContext">Current Database Context</param>
+        /// <returns>Result Entity for the session; <see langword="null"/> if session was empty</returns>
+        private ScoredResultEntity CalculateAccumulatedResult(SessionBaseEntity session, LeagueDbContext dbContext, ScoredResultEntity accScoredResult)
+        {
+            if (session == null)
+            {
+                return null;
+            }
+
+            // Check Result existence and if recalc is required
+            ResultEntity accResult = session.SessionResult;
+            if (accResult == null)
+            {
+                accResult = new ResultEntity()
+                {
+                    Session = session,
+                    Season = session.Schedule.Season,
+                    CreatedByUserId = "ScoringService",
+                    CreatedOn = DateTime.Now,
+                    RequiresRecalculation = true
+                };
+            }
+            if (accResult.RequiresRecalculation == false && accScoredResult != null)
+            {
+                return accScoredResult;
+            }
+            if (accScoredResult == null)
+            {
+                accScoredResult = new ScoredResultEntity()
+                {
+                    Scoring = this,
+                    CreatedByUserId = "ScoringService",
+                    CreatedOn = DateTime.Now,
+                    Result = accResult
+                };
+            }
+
+            // Get the results to accumulate
+            var subSessions = session.SubSessions;
+            var subSessionResults = subSessions
+                .SelectMany(x => x.SessionResult.ScoredResults)
+                .Where(x => SubSessionScorings.Contains(x.Scoring));
+            var subSessionResultRows = subSessionResults.SelectMany(x => x.FinalResults);
+
+            // Make sure every driver in this event has a result row for every subsession
+            // only drivers that have participated in all events will be scored
+            var eventDrivers = subSessionResults
+                .Select(x => x.Result.DriverList)
+                .Aggregate((x, y) => x.Intersect(y))
+                .Distinct();
+
+            var driverResultRows = subSessionResultRows
+                .Where(x => eventDrivers.Contains(x.Member))
+                .GroupBy(x => x.Member);
+
+            // Calculate
+            List<ScoredResultRowEntity> accResultRows = new List<ScoredResultRowEntity>();
+            var totalLaps = subSessionResults.Sum(x => x.FinalResults.Max(y => y.CompletedLaps));
+            foreach (var rows in driverResultRows)
+            {
+                var driver = rows.Key;
+                var accumulator = new Accumulator()
+                {
+                    AccumulateOption = AccumulateResultsOption,
+                    AccumulateWeights = ScoringWeights
+                };
+
+
+                var accResultRow = accResult.RawResults.SingleOrDefault(x => x.Member == driver);
+                if (accResultRow == null)
+                {
+                    accResultRow = new ResultRowEntity()
+                    {
+                        Result = accResult,
+                        Member = driver
+                    };
+                    if (UseResultSetTeam)
+                    {
+                        accResultRow.Team = rows.Last().Team;
+                    }
+                    else
+                    {
+                        accResultRow.Team = driver.Team;
+                    }
+                }
+                else if (UpdateTeamOnRecalculation)
+                {
+                    if (UseResultSetTeam)
+                    {
+                        accResultRow.Team = rows.Last().Team;
+                    }
+                    else
+                    {
+                        accResultRow.Team = driver.Team;
+                    }
+                }
+
+                accResultRow.AvgLapTime = accumulator.Accumulate(rows.Select(x => x.AvgLapTime), AccumulateResultsOption.WeightedAverage, GetBestOption.MinValue, rows.Select(x => x.CompletedLaps));
+                accResultRow.Car = rows.First().Car;
+                accResultRow.CarClass = rows.First().CarClass;
+                accResultRow.CarId = rows.First().CarId;
+                accResultRow.CarNumber = rows.First().CarNumber;
+                accResultRow.ClassId = rows.First().ClassId;
+                accResultRow.ClubId = rows.First().ClubId;
+                accResultRow.ClubName = rows.First().ClubName;
+                accResultRow.CompletedLaps = rows.Sum(x => x.CompletedLaps);
+                accResultRow.NewCpi = rows.Last().NewCpi;
+                accResultRow.OldCpi = rows.First().OldCpi;
+                accResultRow.NewIRating = rows.Last().NewIRating;
+                accResultRow.OldIRating = rows.First().OldIRating;
+                accResultRow.NewLicenseLevel = rows.Last().NewLicenseLevel;
+                accResultRow.OldLicenseLevel = rows.First().OldLicenseLevel;
+                accResultRow.NewSafetyRating = rows.Last().NewSafetyRating;
+                accResultRow.OldSafetyRating = rows.First().OldSafetyRating;
+                accResultRow.NumOfftrackLaps = rows.Sum(x => x.NumOfftrackLaps);
+                accResultRow.NumContactLaps = rows.Sum(x => x.NumContactLaps);
+                accResultRow.NumPitStops = rows.Sum(x => x.NumPitStops);
+                accResultRow.FastLapNr = 0;
+                accResultRow.FastestLapTime = accumulator.Accumulate(rows.Select(x => x.FastestLapTime), GetBestOption.MinValue);
+                accResultRow.FinishPosition = accumulator.Accumulate(rows.Select(x => x.FinishPosition), GetBestOption.MinValue);
+                accResultRow.CompletedPct = accumulator.Accumulate(rows.Select(x => x.CompletedPct), AccumulateResultsOption.WeightedAverage, GetBestOption.MaxValue, ScoringWeights ?? rows.Select(x => x.ResultRow.Result.CompletedLaps / totalLaps));
+                accResultRow.Division = rows.Last().Division;
+                accResultRow.Incidents = rows.Sum(x => x.Incidents);
+                accResultRow.Interval = accumulator.Accumulate(rows.Select(x => x.Interval), GetBestOption.MinValue);
+                accResultRow.LeadLaps = rows.Sum(x => x.LeadLaps);
+                accResultRow.License = rows.Last().License;
+                accResultRow.QualifyingTime = accumulator.Accumulate(rows.Select(x => x.QualifyingTime), GetBestOption.MinValue);
+
+                accResult.RawResults.Add(accResultRow);
+
+                var accScoredResultRow = accScoredResult.FinalResults.SingleOrDefault(x => x.Member == driver);
+                if (accScoredResultRow == null)
+                {
+                    accScoredResultRow = new ScoredResultRowEntity()
+                    {
+                        ResultRow = accResultRow,
+                        ScoredResult = accScoredResult
+                    };
+                    if (UseResultSetTeam)
+                    {
+                        accScoredResultRow.Team = accResultRow.Team;
+                    }
+                    else
+                    {
+                        accScoredResultRow.Team = driver.Team;
+                    }
+                }
+                else if (UpdateTeamOnRecalculation)
+                {
+                    if (UseResultSetTeam)
+                    {
+                        accScoredResultRow.Team = accResultRow.Team;
+                    }
+                    else
+                    {
+                        accScoredResultRow.Team = driver.Team;
+                    }
+                }
+                 
+                accScoredResultRow.AddPenalty = null;
+                accScoredResultRow.BonusPoints = accumulator.Accumulate(rows.Select(x => x.BonusPoints), GetBestOption.MaxValue, ScoringWeights);
+                accScoredResultRow.FinalPositionChange = 0;
+                accScoredResultRow.PenaltyPoints = accumulator.Accumulate(rows.Select(x => x.PenaltyPoints), AccumulateResultsOption.Sum);
+                accScoredResultRow.RacePoints = accumulator.Accumulate(rows.Select(x => x.RacePoints), GetBestOption.MaxValue, ScoringWeights);
+                accScoredResultRow.FinalPosition = 0;
+                accScoredResultRow.TotalPoints = 0;
+                accScoredResultRow.ResultRow = accResultRow;
+                
+                accScoredResult.FinalResults.Add(accScoredResultRow);
+            }
+
+            return accScoredResult;
         }
 
         private ScoredResultEntity GetCurrentScoredResult(SessionBaseEntity session, LeagueDbContext dbContext)
