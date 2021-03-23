@@ -77,6 +77,11 @@ namespace iRLeagueDatabase.DataTransfer
             }
         }
 
+        public BaseDTO()
+        {
+            SerializableProperties = DerivedDataMembers[this.GetType()].ToList();
+        }
+
         public void SetSerializableProperties(string[] fields, bool exclude = false)
         {
             // get all properties that are declared as DataMember
