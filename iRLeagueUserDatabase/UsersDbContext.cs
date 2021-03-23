@@ -5,7 +5,7 @@ using System;
 
 namespace iRLeagueUserDatabase
 {
-    [DbConfigurationType(typeof(iRLeagueDatabase.LeagueDbConfiguration))]
+    [DbConfigurationType(typeof(iRLeagueDatabase.MyContextConfiguration))]
     public class UsersDbContext : IdentityDbContext<IdentityUser>
     {
         public virtual DbSet<UserProfile> UserProfiles { get; set; }

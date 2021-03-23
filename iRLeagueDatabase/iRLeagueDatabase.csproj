@@ -166,6 +166,7 @@
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
