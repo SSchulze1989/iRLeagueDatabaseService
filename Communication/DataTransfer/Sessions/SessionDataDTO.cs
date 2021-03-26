@@ -79,6 +79,12 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// </summary>
         public TimeSpan Duration { get; set; }
 
+        /// <summary>
+        /// Ids of sub sessions e.g: for single heats or with multi race events
+        /// </summary>
+        [DataMember]
+        public long[] SubSessionids { get; set; }
+
         #region Version Info
         [DataMember]
         public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }

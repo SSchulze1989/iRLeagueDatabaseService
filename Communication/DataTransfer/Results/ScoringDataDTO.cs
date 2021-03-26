@@ -88,6 +88,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public bool UseResultSetTeam { get; set; }
         [DataMember]
         public bool UpdateTeamOnRecalculation { get; set; }
+        [DataMember]
+        public long[] SubSessionScoringIds { get; set; }
 
         #region Version Info
         [DataMember]
