@@ -45,6 +45,8 @@ namespace iRLeagueDatabase.Entities.Sessions
         //[XmlIgnore]
         public SessionType SessionType { get; set; }
 
+        public string Name { get; set; }
+
         /// <summary>
         /// Date of the session.
         /// </summary>

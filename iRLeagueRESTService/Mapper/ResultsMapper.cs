@@ -207,7 +207,10 @@ namespace iRLeagueDatabase.Mapper
             target.ResultsFilterOptionIds = source.ResultsFilterOptions.Select(x => x.ResultsFilterId).ToArray();
             target.UseResultSetTeam = source.UseResultSetTeam;
             target.UpdateTeamOnRecalculation = source.UpdateTeamOnRecalculation;
+            target.ParentScoringId = source.ParentScoringId;
             target.SubSessionScoringIds = source.SubSessionScorings.Select(x => x.ScoringId).ToArray();
+            target.AccumulateBy = source.AccumulateBy;
+            target.AccumulateResultsOption = source.AccumulateResultsOption;
 
             return target;
         }

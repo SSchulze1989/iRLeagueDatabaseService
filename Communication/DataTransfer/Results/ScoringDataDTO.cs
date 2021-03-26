@@ -32,6 +32,7 @@ using iRLeagueManager.Enums;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Filters;
+using iRLeagueDatabase.Enums;
 
 namespace iRLeagueDatabase.DataTransfer.Results
 {
@@ -89,7 +90,15 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public bool UpdateTeamOnRecalculation { get; set; }
         [DataMember]
+        public long? ParentScoringId { get; set; }
+        [DataMember]
         public long[] SubSessionScoringIds { get; set; }
+        [DataMember]
+        public IEnumerable<double> ScoringWeights { get; set; }
+        [DataMember]
+        public AccumulateByOption AccumulateBy { get; set; }
+        [DataMember]
+        public AccumulateResultsOption AccumulateResultsOption { get; set; }
 
         #region Version Info
         [DataMember]

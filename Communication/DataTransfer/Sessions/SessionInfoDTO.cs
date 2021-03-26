@@ -44,6 +44,9 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// </summary>
         public SessionType SessionType { get; set; }
 
+        [DataMember]
+        public string Name { get; set; }
+
         public override object MappingId => SessionId;
 
         public override object[] Keys => new object[] { SessionId };

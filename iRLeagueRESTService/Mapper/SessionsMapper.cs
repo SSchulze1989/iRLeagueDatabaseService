@@ -33,6 +33,7 @@ namespace iRLeagueDatabase.Mapper
             MapToVersionInfoDTO(source, target);
             target.SessionId = source.SessionId;
             target.SessionType = source.SessionType;
+            target.Name = source.Name;
 
             return target;
         }
@@ -209,6 +210,7 @@ namespace iRLeagueDatabase.Mapper
             //target.Schedule = GetScheduleEntity(source.Schedule);
             //target.SessionResult = GetResultEntity(new DataTransfer.Results.ResultInfoDTO() { ResultId = source.SessionResultId });
             target.SessionResult = DefaultGet<ResultEntity>(source.SessionId);
+            target.Name = source.Name;
             //MapCollection(source.Reviews, target.Reviews, (src, trg) => GetReviewEntity(src), src => src.ReviewId);
 
             return target;
