@@ -278,6 +278,7 @@
           <Property Name="ExtScoringSourceId" Type="Int64" />
           <Property Name="TakeResultsFromExtSource" Type="Boolean" Nullable="false" />
           <Property Name="ScoringWeightValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AccumulateBy" Type="Self.AccumulateByOption" Nullable="false" />
           <Property Name="AccumulateResultsOption" Type="Self.AccumulateResultsOption" Nullable="false" />
           <Property Name="SeasonId" Type="Int64" Nullable="false" />
           <Property Name="BasePoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -330,6 +331,8 @@
           <Property Name="SeasonId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SeasonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Finished" Type="Boolean" Nullable="false" />
+          <Property Name="SeasonStart" Type="DateTime" />
+          <Property Name="SeasonEnd" Type="DateTime" />
           <Property Name="HideCommentsBeforeVoted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
@@ -658,12 +661,17 @@
           <Member Name="Team" Value="1" />
           <Member Name="Custom" Value="3" />
         </EnumType>
+        <EnumType Name="AccumulateByOption" IsFlags="false" customannotation:ClrType="iRLeagueDatabase.Enums.AccumulateByOption, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="Member" Value="0" />
+          <Member Name="Team" Value="1" />
+        </EnumType>
         <EnumType Name="AccumulateResultsOption" IsFlags="false" customannotation:ClrType="iRLeagueDatabase.Enums.AccumulateResultsOption, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="None" Value="0" />
-          <Member Name="Best" Value="1" />
-          <Member Name="Worst" Value="2" />
-          <Member Name="Average" Value="3" />
-          <Member Name="WeightedAverage" Value="4" />
+          <Member Name="Sum" Value="1" />
+          <Member Name="Best" Value="2" />
+          <Member Name="Worst" Value="3" />
+          <Member Name="Average" Value="4" />
+          <Member Name="WeightedAverage" Value="5" />
         </EnumType>
         <EnumType Name="DropRacesOption" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.DropRacesOption, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="PerTeamResults" Value="0" />
@@ -1927,6 +1935,7 @@
                 <ScalarProperty Name="ExtScoringSourceId" ColumnName="ExtScoringSourceId" />
                 <ScalarProperty Name="TakeResultsFromExtSource" ColumnName="TakeResultsFromExtSource" />
                 <ScalarProperty Name="ScoringWeightValues" ColumnName="ScoringWeightValues" />
+                <ScalarProperty Name="AccumulateBy" ColumnName="AccumulateBy" />
                 <ScalarProperty Name="AccumulateResultsOption" ColumnName="AccumulateResultsOption" />
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="BasePoints" ColumnName="BasePoints" />
@@ -1968,6 +1977,8 @@
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="SeasonName" ColumnName="SeasonName" />
                 <ScalarProperty Name="Finished" ColumnName="Finished" />
+                <ScalarProperty Name="SeasonStart" ColumnName="SeasonStart" />
+                <ScalarProperty Name="SeasonEnd" ColumnName="SeasonEnd" />
                 <ScalarProperty Name="HideCommentsBeforeVoted" ColumnName="HideCommentsBeforeVoted" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
@@ -2616,6 +2627,7 @@
           <Property Name="ExtScoringSourceId" Type="bigint" customannotation:Index="{ Name: IX_ExtScoringSourceId, Order: 0 }" Nullable="true" />
           <Property Name="TakeResultsFromExtSource" Type="bit" Nullable="false" />
           <Property Name="ScoringWeightValues" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="AccumulateBy" Type="int" Nullable="false" />
           <Property Name="AccumulateResultsOption" Type="int" Nullable="false" />
           <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="false" />
           <Property Name="BasePoints" Type="nvarchar(max)" Nullable="true" />
@@ -2656,6 +2668,8 @@
           <Property Name="SeasonId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SeasonName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Finished" Type="bit" Nullable="false" />
+          <Property Name="SeasonStart" Type="datetime" Nullable="true" />
+          <Property Name="SeasonEnd" Type="datetime" Nullable="true" />
           <Property Name="HideCommentsBeforeVoted" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
