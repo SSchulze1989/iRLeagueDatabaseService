@@ -27,5 +27,7 @@ namespace iRLeagueDatabase.Entities.Reviews
         [ForeignKey(nameof(CustomVoteCat))]
         public long? CustomVoteCatId { get; set; }
         public virtual VoteCategoryEntity CustomVoteCat { get; set; }
+
+        public string Description { get; set; }
     }
 }

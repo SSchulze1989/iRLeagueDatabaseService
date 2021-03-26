@@ -14,7 +14,7 @@ using iRLeagueDatabase.Entities.Members;
 namespace iRLeagueDatabase.Entities.Results
 {
     [Serializable]
-    public class ResultRowEntity : MappableEntity
+    public class ResultRowEntity : MappableEntity, IResultRow
     {
         [Key, Column(Order = 0), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ResultRowId { get; set; }
@@ -40,6 +40,10 @@ namespace iRLeagueDatabase.Entities.Results
         [ForeignKey(nameof(Member))]
         public long MemberId { get; set; }
         public virtual LeagueMemberEntity Member { get; set; }
+
+        [ForeignKey(nameof(Team))]
+        public long? TeamId { get; set; }
+        public virtual TeamEntity Team { get; set; }
 
         public int OldIRating { get; set; }
         public int NewIRating { get; set; }

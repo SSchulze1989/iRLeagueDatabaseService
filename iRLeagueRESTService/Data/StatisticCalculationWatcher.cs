@@ -12,7 +12,7 @@ namespace iRLeagueRESTService.Data
 {
     public static class StatisticCalculationWatcher
     {
-        private static TimeSpan TickInterval = TimeSpan.FromMinutes(1);
+        private static TimeSpan TickInterval = TimeSpan.FromMinutes(30);
 
         private static IDictionary<string, Timer> RegisteredWatchers { get; } = new Dictionary<string, Timer>();
 
@@ -36,6 +36,7 @@ namespace iRLeagueRESTService.Data
             timer.Elapsed += async (sender, e) => await Tick(leagueDbName);
             RegisteredWatchers.Add(leagueDbName, timer);
             timer.Start();
+            GC.Collect();
         }
 
         private static async Task Tick(string leagueDbName)
@@ -60,6 +61,7 @@ namespace iRLeagueRESTService.Data
                 dbContext.Configuration.LazyLoadingEnabled = true;
                 dbContext.SaveChanges();
             }
+            GC.Collect();
         }
 
         private static int GetTypePriority(object o)

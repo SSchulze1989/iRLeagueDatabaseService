@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataTransfer.Sessions;
+using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -49,9 +50,9 @@ namespace iRLeagueDatabase.Mapper
             target.Date = source.Date.GetValueOrDefault();
             target.Duration = source.Duration;
             target.LocationId = source.LocationId;
-            target.Schedule = MapToScheduleInfoDTO(source.Schedule);
-            target.SessionResult = MapToResultInfoDTO(source.SessionResult);
-            target.Reviews = source.Reviews.Select(x => MapToReviewInfoDTO(x)).ToArray();
+            target.ScheduleId = source.ScheduleId; // MapToScheduleInfoDTO(source.Schedule);
+            target.SessionResultId = source.SessionResult?.ResultId; // MapToResultInfoDTO(source.SessionResult);
+            target.ReviewIds = source.Reviews.Select(x => x.ReviewId).ToArray();
 
             return target;
         }
@@ -123,7 +124,7 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Name = source.Name;
-            target.Sessions = source.Sessions.Select(MapTo<SessionDataDTO>).ToList();
+            target.Sessions = source.Sessions.Select(MapTo<SessionDataDTO>).ToArray();
 
             return target;
         }
@@ -206,7 +207,8 @@ namespace iRLeagueDatabase.Mapper
             target.Duration = source.Duration;
             target.LocationId = source.LocationId;
             //target.Schedule = GetScheduleEntity(source.Schedule);
-            target.SessionResult = GetResultEntity(source.SessionResult);
+            //target.SessionResult = GetResultEntity(new DataTransfer.Results.ResultInfoDTO() { ResultId = source.SessionResultId });
+            target.SessionResult = DefaultGet<ResultEntity>(source.SessionId);
             //MapCollection(source.Reviews, target.Reviews, (src, trg) => GetReviewEntity(src), src => src.ReviewId);
 
             return target;

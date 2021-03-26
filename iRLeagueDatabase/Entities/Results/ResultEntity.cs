@@ -62,9 +62,9 @@ namespace iRLeagueDatabase.Entities.Results
 
         public override void Delete(LeagueDbContext dbContext)
         {
-            IRSimSessionDetails.Delete(dbContext);
-            RawResults.ToList().ForEach(x => x.Delete(dbContext));
-            ScoredResults.ToList().ForEach(x =>  x.Delete(dbContext));
+            IRSimSessionDetails?.Delete(dbContext);
+            RawResults?.ToList().ForEach(x => x.Delete(dbContext));
+            ScoredResults?.ToList().ForEach(x =>  x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

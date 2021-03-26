@@ -339,3 +339,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /iRLeagueRESTService/App_Data/Tracks.xml
+/iRLeagueRESTService/App_Data/Leagues/Register.xml
+/iRLeagueRESTService/App_Data/Leagues/Tracks.xml
+*.edmx

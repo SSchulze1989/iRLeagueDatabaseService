@@ -20,6 +20,8 @@ namespace iRLeagueDatabase.Entities.Results
         public string Name { get; set; }
         public int DropWeeks { get; set; }
         public int AverageRaceNr { get; set; }
+        [ForeignKey(nameof(Season))]
+        public long SeasonId { get; set; }
         [Required]
         public virtual SeasonEntity Season { get; set; }
         public string ScoringFactors { get; set; }
@@ -53,13 +55,14 @@ namespace iRLeagueDatabase.Entities.Results
         {
             var allSessions = GetAllSessions();
 
-            if (Scorings != null && Scorings.Count > 0)
-            {
-                foreach (var msc in Scorings)
-                {
-                    allSessions.AddRange(msc.Sessions);
-                }
-            }
+            //if (Scorings != null && Scorings.Count > 0)
+            //{
+            //    foreach (var msc in Scorings)
+            //    {
+            //        var addSessions = msc.Sessions.Except(allSessions);
+            //        allSessions.AddRange(addSessions);
+            //    }
+            //}
 
             var session = allSessions.Where(x => x.SessionResult != null).OrderBy(x => x.Date).LastOrDefault();
             if (session == null)
@@ -100,7 +103,7 @@ namespace iRLeagueDatabase.Entities.Results
                 return standings;
 
             if (maxRacesCount == -1)
-                maxRacesCount = Sessions.Count() - maxRacesCount;
+                maxRacesCount = Sessions.Count() - DropWeeks;
 
             if (ScoringKind == ScoringKindEnum.Team)
             {
@@ -261,7 +264,7 @@ namespace iRLeagueDatabase.Entities.Results
                 if (dropRacesOption == DropRacesOption.PerDriverResults)
                 {
                     if (allScoredResultRows != null)
-                        teamDriverResultRows = allScoredResultRows.Where(x => team.Members.Contains(x.ResultRow.Member));
+                        teamDriverResultRows = allScoredResultRows.Where(x => x.TeamId == team.TeamId);
 
                     List<ScoredResultRowEntity> excludeResultRows = new List<ScoredResultRowEntity>();
                     var drivers= teamDriverResultRows.GroupBy(x => x.ResultRow.Member);

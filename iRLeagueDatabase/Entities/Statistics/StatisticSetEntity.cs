@@ -54,6 +54,11 @@ namespace iRLeagueDatabase.Entities.Statistics
         [NotMapped]
         public bool IsDataLoaded { get; protected set; } = false;
 
+        [NotMapped]
+        public DateTime? StartDate => DriverStatistic.Min(x => x.FirstRaceDate);
+        [NotMapped]
+        public DateTime? EndDate => DriverStatistic.Max(x => x.LastRaceDate);
+
         public StatisticSetEntity()
         {
             DriverStatistic = new List<DriverStatisticRowEntity>();

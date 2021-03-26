@@ -23,6 +23,8 @@ namespace iRLeagueDatabase.Entities.Sessions
         //public int? ScheduleId { get; set; }
         //[Key, ForeignKey(nameof(Schedule)), Column(Order = 2)]
         //public int ScheduleId { get; set; }
+        [ForeignKey(nameof(Schedule))]
+        public long ScheduleId { get; set; }
         [Required]
         public virtual ScheduleEntity Schedule { get; set; }
 

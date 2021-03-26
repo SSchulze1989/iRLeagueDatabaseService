@@ -112,11 +112,16 @@ namespace iRLeagueDatabase.Mapper
 
         public object MapTo(object source, Type targetType)
         {
-            return MapTo(source, null, source.GetType(), targetType);
+            return MapTo(source, null, source?.GetType(), targetType);
         }
 
         public object MapTo(object source, object target, Type sourceType, Type targetType)
         {
+            if (source == null)
+            {
+                return null;
+            }
+
             try
             {
                 var typeMap = GetTypeMap(sourceType, targetType);

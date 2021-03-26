@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.DataTransfer.Reviews;
+using iRLeagueDatabase.DataTransfer.Sessions;
+using iRLeagueDatabase.DataTransfer.Members;
+using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -52,12 +55,12 @@ namespace iRLeagueDatabase.Mapper
             target.IncidentKind = source.IncidentKind;
             target.FullDescription = source.FullDescription;
             target.AuthorName = source.AuthorName;
-            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToList();
+            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToArray();
             target.Corner = source.Corner;
-            target.InvolvedMembers = source.InvolvedMembers?.Select(x => MapToMemberInfoDTO(x)).ToList();
+            target.InvolvedMemberIds = source.InvolvedMembers?.Select(x => x.MemberId).ToArray();
             target.OnLap = source.OnLap;
             target.ReviewId = source.ReviewId;
-            target.Session = MapToSessionInfoDTO(source.Session);
+            target.SessionId = source.SessionId; //MapToSessionInfoDTO(source.Session);
             target.TimeStamp = source.TimeStamp;
             target.AcceptedReviewVotes = source.AcceptedReviewVotes?.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
             target.ResultLongText = source.ResultLongText;
@@ -107,7 +110,7 @@ namespace iRLeagueDatabase.Mapper
                 target = new ReviewCommentDataDTO();
 
             MapToCommentDataDTO(source, target);
-            target.Review = MapToReviewInfoDTO(source.Review);
+            target.ReviewId = source.ReviewId; // MapToReviewInfoDTO(source.Review);
             target.CommentReviewVotes = source.CommentReviewVotes.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
 
             return target;
@@ -122,8 +125,11 @@ namespace iRLeagueDatabase.Mapper
 
             target.ReviewVoteId = source.ReviewVoteId;
             target.Vote = source.Vote;
-            target.MemberAtFault = MapToMemberInfoDTO(source.MemberAtFault);
+            target.MemberAtFaultId = source.MemberAtFaultId; // MapToMemberInfoDTO(source.MemberAtFault);
             target.VoteCategoryId = source.CustomVoteCatId;
+            target.CatText = source.CustomVoteCat?.Text;
+            target.CatPenalty = source.CustomVoteCat?.DefaultPenalty ?? 0;
+            target.Description = source.Description;
 
             return target;
         }
@@ -202,7 +208,7 @@ namespace iRLeagueDatabase.Mapper
 
             //target.Author = GetMemberEntity(source.Author);
             target.AuthorUserId = source.AuthorUserId;
-            target.Session = GetSessionBaseEntity(source.Session);
+            target.Session = GetSessionBaseEntity(new SessionInfoDTO() { SessionId = source.SessionId });
             target.IncidentKind = source.IncidentKind;
             target.FullDescription = source.FullDescription;
             target.AuthorName = source.AuthorName;
@@ -212,7 +218,7 @@ namespace iRLeagueDatabase.Mapper
             target.Corner = source.Corner;
             if (target.InvolvedMembers == null)
                 target.InvolvedMembers = new List<Entities.Members.LeagueMemberEntity>();
-            MapCollection(source.InvolvedMembers, target.InvolvedMembers, GetMemberEntity, x => x.MemberId, removeFromCollection: true);
+            MapCollection(source.InvolvedMemberIds.Select(x => new LeagueMemberInfoDTO() { MemberId = x }), target.InvolvedMembers, GetMemberEntity, x => x.MemberId, removeFromCollection: true);
             target.OnLap = source.OnLap;
             target.TimeStamp = source.TimeStamp;
             if (target.AcceptedReviewVotes == null)
@@ -308,7 +314,8 @@ namespace iRLeagueDatabase.Mapper
                 return target;
 
             MapToCommentBaseEntity(source, target);
-            target.Review = GetReviewEntity(source.Review);
+            //target.Review = GetReviewEntity(new IncidentReviewInfoDTO() { ReviewId = source.ReviewId });
+            target.Review = DefaultGet<IncidentReviewEntity>(source.ReviewId);
             if (target.CommentReviewVotes == null)
                 target.CommentReviewVotes = new List<CommentReviewVoteEntity>();
             MapCollection(source.CommentReviewVotes, target.CommentReviewVotes, MapToCommentReviewVoteEntity, 
@@ -322,9 +329,10 @@ namespace iRLeagueDatabase.Mapper
             if (source == null || target == null)
                 return null;
 
-            target.MemberAtFault = GetMemberEntity(source.MemberAtFault);
+            target.MemberAtFault = DefaultGet<LeagueMemberEntity>(source.MemberAtFaultId);
             target.Vote = source.Vote;
-            target.CustomVoteCat = DefaultGet<VoteCategoryEntity>(new object[] { source.VoteCategoryId });
+            target.CustomVoteCat = DefaultGet<VoteCategoryEntity>(source.VoteCategoryId);
+            target.Description = source.Description;
 
             return target;
         }

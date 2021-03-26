@@ -57,6 +57,7 @@
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
     <Compile Include="Entities\Filters\FilterValueBaseEntity.cs" />
     <Compile Include="Entities\Filters\IntFilterValueEntity.cs" />
+    <Compile Include="Entities\Results\IResultRow.cs" />
     <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
     <Compile Include="Entities\Filters\MemberFilterValueEntity.cs" />
     <Compile Include="Entities\Filters\ResultsFilterOptionEntity.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Filters\FilterTypeEnum.cs" />
     <Compile Include="Filters\InvalidFilterValueException.cs" />
     <Compile Include="Filters\IResultsFilter.cs" />
+    <Compile Include="Filters\IResultsFilterRow.cs" />
     <Compile Include="Filters\MemberListFilter.cs" />
     <Compile Include="Filters\SeasonStartIRatingFilter.cs" />
     <Compile Include="LeagueDbConfiguration.cs" />
@@ -143,7 +145,28 @@
     <Compile Include="Migrations\202012291901576_AddStatistics.designer.cs">
       <DependentUpon>202012291901576_AddStatistics.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101082034374_AddFilterPointsOnlyOption.cs" />
+    <Compile Include="Migrations\202101082034374_AddFilterPointsOnlyOption.designer.cs">
+      <DependentUpon>202101082034374_AddFilterPointsOnlyOption.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202101140104453_AddMissingForeignKeys.cs" />
+    <Compile Include="Migrations\202101140104453_AddMissingForeignKeys.designer.cs">
+      <DependentUpon>202101140104453_AddMissingForeignKeys.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102052252475_AddAdditionalTeamInfo.cs" />
+    <Compile Include="Migrations\202102052252475_AddAdditionalTeamInfo.designer.cs">
+      <DependentUpon>202102052252475_AddAdditionalTeamInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102062147212_AddReviewVoteDescr.cs" />
+    <Compile Include="Migrations\202102062147212_AddReviewVoteDescr.designer.cs">
+      <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.cs" />
+    <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.designer.cs">
+      <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -178,9 +201,24 @@
     <EmbeddedResource Include="Migrations\202012291901576_AddStatistics.resx">
       <DependentUpon>202012291901576_AddStatistics.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101082034374_AddFilterPointsOnlyOption.resx">
+      <DependentUpon>202101082034374_AddFilterPointsOnlyOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101140104453_AddMissingForeignKeys.resx">
+      <DependentUpon>202101140104453_AddMissingForeignKeys.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102052252475_AddAdditionalTeamInfo.resx">
+      <DependentUpon>202102052252475_AddAdditionalTeamInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102062147212_AddReviewVoteDescr.resx">
+      <DependentUpon>202102062147212_AddReviewVoteDescr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103102204011_AddSeasonStartEndDate.resx">
+      <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\iRLeagueManager\Communication\Communication.csproj">
+    <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
       <Name>Communication</Name>
     </ProjectReference>

@@ -24,6 +24,7 @@ namespace iRLeagueDatabase.Entities.Filters
         public string ColumnPropertyName { get; set; }
         public ComparatorTypeEnum Comparator { get; set; }
         public bool Exclude { get; set; }
+        public bool FilterPointsOnly { get; set; }
 
         //[InverseProperty(nameof(FilterValueBaseEntity.ResultsFilterOption))]
         //public virtual List<FilterValueBaseEntity> FilterValues { get; set; }

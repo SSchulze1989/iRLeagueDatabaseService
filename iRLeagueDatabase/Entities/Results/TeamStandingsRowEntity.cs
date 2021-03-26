@@ -34,7 +34,7 @@ namespace iRLeagueDatabase.Entities.Results
                 CompletedLapsChange = source.CompletedLaps - compare.CompletedLaps,
                 Incidents = source.Incidents,
                 IncidentsChange = source.Incidents - compare.Incidents,
-                DroppedResults = source.DroppedResults,
+                DroppedResultCount = source.DroppedResultCount,
                 FastestLaps = source.FastestLaps,
                 FastestLapsChange = source.FastestLaps - compare.FastestLaps,
                 LastPosition = compare.Position,

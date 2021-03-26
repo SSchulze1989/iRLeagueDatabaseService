@@ -20,31 +20,23 @@ using System.Threading.Tasks;
 
 namespace iRLeagueRESTService.Data
 {
-    public class ModelDataProvider<TModelDTO> : IModelDataProvider<TModelDTO, long[]>, IDisposable where TModelDTO : class, IMappableDTO
+    public class ModelDataProvider<TModelDTO> : DataProviderBase, IModelDataProvider<TModelDTO, long[]>, IDisposable where TModelDTO : class, IMappableDTO
     {
-        private LeagueDbContext DbContext { get; }
 
-        public string UserName { get; set; }
-        public string UserId { get; set; }
-
-        public ModelDataProvider()
+        public ModelDataProvider() : base(new LeagueDbContext())
         {
-            DbContext = new LeagueDbContext();
         }
 
-        public ModelDataProvider(LeagueDbContext context)
+        public ModelDataProvider(LeagueDbContext context) : base (context)
         {
-            DbContext = context;
         }
 
-        public ModelDataProvider(LeagueDbContext context, string userName) : this(context)
+        public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName)
         {
-            UserName = userName;
         }
 
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId)  : this(context, userName)
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId)
         {
-            UserId = userId;
         }
 
         public void Dispose()
@@ -69,14 +61,17 @@ namespace iRLeagueRESTService.Data
 
         public TModelDTO[] GetArray(Type requestType, long[][] requestIds)
         {
-            TModelDTO[] items = null;
+            TModelDTO[] items = new TModelDTO[0];
 
             var mapper = new DTOMapper(DbContext);
 
             if (requestType.Equals(typeof(ScoredResultDataDTO)))
             {
                 //var leagueService = new LeagueDBService.LeagueDBService();
-                items = requestIds.Select(x => GetScoredResult(x[0], x[1])).Cast<TModelDTO>().ToArray();
+                if (requestIds != null && requestIds.Count() > 0)
+                {
+                    items = requestIds.Select(x => GetScoredResult(x[0], x[1])).Cast<TModelDTO>().ToArray();
+                }
             }
             else if (requestType.Equals(typeof(StandingsDataDTO)))
             {
@@ -153,7 +148,9 @@ namespace iRLeagueRESTService.Data
                 .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
                 .Include(x => x.Replies).Load();
             DbContext.Set<AcceptedReviewVoteEntity>().Where(x => keys.Contains(x.ReviewId))
-                .Include(x => x.MemberAtFault).Load();
+                .Include(x => x.MemberAtFault)
+                .Include(x => x.CustomVoteCat)
+                .Load();
 
             DbContext.ChangeTracker.DetectChanges();
 
@@ -293,7 +290,7 @@ namespace iRLeagueRESTService.Data
             return status;
         }
 
-        private ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId)
+        public ScoredResultDataDTO GetScoredResult(long sessionId, long scoringId)
         {
             var scoredResultData = new ScoredResultDataDTO();
 
@@ -309,7 +306,7 @@ namespace iRLeagueRESTService.Data
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,
-                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    ScoringId = scoringId
                 };
             }
             else if (result.RequiresRecalculation)
@@ -322,6 +319,8 @@ namespace iRLeagueRESTService.Data
                 //.AsNoTracking()
                 //.Include(x => x.Result.Session)
                 .Include(x => x.Scoring)
+                .Include(x => x.HardChargers)
+                .Include(x => x.CleanestDrivers)
                 //.Include(x => x.Result.RawResults.Select(y => y.Member))
                 //.Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
                 //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
@@ -331,7 +330,7 @@ namespace iRLeagueRESTService.Data
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,
-                    Scoring = new ScoringInfoDTO() { ScoringId = scoringId }
+                    ScoringId = scoringId
                 };
             //DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
             //         .Include(x => x.Session).Load();
@@ -373,12 +372,12 @@ namespace iRLeagueRESTService.Data
             return scoredResultData;
         }
 
-        private StandingsDataDTO[] GetStandings(long[] scoringIds)
+        public StandingsDataDTO[] GetStandings(long[] scoringIds)
         {
             return GetStandings(scoringIds.Select(x => new long[] { x }).ToArray());
         }
 
-        private StandingsDataDTO[] GetStandings(long[][] requestIds)
+        public StandingsDataDTO[] GetStandings(long[][] requestIds)
         {
             var mapper = new DTOMapper(DbContext);
 
@@ -411,6 +410,7 @@ namespace iRLeagueRESTService.Data
                         var loadScoredResults = DbContext.Set<ScoredResultEntity>()
                             .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
                             .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
+                            .Include(x => x.FinalResults.Select(y => y.Team))
                             .ToList();
                     }
 
@@ -439,7 +439,6 @@ namespace iRLeagueRESTService.Data
                             standings = scoringTable.GetSeasonStandings(scoringSession, DbContext);
                         }
                         var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
-                        standingsDTO.SessionId = sessionId;
                         responseItems.Add(standingsDTO);
                     }
                 }

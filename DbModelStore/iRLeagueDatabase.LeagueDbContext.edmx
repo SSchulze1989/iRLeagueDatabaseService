@@ -88,6 +88,7 @@
           <Property Name="ResultRowId" Type="Int64" Nullable="false" />
           <Property Name="ScoredResultId" Type="Int64" Nullable="false" />
           <Property Name="ScoringId" Type="Int64" Nullable="false" />
+          <Property Name="TeamId" Type="Int64" />
           <Property Name="RacePoints" Type="Int32" Nullable="false" />
           <Property Name="BonusPoints" Type="Int32" Nullable="false" />
           <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
@@ -98,6 +99,7 @@
           <NavigationProperty Name="ResultRow" Relationship="Self.ResultRowEntity_ScoredResultRows" FromRole="ResultRowEntity_ScoredResultRows_Target" ToRole="ResultRowEntity_ScoredResultRows_Source" />
           <NavigationProperty Name="ReviewPenalties" Relationship="Self.ScoredResultRowEntity_ReviewPenalties" FromRole="ScoredResultRowEntity_ReviewPenalties_Source" ToRole="ScoredResultRowEntity_ReviewPenalties_Target" />
           <NavigationProperty Name="ScoredResult" Relationship="Self.ScoredResultEntity_FinalResults" FromRole="ScoredResultEntity_FinalResults_Target" ToRole="ScoredResultEntity_FinalResults_Source" />
+          <NavigationProperty Name="Team" Relationship="Self.ScoredResultRowEntity_Team" FromRole="ScoredResultRowEntity_Team_Source" ToRole="ScoredResultRowEntity_Team_Target" />
         </EntityType>
         <EntityType Name="AddPenaltyEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.AddPenaltyEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
@@ -117,6 +119,7 @@
           <Property Name="StartPosition" Type="Int32" Nullable="false" />
           <Property Name="FinishPosition" Type="Int32" Nullable="false" />
           <Property Name="MemberId" Type="Int64" Nullable="false" />
+          <Property Name="TeamId" Type="Int64" />
           <Property Name="OldIRating" Type="Int32" Nullable="false" />
           <Property Name="NewIRating" Type="Int32" Nullable="false" />
           <Property Name="SeasonStartIRating" Type="Int32" Nullable="false" />
@@ -156,6 +159,7 @@
           <NavigationProperty Name="Member" Relationship="Self.ResultRowEntity_Member" FromRole="ResultRowEntity_Member_Source" ToRole="ResultRowEntity_Member_Target" />
           <NavigationProperty Name="Result" Relationship="Self.ResultEntity_RawResults" FromRole="ResultEntity_RawResults_Target" ToRole="ResultEntity_RawResults_Source" />
           <NavigationProperty Name="ScoredResultRows" Relationship="Self.ResultRowEntity_ScoredResultRows" FromRole="ResultRowEntity_ScoredResultRows_Source" ToRole="ResultRowEntity_ScoredResultRows_Target" />
+          <NavigationProperty Name="Team" Relationship="Self.ResultRowEntity_Team" FromRole="ResultRowEntity_Team_Source" ToRole="ResultRowEntity_Team_Target" />
         </EntityType>
         <EntityType Name="ResultEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ResultEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <Key>
@@ -272,9 +276,13 @@
           <Property Name="TakeGroupAverage" Type="Boolean" Nullable="false" />
           <Property Name="ExtScoringSourceId" Type="Int64" />
           <Property Name="TakeResultsFromExtSource" Type="Boolean" Nullable="false" />
+          <Property Name="SeasonId" Type="Int64" Nullable="false" />
           <Property Name="BasePoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="BonusPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IncPenaltyPoints" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ConnectedScheduleId" Type="Int64" />
+          <Property Name="UseResultSetTeam" Type="Boolean" Nullable="false" />
+          <Property Name="UpdateTeamOnRecalculation" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -315,6 +323,8 @@
           <Property Name="SeasonId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SeasonName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Finished" Type="Boolean" Nullable="false" />
+          <Property Name="SeasonStart" Type="DateTime" />
+          <Property Name="SeasonEnd" Type="DateTime" />
           <Property Name="HideCommentsBeforeVoted" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
@@ -338,6 +348,7 @@
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropWeeks" Type="Int32" Nullable="false" />
           <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
+          <Property Name="SeasonId" Type="Int64" Nullable="false" />
           <Property Name="ScoringFactors" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropRacesOption" Type="Self.DropRacesOption" Nullable="false" />
           <Property Name="ResultsPerRaceCount" Type="Int32" Nullable="false" />
@@ -487,6 +498,7 @@
           <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="Int64" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CustomVoteCat" Relationship="Self.AcceptedReviewVoteEntity_CustomVoteCat" FromRole="AcceptedReviewVoteEntity_CustomVoteCat_Source" ToRole="AcceptedReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="IncidentReview" Relationship="Self.IncidentReviewEntity_AcceptedReviewVotes" FromRole="IncidentReviewEntity_AcceptedReviewVotes_Target" ToRole="IncidentReviewEntity_AcceptedReviewVotes_Source" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.AcceptedReviewVoteEntity_MemberAtFault" FromRole="AcceptedReviewVoteEntity_MemberAtFault_Source" ToRole="AcceptedReviewVoteEntity_MemberAtFault_Target" />
@@ -519,6 +531,7 @@
           <Property Name="MemberAtFaultId" Type="Int64" />
           <Property Name="Vote" Type="Self.VoteEnum" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="Int64" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="CustomVoteCat" Relationship="Self.CommentReviewVoteEntity_CustomVoteCat" FromRole="CommentReviewVoteEntity_CustomVoteCat_Source" ToRole="CommentReviewVoteEntity_CustomVoteCat_Target" />
           <NavigationProperty Name="MemberAtFault" Relationship="Self.CommentReviewVoteEntity_MemberAtFault" FromRole="CommentReviewVoteEntity_MemberAtFault_Source" ToRole="CommentReviewVoteEntity_MemberAtFault_Target" />
           <NavigationProperty Name="ReviewComment" Relationship="Self.ReviewCommentEntity_CommentReviewVotes" FromRole="ReviewCommentEntity_CommentReviewVotes_Target" ToRole="ReviewCommentEntity_CommentReviewVotes_Source" />
@@ -548,6 +561,7 @@
             <PropertyRef Name="SessionId" />
           </Key>
           <Property Name="SessionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScheduleId" Type="Int64" Nullable="false" />
           <Property Name="SessionTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="SessionType" Type="Self.SessionType" Nullable="false" />
           <Property Name="Date" Type="DateTime" />
@@ -599,6 +613,7 @@
           <Property Name="ColumnPropertyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Comparator" Type="Self.ComparatorTypeEnum" Nullable="false" />
           <Property Name="Exclude" Type="Boolean" Nullable="false" />
+          <Property Name="FilterPointsOnly" Type="Boolean" Nullable="false" />
           <Property Name="FilterValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
@@ -779,6 +794,14 @@
           <End Role="ScoringTableEntity_Season_Target" Type="Self.SeasonEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
+          <ReferentialConstraint>
+            <Principal Role="ScoringTableEntity_Season_Target">
+              <PropertyRef Name="SeasonId" />
+            </Principal>
+            <Dependent Role="ScoringTableEntity_Season_Source">
+              <PropertyRef Name="SeasonId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="AcceptedReviewVoteEntity_CustomVoteCat">
           <End Role="AcceptedReviewVoteEntity_CustomVoteCat_Source" Type="Self.AcceptedReviewVoteEntity" Multiplicity="*" />
@@ -917,6 +940,14 @@
           <End Role="SessionBaseEntity_Schedule_Target" Type="Self.ScheduleEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
+          <ReferentialConstraint>
+            <Principal Role="SessionBaseEntity_Schedule_Target">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="SessionBaseEntity_Schedule_Source">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="SessionBaseEntity_SessionResult">
           <End Role="SessionBaseEntity_SessionResult_Source" Type="Self.SessionBaseEntity" Multiplicity="1">
@@ -1075,6 +1106,14 @@
         <Association Name="ScoringEntity_ConnectedSchedule">
           <End Role="ScoringEntity_ConnectedSchedule_Source" Type="Self.ScoringEntity" Multiplicity="*" />
           <End Role="ScoringEntity_ConnectedSchedule_Target" Type="Self.ScheduleEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringEntity_ConnectedSchedule_Target">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="ScoringEntity_ConnectedSchedule_Source">
+              <PropertyRef Name="ConnectedScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="ScoringEntity_DependendScorings">
           <End Role="ScoringEntity_DependendScorings_Source" Type="Self.ScoringEntity" Multiplicity="0..1" />
@@ -1121,6 +1160,14 @@
           <End Role="ScoringEntity_Season_Target" Type="Self.SeasonEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
+          <ReferentialConstraint>
+            <Principal Role="ScoringEntity_Season_Target">
+              <PropertyRef Name="SeasonId" />
+            </Principal>
+            <Dependent Role="ScoringEntity_Season_Source">
+              <PropertyRef Name="SeasonId" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
         <Association Name="ScoringEntity_Sessions">
           <End Role="ScoringEntity_Sessions_Source" Type="Self.ScoringEntity" Multiplicity="*" />
@@ -1182,6 +1229,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ResultRowEntity_Team">
+          <End Role="ResultRowEntity_Team_Source" Type="Self.ResultRowEntity" Multiplicity="*" />
+          <End Role="ResultRowEntity_Team_Target" Type="Self.TeamEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ResultRowEntity_Team_Target">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="ResultRowEntity_Team_Source">
+              <PropertyRef Name="TeamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="ScoredResultRowEntity_ReviewPenalties">
           <End Role="ScoredResultRowEntity_ReviewPenalties_Source" Type="Self.ScoredResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1193,6 +1252,18 @@
             </Principal>
             <Dependent Role="ScoredResultRowEntity_ReviewPenalties_Target">
               <PropertyRef Name="ResultRowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoredResultRowEntity_Team">
+          <End Role="ScoredResultRowEntity_Team_Source" Type="Self.ScoredResultRowEntity" Multiplicity="*" />
+          <End Role="ScoredResultRowEntity_Team_Target" Type="Self.TeamEntity" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ScoredResultRowEntity_Team_Target">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="ScoredResultRowEntity_Team_Source">
+              <PropertyRef Name="TeamId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1451,9 +1522,17 @@
             <End Role="ResultRowEntity_ScoredResultRows_Source" EntitySet="ResultRowEntities" />
             <End Role="ResultRowEntity_ScoredResultRows_Target" EntitySet="ScoredResultRowEntities" />
           </AssociationSet>
+          <AssociationSet Name="ResultRowEntity_Team" Association="Self.ResultRowEntity_Team">
+            <End Role="ResultRowEntity_Team_Source" EntitySet="ResultRowEntities" />
+            <End Role="ResultRowEntity_Team_Target" EntitySet="TeamEntities" />
+          </AssociationSet>
           <AssociationSet Name="ScoredResultRowEntity_ReviewPenalties" Association="Self.ScoredResultRowEntity_ReviewPenalties">
             <End Role="ScoredResultRowEntity_ReviewPenalties_Source" EntitySet="ScoredResultRowEntities" />
             <End Role="ScoredResultRowEntity_ReviewPenalties_Target" EntitySet="ReviewPenaltyEntities" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredResultRowEntity_Team" Association="Self.ScoredResultRowEntity_Team">
+            <End Role="ScoredResultRowEntity_Team_Source" EntitySet="ScoredResultRowEntities" />
+            <End Role="ScoredResultRowEntity_Team_Target" EntitySet="TeamEntities" />
           </AssociationSet>
           <AssociationSet Name="ScoredTeamResultRowEntity_ScoredResultRows" Association="Self.ScoredTeamResultRowEntity_ScoredResultRows">
             <End Role="ScoredTeamResultRowEntity_ScoredResultRows_Source" EntitySet="ScoredTeamResultRowEntities" />
@@ -1600,6 +1679,7 @@
                 <ScalarProperty Name="ResultRowId" ColumnName="ResultRowId" />
                 <ScalarProperty Name="ScoredResultId" ColumnName="ScoredResultId" />
                 <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
+                <ScalarProperty Name="TeamId" ColumnName="TeamId" />
                 <ScalarProperty Name="RacePoints" ColumnName="RacePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
                 <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
@@ -1626,6 +1706,7 @@
                 <ScalarProperty Name="StartPosition" ColumnName="StartPosition" />
                 <ScalarProperty Name="FinishPosition" ColumnName="FinishPosition" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="TeamId" ColumnName="TeamId" />
                 <ScalarProperty Name="OldIRating" ColumnName="OldIRating" />
                 <ScalarProperty Name="NewIRating" ColumnName="NewIRating" />
                 <ScalarProperty Name="SeasonStartIRating" ColumnName="SeasonStartIRating" />
@@ -1794,9 +1875,13 @@
                 <ScalarProperty Name="TakeGroupAverage" ColumnName="TakeGroupAverage" />
                 <ScalarProperty Name="ExtScoringSourceId" ColumnName="ExtScoringSourceId" />
                 <ScalarProperty Name="TakeResultsFromExtSource" ColumnName="TakeResultsFromExtSource" />
+                <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="BasePoints" ColumnName="BasePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
                 <ScalarProperty Name="IncPenaltyPoints" ColumnName="IncPenaltyPoints" />
+                <ScalarProperty Name="ConnectedScheduleId" ColumnName="ConnectedScheduleId" />
+                <ScalarProperty Name="UseResultSetTeam" ColumnName="UseResultSetTeam" />
+                <ScalarProperty Name="UpdateTeamOnRecalculation" ColumnName="UpdateTeamOnRecalculation" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -1828,6 +1913,8 @@
                 <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="SeasonName" ColumnName="SeasonName" />
                 <ScalarProperty Name="Finished" ColumnName="Finished" />
+                <ScalarProperty Name="SeasonStart" ColumnName="SeasonStart" />
+                <ScalarProperty Name="SeasonEnd" ColumnName="SeasonEnd" />
                 <ScalarProperty Name="HideCommentsBeforeVoted" ColumnName="HideCommentsBeforeVoted" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
@@ -1847,6 +1934,7 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
                 <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
+                <ScalarProperty Name="SeasonId" ColumnName="SeasonId" />
                 <ScalarProperty Name="ScoringFactors" ColumnName="ScoringFactors" />
                 <ScalarProperty Name="DropRacesOption" ColumnName="DropRacesOption" />
                 <ScalarProperty Name="ResultsPerRaceCount" ColumnName="ResultsPerRaceCount" />
@@ -1952,6 +2040,7 @@
             <EntityTypeMapping TypeName="IsTypeOf(iRLeagueDatabase.SessionBaseEntity)">
               <MappingFragment StoreEntitySet="SessionBaseEntity">
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
                 <ScalarProperty Name="SessionTitle" ColumnName="SessionTitle" />
                 <ScalarProperty Name="SessionType" ColumnName="SessionType" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
@@ -2005,6 +2094,7 @@
                 <ScalarProperty Name="MemberAtFaultId" ColumnName="MemberAtFaultId" />
                 <ScalarProperty Name="Vote" ColumnName="Vote" />
                 <ScalarProperty Name="CustomVoteCatId" ColumnName="CustomVoteCatId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2058,6 +2148,7 @@
                 <ScalarProperty Name="MemberAtFaultId" ColumnName="MemberAtFaultId" />
                 <ScalarProperty Name="Vote" ColumnName="Vote" />
                 <ScalarProperty Name="CustomVoteCatId" ColumnName="CustomVoteCatId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2070,6 +2161,7 @@
                 <ScalarProperty Name="ColumnPropertyName" ColumnName="ColumnPropertyName" />
                 <ScalarProperty Name="Comparator" ColumnName="Comparator" />
                 <ScalarProperty Name="Exclude" ColumnName="Exclude" />
+                <ScalarProperty Name="FilterPointsOnly" ColumnName="FilterPointsOnly" />
                 <ScalarProperty Name="FilterValues" ColumnName="FilterValues" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
@@ -2154,45 +2246,12 @@
               <ScalarProperty Name="ScoringId" ColumnName="ScoringRefId" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="ScoringTableEntity_Season" TypeName="iRLeagueDatabase.ScoringTableEntity_Season" StoreEntitySet="ScoringTableEntity">
-            <EndProperty Name="ScoringTableEntity_Season_Target">
-              <ScalarProperty Name="SeasonId" ColumnName="Season_SeasonId" />
-            </EndProperty>
-            <EndProperty Name="ScoringTableEntity_Season_Source">
-              <ScalarProperty Name="ScoringTableId" ColumnName="ScoringTableId" />
-            </EndProperty>
-          </AssociationSetMapping>
           <AssociationSetMapping Name="IncidentReviewEntity_InvolvedMembers" TypeName="iRLeagueDatabase.IncidentReviewEntity_InvolvedMembers" StoreEntitySet="IncidentReviewEntityLeagueMemberEntity">
             <EndProperty Name="IncidentReviewEntity_InvolvedMembers_Source">
               <ScalarProperty Name="ReviewId" ColumnName="ReviewRefId" />
             </EndProperty>
             <EndProperty Name="IncidentReviewEntity_InvolvedMembers_Target">
               <ScalarProperty Name="MemberId" ColumnName="MemberRefId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="SessionBaseEntity_Schedule" TypeName="iRLeagueDatabase.SessionBaseEntity_Schedule" StoreEntitySet="SessionBaseEntity">
-            <EndProperty Name="SessionBaseEntity_Schedule_Target">
-              <ScalarProperty Name="ScheduleId" ColumnName="Schedule_ScheduleId" />
-            </EndProperty>
-            <EndProperty Name="SessionBaseEntity_Schedule_Source">
-              <ScalarProperty Name="SessionId" ColumnName="SessionId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="ScoringEntity_ConnectedSchedule" TypeName="iRLeagueDatabase.ScoringEntity_ConnectedSchedule" StoreEntitySet="ScoringEntity">
-            <EndProperty Name="ScoringEntity_ConnectedSchedule_Target">
-              <ScalarProperty Name="ScheduleId" ColumnName="ConnectedSchedule_ScheduleId" />
-            </EndProperty>
-            <EndProperty Name="ScoringEntity_ConnectedSchedule_Source">
-              <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
-            </EndProperty>
-            <Condition IsNull="false" ColumnName="ConnectedSchedule_ScheduleId" />
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="ScoringEntity_Season" TypeName="iRLeagueDatabase.ScoringEntity_Season" StoreEntitySet="ScoringEntity">
-            <EndProperty Name="ScoringEntity_Season_Target">
-              <ScalarProperty Name="SeasonId" ColumnName="Season_SeasonId" />
-            </EndProperty>
-            <EndProperty Name="ScoringEntity_Season_Source">
-              <ScalarProperty Name="ScoringId" ColumnName="ScoringId" />
             </EndProperty>
           </AssociationSetMapping>
           <AssociationSetMapping Name="ScoringEntity_Sessions" TypeName="iRLeagueDatabase.ScoringEntity_Sessions" StoreEntitySet="ScoringEntitySessionBaseEntity">
@@ -2325,6 +2384,7 @@
           <Property Name="ScoredResultId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 0 }" Nullable="false" />
           <Property Name="ScoringId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultId_ScoringId, Order: 1 }" Nullable="false" />
           <Property Name="ResultRowId" Type="bigint" customannotation:Index="{ Name: IX_ResultRowId, Order: 0 }" Nullable="false" />
+          <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="true" />
           <Property Name="RacePoints" Type="int" Nullable="false" />
           <Property Name="BonusPoints" Type="int" Nullable="false" />
           <Property Name="PenaltyPoints" Type="int" Nullable="false" />
@@ -2349,6 +2409,7 @@
           <Property Name="StartPosition" Type="int" Nullable="false" />
           <Property Name="FinishPosition" Type="int" Nullable="false" />
           <Property Name="MemberId" Type="bigint" customannotation:Index="{ Name: IX_MemberId, Order: 0 }" Nullable="false" />
+          <Property Name="TeamId" Type="bigint" customannotation:Index="{ Name: IX_TeamId, Order: 0 }" Nullable="true" />
           <Property Name="OldIRating" Type="int" Nullable="false" />
           <Property Name="NewIRating" Type="int" Nullable="false" />
           <Property Name="SeasonStartIRating" Type="int" Nullable="false" />
@@ -2493,9 +2554,13 @@
           <Property Name="TakeGroupAverage" Type="bit" Nullable="false" />
           <Property Name="ExtScoringSourceId" Type="bigint" customannotation:Index="{ Name: IX_ExtScoringSourceId, Order: 0 }" Nullable="true" />
           <Property Name="TakeResultsFromExtSource" Type="bit" Nullable="false" />
+          <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="false" />
           <Property Name="BasePoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="BonusPoints" Type="nvarchar(max)" Nullable="true" />
           <Property Name="IncPenaltyPoints" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="ConnectedScheduleId" Type="bigint" customannotation:Index="{ Name: IX_ConnectedScheduleId, Order: 0 }" Nullable="true" />
+          <Property Name="UseResultSetTeam" Type="bit" Nullable="false" />
+          <Property Name="UpdateTeamOnRecalculation" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
@@ -2503,8 +2568,6 @@
           <Property Name="CreatedByUserName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="ConnectedSchedule_ScheduleId" Type="bigint" customannotation:Index="{ Name: IX_ConnectedSchedule_ScheduleId, Order: 0 }" Nullable="true" />
-          <Property Name="Season_SeasonId" Type="bigint" customannotation:Index="{ Name: IX_Season_SeasonId, Order: 0 }" Nullable="false" />
         </EntityType>
         <EntityType Name="ScheduleEntity">
           <Key>
@@ -2528,6 +2591,8 @@
           <Property Name="SeasonId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SeasonName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Finished" Type="bit" Nullable="false" />
+          <Property Name="SeasonStart" Type="datetime" Nullable="true" />
+          <Property Name="SeasonEnd" Type="datetime" Nullable="true" />
           <Property Name="HideCommentsBeforeVoted" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
@@ -2547,6 +2612,7 @@
           <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropWeeks" Type="int" Nullable="false" />
           <Property Name="AverageRaceNr" Type="int" Nullable="false" />
+          <Property Name="SeasonId" Type="bigint" customannotation:Index="{ Name: IX_SeasonId, Order: 0 }" Nullable="false" />
           <Property Name="ScoringFactors" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropRacesOption" Type="int" Nullable="false" />
           <Property Name="ResultsPerRaceCount" Type="int" Nullable="false" />
@@ -2557,7 +2623,6 @@
           <Property Name="CreatedByUserName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
-          <Property Name="Season_SeasonId" Type="bigint" customannotation:Index="{ Name: IX_Season_SeasonId, Order: 0 }" Nullable="false" />
         </EntityType>
         <EntityType Name="DriverStatisticRowEntity">
           <Key>
@@ -2637,6 +2702,7 @@
             <PropertyRef Name="SessionId" />
           </Key>
           <Property Name="SessionId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScheduleId" Type="bigint" customannotation:Index="{ Name: IX_ScheduleId, Order: 0 }" Nullable="false" />
           <Property Name="SessionTitle" Type="nvarchar(max)" Nullable="true" />
           <Property Name="SessionType" Type="int" Nullable="false" />
           <Property Name="Date" Type="datetime" Nullable="true" />
@@ -2659,7 +2725,6 @@
           <Property Name="QualyAttached" Type="bit" Nullable="true" />
           <Property Name="PracticeAttached" Type="bit" Nullable="true" />
           <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Schedule_ScheduleId" Type="bigint" customannotation:Index="{ Name: IX_Schedule_ScheduleId, Order: 0 }" Nullable="false" />
         </EntityType>
         <EntityType Name="IncidentReviewEntity">
           <Key>
@@ -2693,6 +2758,7 @@
           <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
         <EntityType Name="ReviewPenaltyEntity">
           <Key>
@@ -2733,6 +2799,7 @@
           <Property Name="MemberAtFaultId" Type="bigint" customannotation:Index="{ Name: IX_MemberAtFaultId, Order: 0 }" Nullable="true" />
           <Property Name="Vote" Type="int" Nullable="false" />
           <Property Name="CustomVoteCatId" Type="bigint" customannotation:Index="{ Name: IX_CustomVoteCatId, Order: 0 }" Nullable="true" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
         <EntityType Name="ResultsFilterOptionEntity">
           <Key>
@@ -2744,6 +2811,7 @@
           <Property Name="ColumnPropertyName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Comparator" Type="int" Nullable="false" />
           <Property Name="Exclude" Type="bit" Nullable="false" />
+          <Property Name="FilterPointsOnly" Type="bit" Nullable="false" />
           <Property Name="FilterValues" Type="nvarchar(max)" Nullable="true" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
@@ -3053,7 +3121,7 @@
               <PropertyRef Name="SeasonId" />
             </Principal>
             <Dependent Role="ScoringTableEntity">
-              <PropertyRef Name="Season_SeasonId" />
+              <PropertyRef Name="SeasonId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3223,7 +3291,7 @@
               <PropertyRef Name="ScheduleId" />
             </Principal>
             <Dependent Role="SessionBaseEntity">
-              <PropertyRef Name="Schedule_ScheduleId" />
+              <PropertyRef Name="ScheduleId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3389,7 +3457,7 @@
               <PropertyRef Name="ScheduleId" />
             </Principal>
             <Dependent Role="ScoringEntity">
-              <PropertyRef Name="ConnectedSchedule_ScheduleId" />
+              <PropertyRef Name="ConnectedScheduleId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3443,7 +3511,7 @@
               <PropertyRef Name="SeasonId" />
             </Principal>
             <Dependent Role="ScoringEntity">
-              <PropertyRef Name="Season_SeasonId" />
+              <PropertyRef Name="SeasonId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3531,6 +3599,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="ResultRowEntity_Team">
+          <End Role="TeamEntity" Type="Self.TeamEntity" Multiplicity="0..1" />
+          <End Role="ResultRowEntity" Type="Self.ResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeamEntity">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="ResultRowEntity">
+              <PropertyRef Name="TeamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="ScoredResultRowEntity_ReviewPenalties">
           <End Role="ScoredResultRowEntity" Type="Self.ScoredResultRowEntity" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -3542,6 +3622,18 @@
             </Principal>
             <Dependent Role="ReviewPenaltyEntity">
               <PropertyRef Name="ResultRowId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoredResultRowEntity_Team">
+          <End Role="TeamEntity" Type="Self.TeamEntity" Multiplicity="0..1" />
+          <End Role="ScoredResultRowEntity" Type="Self.ScoredResultRowEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TeamEntity">
+              <PropertyRef Name="TeamId" />
+            </Principal>
+            <Dependent Role="ScoredResultRowEntity">
+              <PropertyRef Name="TeamId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3871,9 +3963,17 @@
             <End Role="ResultRowEntity" EntitySet="ResultRowEntity" />
             <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
           </AssociationSet>
+          <AssociationSet Name="ResultRowEntity_Team" Association="Self.ResultRowEntity_Team">
+            <End Role="TeamEntity" EntitySet="TeamEntity" />
+            <End Role="ResultRowEntity" EntitySet="ResultRowEntity" />
+          </AssociationSet>
           <AssociationSet Name="ScoredResultRowEntity_ReviewPenalties" Association="Self.ScoredResultRowEntity_ReviewPenalties">
             <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
             <End Role="ReviewPenaltyEntity" EntitySet="ReviewPenaltyEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoredResultRowEntity_Team" Association="Self.ScoredResultRowEntity_Team">
+            <End Role="TeamEntity" EntitySet="TeamEntity" />
+            <End Role="ScoredResultRowEntity" EntitySet="ScoredResultRowEntity" />
           </AssociationSet>
           <AssociationSet Name="ScoredTeamResultRowEntity_ScoredResultRows_Source" Association="Self.ScoredTeamResultRowEntity_ScoredResultRows_Source">
             <End Role="ScoredTeamResultRowEntity" EntitySet="ScoredTeamResultRowEntity" />

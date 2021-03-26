@@ -17,6 +17,7 @@ using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase
 {
+    [DbConfigurationType(typeof(iRLeagueDatabase.MyContextConfiguration))]
     public class LeagueDbContext : DbContext
     {
         public virtual DbSet<SeasonEntity> Seasons { get; set; }
@@ -31,6 +32,11 @@ namespace iRLeagueDatabase
         private static bool AllowMultipleResultSets = true;
 
         private const string defaultDb = "TestDatabase_leagueDb";
+
+        /// <summary>
+        /// Indicates that SaveChanges() operation performed a change while working with the current dbContext
+        /// </summary>
+        public bool DbChanged { get; private set; } = false;
 
         public LeagueDbContext() : this(GetConnectionString(defaultDb))
         {
@@ -179,6 +185,10 @@ namespace iRLeagueDatabase
         public override int SaveChanges()
         {
             //while (!HandleOrphans()) { }
+            if (ChangeTracker.HasChanges())
+            {
+                DbChanged = true;
+            }
             HandleOrphans();
             return base.SaveChanges();
         }
