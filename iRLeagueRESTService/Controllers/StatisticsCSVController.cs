@@ -1,5 +1,6 @@
 ﻿using iRLeagueDatabase.DataTransfer.Statistics;
 using iRLeagueDatabase.DataTransfer.Statistics.Special;
+using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Statistics;
 using iRLeagueDatabase.Extensions;
 using iRLeagueDatabase.Mapper;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,6 +21,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Web;
 using System.Web.Http;
+using System.Web.UI.WebControls;
 
 namespace iRLeagueRESTService.Controllers
 {
@@ -61,9 +64,33 @@ namespace iRLeagueRESTService.Controllers
                     // quick and dirty db access | hardcoded ids!
                     var leagueSetId = 3;
                     var heSetId = 7;
-                    var leagueSet = dbContext.Set<LeagueStatisticSetEntity>().Find(leagueSetId);
-                    var heSet = dbContext.Set<LeagueStatisticSetEntity>().Find(heSetId);
                     var mapper = new DTOMapper(dbContext);
+
+                    dbContext.Configuration.LazyLoadingEnabled = false;
+
+                    // preload data from db
+                    var leagueSet = dbContext.Set<LeagueStatisticSetEntity>()
+                        .Where(x => x.Id == leagueSetId)
+                        .Include(x => x.StatisticSets)
+                        .FirstOrDefault();
+                    var heSet = dbContext.Set<LeagueStatisticSetEntity>()
+                        .Where(x => x.Id == heSetId)
+                        .Include(x => x.StatisticSets)
+                        .FirstOrDefault();
+
+                    var statisticSetIds = dbContext.Set<StatisticSetEntity>().Local.Select(x => x.Id);
+                    // driver statistic rows
+                    dbContext.Set<DriverStatisticRowEntity>()
+                        .Where(x => statisticSetIds.Contains(x.StatisticSetId))
+                        .Include(x => x.Member.Team)
+                        .Load();
+
+                    var seasonIds = leagueSet.StatisticSets
+                        .Concat(heSet.StatisticSets)
+                        .OfType<SeasonStatisticSetEntity>()
+                        .Select(x => x.SeasonId);
+
+                    dbContext.ChangeTracker.DetectChanges();
 
                     foreach (var row in leagueSet.DriverStatistic)
                     {
@@ -84,6 +111,7 @@ namespace iRLeagueRESTService.Controllers
                     var lastChamp = leagueSet.StatisticSets
                         .OfType<SeasonStatisticSetEntity>()
                         .Where(x => x.IsSeasonFinished)
+                        .OrderBy(x => x.EndDate)
                         .LastOrDefault()?.DriverStatistic
                         .Where(x => x.CurrentSeasonPosition > 0)
                         .OrderBy(x => x.CurrentSeasonPosition)
@@ -91,6 +119,7 @@ namespace iRLeagueRESTService.Controllers
                     var lastHeChamp = heSet.StatisticSets
                         .OfType<SeasonStatisticSetEntity>()
                         .Where(x => x.IsSeasonFinished)
+                        .OrderBy(x => x.EndDate)
                         .LastOrDefault()?.DriverStatistic
                         .Where(x => x.CurrentSeasonPosition > 0)
                         .OrderBy(x => x.CurrentSeasonPosition)

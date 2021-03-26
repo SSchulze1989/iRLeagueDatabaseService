@@ -17,6 +17,7 @@ using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase
 {
+    [DbConfigurationType(typeof(iRLeagueDatabase.MyContextConfiguration))]
     public class LeagueDbContext : DbContext
     {
         public virtual DbSet<SeasonEntity> Seasons { get; set; }

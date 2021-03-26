@@ -11,15 +11,15 @@ using System.IO;
 
 namespace iRLeagueDatabase
 {
-    public class LeagueDbConfiguration : DbConfiguration
-    {
-        private readonly string DbModelStorePath = "C:\\iRLeagueDatabaseService\\DbModelStore";
+    //public class LeagueDbConfiguration : DbConfiguration
+    //{
+    //    public static readonly string DbModelStorePath = "C:\\iRLeagueDatabaseService\\DbModelStore";
 
-        public LeagueDbConfiguration() : base()
-        {
-            //var path = Path.GetDirectoryName(this.GetType().Assembly.Location);
-            var path = DbModelStorePath;
-            SetModelStore(new DefaultDbModelStore(path));
-        }
-    }
+    //    public LeagueDbConfiguration() : base()
+    //    {
+    //        //var path = Path.GetDirectoryName(this.GetType().Assembly.Location);
+    //        var path = DbModelStorePath;
+    //        SetModelStore(new MyDbModelStore);
+    //    }
+    //}
 }
