@@ -1,4 +1,6 @@
-﻿using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
+﻿using iRLeagueDatabase.DataTransfer.Reviews;
+using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
+using iRLeagueDatabase.Entities.Sessions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace iRLeagueRESTService.Data
 {
     public interface IReviewDataProvider
     {
-        SessionReviewsDTO GetReviewsFromSession(long sessionId);
+        SessionReviewsDTO GetReviewsFromSession(long sessionId, SessionBaseEntity preLoadedSession = null, IncidentReviewDataDTO[] preLoadedReviews = null);
         SeasonReviewsDTO GetReviewsFromSeason(long seasonId);
     }
 }

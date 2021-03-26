@@ -59,7 +59,11 @@ namespace iRLeagueRESTService.Data
 
             // get season sessions
             var sessions = season.Schedules.SelectMany(x => x.Sessions);
-            var sessionReviews = sessions.Select(x => GetReviewsFromSession(x.SessionId)).ToArray();
+            // preload reviews and vote cats
+            var reviewDtos = GetReviews(sessions.Select(x => x.SessionId).ToArray()).GroupBy(x => x.SessionId).ToDictionary(x => x.Key, x => x.ToArray());
+            DbContext.Set<VoteCategoryEntity>().Load();
+
+            var sessionReviews = sessions.Select(x => GetReviewsFromSession(x.SessionId, x, reviewDtos.TryGetValue(x.SessionId, out IncidentReviewDataDTO[] reviews) ? reviews : new IncidentReviewDataDTO[0])).ToArray();
 
             // construct DTO
             var seasonReviews = new SeasonReviewsDTO()
@@ -79,21 +83,25 @@ namespace iRLeagueRESTService.Data
         /// </summary>
         /// <param name="sessionId">Id of the session</param>
         /// <returns>DTO containing all reviews and summary data</returns>
-        public SessionReviewsDTO GetReviewsFromSession(long sessionId)
+        public SessionReviewsDTO GetReviewsFromSession(long sessionId, SessionBaseEntity preLoadedSession = null, IncidentReviewDataDTO[] preLoadedReviews = null)
         {
             // Load session from db
             SessionBaseEntity session;
             // if session id == 0 load latest session, else load specified session
-            if (sessionId == 0)
+            if (sessionId == 0 && preLoadedSession == null)
             {
                 session = DbContext.Set<SessionBaseEntity>()
                     .Where(x => x.SessionResult != null)
                     .OrderByDescending(x => x.Date)
                     .FirstOrDefault();
             }
-            else
+            else if (preLoadedSession == null)
             {
                 session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
+            }
+            else
+            {
+                session = preLoadedSession;
             }
 
             if (session == null)
@@ -112,14 +120,22 @@ namespace iRLeagueRESTService.Data
                 raceNr = (seasonSessions.Select((x, i) => new { number = i + 1, item = x }).FirstOrDefault(x => x.item.SessionId == sessionId)?.number).GetValueOrDefault();
             }
 
+            IncidentReviewDataDTO[] reviews = preLoadedReviews;
+            if (preLoadedReviews == null)
             // get all reviews ids for this session and retrieve reviews data from ModelDataProvider
-            var reviewIds = session.Reviews.Select(x => x.ReviewId);
-            var modelDataProvider = new ModelDataProvider(DbContext);
-            var reviews = modelDataProvider.GetReviews(reviewIds.ToArray());
+            {
+                var reviewIds = session.Reviews.Select(x => x.ReviewId);
+                var modelDataProvider = new ModelDataProvider(DbContext);
+                reviews = modelDataProvider.GetReviews(reviewIds.ToArray());
+            }
 
             // get custom vote categories information from database
-            var voteCatIds = reviews.Where(x => x.AcceptedReviewVotes?.Count() > 0).SelectMany(x => x.AcceptedReviewVotes.Select(y => y.VoteCategoryId));
-            var voteCats = DbContext.Set<VoteCategoryEntity>().Where(x => voteCatIds.Contains(x.CatId)).ToList().Select(x => mapper.MapToVoteCategoryDTO(x));
+            var voteCatIds = reviews.Where(x => x.AcceptedReviewVotes?.Count() > 0).SelectMany(x => x.AcceptedReviewVotes.Select(y => y.VoteCategoryId)).Distinct();
+            var voteCats = DbContext.Set<VoteCategoryEntity>().Local.Where(x => voteCatIds.Contains(x.CatId)).ToList().Select(x => mapper.MapToVoteCategoryDTO(x));
+            if (voteCats.Count() < voteCatIds.Count())
+            {
+                voteCats = DbContext.Set<VoteCategoryEntity>().Where(x => voteCatIds.Contains(x.CatId)).ToList().Select(x => mapper.MapToVoteCategoryDTO(x));
+            }
 
             /* construct DTOs */
             // get all vote results that resulted in a penalty
@@ -167,6 +183,32 @@ namespace iRLeagueRESTService.Data
             /* END construct DTOs */
 
             return reviewData;
+        }
+
+        public IncidentReviewDataDTO[] GetReviews(long[] sessionIds)
+        {
+            var mapper = new DTOMapper(DbContext);
+
+            DbContext.Configuration.LazyLoadingEnabled = false;
+            var reviewEnties = DbContext.Set<IncidentReviewEntity>().Where(x => sessionIds.Contains(x.SessionId))
+                .Include(x => x.Session)
+                .Include(x => x.InvolvedMembers).ToArray();
+            var reviewIds = reviewEnties.Select(x => x.ReviewId);
+
+            DbContext.Set<ReviewCommentEntity>().Where(x => reviewIds.Contains(x.ReviewId))
+                .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
+                .Include(x => x.Replies).Load();
+            DbContext.Set<AcceptedReviewVoteEntity>().Where(x => reviewIds.Contains(x.ReviewId))
+                .Include(x => x.MemberAtFault)
+                .Include(x => x.CustomVoteCat)
+                .Load();
+
+            DbContext.ChangeTracker.DetectChanges();
+
+            var reviewDtos = reviewEnties.Select(x => mapper.MapTo<IncidentReviewDataDTO>(x)).ToArray();
+            DbContext.Configuration.LazyLoadingEnabled = true;
+
+            return reviewDtos;
         }
     }
 }
