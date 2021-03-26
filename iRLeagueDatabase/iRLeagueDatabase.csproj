@@ -58,7 +58,6 @@
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
     <Compile Include="Entities\Filters\FilterValueBaseEntity.cs" />
     <Compile Include="Entities\Filters\IntFilterValueEntity.cs" />
-    <Compile Include="Entities\Results\Accumulator.cs" />
     <Compile Include="Entities\Results\IResultRow.cs" />
     <Compile Include="Entities\Results\IRSimSessionDetailsEntity.cs" />
     <Compile Include="Entities\Filters\MemberFilterValueEntity.cs" />
@@ -170,10 +169,6 @@
     <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.designer.cs">
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202103202126476_AddSubsessionScoring.cs" />
-    <Compile Include="Migrations\202103202126476_AddSubsessionScoring.designer.cs">
-      <DependentUpon>202103202126476_AddSubsessionScoring.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -223,9 +218,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103102204011_AddSeasonStartEndDate.resx">
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202103202126476_AddSubsessionScoring.resx">
-      <DependentUpon>202103202126476_AddSubsessionScoring.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

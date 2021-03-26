@@ -282,6 +282,7 @@ namespace iRLeagueDatabase.Entities.Results
                     SubSessionScorings?.Count > 0)
                 {
                     scoredResult = CalculateAccumulatedResult(session, dbContext, scoredResult);
+                    result = scoredResult.Result;
                 }
 
                 IEnumerable<ResultRowEntity> resultRows = result.RawResults;
