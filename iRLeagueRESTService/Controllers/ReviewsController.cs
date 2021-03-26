@@ -1,4 +1,5 @@
 ﻿using iRLeagueDatabase;
+using iRLeagueDatabase.DataTransfer.Reviews;
 using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
