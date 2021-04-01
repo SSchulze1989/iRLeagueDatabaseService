@@ -143,6 +143,7 @@
     <Compile Include="Enums\DropRacesOption.cs" />
     <Compile Include="Enums\GetBestOption.cs" />
     <Compile Include="Enums\LicenseLevelEnum.cs" />
+    <Compile Include="Enums\ScoringSessionSelectionEnum.cs" />
     <Compile Include="Enums\SortOptionEnum.cs" />
     <Compile Include="Enums\RaceStatusEnum.cs" />
     <Compile Include="Enums\SaveSelect.cs" />

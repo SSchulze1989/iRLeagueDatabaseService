@@ -35,6 +35,7 @@ namespace iRLeagueManager.Enums
         Qualifying,
         Race,
         HeatEvent,
+        Heat,
         Warmup
     }
 }
