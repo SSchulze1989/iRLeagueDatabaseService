@@ -1,5 +1,5 @@
 ﻿using iRLeagueDatabase.Entities.Results;
-using iRLeagueDatabase.Enums;
+using iRLeagueManager.Enums;
 using iRLeagueDatabase.Exceptions;
 using System;
 using System.Collections.Generic;

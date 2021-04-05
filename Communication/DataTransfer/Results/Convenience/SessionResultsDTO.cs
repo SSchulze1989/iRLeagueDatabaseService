@@ -23,7 +23,7 @@ namespace iRLeagueDatabase.DataTransfer.Results.Convenience
         /// Id of the schedule
         /// </summary>
         [DataMember]
-        public long ScheduleId { get; set; }
+        public long? ScheduleId { get; set; }
         /// <summary>
         /// Name of the schedule
         /// </summary>

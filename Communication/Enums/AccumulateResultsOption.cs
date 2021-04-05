@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace iRLeagueDatabase.Enums
+namespace iRLeagueManager.Enums
 {
     public enum AccumulateResultsOption
     {

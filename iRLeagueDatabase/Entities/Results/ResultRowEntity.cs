@@ -95,6 +95,8 @@ namespace iRLeagueDatabase.Entities.Results
         double IResultRow.PenaltyPoints => 0;
         double IResultRow.TotalPoints => 0;
 
+        public bool PointsEligible { get; set; }
+
         public ResultRowEntity() { }
 
         public override void Delete(LeagueDbContext dbContext)

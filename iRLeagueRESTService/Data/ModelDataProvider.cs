@@ -294,11 +294,18 @@ namespace iRLeagueRESTService.Data
             DbContext.Configuration.LazyLoadingEnabled = false;
 
             /// Load result and check if recalculation needed
-            var result = DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
-                .Include(x => x.Session)
+            var session = DbContext.Set<SessionBaseEntity>().Where(x => x.SessionId == sessionId)
+                .Include(x => x.SubSessions)
+                .Include(x => x.SessionResult)
                 .FirstOrDefault();
+            IEnumerable<long> sessionIds = new long[] { sessionId };
+            if (session.SubSessions?.Count > 0)
+            {
+                sessionIds = sessionIds.Concat(session.SubSessions.Select(x => x.SessionId));
+            }
+            var results = DbContext.Set<ResultEntity>().Where(x => sessionIds.Contains(x.ResultId));
 
-            if (result == null)
+            if (results.Count() == 0)
             {
                 return new ScoredResultDataDTO()
                 {
@@ -306,7 +313,7 @@ namespace iRLeagueRESTService.Data
                     ScoringId = scoringId
                 };
             }
-            else if (result.RequiresRecalculation)
+            else if (results.Any(x => x.RequiresRecalculation) || session.SessionResult == null)
             {
                 ILeagueActionProvider leagueActionProvider = new LeagueActionProvider(DbContext);
                 leagueActionProvider.CalculateScoredResult(sessionId);

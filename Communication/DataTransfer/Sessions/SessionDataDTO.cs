@@ -58,6 +58,9 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         public long? SessionResultId { get; set; }
 
         [DataMember]
+        public long? ParentSessionId { get; set; }
+
+        [DataMember]
         //public IncidentReviewInfoDTO[] Reviews { get; set; }
         public long[] ReviewIds { get; set; }
 
@@ -83,7 +86,10 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// Ids of sub sessions e.g: for single heats or with multi race events
         /// </summary>
         [DataMember]
-        public long[] SubSessionids { get; set; }
+        public SessionDataDTO[] SubSessions { get; set; }
+
+        [DataMember]
+        public int SubSessionNr { get; set; }
 
         #region Version Info
         [DataMember]

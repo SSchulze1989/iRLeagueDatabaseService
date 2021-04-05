@@ -1,12 +1,8 @@
-﻿using System;
+﻿using iRLeagueDatabase.DataTransfer.Sessions;
+using iRLeagueDatabase.Entities.Results;
+using iRLeagueDatabase.Entities.Sessions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using iRLeagueDatabase.Entities.Sessions;
-using iRLeagueDatabase.DataTransfer.Sessions;
-using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Mapper
 {
@@ -54,6 +50,9 @@ namespace iRLeagueDatabase.Mapper
             target.ScheduleId = source.ScheduleId; // MapToScheduleInfoDTO(source.Schedule);
             target.SessionResultId = source.SessionResult?.ResultId; // MapToResultInfoDTO(source.SessionResult);
             target.ReviewIds = source.Reviews.Select(x => x.ReviewId).ToArray();
+            target.SubSessions = source.SubSessions.Select(x => MapToSessionDataDTO(x)).ToArray();
+            target.ParentSessionId = source.ParentSession?.SessionId;
+            target.SubSessionNr = source.SubSessionNr;
 
             return target;
         }
@@ -75,7 +74,7 @@ namespace iRLeagueDatabase.Mapper
             target.QualyLength = source.QualyLength;
             //target.RaceId = source.RaceId;
             target.RaceLength = source.RaceLength;
-                
+
             return target;
         }
 
@@ -211,6 +210,12 @@ namespace iRLeagueDatabase.Mapper
             //target.SessionResult = GetResultEntity(new DataTransfer.Results.ResultInfoDTO() { ResultId = source.SessionResultId });
             target.SessionResult = DefaultGet<ResultEntity>(source.SessionId);
             target.Name = source.Name;
+            target.SubSessionNr = source.SubSessionNr;
+            if (target.SubSessions == null)
+            {
+                target.SubSessions = new List<SessionBaseEntity>();
+            }
+            MapCollection(source.SubSessions, target.SubSessions, MapToSessionBaseEntity, x => x.SessionId, removeFromCollection: true, removeFromDatabase: true, autoAddMissing: true);
             //MapCollection(source.Reviews, target.Reviews, (src, trg) => GetReviewEntity(src), src => src.ReviewId);
 
             return target;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace iRLeagueDatabase.Filters
 {
     public class SortOption
-    {
+    { 
         /// <summary>
         /// Option which value to use for order
         /// </summary>
@@ -17,5 +17,11 @@ namespace iRLeagueDatabase.Filters
         /// + 1 for ascending, -1 for descending
         /// </summary>
         public int SortDirection { get; set; }
+
+        public SortOption(SortOptionEnum option, int sortDirection)
+        {
+            Option = option;
+            SortDirection = sortDirection;
+        }
     }
 }

@@ -12,9 +12,6 @@ namespace iRLeagueDatabase.Entities.Sessions
 {
     public class SubSessionEntity : SessionBaseEntity
     {
-        [ForeignKey(nameof(ParentSession))]
-        public long ParentSessionId { get; set; }
-
-        public virtual SessionBaseEntity ParentSession { get; set; }
+        
     }
 }

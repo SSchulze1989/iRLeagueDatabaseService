@@ -211,6 +211,9 @@ namespace iRLeagueDatabase.Mapper
             target.SubSessionScoringIds = source.SubSessionScorings.Select(x => x.ScoringId).ToArray();
             target.AccumulateBy = source.AccumulateBy;
             target.AccumulateResultsOption = source.AccumulateResultsOption;
+            target.ScoringSessionType = source.ScoringSessionType;
+            target.SessionSelectType = source.SessionSelectType;
+            target.ScoringWeights = source.ScoringWeights;
 
             return target;
         }
@@ -512,7 +515,11 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Session = GetSessionBaseEntity(new SessionInfoDTO() { SessionId = source.SessionId });
-            target.Season = target.Session.Schedule.Season;
+            target.Season = target.Session.Schedule?.Season;
+            if (target.Season == null)
+            {
+                target.Season = target.Session.ParentSession?.Schedule?.Season;
+            }
             MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId }, autoAddMissing: true, removeFromCollection: true, removeFromDatabase: true);
             MapCollection(source.ReviewIds.Select(x => new IncidentReviewInfoDTO() { ReviewId = x }), target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.RequiresRecalculation = true;
@@ -544,6 +551,7 @@ namespace iRLeagueDatabase.Mapper
                     {
                         resultRow.SeasonStartIRating = resultRow.OldIRating;
                     }
+                    resultRow.PointsEligible = true;
                     DbContext.Configuration.LazyLoadingEnabled = true;
                 }
             }
@@ -672,7 +680,7 @@ namespace iRLeagueDatabase.Mapper
             else
                 MapCollection(source.SessionIds.Select(x => new SessionInfoDTO() { SessionId = x }), target.Sessions, GetSessionBaseEntity, x => x.SessionId, removeFromCollection: true);
             //target.ConnectedSchedule = GetScheduleEntity(source.ConnectedScheduleId != null ? new ScheduleInfoDTO() { ScheduleId = source.ConnectedScheduleId } : null);
-            target.ConnectedSchedule = DefaultGet<ScheduleEntity>(source.ConnectedScheduleId);
+            target.ConnectedSchedule = source.SessionSelectType == iRLeagueManager.Enums.ScoringSessionSelectionEnum.SelectSchedule ? DefaultGet<ScheduleEntity>(source.ConnectedScheduleId) : null;
             if (target.ConnectedSchedule != null)
             {
                 target.Sessions = target.ConnectedSchedule.Sessions;
@@ -686,8 +694,21 @@ namespace iRLeagueDatabase.Mapper
             target.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
             target.UseResultSetTeam = source.UseResultSetTeam;
             target.UpdateTeamOnRecalculation = source.UpdateTeamOnRecalculation;
-            MapCollection(source.SubSessionScoringIds.Select(x => new ScoringInfoDTO() { ScoringId = x }), target.SubSessionScorings, x => DefaultGet<ScoringEntity>(x),
+            if (source.SubSessionScoringIds != null)
+            {
+                MapCollection(source.SubSessionScoringIds.Select(x => new ScoringInfoDTO() { ScoringId = x }), target.SubSessionScorings, x => DefaultGet<ScoringEntity>(x),
                 removeFromCollection: true);
+                target.ScoringWeights = source.ScoringWeights;
+            }
+            else
+            {
+                target.SubSessionScorings = null;
+                target.ScoringWeights = null;
+            }
+            target.SessionSelectType = source.SessionSelectType;
+            target.ScoringSessionType = source.ScoringSessionType;
+            target.AccumulateBy = source.AccumulateBy;
+            target.AccumulateResultsOption = source.AccumulateResultsOption;
 
             return target;
         }

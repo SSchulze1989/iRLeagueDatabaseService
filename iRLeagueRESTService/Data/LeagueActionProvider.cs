@@ -51,12 +51,23 @@ namespace iRLeagueRESTService.Data
                 //.Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.AddPenalty)))
                 //.Include(x => x.SessionResult.ScoredResults.Select(y => y.FinalResults.Select(z => z.ReviewPenalties)))
                 //.Include(x => x.SessionResult.ScoredResults.Select(y => ((ScoredTeamResultEntity)y).TeamResults.Select(z => z.ScoredResultRows)))
-                .Include(x => x.SessionResult.RawResults.Select(y => y.Member.Team))
+                //.Include(x => x.SessionResult.RawResults.Select(y => y.Member.Team))
                 .Include(x => x.Reviews.Select(y => y.AcceptedReviewVotes.Select(z => z.CustomVoteCat)))
+                .Include(x => x.SubSessions)
+                .Include(x => x.Schedule)
                 .Where(x => sessionIds.Contains(x.SessionId));
 
+            var allSessionIds = sessionIds.AsEnumerable();
+            allSessionIds = allSessionIds.Concat(sessions.SelectMany(x => x.SubSessions.Select(y => y.SessionId)));
+
+            DbContext.Set<ResultEntity>()
+                .Where(x => allSessionIds.Contains(x.ResultId))
+                .Include(x => x.RawResults.Select(y => y.Member.Team))
+                .Load();
+
             DbContext.Set<ScoredResultEntity>()
-                .Where(x => sessionIds.Contains(x.ResultId))
+                .Where(x => allSessionIds.Contains(x.ResultId))
+                .Include(x => x.FinalResults.Select(y => y.ResultRow.Member.Team))
                 .Include(x => x.FinalResults.Select(y => y.AddPenalty))
                 .Include(x => x.FinalResults.Select(y => y.ReviewPenalties))
                 .Include(x => x.HardChargers)
@@ -68,7 +79,14 @@ namespace iRLeagueRESTService.Data
 
             foreach (var session in sessions)
             {
-                var scorings = session.Scorings;
+                IEnumerable<ScoringEntity> scorings = session.Scorings;
+                scorings = scorings.Concat(session.SubSessions.SelectMany(x => x.Scorings));
+
+                // reorder scorings to get subsession scorings recalculated before accumulated scorings
+                scorings = scorings
+                    .OrderBy(x => x.AccumulateResultsOption == iRLeagueManager.Enums.AccumulateResultsOption.None)
+                    .OrderBy(x => x.ExtScoringSourceId != null)
+                    .OrderBy(x => x.ParentScoringId == null);
 
                 foreach (var scoring in scorings)
                 {
@@ -77,7 +95,7 @@ namespace iRLeagueRESTService.Data
 
                 foreach (var scoredResult in session.SessionResult.ScoredResults.ToList())
                 {
-                    if (scoredResult != null && !session.Scorings.Contains(scoredResult.Scoring))
+                    if (scoredResult != null && session.Scorings.Contains(scoredResult.Scoring) == false)
                     {
                         scoredResult.Delete(DbContext);
                         session.SessionResult.ScoredResults.Remove(scoredResult);

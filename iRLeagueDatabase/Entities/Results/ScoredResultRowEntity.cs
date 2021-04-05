@@ -54,6 +54,7 @@ namespace iRLeagueDatabase.Entities.Results
         public int FinalPosition { get; set; }
         public double FinalPositionChange { get; set; }
         public double TotalPoints { get; set; }
+        public bool PointsEligible { get; set; }
 
         public SimSessionTypeEnum SimSessionType => ((IResultRow)ResultRow).SimSessionType;
 

@@ -169,6 +169,14 @@
     <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.designer.cs">
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202104041229298_AddHeatScoring.cs" />
+    <Compile Include="Migrations\202104041229298_AddHeatScoring.designer.cs">
+      <DependentUpon>202104041229298_AddHeatScoring.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104050803044_AddPointsEligibleToResultRow.cs" />
+    <Compile Include="Migrations\202104050803044_AddPointsEligibleToResultRow.designer.cs">
+      <DependentUpon>202104050803044_AddPointsEligibleToResultRow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -218,6 +226,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103102204011_AddSeasonStartEndDate.resx">
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104041229298_AddHeatScoring.resx">
+      <DependentUpon>202104041229298_AddHeatScoring.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104050803044_AddPointsEligibleToResultRow.resx">
+      <DependentUpon>202104050803044_AddPointsEligibleToResultRow.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
