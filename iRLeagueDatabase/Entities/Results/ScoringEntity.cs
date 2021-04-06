@@ -38,11 +38,13 @@ namespace iRLeagueDatabase.Entities.Results
         public SessionType ScoringSessionType { get; set; }
         public ScoringSessionSelectionEnum SessionSelectType { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public override object MappingId => ScoringId;
         public int DropWeeks { get; set; }
         public int AverageRaceNr { get; set; }
         public int MaxResultsPerGroup { get; set; }
         public bool TakeGroupAverage { get; set; }
+        public bool ShowResults { get; set; }
 
         [InverseProperty(nameof(ScoringEntity.ExtScoringSource))]
         public virtual List<ScoringEntity> DependendScorings { get; set; }

@@ -330,7 +330,7 @@ namespace iRLeagueRESTService.Data
                 //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
                 .FirstOrDefault(x => x.ResultId == sessionId && x.ScoringId == scoringId);
 
-            if (scoredResultEntity == null)
+            if (scoredResultEntity == null || scoredResultEntity.Scoring.ShowResults == false)
                 return new ScoredResultDataDTO()
                 {
                     ResultId = sessionId,

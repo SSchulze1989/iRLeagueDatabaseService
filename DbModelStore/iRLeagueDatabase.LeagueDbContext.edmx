@@ -275,10 +275,12 @@
           <Property Name="ScoringSessionType" Type="Self.SessionType" Nullable="false" />
           <Property Name="SessionSelectType" Type="Self.ScoringSessionSelectionEnum" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="DropWeeks" Type="Int32" Nullable="false" />
           <Property Name="AverageRaceNr" Type="Int32" Nullable="false" />
           <Property Name="MaxResultsPerGroup" Type="Int32" Nullable="false" />
           <Property Name="TakeGroupAverage" Type="Boolean" Nullable="false" />
+          <Property Name="ShowResults" Type="Boolean" Nullable="false" />
           <Property Name="ExtScoringSourceId" Type="Int64" />
           <Property Name="TakeResultsFromExtSource" Type="Boolean" Nullable="false" />
           <Property Name="ScoringWeightValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -1943,10 +1945,12 @@
                 <ScalarProperty Name="ScoringSessionType" ColumnName="ScoringSessionType" />
                 <ScalarProperty Name="SessionSelectType" ColumnName="SessionSelectType" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="DropWeeks" ColumnName="DropWeeks" />
                 <ScalarProperty Name="AverageRaceNr" ColumnName="AverageRaceNr" />
                 <ScalarProperty Name="MaxResultsPerGroup" ColumnName="MaxResultsPerGroup" />
                 <ScalarProperty Name="TakeGroupAverage" ColumnName="TakeGroupAverage" />
+                <ScalarProperty Name="ShowResults" ColumnName="ShowResults" />
                 <ScalarProperty Name="ExtScoringSourceId" ColumnName="ExtScoringSourceId" />
                 <ScalarProperty Name="TakeResultsFromExtSource" ColumnName="TakeResultsFromExtSource" />
                 <ScalarProperty Name="ScoringWeightValues" ColumnName="ScoringWeightValues" />
@@ -2641,10 +2645,12 @@
           <Property Name="ScoringSessionType" Type="int" Nullable="false" />
           <Property Name="SessionSelectType" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
           <Property Name="DropWeeks" Type="int" Nullable="false" />
           <Property Name="AverageRaceNr" Type="int" Nullable="false" />
           <Property Name="MaxResultsPerGroup" Type="int" Nullable="false" />
           <Property Name="TakeGroupAverage" Type="bit" Nullable="false" />
+          <Property Name="ShowResults" Type="bit" Nullable="false" />
           <Property Name="ExtScoringSourceId" Type="bigint" customannotation:Index="{ Name: IX_ExtScoringSourceId, Order: 0 }" Nullable="true" />
           <Property Name="TakeResultsFromExtSource" Type="bit" Nullable="false" />
           <Property Name="ScoringWeightValues" Type="nvarchar(max)" Nullable="true" />

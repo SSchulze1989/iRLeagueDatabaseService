@@ -191,6 +191,7 @@ namespace iRLeagueDatabase.Mapper
             target.BonusPoints = source.BonusPoints;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
+            target.Description = source.Description;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.Name = source.Name;
@@ -201,6 +202,7 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringKind = source.ScoringKind;
             target.MaxResultsPerGroup = source.MaxResultsPerGroup;
             target.TakeGroupAverage = source.TakeGroupAverage;
+            target.ShowResults = source.ShowResults;
             target.ExtScoringSourceId = source.ExtScoringSourceId; // MapToScoringInfoDTO(source.ExtScoringSource);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             //target.ResultsFilterOptions = source.ResultsFilterOptions.Select(x => MapToResultsFilterOptionDTO(x)).ToArray();
@@ -210,7 +212,7 @@ namespace iRLeagueDatabase.Mapper
             target.ParentScoringId = source.ParentScoringId;
             target.SubSessionScoringIds = source.SubSessionScorings.Select(x => x.ScoringId).ToArray();
             target.AccumulateBy = source.AccumulateBy;
-            target.AccumulateResultsOption = source.AccumulateResultsOption;
+            target.AccumulateResults = source.AccumulateResultsOption;
             target.ScoringSessionType = source.ScoringSessionType;
             target.SessionSelectType = source.SessionSelectType;
             target.ScoringWeights = source.ScoringWeights;
@@ -667,6 +669,7 @@ namespace iRLeagueDatabase.Mapper
             target.BonusPoints = source.BonusPoints;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
+            target.Description = source.Description;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.Name = source.Name;
@@ -688,6 +691,7 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringKind = source.ScoringKind;
             target.MaxResultsPerGroup = source.MaxResultsPerGroup;
             target.TakeGroupAverage = source.TakeGroupAverage;
+            target.ShowResults = source.ShowResults;
             //target.ExtScoringSource = GetScoringEntity(source.ExtScoringSourceId != null ? new ScoringInfoDTO() { ScoringId = source.ExtScoringSourceId } : null);
             target.ExtScoringSource = DefaultGet<ScoringEntity>(source.ExtScoringSourceId);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
@@ -708,7 +712,7 @@ namespace iRLeagueDatabase.Mapper
             target.SessionSelectType = source.SessionSelectType;
             target.ScoringSessionType = source.ScoringSessionType;
             target.AccumulateBy = source.AccumulateBy;
-            target.AccumulateResultsOption = source.AccumulateResultsOption;
+            target.AccumulateResultsOption = source.AccumulateResults;
 
             return target;
         }

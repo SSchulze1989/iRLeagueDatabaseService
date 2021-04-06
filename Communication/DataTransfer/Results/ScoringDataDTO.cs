@@ -44,6 +44,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string Name { get; set; }
         [DataMember]
+        public string Description { get; set; }
+        [DataMember]
         public ScoringKindEnum ScoringKind { get; set; }
         [DataMember]
         public DropRacesOption DropRacesOption { get; set; }
@@ -59,6 +61,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int MaxResultsPerGroup { get; set; }
         [DataMember]
         public bool TakeGroupAverage { get; set; }
+        [DataMember]
+        public bool ShowResults { get; set; }
         [DataMember]
         //public virtual SessionInfoDTO[] Sessions { get; set; }
         public long[] SessionIds { get; set; }
@@ -102,7 +106,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public AccumulateByOption AccumulateBy { get; set; }
         [DataMember]
-        public AccumulateResultsOption AccumulateResultsOption { get; set; }
+        public AccumulateResultsOption AccumulateResults { get; set; }
 
         #region Version Info
         [DataMember]

@@ -177,6 +177,14 @@
     <Compile Include="Migrations\202104050803044_AddPointsEligibleToResultRow.designer.cs">
       <DependentUpon>202104050803044_AddPointsEligibleToResultRow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202104060033285_AddShowResultsScoringOption.cs" />
+    <Compile Include="Migrations\202104060033285_AddShowResultsScoringOption.designer.cs">
+      <DependentUpon>202104060033285_AddShowResultsScoringOption.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104060050369_AddScoringDescription.cs" />
+    <Compile Include="Migrations\202104060050369_AddScoringDescription.designer.cs">
+      <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -232,6 +240,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202104050803044_AddPointsEligibleToResultRow.resx">
       <DependentUpon>202104050803044_AddPointsEligibleToResultRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104060033285_AddShowResultsScoringOption.resx">
+      <DependentUpon>202104060033285_AddShowResultsScoringOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104060050369_AddScoringDescription.resx">
+      <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
