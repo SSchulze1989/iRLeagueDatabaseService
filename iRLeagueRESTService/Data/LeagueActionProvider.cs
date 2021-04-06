@@ -80,7 +80,7 @@ namespace iRLeagueRESTService.Data
             foreach (var session in sessions)
             {
                 IEnumerable<ScoringEntity> scorings = session.Scorings;
-                scorings = scorings.Concat(session.SubSessions.SelectMany(x => x.Scorings));
+                scorings = scorings.Concat(session.SubSessions.SelectMany(x => x.Scorings)).Where(x => x != null);
 
                 // reorder scorings to get subsession scorings recalculated before accumulated scorings
                 scorings = scorings
