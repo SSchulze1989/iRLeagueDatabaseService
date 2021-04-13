@@ -64,6 +64,10 @@ namespace iRLeagueManager.Locations
         [DataMember(Name = "map_img_src")]
         public string MapImageSrc { get; set; }
 
+        [XmlAttribute("iracing_trkid")]
+        [DataMember(Name = "iracing_trkid")]
+        public int iracingTrkId { get; set; }
+
         private BitmapImage mapImage = null;
         [XmlIgnore]
         public BitmapImage MapImage
