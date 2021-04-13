@@ -316,12 +316,15 @@
                     ResultRowId = c.Long(nullable: false),
                     ReviewId = c.Long(nullable: false),
                     PenaltyPoints = c.Int(nullable: false),
+                    ReviewVoteId = c.Long(nullable: true)
                 })
                 .PrimaryKey(t => new { t.ResultRowId, t.ReviewId })
                 .ForeignKey("dbo.IncidentReviewEntities", t => t.ReviewId, cascadeDelete: false)
                 .ForeignKey("dbo.ScoredResultRowEntities", t => t.ResultRowId, cascadeDelete: true)
+                .ForeignKey("dbo.AcceptedReviewVoteEntities", t=> t.ReviewVoteId)
                 .Index(t => t.ResultRowId)
-                .Index(t => t.ReviewId);
+                .Index(t => t.ReviewId)
+                .Index(t => t.ReviewVoteId);
 
             CreateTable(
                 "dbo.ScoredResultEntities",
