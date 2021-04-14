@@ -37,31 +37,51 @@ namespace iRLeagueManager.Locations
     {
         private List<Location> locations;
 
-        public LocationCollection() : this("Tracks.xml") { }
+        public LocationCollection()
+        {
+            locations = new List<Location>();
+        }
 
         public LocationCollection(string filePath)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<RaceTrack>));
             if (File.Exists(filePath))
             {
-                StreamReader streamReader = new StreamReader(filePath);
-                List<RaceTrack> tracks = xmlSerializer.Deserialize(streamReader) as List<RaceTrack>;
-                foreach (var track in tracks)
+                using (var streamReader = new StreamReader(filePath))
                 {
-                    foreach (var config in track.Configs)
+                    List<RaceTrack> tracks = xmlSerializer.Deserialize(streamReader) as List<RaceTrack>;
+                    foreach (var track in tracks)
                     {
-                        config.Track = track;
+                        foreach (var config in track.Configs)
+                        {
+                            config.Track = track;
+                        }
                     }
-                }
-                //tracks.ForEach(x => x.Configs.ForEach(y => y.Track = x));
-                List<TrackConfig> configs = tracks.Select(x => x.Configs.ToList()).Aggregate((x, y) => x.Concat(y).ToList());
+                    //tracks.ForEach(x => x.Configs.ForEach(y => y.Track = x));
+                    List<TrackConfig> configs = tracks.Select(x => x.Configs.ToList()).Aggregate((x, y) => x.Concat(y).ToList());
 
-                locations = configs.Select(x => new Location(x)).OrderBy(x => x.TrackName).ToList();
+                    locations = configs.Select(x => new Location(x)).OrderBy(x => x.TrackName).ToList();
+                }
             }
             else
             {
                 locations = new List<Location>();
             }
+        }
+
+        public LocationCollection(IEnumerable<RaceTrack> tracks)
+        {
+            foreach (var track in tracks)
+            {
+                foreach (var config in track.Configs)
+                {
+                    config.Track = track;
+                }
+            }
+            //tracks.ForEach(x => x.Configs.ForEach(y => y.Track = x));
+            List<TrackConfig> configs = tracks.Select(x => x.Configs.ToList()).Aggregate((x, y) => x.Concat(y).ToList());
+
+            locations = configs.Select(x => new Location(x)).OrderBy(x => x.TrackName).ToList();
         }
 
         public int Count => ((ICollection<Location>)locations).Count;
@@ -78,6 +98,31 @@ namespace iRLeagueManager.Locations
         public void Add(Location item)
         {
             ((ICollection<Location>)locations).Add(item);
+        }
+
+        public void Add(TrackConfig config)
+        {
+            if (locations.Any(x => x.GetConfigInfo() == config) == false)
+            {
+                locations.Add(new Location(config));
+                if (config.Track.TrackId == 0)
+                {
+                    config.Track.TrackId = locations.Max(x => x.GetTrackInfo().TrackId) + 1;
+                }
+            }
+        }
+
+        public void Add(RaceTrack track)
+        {
+            if (locations.Any(x => x.GetConfigInfo().Track.TrackName == track.TrackName) == false)
+            {
+                var id = locations.Max(x => x.GetTrackInfo().TrackId) + 1;
+                track.TrackId = id;
+                foreach(var config in track.Configs)
+                {
+                    Add(config);
+                }
+            }
         }
 
         public void Clear()
@@ -123,6 +168,15 @@ namespace iRLeagueManager.Locations
         public void RemoveAt(int index)
         {
             ((IList<Location>)locations).RemoveAt(index);
+        }
+
+        public void SaveAs(string filePath)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<RaceTrack>));
+            using (var streamWriter = new StreamWriter(filePath))
+            {
+                xmlSerializer.Serialize(streamWriter, locations.Select(x => x.GetTrackInfo()).Distinct().OrderBy(x => x.TrackId).ToList());
+            }
         }
     }
 }

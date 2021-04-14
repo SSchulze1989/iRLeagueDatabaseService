@@ -29,6 +29,7 @@ using System.Xml.Serialization;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.Runtime.CompilerServices;
 
 namespace iRLeagueManager.Locations
 {
@@ -44,20 +45,35 @@ namespace iRLeagueManager.Locations
         public string ShortName => TrackName.Substring(0, Math.Min(20, TrackName.Length));
         [DataMember]
         public ObservableCollection<TrackConfig> Configs { get; set; }
+        [DataMember]
+        public string Location { get; set; } = "";
         //Race track data
 
-        public RaceTrack() { }
+        public RaceTrack() 
+        {
+            Configs = new ObservableCollection<TrackConfig>();
+        }
 
-        public RaceTrack(int trackId, string trackName)
+        public RaceTrack(int trackId, string trackName) : this()
         {
             TrackId = trackId;
             TrackName = trackName;
-            Configs = new ObservableCollection<TrackConfig>();
         }
 
         public void AddConfig(int configId, string configName, int lengtKm = 0)
         {
             Configs.Add(new TrackConfig(this, configId, configName, lengtKm));
+        }
+
+        public void AddConfig(TrackConfig config)
+        {
+            if ((Configs.Any(x => x.ConfigId == config.ConfigId) || Configs.Any(x => x.ConfigName == config.ConfigName)) == false)
+            {
+                var id = Configs.Count > 0 ? Configs.Max(x => x.ConfigId) + 1 : 1;
+                config.ConfigId = 1;
+                config.Track = this;
+                Configs.Add(config);
+            }
         }
     }
 }
