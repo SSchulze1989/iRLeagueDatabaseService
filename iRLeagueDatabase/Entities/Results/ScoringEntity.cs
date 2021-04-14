@@ -654,9 +654,23 @@ namespace iRLeagueDatabase.Entities.Results
                 .Where(x => eventDrivers.Contains(x.Member))
                 .GroupBy(x => x.Member);
 
+            // clear rows
+            var removeRows = accResult.RawResults.Where(x => eventDrivers.Contains(x.Member) == false).ToList();
+            removeRows.ForEach(x => 
+            { 
+                x.Delete(dbContext); accResult.RawResults.Remove(x); 
+            });
+            var removeScoredRows = accScoredResult.FinalResults.Where(x => eventDrivers.Contains(x.Member) == false).ToList();
+            removeScoredRows.ForEach(x =>
+            {
+                x.Delete(dbContext);
+                accScoredResult.FinalResults.Remove(x);
+            });
+
             // Calculate
             List<ScoredResultRowEntity> accResultRows = new List<ScoredResultRowEntity>();
             var totalLaps = subSessionResults.Sum(x => x.FinalResults.Max(y => y.CompletedLaps));
+
             foreach (var rows in driverResultRows)
             {
                 var driver = rows.Key;
@@ -773,6 +787,8 @@ namespace iRLeagueDatabase.Entities.Results
                 accScoredResultRow.ResultRow = accResultRow;
                 accScoredResultRow.PointsEligible = rows.Select(x => x.PointsEligible).Aggregate((x, y) => x |= y);
             }
+
+
 
             // Calculate lap interval
             var maxCompletedLaps = accScoredResult.FinalResults.Max(x => x.CompletedLaps);
