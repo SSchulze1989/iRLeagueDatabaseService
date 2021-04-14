@@ -37,7 +37,10 @@ namespace iRLeagueManager.Locations
     {
         private List<Location> locations;
 
-        public LocationCollection() : this("Tracks.xml") { }
+        public LocationCollection()
+        {
+            locations = new List<Location>();
+        }
 
         public LocationCollection(string filePath)
         {
@@ -64,6 +67,21 @@ namespace iRLeagueManager.Locations
             {
                 locations = new List<Location>();
             }
+        }
+
+        public LocationCollection(IEnumerable<RaceTrack> tracks)
+        {
+            foreach (var track in tracks)
+            {
+                foreach (var config in track.Configs)
+                {
+                    config.Track = track;
+                }
+            }
+            //tracks.ForEach(x => x.Configs.ForEach(y => y.Track = x));
+            List<TrackConfig> configs = tracks.Select(x => x.Configs.ToList()).Aggregate((x, y) => x.Concat(y).ToList());
+
+            locations = configs.Select(x => new Location(x)).OrderBy(x => x.TrackName).ToList();
         }
 
         public int Count => ((ICollection<Location>)locations).Count;
