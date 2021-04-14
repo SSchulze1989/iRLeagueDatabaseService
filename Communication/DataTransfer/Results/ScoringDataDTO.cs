@@ -32,6 +32,7 @@ using iRLeagueManager.Enums;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Filters;
+using iRLeagueDatabase.Enums;
 
 namespace iRLeagueDatabase.DataTransfer.Results
 {
@@ -43,9 +44,15 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public string Name { get; set; }
         [DataMember]
+        public string Description { get; set; }
+        [DataMember]
         public ScoringKindEnum ScoringKind { get; set; }
         [DataMember]
         public DropRacesOption DropRacesOption { get; set; }
+        [DataMember]
+        public SessionType ScoringSessionType { get; set; }
+        [DataMember]
+        public ScoringSessionSelectionEnum SessionSelectType { get; set; }
         [DataMember]
         public int DropWeeks { get; set; }
         [DataMember]
@@ -54,6 +61,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int MaxResultsPerGroup { get; set; }
         [DataMember]
         public bool TakeGroupAverage { get; set; }
+        [DataMember]
+        public bool ShowResults { get; set; }
         [DataMember]
         //public virtual SessionInfoDTO[] Sessions { get; set; }
         public long[] SessionIds { get; set; }
@@ -88,6 +97,16 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public bool UseResultSetTeam { get; set; }
         [DataMember]
         public bool UpdateTeamOnRecalculation { get; set; }
+        [DataMember]
+        public long? ParentScoringId { get; set; }
+        [DataMember]
+        public long[] SubSessionScoringIds { get; set; }
+        [DataMember]
+        public IEnumerable<double> ScoringWeights { get; set; }
+        [DataMember]
+        public AccumulateByOption AccumulateBy { get; set; }
+        [DataMember]
+        public AccumulateResultsOption AccumulateResults { get; set; }
 
         #region Version Info
         [DataMember]

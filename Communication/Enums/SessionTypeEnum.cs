@@ -33,6 +33,9 @@ namespace iRLeagueManager.Enums
         Undefined,
         Practice,
         Qualifying,
-        Race
+        Race,
+        HeatEvent,
+        Heat,
+        Warmup
     }
 }

@@ -197,22 +197,64 @@ namespace iRLeagueDatabase.Mapper
             TypeMaps.Add(typeMap);
         }
 
+        /// <summary>
+        /// Map a collection of source dto to a collection of target entites.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the source DTO</typeparam>
+        /// <typeparam name="TTarget">Type of the target Entity</typeparam>
+        /// <param name="sourceCollection">Collection of source items. In case of mapping Ids to entities an array of DTOs has to be created first.</param>
+        /// <param name="targetCollection">Target collection to map to. Depending on configuration entites might be permanently deleted after mapping.</param>
+        /// <param name="map">Mapping function from DTO to Entity</param>
+        /// <param name="key">Key selector for finding entities in the database</param>
+        /// <param name="removeFromCollection">If <see langword="true"/>: Items that are not in the source collection will be removed from the target collection. 
+        /// Otherwise target collection items will be preserved</param>
+        /// <param name="removeFromDatabase">If <see langword="true"/>: Items that are not in the source collection will be deleted from the database.</param>
+        /// <param name="autoAddMissing">If <see langword="true"/>: For each item that is not found in the database a new entity will be created.</param>
+        /// <returns>Mapping target collection</returns>
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection,
-            Func<TSource, TTarget, TTarget> map, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false)
+            Func<TSource, TTarget, TTarget> map, Func<TSource, object> key = null, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false)
             where TSource : MappableDTO where TTarget : MappableEntity
         {
             return MapCollection(sourceCollection, targetCollection, map, x => new object[] { key(x) },
                 removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase, autoAddMissing: autoAddMissing);
         }
 
+        /// <summary>
+        /// Map a collection of source dto to a collection of target entites.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the source DTO</typeparam>
+        /// <typeparam name="TTarget">Type of the target Entity</typeparam>
+        /// <param name="sourceCollection">Collection of source items. In case of mapping Ids to entities an array of DTOs has to be created first.</param>
+        /// <param name="targetCollection">Target collection to map to. Depending on configuration entites might be permanently deleted after mapping.</param>
+        /// <param name="get">Skip Mapping. Get function </param>
+        /// <param name="key">Key selector for finding entities in the database</param>
+        /// <param name="removeFromCollection">If <see langword="true"/>: Items that are not in the source collection will be removed from the target collection. 
+        /// Otherwise target collection items will be preserved</param>
+        /// <param name="removeFromDatabase">If <see langword="true"/>: Items that are not in the source collection will be deleted from the database.</param>
+        /// <param name="autoAddMissing">If <see langword="true"/>: For each item that is not found in the database a new entity will be created.</param>
+        /// <returns>Mapping target collection</returns>
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection,
-            Func<TSource, TTarget> get, Func<TSource, object> key, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false)
+            Func<TSource, TTarget> get, Func<TSource, object> key = null, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false)
             where TSource : MappableDTO where TTarget : MappableEntity
         {
             return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), key,
                 removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase, autoAddMissing: autoAddMissing);
         }
 
+        /// <summary>
+        /// Map a collection of source dto to a collection of target entites.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the source DTO</typeparam>
+        /// <typeparam name="TTarget">Type of the target Entity</typeparam>
+        /// <param name="sourceCollection">Collection of source items. In case of mapping Ids to entities an array of DTOs has to be created first.</param>
+        /// <param name="targetCollection">Target collection to map to. Depending on configuration entites might be permanently deleted after mapping.</param>
+        /// <param name="get">Skip Mapping. Get function </param>
+        /// <param name="keys">Key selector for finding entities in the database</param>
+        /// <param name="removeFromCollection">If <see langword="true"/>: Items that are not in the source collection will be removed from the target collection. 
+        /// Otherwise target collection items will be preserved</param>
+        /// <param name="removeFromDatabase">If <see langword="true"/>: Items that are not in the source collection will be deleted from the database.</param>
+        /// <param name="autoAddMissing">If <see langword="true"/>: For each item that is not found in the database a new entity will be created.</param>
+        /// <returns>Mapping target collection</returns>
         public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection,
             Func<TSource, TTarget> get, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false)
             where TSource : MappableDTO where TTarget : MappableEntity
@@ -220,7 +262,24 @@ namespace iRLeagueDatabase.Mapper
             return MapCollection(sourceCollection, targetCollection, (src, trg) => get(src), keys,
                 removeFromCollection: removeFromCollection, removeFromDatabase: removeFromDatabase, autoAddMissing: autoAddMissing);
         }
-        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false) where TSource : MappableDTO where TTarget : MappableEntity
+
+        /// <summary>
+        /// Map a collection of source dto to a collection of target entites.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the source DTO</typeparam>
+        /// <typeparam name="TTarget">Type of the target Entity</typeparam>
+        /// <param name="sourceCollection">Collection of source items. In case of mapping Ids to entities an array of DTOs has to be created first.</param>
+        /// <param name="targetCollection">Target collection to map to. Depending on configuration entites might be permanently deleted after mapping.</param>
+        /// <param name="map">Mapping function from DTO to Entity</param>
+        /// <param name="keys">Key selector for finding entities in the database</param>
+        /// <param name="removeFromCollection">If <see langword="true"/>: Items that are not in the source collection will be removed from the target collection. 
+        /// Otherwise target collection items will be preserved</param>
+        /// <param name="removeFromDatabase">If <see langword="true"/>: Items that are not in the source collection will be deleted from the database.</param>
+        /// <param name="autoAddMissing">If <see langword="true"/>: For each item that is not found in the database a new entity will be created.</param>
+        /// <returns>Mapping target collection</returns>
+        public ICollection<TTarget> MapCollection<TSource, TTarget>(IEnumerable<TSource> sourceCollection, ICollection<TTarget> targetCollection, 
+            Func<TSource, TTarget, TTarget> map, Func<TSource, object[]> keys, bool removeFromCollection = false, bool removeFromDatabase = false, bool autoAddMissing = false) 
+            where TSource : MappableDTO where TTarget : MappableEntity
         {
             //if (sourceCollection == null)
             //{
@@ -269,9 +328,14 @@ namespace iRLeagueDatabase.Mapper
                 //-> this can be a problem when another entity of this kind has been added in the same context without saving.
                 //   the problem is migitated for cases of multiple adds in one collection by buffering and only adding to database after the
                 //   whole collection is run through. There might be an issue appearing with multiple collections of same type but I do not have a quick way around this.
-                target = dbSet.Find(source.Keys) as TTarget;
-                //if (target != null && DbContext.Entry(target).State == System.Data.Entity.EntityState.Added)
-                //    target = null;
+                //if (keys == null)
+                //{
+                    target = dbSet.Find(source.Keys) as TTarget;
+                //}
+                //else
+                //{
+                //    target = dbSet.Find(keys.Invoke(source)) as TTarget;
+                //}
 
                 if (target == null)
                 {

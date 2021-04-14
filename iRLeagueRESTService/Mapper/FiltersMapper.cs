@@ -8,6 +8,7 @@ using iRLeagueDatabase.Extensions;
 using iRLeagueManager.Timing;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -84,7 +85,7 @@ namespace iRLeagueDatabase.Mapper
                     return null;
                 }
             }
-            object sourceObject = Convert.ChangeType(source, sourceType);
+            object sourceObject = Convert.ChangeType(source, sourceType, CultureInfo.InvariantCulture);
             object target;
             if (sourceType.Equals(typeof(long)) && targetType.Equals(typeof(TimeSpan)))
             {
@@ -100,7 +101,7 @@ namespace iRLeagueDatabase.Mapper
             }
             else
             {
-                target = Convert.ChangeType(sourceObject, targetType);
+                target = Convert.ChangeType(sourceObject, targetType, CultureInfo.InvariantCulture);
             }
 
             return target;
@@ -181,10 +182,10 @@ namespace iRLeagueDatabase.Mapper
             }
             else
             {
-                target = Convert.ChangeType(source, targetType);
+                target = Convert.ChangeType(source, targetType, CultureInfo.InvariantCulture);
             }
 
-            return Convert.ToString(target);
+            return Convert.ToString(target, CultureInfo.InvariantCulture);
         }
     }
 }

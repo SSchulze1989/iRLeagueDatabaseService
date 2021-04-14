@@ -97,7 +97,7 @@ namespace iRLeagueDatabase
                 .WithRequired(r => r.Session)
                 .WillCascadeOnDelete();
             modelBuilder.Entity<SessionBaseEntity>()
-                .HasRequired(r => r.Schedule)
+                .HasOptional(r => r.Schedule)
                 .WithMany(r => r.Sessions)
                 .WillCascadeOnDelete();
 

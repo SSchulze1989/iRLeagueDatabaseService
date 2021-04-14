@@ -188,7 +188,7 @@ namespace iRLeagueRESTService.Controllers
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 result = false;
             }

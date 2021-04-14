@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculation\Accumulator.cs" />
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
@@ -78,11 +79,14 @@
     <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
+    <Compile Include="Entities\Sessions\SubSessionEntity.cs" />
     <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
     <Compile Include="Entities\Statistics\ImportedStatisticSetEntity.cs" />
     <Compile Include="Entities\Statistics\LeagueStatisticSetEntity.cs" />
     <Compile Include="Entities\Statistics\SeasonStatisticSetEntity.cs" />
     <Compile Include="Entities\Statistics\StatisticSetEntity.cs" />
+    <Compile Include="Exceptions\LeagueDatabaseException.cs" />
+    <Compile Include="Exceptions\ResultsCalculationException.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
     <Compile Include="Filters\FilterFactoryHelper.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />
@@ -165,6 +169,22 @@
     <Compile Include="Migrations\202103102204011_AddSeasonStartEndDate.designer.cs">
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202104041229298_AddHeatScoring.cs" />
+    <Compile Include="Migrations\202104041229298_AddHeatScoring.designer.cs">
+      <DependentUpon>202104041229298_AddHeatScoring.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104050803044_AddPointsEligibleToResultRow.cs" />
+    <Compile Include="Migrations\202104050803044_AddPointsEligibleToResultRow.designer.cs">
+      <DependentUpon>202104050803044_AddPointsEligibleToResultRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104060033285_AddShowResultsScoringOption.cs" />
+    <Compile Include="Migrations\202104060033285_AddShowResultsScoringOption.designer.cs">
+      <DependentUpon>202104060033285_AddShowResultsScoringOption.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202104060050369_AddScoringDescription.cs" />
+    <Compile Include="Migrations\202104060050369_AddScoringDescription.designer.cs">
+      <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -216,6 +236,18 @@
     <EmbeddedResource Include="Migrations\202103102204011_AddSeasonStartEndDate.resx">
       <DependentUpon>202103102204011_AddSeasonStartEndDate.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104041229298_AddHeatScoring.resx">
+      <DependentUpon>202104041229298_AddHeatScoring.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104050803044_AddPointsEligibleToResultRow.resx">
+      <DependentUpon>202104050803044_AddPointsEligibleToResultRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104060033285_AddShowResultsScoringOption.resx">
+      <DependentUpon>202104060033285_AddShowResultsScoringOption.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202104060050369_AddScoringDescription.resx">
+      <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Communication\Communication.csproj">
@@ -223,6 +255,7 @@
       <Name>Communication</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

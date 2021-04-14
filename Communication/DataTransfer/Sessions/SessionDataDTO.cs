@@ -58,6 +58,9 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         public long? SessionResultId { get; set; }
 
         [DataMember]
+        public long? ParentSessionId { get; set; }
+
+        [DataMember]
         //public IncidentReviewInfoDTO[] Reviews { get; set; }
         public long[] ReviewIds { get; set; }
 
@@ -78,6 +81,15 @@ namespace iRLeagueDatabase.DataTransfer.Sessions
         /// Duration of the session. In case of a race with attached qualy, this also includes the times of free practice and qualifiying.
         /// </summary>
         public TimeSpan Duration { get; set; }
+
+        /// <summary>
+        /// Ids of sub sessions e.g: for single heats or with multi race events
+        /// </summary>
+        [DataMember]
+        public SessionDataDTO[] SubSessions { get; set; }
+
+        [DataMember]
+        public int SubSessionNr { get; set; }
 
         #region Version Info
         [DataMember]

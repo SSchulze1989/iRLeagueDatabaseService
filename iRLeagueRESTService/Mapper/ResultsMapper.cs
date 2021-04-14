@@ -91,19 +91,19 @@ namespace iRLeagueDatabase.Mapper
             target.CarClass = source.CarClass;
             target.CarNumber = source.CarNumber;
             target.ClassId = source.ClassId;
-            target.CompletedLaps = source.CompletedLaps;
+            target.CompletedLaps = (int)source.CompletedLaps;
             target.FastestLapTime = TimeSpanConverter.Convert(source.FastestLapTime);
             target.FastLapNr = source.FastLapNr;
-            target.FinishPosition = source.FinishPosition;
-            target.Incidents = source.Incidents;
+            target.FinishPosition = (int)source.FinishPosition;
+            target.Incidents = (int)source.Incidents;
             target.Interval = TimeSpanConverter.Convert(source.Interval);
-            target.LeadLaps = source.LeadLaps;
+            target.LeadLaps = (int)source.LeadLaps;
             target.MemberId = source.MemberId; // MapToMemberInfoDTO(source.Member);
-            target.PositionChange = source.PositionChange;
+            target.PositionChange = (int)source.PositionChange;
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.ResultRowId = source.ResultRowId;
             target.ResultId = source.ResultId;
-            target.StartPosition = source.StartPosition;
+            target.StartPosition = (int)source.StartPosition;
             target.Status = source.Status;
             target.TeamId = source.Team?.TeamId;
             target.TeamName = source.Team?.Name;
@@ -152,14 +152,14 @@ namespace iRLeagueDatabase.Mapper
 
             MapToResultRowDataDTO(source.ResultRow, target);
             target.ScoredResultRowId = source.ScoredResultRowId;
-            target.BonusPoints = source.BonusPoints;
+            target.BonusPoints = (int)source.BonusPoints;
             target.FinalPosition = source.FinalPosition;
-            target.FinalPositionChange = source.FinalPositionChange;
-            target.PenaltyPoints = source.PenaltyPoints;
-            target.RacePoints = source.RacePoints;
+            target.FinalPositionChange = (int)source.FinalPositionChange;
+            target.PenaltyPoints = (int)source.PenaltyPoints;
+            target.RacePoints = (int)source.RacePoints;
             target.ScoringId = source.ScoringId;
             target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
-            target.TotalPoints = source.TotalPoints;
+            target.TotalPoints = (int)source.TotalPoints;
             target.TeamId = source.Team?.TeamId;
             target.TeamName = source.Team?.Name;
 
@@ -192,6 +192,7 @@ namespace iRLeagueDatabase.Mapper
             target.BonusPoints = source.BonusPoints;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
+            target.Description = source.Description;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.Name = source.Name;
@@ -202,12 +203,20 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringKind = source.ScoringKind;
             target.MaxResultsPerGroup = source.MaxResultsPerGroup;
             target.TakeGroupAverage = source.TakeGroupAverage;
+            target.ShowResults = source.ShowResults;
             target.ExtScoringSourceId = source.ExtScoringSourceId; // MapToScoringInfoDTO(source.ExtScoringSource);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             //target.ResultsFilterOptions = source.ResultsFilterOptions.Select(x => MapToResultsFilterOptionDTO(x)).ToArray();
             target.ResultsFilterOptionIds = source.ResultsFilterOptions.Select(x => x.ResultsFilterId).ToArray();
             target.UseResultSetTeam = source.UseResultSetTeam;
             target.UpdateTeamOnRecalculation = source.UpdateTeamOnRecalculation;
+            target.ParentScoringId = source.ParentScoringId;
+            target.SubSessionScoringIds = source.SubSessionScorings.Select(x => x.ScoringId).ToArray();
+            target.AccumulateBy = source.AccumulateBy;
+            target.AccumulateResults = source.AccumulateResultsOption;
+            target.ScoringSessionType = source.ScoringSessionType;
+            target.SessionSelectType = source.SessionSelectType;
+            target.ScoringWeights = source.ScoringWeights;
 
             return target;
         }
@@ -278,33 +287,33 @@ namespace iRLeagueDatabase.Mapper
 
             target.CarClass = source.CarClass;
             target.ClassId = source.ClassId;
-            target.CompletedLaps = source.CompletedLaps;
-            target.CompletedLapsChange = source.CompletedLapsChange;
+            target.CompletedLaps = (int)source.CompletedLaps;
+            target.CompletedLapsChange = (int)source.CompletedLapsChange;
             target.DroppedResultCount = source.DroppedResultCount;
             target.FastestLaps = source.FastestLaps;
             target.FastestLapsChange = source.FastestLapsChange;
-            target.Incidents = source.Incidents;
-            target.IncidentsChange = source.IncidentsChange;
+            target.Incidents = (int)source.Incidents;
+            target.IncidentsChange = (int)source.IncidentsChange;
             target.LastPosition = source.LastPosition;
-            target.LeadLaps = source.LeadLaps;
-            target.LeadLapsChange = source.LeadLapsChange;
+            target.LeadLaps = (int)source.LeadLaps;
+            target.LeadLapsChange = (int)source.LeadLapsChange;
             target.MemberId = source.Member.MemberId; // MapToMemberInfoDTO(source.Member);
-            target.PenaltyPoints = source.PenaltyPoints;
-            target.PenaltyPointsChange = source.PenaltyPointsChange;
+            target.PenaltyPoints = (int)source.PenaltyPoints;
+            target.PenaltyPointsChange = (int)source.PenaltyPointsChange;
             target.PolePositions = source.PolePositions;
             target.PolePositionsChange = source.PolePositionsChange;
             target.Position = source.Position;
             target.PositionChange = source.PositionChange;
-            target.RacePoints = source.RacePoints;
-            target.RacePointsChange = source.RacePointsChange;
+            target.RacePoints = (int)source.RacePoints;
+            target.RacePointsChange = (int)source.RacePointsChange;
             target.Races = source.Races;
             target.RacesCounted = source.RacesCounted;
             //target.ScoringId = source.Scoring.ScoringId; // MapToScoringInfoDTO(source.Scoring);
             target.Top10 = source.Top10;
             target.Top3 = source.Top3;
             target.Top5 = source.Top5;
-            target.TotalPoints = source.TotalPoints;
-            target.TotalPointsChange = source.TotalPointsChange;
+            target.TotalPoints = (int)source.TotalPoints;
+            target.TotalPointsChange = (int)source.TotalPointsChange;
             target.Wins = source.Wins;
             target.WinsChange = source.WinsChange;
             var countedResults = source.CountedResults?.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
@@ -352,17 +361,17 @@ namespace iRLeagueDatabase.Mapper
 
             //MapToResultRowDataDTO(source.ResultRow, target);
             target.ScoredResultRowId = source.ScoredResultRowId;
-            target.BonusPoints = source.BonusPoints;
+            target.BonusPoints = (int)source.BonusPoints;
             target.FinalPosition = source.FinalPosition;
             target.FinalPositionChange = source.FinalPositionChange;
-            target.PenaltyPoints = source.PenaltyPoints;
-            target.RacePoints = source.RacePoints;
+            target.PenaltyPoints = (int)source.PenaltyPoints;
+            target.RacePoints = (int)source.RacePoints;
             target.ScoringId = source.ScoringId;
             target.TeamId = source.TeamId;
             target.FastestLapTime = TimeSpanConverter.Convert(source.FastestLapTime);
             target.AvgLapTime = TimeSpanConverter.Convert(source.AvgLapTime);
             target.ScoredResultRows = source.ScoredResultRows.Select(x => MapToScoredResultRowDataDTO(x)).ToArray();
-            target.TotalPoints = source.TotalPoints;
+            target.TotalPoints = (int)source.TotalPoints;
 
             return target;
         }
@@ -509,7 +518,11 @@ namespace iRLeagueDatabase.Mapper
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
             target.Session = GetSessionBaseEntity(new SessionInfoDTO() { SessionId = source.SessionId });
-            target.Season = target.Session.Schedule.Season;
+            target.Season = target.Session.Schedule?.Season;
+            if (target.Season == null)
+            {
+                target.Season = target.Session.ParentSession?.Schedule?.Season;
+            }
             MapCollection(source.RawResults, target.RawResults, MapToResultRowEntity, x => new object[] { x.ResultRowId, x.ResultId }, autoAddMissing: true, removeFromCollection: true, removeFromDatabase: true);
             MapCollection(source.ReviewIds.Select(x => new IncidentReviewInfoDTO() { ReviewId = x }), target.Reviews, GetReviewEntity, x => x.ReviewId);
             target.RequiresRecalculation = true;
@@ -541,6 +554,7 @@ namespace iRLeagueDatabase.Mapper
                     {
                         resultRow.SeasonStartIRating = resultRow.OldIRating;
                     }
+                    resultRow.PointsEligible = true;
                     DbContext.Configuration.LazyLoadingEnabled = true;
                 }
             }
@@ -656,6 +670,7 @@ namespace iRLeagueDatabase.Mapper
             target.BonusPoints = source.BonusPoints;
             target.CreatedByUserId = source.CreatedByUserId;
             target.LastModifiedByUserId = source.LastModifiedByUserId;
+            target.Description = source.Description;
             target.DropWeeks = source.DropWeeks;
             target.IncPenaltyPoints = source.IncPenaltyPoints;
             target.Name = source.Name;
@@ -667,9 +682,9 @@ namespace iRLeagueDatabase.Mapper
             if (target.Sessions == null)
                 target.Sessions = new List<Entities.Sessions.SessionBaseEntity>();
             else
-                MapCollection(source.SessionIds.Select(x => new SessionInfoDTO() { SessionId = x }), target.Sessions, GetSessionBaseEntity, x => x.SessionId);
+                MapCollection(source.SessionIds.Select(x => new SessionInfoDTO() { SessionId = x }), target.Sessions, GetSessionBaseEntity, x => x.SessionId, removeFromCollection: true);
             //target.ConnectedSchedule = GetScheduleEntity(source.ConnectedScheduleId != null ? new ScheduleInfoDTO() { ScheduleId = source.ConnectedScheduleId } : null);
-            target.ConnectedSchedule = DefaultGet<ScheduleEntity>(source.ConnectedScheduleId);
+            target.ConnectedSchedule = source.SessionSelectType == iRLeagueManager.Enums.ScoringSessionSelectionEnum.SelectSchedule ? DefaultGet<ScheduleEntity>(source.ConnectedScheduleId) : null;
             if (target.ConnectedSchedule != null)
             {
                 target.Sessions = target.ConnectedSchedule.Sessions;
@@ -677,12 +692,28 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringKind = source.ScoringKind;
             target.MaxResultsPerGroup = source.MaxResultsPerGroup;
             target.TakeGroupAverage = source.TakeGroupAverage;
+            target.ShowResults = source.ShowResults;
             //target.ExtScoringSource = GetScoringEntity(source.ExtScoringSourceId != null ? new ScoringInfoDTO() { ScoringId = source.ExtScoringSourceId } : null);
             target.ExtScoringSource = DefaultGet<ScoringEntity>(source.ExtScoringSourceId);
             target.TakeResultsFromExtSource = source.TakeResultsFromExtSource;
             target.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
             target.UseResultSetTeam = source.UseResultSetTeam;
             target.UpdateTeamOnRecalculation = source.UpdateTeamOnRecalculation;
+            if (source.SubSessionScoringIds != null)
+            {
+                MapCollection(source.SubSessionScoringIds.Select(x => new ScoringInfoDTO() { ScoringId = x }), target.SubSessionScorings, x => DefaultGet<ScoringEntity>(x),
+                removeFromCollection: true);
+                target.ScoringWeights = source.ScoringWeights;
+            }
+            else
+            {
+                target.SubSessionScorings = null;
+                target.ScoringWeights = null;
+            }
+            target.SessionSelectType = source.SessionSelectType;
+            target.ScoringSessionType = source.ScoringSessionType;
+            target.AccumulateBy = source.AccumulateBy;
+            target.AccumulateResultsOption = source.AccumulateResults;
 
             return target;
         }

@@ -24,8 +24,7 @@ namespace iRLeagueDatabase.Entities.Sessions
         //[Key, ForeignKey(nameof(Schedule)), Column(Order = 2)]
         //public int ScheduleId { get; set; }
         [ForeignKey(nameof(Schedule))]
-        public long ScheduleId { get; set; }
-        [Required]
+        public long? ScheduleId { get; set; }
         public virtual ScheduleEntity Schedule { get; set; }
 
         public override object MappingId => SessionId;
@@ -44,6 +43,8 @@ namespace iRLeagueDatabase.Entities.Sessions
         /// </summary>
         //[XmlIgnore]
         public SessionType SessionType { get; set; }
+
+        public string Name { get; set; }
 
         /// <summary>
         /// Date of the session.
@@ -75,6 +76,16 @@ namespace iRLeagueDatabase.Entities.Sessions
 
         public virtual List<ScoringEntity> Scorings { get; set; }
 
+        [InverseProperty(nameof(SessionBaseEntity.ParentSession))]
+        public virtual List<SessionBaseEntity> SubSessions { get; set; }
+
+        [ForeignKey(nameof(ParentSession))]
+        public long? ParentSessionId { get; set; }
+
+        public virtual SessionBaseEntity ParentSession { get; set; }
+
+        public int SubSessionNr { get; set; }
+
         /// <summary>
         /// Create a new Session object
         /// </summary>
@@ -89,6 +100,7 @@ namespace iRLeagueDatabase.Entities.Sessions
             SessionResult?.Delete(dbContext);
             Scorings?.ToList().ForEach(x => x.Sessions.Remove(this));
             Reviews?.ToList().ForEach(x => x.Delete(dbContext));
+            SubSessions?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
     }

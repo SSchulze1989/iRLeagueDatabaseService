@@ -10,6 +10,7 @@ using iRLeagueManager.Enums;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Statistics;
 using System.Data.Entity;
+using System.CodeDom;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -39,10 +40,10 @@ namespace iRLeagueDatabase.Entities.Results
         public long? TeamId { get; set; }
         public virtual TeamEntity Team { get; set; }
 
-        public int RacePoints { get; set; }
-        public int BonusPoints { get; set; }
+        public double RacePoints { get; set; }
+        public double BonusPoints { get; set; }
         //public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }
-        public int PenaltyPoints { get; set; }
+        public double PenaltyPoints { get; set; }
         [InverseProperty(nameof(AddPenaltyEntity.ScoredResultRow))]
         public virtual AddPenaltyEntity AddPenalty { get; set; }
         [InverseProperty(nameof(ReviewPenaltyEntity.ScoredResultRow))]
@@ -51,16 +52,17 @@ namespace iRLeagueDatabase.Entities.Results
         //public long? TeamResultRowId { get; set; }
         //public virtual ScoredTeamResultRowEntity TeamResultRow { get; set; }
         public int FinalPosition { get; set; }
-        public int FinalPositionChange { get; set; }
-        public int TotalPoints { get; set; }
+        public double FinalPositionChange { get; set; }
+        public double TotalPoints { get; set; }
+        public bool PointsEligible { get; set; }
 
         public SimSessionTypeEnum SimSessionType => ((IResultRow)ResultRow).SimSessionType;
 
         public DateTime? Date => ((IResultRow)ResultRow).Date;
 
-        public int StartPosition => ((IResultRow)ResultRow).StartPosition;
+        public double StartPosition => ((IResultRow)ResultRow).StartPosition;
 
-        public int FinishPosition => ((IResultRow)ResultRow).FinishPosition;
+        public double FinishPosition => ((IResultRow)ResultRow).FinishPosition;
 
         public long MemberId => ((IResultRow)ResultRow).MemberId;
 
@@ -96,15 +98,15 @@ namespace iRLeagueDatabase.Entities.Results
 
         public string CarClass => ((IResultRow)ResultRow).CarClass;
 
-        public int CompletedLaps => ((IResultRow)ResultRow).CompletedLaps;
+        public double CompletedLaps => ((IResultRow)ResultRow).CompletedLaps;
 
         public double CompletedPct => ((IResultRow)ResultRow).CompletedPct;
 
-        public int LeadLaps => ((IResultRow)ResultRow).LeadLaps;
+        public double LeadLaps => ((IResultRow)ResultRow).LeadLaps;
 
         public int FastLapNr => ((IResultRow)ResultRow).FastLapNr;
 
-        public int Incidents => ((IResultRow)ResultRow).Incidents;
+        public double Incidents => ((IResultRow)ResultRow).Incidents;
 
         public RaceStatusEnum Status => ((IResultRow)ResultRow).Status;
 
@@ -118,7 +120,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public long FastestLapTime => ((IResultRow)ResultRow).FastestLapTime;
 
-        public int PositionChange => ((IResultRow)ResultRow).PositionChange;
+        public double PositionChange => ((IResultRow)ResultRow).PositionChange;
 
         public int Division => ((IResultRow)ResultRow).Division;
 
