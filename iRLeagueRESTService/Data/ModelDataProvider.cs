@@ -17,6 +17,7 @@ using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Mapper;
 using System.Threading.Tasks;
+using System.Data.Entity.Infrastructure;
 
 namespace iRLeagueRESTService.Data
 {
@@ -322,53 +323,56 @@ namespace iRLeagueRESTService.Data
                 leagueActionProvider.CalculateScoredResult(sessionId);
             }
 
+            var resultsDataProvider = new ResultsDataProvider(DbContext);
+            resultsDataProvider.EagerLoadResult(new long[] { sessionId }, new long[] { scoringId });
+
             var scoredResultEntity = DbContext.Set<ScoredResultEntity>()
                 //.AsNoTracking()
                 //.Include(x => x.Result.Session)
-                .Include(x => x.Scoring)
-                .Include(x => x.HardChargers)
-                .Include(x => x.CleanestDrivers)
+                //.Include(x => x.Scoring)
+                //.Include(x => x.HardChargers)
+                //.Include(x => x.CleanestDrivers)
                 //.Include(x => x.Result.RawResults.Select(y => y.Member))
                 //.Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
                 //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
                 .FirstOrDefault(x => x.ResultId == sessionId && x.ScoringId == scoringId);
 
-            if (scoredResultEntity == null || scoredResultEntity.Scoring.ShowResults == false)
-                return new ScoredResultDataDTO()
-                {
-                    ResultId = sessionId,
-                    ScoringId = scoringId
-                };
-            //DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
-            //         .Include(x => x.Session).Load();
-            DbContext.Set<ScoredResultRowEntity>().Where(x => x.ScoredResultId == sessionId && x.ScoringId == scoringId)
-                     .Include(x => x.AddPenalty)
-                     .Include(x => x.ResultRow.Member.Team)
-                     .Include(x => x.ReviewPenalties).Load();
-            //DbContext.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
-            //DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
-            //DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
-            //    .Include(x => x.AddPenalty)
-            //    .Include(x => x.ResultRow.Member.Team).Load();
+            //if (scoredResultEntity == null || scoredResultEntity.Scoring.ShowResults == false)
+            //    return new ScoredResultDataDTO()
+            //    {
+            //        ResultId = sessionId,
+            //        ScoringId = scoringId
+            //    };
+            ////DbContext.Set<ResultEntity>().Where(x => x.ResultId == sessionId)
+            ////         .Include(x => x.Session).Load();
+            //DbContext.Set<ScoredResultRowEntity>().Where(x => x.ScoredResultId == sessionId && x.ScoringId == scoringId)
+            //         .Include(x => x.AddPenalty)
+            //         .Include(x => x.ResultRow.Member.Team)
+            //         .Include(x => x.ReviewPenalties).Load();
+            ////DbContext.Entry(scoredResultEntity).Reference(x => x.Scoring).Load();
+            ////DbContext.Entry(scoredResultEntity).Reference(x => x.Result).Query().Include(x => x.Session).Load();
+            ////DbContext.Entry(scoredResultEntity).Collection(x => x.FinalResults).Query()
+            ////    .Include(x => x.AddPenalty)
+            ////    .Include(x => x.ResultRow.Member.Team).Load();
             
-            DbContext.Set<IncidentReviewEntity>()
-                     .Where(x => x.SessionId == sessionId)
-                     .Include(x => x.AcceptedReviewVotes)
-                     .Load();
+            //DbContext.Set<IncidentReviewEntity>()
+            //         .Where(x => x.SessionId == sessionId)
+            //         .Include(x => x.AcceptedReviewVotes)
+            //         .Load();
 
-            //if (scoredResultRowIds != null)
+            ////if (scoredResultRowIds != null)
+            ////{
+            ////    DbContext.Set<ReviewPenaltyEntity>().Where(x => scoredResultRowIds.Contains(x.ResultRowId))
+            ////    .Include(x => x.ReviewVote.MemberAtFault)
+            ////    .Include(x => x.ReviewVote.CustomVoteCat)
+            ////    .Load();
+            ////}
+
+            //if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
             //{
-            //    DbContext.Set<ReviewPenaltyEntity>().Where(x => scoredResultRowIds.Contains(x.ResultRowId))
-            //    .Include(x => x.ReviewVote.MemberAtFault)
-            //    .Include(x => x.ReviewVote.CustomVoteCat)
-            //    .Load();
+            //    DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
+            //        .Include(x => x.ScoredResultRows).Load();
             //}
-
-            if (scoredResultEntity is ScoredTeamResultEntity scoredTeamResultEntity)
-            {
-                DbContext.Entry(scoredTeamResultEntity).Collection(x => x.TeamResults).Query()
-                    .Include(x => x.ScoredResultRows).Load();
-            }
 
             DbContext.ChangeTracker.DetectChanges();
 

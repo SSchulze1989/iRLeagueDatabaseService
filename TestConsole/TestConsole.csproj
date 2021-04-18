@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>TestConsole</RootNamespace>
     <AssemblyName>TestConsole</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -30,6 +30,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -113,6 +114,10 @@
     <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>
       <Name>iRLeagueDatabase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\iRLeagueRESTService\iRLeagueRESTService.csproj">
+      <Project>{212f1b36-18f3-4128-a735-c27a9c7d8ad2}</Project>
+      <Name>iRLeagueRESTService</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

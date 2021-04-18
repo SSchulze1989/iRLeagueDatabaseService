@@ -53,7 +53,7 @@ namespace iRLeagueDatabase.Mapper
 
             MapToVersionInfoDTO(source, target);
             target.ResultId = source.ResultId;
-            target.SessionId = source.Session.SessionId;//MapToSessionInfoDTO(source.Session);
+            target.SessionId = source.ResultId;//MapToSessionInfoDTO(source.Session);
 
             return target;
         }

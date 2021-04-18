@@ -10,6 +10,7 @@ using iRLeagueDatabase.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web;
@@ -175,60 +176,62 @@ namespace iRLeagueRESTService.Data
                 }
             }
 
+            EagerLoadResult(scoringSessionIds.Select(x => x.Key).ToArray(), scoringSessionIds.Select(x => x.Value).ToArray());
+
             IEnumerable<ScoredResultEntity> scoredResultEntities = DbContext.Set<ScoredResultEntity>()
-                .Include(x => x.Scoring)
+                //.Include(x => x.Scoring)
                 .Where(x => sessionIds.Contains(x.ResultId))
                 .ToArray(); // Filter data before fetching from database
 
-            scoredResultEntities = scoringSessionIds
-                .Select(x => scoredResultEntities
-                    .SingleOrDefault(y => x.Key == y.ScoringId && x.Value == y.ResultId)).ToArray(); // Filter data after fetching from database to the exact needed scoredResults
+            //scoredResultEntities = scoringSessionIds
+            //    .Select(x => scoredResultEntities
+            //        .SingleOrDefault(y => x.Key == y.ScoringId && x.Value == y.ResultId)).ToArray(); // Filter data after fetching from database to the exact needed scoredResults
 
-            DbContext.Set<ScoredResultRowEntity>()
-                .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
-                .Include(x => x.ResultRow)
-                .Include(x => x.AddPenalty)
-                .Include(x => x.ReviewPenalties)
-                .Load();
+            //DbContext.Set<ScoredResultRowEntity>()
+            //    .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
+            //    .Include(x => x.ResultRow)
+            //    .Include(x => x.AddPenalty)
+            //    .Include(x => x.ReviewPenalties)
+            //    .Load();
 
-            DbContext.Set<ScoredTeamResultRowEntity>()
-                .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
-                .Include(x => x.ScoredResultRows)
-                .Load();
+            //DbContext.Set<ScoredTeamResultRowEntity>()
+            //    .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
+            //    .Include(x => x.ScoredResultRows)
+            //    .Load();
 
-            DbContext.Set<IncidentReviewEntity>()
-                .Where(x => sessionIds.Contains(x.SessionId))
-                .Include(x => x.AcceptedReviewVotes)
-                .Load();
+            //DbContext.Set<IncidentReviewEntity>()
+            //    .Where(x => sessionIds.Contains(x.SessionId))
+            //    .Include(x => x.AcceptedReviewVotes)
+            //    .Load();
 
-            DbContext.ChangeTracker.DetectChanges();
+            //DbContext.ChangeTracker.DetectChanges();
 
-            var memberIds = new List<long>();
-            foreach(var scoredResult in scoredResultEntities)
-            {
-                if (scoredResult.FinalResults != null)
-                {
-                    foreach (var row in scoredResult.FinalResults)
-                    {
-                        memberIds.Add(row.MemberId);
-                    }
-                }
-                if (scoredResult is ScoredTeamResultEntity scoredTeamResultEntity && scoredTeamResultEntity.TeamResults != null)
-                {
-                    var scoredTeamResultRows = scoredTeamResultEntity.TeamResults
-                        .SelectMany(x => x.ScoredResultRows)
-                        .Where(x => x != null);
-                    foreach(var row in scoredTeamResultRows)
-                    {
-                        memberIds.Add(row.MemberId);
-                    }
-                }
-            }
-            memberIds = memberIds.Distinct().ToList();
+            //var memberIds = new List<long>();
+            //foreach(var scoredResult in scoredResultEntities)
+            //{
+            //    if (scoredResult.FinalResults != null)
+            //    {
+            //        foreach (var row in scoredResult.FinalResults)
+            //        {
+            //            memberIds.Add(row.MemberId);
+            //        }
+            //    }
+            //    if (scoredResult is ScoredTeamResultEntity scoredTeamResultEntity && scoredTeamResultEntity.TeamResults != null)
+            //    {
+            //        var scoredTeamResultRows = scoredTeamResultEntity.TeamResults
+            //            .SelectMany(x => x.ScoredResultRows)
+            //            .Where(x => x != null);
+            //        foreach(var row in scoredTeamResultRows)
+            //        {
+            //            memberIds.Add(row.MemberId);
+            //        }
+            //    }
+            //}
+            //memberIds = memberIds.Distinct().ToList();
 
-            DbContext.Set<LeagueMemberEntity>()
-                .Where(x => memberIds.Contains(x.MemberId))
-                .Load();
+            //DbContext.Set<LeagueMemberEntity>()
+            //    .Where(x => memberIds.Contains(x.MemberId))
+            //    .Load();
 
             //foreach (var scoredResultEntity in scoredResultEntities)
             //{
@@ -246,6 +249,78 @@ namespace iRLeagueRESTService.Data
             DbContext.Configuration.LazyLoadingEnabled = true;
 
             return scoredResultData;
+        }
+
+        public void EagerLoadResult(long[] resultIds, long[] scoringIds)
+        {
+            DbContext.Database.Initialize(false);
+
+            var cmd = DbContext.Database.Connection.CreateCommand();
+            cmd.CommandText = "dbo.GetScoredResults @resultIds, @scoringIds";
+            var param = cmd.CreateParameter();
+            param.ParameterName = "resultIds";
+            param.Value = string.Join(",", resultIds);
+            param.DbType = System.Data.DbType.String;
+            cmd.Parameters.Add(param);
+            var param2 = cmd.CreateParameter();
+            param2.ParameterName = "scoringIds";
+            param2.Value = string.Join(",", scoringIds);
+            param2.DbType = System.Data.DbType.String;
+            cmd.Parameters.Add(param2);
+
+            DbContext.Database.Connection.Open();
+            try
+            {
+                var reader = cmd.ExecuteReader();
+
+                var objContext = ((IObjectContextAdapter)DbContext).ObjectContext;
+
+                var scoredResults = objContext
+                    .Translate<ScoredResultEntity>(reader, "ScoredResultEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var scoredTeamResults = objContext
+                    .Translate<ScoredTeamResultEntity>(reader, "ScoredResultEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var scoredResultRows = objContext
+                    .Translate<ScoredResultRowEntity>(reader, "ScoredResultRowEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var scorings = objContext
+                    .Translate<ScoringEntity>(reader, "ScoringEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var results = objContext
+                    .Translate<ResultEntity>(reader, "ResultEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var resulRows = objContext
+                    .Translate<ResultRowEntity>(reader, "ResultRowEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var reviewPenalties = objContext
+                    .Translate<ReviewPenaltyEntity>(reader, "ReviewPenaltyEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var acceptedReviewVotes = objContext
+                    .Translate<AcceptedReviewVoteEntity>(reader, "AcceptedReviewVoteEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var addPenalties = objContext
+                    .Translate<AddPenaltyEntity>(reader, "AddPenaltyEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var reviews = objContext
+                    .Translate<IncidentReviewEntity>(reader, "IncidentReviewEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var sessions = objContext
+                    .Translate<SessionBaseEntity>(reader, "SessionBaseEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var raceSessions = objContext
+                    .Translate<RaceSessionEntity>(reader, "SessionBaseEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var members = objContext
+                    .Translate<LeagueMemberEntity>(reader, nameof(LeagueDbContext.Members), System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+                reader.NextResult();
+                var teams = objContext
+                    .Translate<TeamEntity>(reader, "TeamEntities", System.Data.Entity.Core.Objects.MergeOption.AppendOnly).ToList();
+            }
+            finally
+            {
+                DbContext.Database.Connection.Close();
+            }
         }
     }
 }
