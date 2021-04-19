@@ -176,7 +176,7 @@ namespace iRLeagueRESTService.Data
                 }
             }
 
-            EagerLoadResult(scoringSessionIds.Select(x => x.Key).ToArray(), scoringSessionIds.Select(x => x.Value).ToArray());
+            EagerLoadResult(sessionIds.ToArray(), scoringIds.ToArray());
 
             IEnumerable<ScoredResultEntity> scoredResultEntities = DbContext.Set<ScoredResultEntity>()
                 //.Include(x => x.Scoring)
