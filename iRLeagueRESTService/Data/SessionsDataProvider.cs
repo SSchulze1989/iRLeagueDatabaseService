@@ -32,7 +32,7 @@ namespace iRLeagueRESTService.Data
             if (sessionId == 0)
             {
                 session = DbContext.Set<SessionBaseEntity>()
-                    .Where(x => x.SessionResult != null)
+                    .Where(x => x.SessionResult != null && x.SessionType != iRLeagueManager.Enums.SessionType.Heat)
                     .OrderByDescending(x => x.Date)
                     .FirstOrDefault();
             }
