@@ -163,7 +163,7 @@ namespace iRLeagueDatabase
 
             modelBuilder.Entity<ScoredTeamResultRowEntity>()
                 .HasMany(r => r.ScoredResultRows)
-                .WithMany()
+                .WithMany(m => m.ScoredTeamResultRows)
                 .Map(rm =>
                 {
                     rm.MapLeftKey("ScoredTeamResultRowRefId");

@@ -140,6 +140,8 @@ namespace iRLeagueDatabase.Entities.Results
 
         public string ContactLaps => ((IResultRow)ResultRow).ContactLaps;
 
+        public virtual List<ScoredTeamResultRowEntity> ScoredTeamResultRows { get; set; }
+
         public override void Delete(LeagueDbContext dbContext)
         {
             AddPenalty?.Delete(dbContext);
@@ -147,6 +149,8 @@ namespace iRLeagueDatabase.Entities.Results
             dbContext.Set<DriverStatisticRowEntity>()
                 .Where(x => x.LastResultRowId == ScoredResultRowId || x.FirstResultRowId == ScoredResultRowId)
                 .Load();
+            ScoredTeamResultRows?.ToList().ForEach(x => x.ScoredResultRows.Remove(this));
+            ScoredTeamResultRows?.Clear();
 
             base.Delete(dbContext);
         }
