@@ -75,6 +75,11 @@ namespace iRLeagueRESTService.Data
                 .Include(x => x.Result)
                 .Load();
 
+            DbContext.Set<ScoredTeamResultRowEntity>()
+                .Where(x => allSessionIds.Contains(x.ScoredResultId))
+                .Include(x => x.ScoredResultRows)
+                .Load();
+
             DbContext.ChangeTracker.DetectChanges();
 
             foreach (var session in sessions)
