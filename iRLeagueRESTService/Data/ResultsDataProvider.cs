@@ -41,7 +41,7 @@ namespace iRLeagueRESTService.Data
             {
                 // if sessionId is 0 get latest session with result
                 session = DbContext.Set<SessionBaseEntity>()
-                    .Where(x => x.SessionResult != null)
+                    .Where(x => x.SessionResult != null && x.SessionType != iRLeagueManager.Enums.SessionType.Heat)
                     .OrderByDescending(x => x.Date)
                     .FirstOrDefault();
             }
@@ -59,10 +59,13 @@ namespace iRLeagueRESTService.Data
 
             // get session race number
             int raceNr = 0;
-            if (session.SessionType == iRLeagueManager.Enums.SessionType.Race)
+            if (session.SessionType == iRLeagueManager.Enums.SessionType.Race || session.SessionType == iRLeagueManager.Enums.SessionType.HeatEvent)
             {
                 var season = session.Schedule.Season;
-                var seasonSessions = season.Schedules.SelectMany(x => x.Sessions).Where(x => x.SessionType == iRLeagueManager.Enums.SessionType.Race).OrderBy(x => x.Date);
+                var seasonSessions = season.Schedules
+                    .SelectMany(x => x.Sessions)
+                    .Where(x => x.SessionType == iRLeagueManager.Enums.SessionType.Race || x.SessionType == iRLeagueManager.Enums.SessionType.HeatEvent)
+                    .OrderBy(x => x.Date);
                 raceNr = (seasonSessions.Select((x, i) => new { number = i + 1, item = x }).FirstOrDefault(x => x.item.SessionId == sessionId)?.number).GetValueOrDefault();
             }
 
@@ -75,7 +78,17 @@ namespace iRLeagueRESTService.Data
                 if (scoredResults == null)
                 {
                     scoredResults = new ScoredResultDataDTO[0];
-                    var ids = session.Scorings.Select(x => new KeyValuePair<long, long>(x.ScoringId, session.SessionId));
+                    var resultSessions = new List<SessionBaseEntity>() { session };
+                    if (session.SubSessions.Count > 0)
+                    {
+                        resultSessions.AddRange(session.SubSessions
+                            .Where(x => x.SessionResult != null));
+                    }
+                    var ids = resultSessions
+                        .SelectMany(x => x.Scorings
+                            .Where(y => y.ShowResults == true)
+                            .Select(y => new KeyValuePair<long, long>(y.ScoringId, x.SessionId)))
+                        .ToArray();
                     //scoredResults = session.Scorings.Select(x => modelDataProvider.GetScoredResult(sessionId, x.ScoringId)).ToArray();
                     scoredResults = GetScoredResults(ids);
                 }
@@ -87,7 +100,14 @@ namespace iRLeagueRESTService.Data
                 }
 
                 // get session details
-                sessionDetails = mapper.MapToSimSessionDetailsDTO(session.SessionResult.IRSimSessionDetails);
+                var sessionDetailsData = session.SessionResult.IRSimSessionDetails;
+                if (sessionDetailsData == null)
+                {
+                    sessionDetailsData = session.SubSessions?
+                        .Select(x => x.SessionResult?.IRSimSessionDetails)
+                        .FirstOrDefault(x => x != null);
+                }
+                sessionDetails = mapper.MapToSimSessionDetailsDTO(sessionDetailsData);
             }
 
             // construct SessionResultsDTO
@@ -95,7 +115,7 @@ namespace iRLeagueRESTService.Data
             {
                 Count = scoredResults.Count(),
                 ScheduleId = session.ScheduleId,
-                ScheduleName = session.Schedule.Name,
+                ScheduleName = session.Schedule?.Name,
                 RaceNr = raceNr,
                 RawResults = rawResults,
                 ScoredResults = scoredResults,
@@ -134,11 +154,23 @@ namespace iRLeagueRESTService.Data
             }
 
             // get season results
-            var sessions = season.Schedules.SelectMany(x => x.Sessions).Where(x => x.SessionResult != null);
-            var ids = sessions.SelectMany(x => x.Scorings.Select(y => new KeyValuePair<long, long>(y.ScoringId, x.SessionId))).ToArray();
+            var sessions = season.Schedules
+                .SelectMany(x => x.Sessions)
+                .Where(x => x.SessionResult != null);
+            var resultSessions = sessions
+                .Concat(sessions
+                    .Where(x => x.SubSessions.Count > 0)
+                    .SelectMany(x => x.SubSessions
+                        .Where(y => y.SessionResult != null)));
+            var ids = resultSessions
+                .SelectMany(x => x.Scorings
+                    .Where(y => y.ShowResults == true) 
+                    .Select(y => new KeyValuePair<long, long>(y.ScoringId, x.SessionId)))
+                .ToArray();
             var results = GetScoredResults(ids);
             var sessionResults = sessions
-                .Select(x => GetResultsFromSession(x.SessionId, includeRawResults, results.Where(y => x.SessionId == y.SessionId).ToArray()))
+                .Select(x => GetResultsFromSession(x.SessionId, includeRawResults, results
+                    .Where(y => x.SessionId == y.SessionId || x.SubSessions.Any(z => z.SessionId == y.SessionId)).ToArray()))
                 .ToArray();
 
             // Construct DTO

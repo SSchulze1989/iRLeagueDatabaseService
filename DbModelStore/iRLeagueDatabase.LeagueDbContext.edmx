@@ -100,6 +100,7 @@
           <NavigationProperty Name="ResultRow" Relationship="Self.ResultRowEntity_ScoredResultRows" FromRole="ResultRowEntity_ScoredResultRows_Target" ToRole="ResultRowEntity_ScoredResultRows_Source" />
           <NavigationProperty Name="ReviewPenalties" Relationship="Self.ScoredResultRowEntity_ReviewPenalties" FromRole="ScoredResultRowEntity_ReviewPenalties_Source" ToRole="ScoredResultRowEntity_ReviewPenalties_Target" />
           <NavigationProperty Name="ScoredResult" Relationship="Self.ScoredResultEntity_FinalResults" FromRole="ScoredResultEntity_FinalResults_Target" ToRole="ScoredResultEntity_FinalResults_Source" />
+          <NavigationProperty Name="ScoredTeamResultRows" Relationship="Self.ScoredTeamResultRowEntity_ScoredResultRows" FromRole="ScoredTeamResultRowEntity_ScoredResultRows_Target" ToRole="ScoredTeamResultRowEntity_ScoredResultRows_Source" />
           <NavigationProperty Name="Team" Relationship="Self.ScoredResultRowEntity_Team" FromRole="ScoredResultRowEntity_Team_Source" ToRole="ScoredResultRowEntity_Team_Target" />
         </EntityType>
         <EntityType Name="AddPenaltyEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.AddPenaltyEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
