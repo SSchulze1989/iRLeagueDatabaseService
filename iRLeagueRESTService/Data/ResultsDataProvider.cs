@@ -196,7 +196,7 @@ namespace iRLeagueRESTService.Data
 
             /// Load results and check if recalculation needed
             var results = DbContext.Set<ResultEntity>().Where(x => sessionIds.Contains(x.ResultId))
-                .Include(x => x.Session);
+                .Include(x => x.Session).ToList();
 
             foreach (var result in results)
             {
