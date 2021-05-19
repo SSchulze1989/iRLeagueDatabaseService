@@ -243,6 +243,11 @@ namespace iRLeagueDatabase.Entities.Results
 
             return source.Skip(maxRacesCount);
         }
+
+        public override long GetLeagueId()
+        {
+            return Season.GetLeagueId();
+        }
     }
 
     public static partial class ScoredResultExtensions

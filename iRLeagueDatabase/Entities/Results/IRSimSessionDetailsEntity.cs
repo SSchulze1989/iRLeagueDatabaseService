@@ -74,5 +74,10 @@ namespace iRLeagueDatabase.Entities.Results
         public int RaceGripCompound { get; set; }
 
         public override object MappingId => ResultId;
+
+        public override long GetLeagueId()
+        {
+            return Result.GetLeagueId();
+        }
     }
 }

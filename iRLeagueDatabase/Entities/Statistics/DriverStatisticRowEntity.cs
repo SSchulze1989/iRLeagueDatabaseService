@@ -131,6 +131,11 @@ namespace iRLeagueDatabase.Entities.Statistics
 
         public override object MappingId => new { StatisticSetId, MemberId };
 
+        public override long GetLeagueId()
+        {
+            return StatisticSet.GetLeagueId();
+        }
+
         public void ResetStatistic()
         {
             RacePoints = default;

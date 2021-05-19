@@ -51,5 +51,10 @@ namespace iRLeagueDatabase.Entities.Results
             CleanestDrivers.Clear();
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Scoring.GetLeagueId();
+        }
     }
 }

@@ -103,5 +103,10 @@ namespace iRLeagueDatabase.Entities.Sessions
             SubSessions?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Schedule.GetLeagueId();
+        }
     }
 }

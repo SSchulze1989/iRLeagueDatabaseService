@@ -46,5 +46,10 @@ namespace iRLeagueDatabase.Entities.Sessions
             ConnectedScorings?.ToList().ForEach(x => x.ConnectedSchedule = null);
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Season.GetLeagueId();
+        }
     }
 }

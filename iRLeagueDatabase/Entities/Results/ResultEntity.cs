@@ -71,5 +71,10 @@ namespace iRLeagueDatabase.Entities.Results
             ScoredResults?.ToList().ForEach(x =>  x.Delete(dbContext));
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Session.GetLeagueId();
+        }
     }
 }

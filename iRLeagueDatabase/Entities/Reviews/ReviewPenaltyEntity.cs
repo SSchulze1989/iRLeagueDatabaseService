@@ -32,5 +32,10 @@ namespace iRLeagueDatabase.Entities.Reviews
         {
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return ScoredResultRow.GetLeagueId();
+        }
     }
 }

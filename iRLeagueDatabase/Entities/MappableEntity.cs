@@ -17,6 +17,8 @@ namespace iRLeagueDatabase.Entities
         [NotMapped]
         public abstract object MappingId { get; }
 
+        public abstract long GetLeagueId();
+
         public virtual void Delete(LeagueDbContext dbContext)
         {
             dbContext.Set(this.GetType()).Remove(this);

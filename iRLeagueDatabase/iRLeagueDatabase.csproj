@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculation\Accumulator.cs" />
+    <Compile Include="Entities\LeagueEntity.cs" />
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />

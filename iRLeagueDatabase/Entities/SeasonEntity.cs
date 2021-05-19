@@ -15,11 +15,15 @@ using iRLeagueDatabase.Entities.Statistics;
 namespace iRLeagueDatabase.Entities
 {
     public class SeasonEntity : Revision
-    {   
+    {
         [Key]
         public long SeasonId { get; set; }
 
         public override object MappingId => SeasonId;
+
+        [ForeignKey(nameof(League))]
+        public long LeagueId { get; set; }
+        public virtual LeagueEntity League { get; set; }
 
         public string SeasonName { get; set; }
 
@@ -61,6 +65,11 @@ namespace iRLeagueDatabase.Entities
             Scorings?.ToList().ForEach(x => x.Delete(dbContext));
             ScoringTables?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
+        }
+
+        public override long GetLeagueId()
+        {
+            return LeagueId;
         }
     }
 }

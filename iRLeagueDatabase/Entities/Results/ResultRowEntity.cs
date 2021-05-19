@@ -108,5 +108,10 @@ namespace iRLeagueDatabase.Entities.Results
             }
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Result.GetLeagueId();
+        }
     }
 }

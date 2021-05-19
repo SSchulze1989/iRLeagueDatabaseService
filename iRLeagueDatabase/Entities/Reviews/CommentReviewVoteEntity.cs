@@ -13,5 +13,10 @@ namespace iRLeagueDatabase.Entities.Reviews
         [ForeignKey(nameof(ReviewComment))]
         public long CommentId { get; set; }
         public virtual ReviewCommentEntity ReviewComment { get; set; }
+
+        public override long GetLeagueId()
+        {
+            return ReviewComment.GetLeagueId();
+        }
     }
 }

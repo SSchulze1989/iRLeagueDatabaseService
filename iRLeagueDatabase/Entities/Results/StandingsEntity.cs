@@ -62,5 +62,10 @@ namespace iRLeagueDatabase.Entities.Results
         {
             throw new InvalidOperationException("Could not delete " + GetType().Name + ". Entity is not attached to database.");
         }
+
+        public override long GetLeagueId()
+        {
+            return ScoringTable.GetLeagueId();
+        }
     }
 }

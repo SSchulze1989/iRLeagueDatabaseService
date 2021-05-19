@@ -29,6 +29,10 @@ namespace iRLeagueDatabase.Entities.Members
 
         public override object MappingId => MemberId;
 
+        [ForeignKey(nameof(League))]
+        public long LeagueId { get; set; }
+        public virtual LeagueEntity League { get; set; }
+
         //public virtual List<IncidentReviewEntity> Reviews { get; set; }
 
         public LeagueMemberEntity() { }
@@ -47,6 +51,11 @@ namespace iRLeagueDatabase.Entities.Members
         {
             Team?.Members?.Remove(this);
             base.Delete(dbContext);
+        }
+
+        public override long GetLeagueId()
+        {
+            return LeagueId;
         }
     }
 }

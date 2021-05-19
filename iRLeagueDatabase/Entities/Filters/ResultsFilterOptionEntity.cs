@@ -44,5 +44,10 @@ namespace iRLeagueDatabase.Entities.Filters
             }
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Scoring.GetLeagueId();
+        }
     }
 }

@@ -994,6 +994,11 @@ namespace iRLeagueDatabase.Entities.Results
             SubSessionScorings?.ToList().ForEach(x => x.ParentScoring = null);
             base.Delete(dbContext);
         }
+
+        public override long GetLeagueId()
+        {
+            return Season.GetLeagueId();
+        }
     }
 
     public static partial class ScoredResultExtensions

@@ -176,5 +176,10 @@ namespace iRLeagueDatabase.Entities.Results
 
             return standingsRow;
         }
+
+        public override long GetLeagueId()
+        {
+            return ScoringTable.GetLeagueId();
+        }
     }
 }

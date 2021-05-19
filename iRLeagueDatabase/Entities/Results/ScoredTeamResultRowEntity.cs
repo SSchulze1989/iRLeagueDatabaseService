@@ -84,5 +84,10 @@ namespace iRLeagueDatabase.Entities.Results
 
             return this;
         }
+
+        public override long GetLeagueId()
+        {
+            return ScoredTeamResult.GetLeagueId();
+        }
     }
 }
