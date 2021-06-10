@@ -20,6 +20,7 @@ namespace iRLeagueDatabase
     [DbConfigurationType(typeof(iRLeagueDatabase.MyContextConfiguration))]
     public class LeagueDbContext : DbContext
     {
+        public virtual DbSet<LeagueEntity> Leagues { get; set; }
         public virtual DbSet<SeasonEntity> Seasons { get; set; }
         //public virtual DbSet<LeagueUserEntity> Users { get; set; }
         public virtual DbSet<LeagueMemberEntity> Members { get; set; }
@@ -27,22 +28,28 @@ namespace iRLeagueDatabase
         public virtual DbSet<VoteCategoryEntity> CustomVoteCategories { get; set; }
         public virtual DbSet<LeagueStatisticSetEntity> LeagueStatistics { get; set; }
 
+        public string LeagueName { get; set; }
+
+        public long LeagueId { get; set; }
+
         private readonly OrphansToHandle OrphansToHandle;
 
         private static bool AllowMultipleResultSets = true;
 
-        private const string defaultDb = "TestDatabase_leagueDb";
+        private const string databaseName = "iRLM_LeagueDatabase";
 
         /// <summary>
         /// Indicates that SaveChanges() operation performed a change while working with the current dbContext
         /// </summary>
         public bool DbChanged { get; private set; } = false;
 
-        public LeagueDbContext() : this(GetConnectionString(defaultDb))
+        public LeagueDbContext() : this("")
         {
+            LeagueName = "";
+            LeagueId = 0;
         }
 
-        public LeagueDbContext(string dbName, bool createDb = false) : base((dbName != null && dbName != "") ? GetConnectionString(dbName) : GetConnectionString(defaultDb))
+        public LeagueDbContext(string leagueName, bool createDb = false) : base(GetConnectionString(databaseName))
         {
             if (createDb)
                 Database.SetInitializer(new CreateDatabaseIfNotExists<LeagueDbContext>());
@@ -61,6 +68,16 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
 
+            LeagueName = leagueName;
+            var leagueEntity = Leagues.SingleOrDefault(x => x.LeagueName == LeagueName);
+            //if (leagueEntity == null)
+            //{
+            //    throw new ArgumentException("League name not found!", nameof(leagueName));
+            //}
+            if (leagueEntity != null)
+            {
+                LeagueId = leagueEntity.LeagueId;
+            }
         }
 
         private static string GetConnectionString(string dbName)

@@ -186,6 +186,10 @@
     <Compile Include="Migrations\202104060050369_AddScoringDescription.designer.cs">
       <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202105192303197_AddLeagueTable.cs" />
+    <Compile Include="Migrations\202105192303197_AddLeagueTable.designer.cs">
+      <DependentUpon>202105192303197_AddLeagueTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -248,6 +252,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202104060050369_AddScoringDescription.resx">
       <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105192303197_AddLeagueTable.resx">
+      <DependentUpon>202105192303197_AddLeagueTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,11 @@ namespace iRLeagueDatabase.Entities
         public long LeagueId { get; set; }
         public override object MappingId => LeagueId;
 
+        public string LeagueName { get; set; }
+
+        public string LongName { get; set; }
+
+
         [InverseProperty(nameof(SeasonEntity.League))]
         public virtual List<SeasonEntity> Seasons { get; set; }
 
