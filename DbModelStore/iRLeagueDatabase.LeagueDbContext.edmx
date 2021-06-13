@@ -20,6 +20,8 @@
           <Property Name="LeagueId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LeagueName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LongName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsPublic" Type="Boolean" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" />
           <Property Name="LastModifiedOn" Type="DateTime" />
           <Property Name="Version" Type="Int32" Nullable="false" />
@@ -1801,6 +1803,8 @@
                 <ScalarProperty Name="LeagueId" ColumnName="LeagueId" />
                 <ScalarProperty Name="LeagueName" ColumnName="LeagueName" />
                 <ScalarProperty Name="LongName" ColumnName="LongName" />
+                <ScalarProperty Name="IsPublic" ColumnName="IsPublic" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -2572,6 +2576,8 @@
           <Property Name="LeagueId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="LeagueName" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LongName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="IsPublic" Type="bit" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="CreatedOn" Type="datetime" Nullable="true" />
           <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
           <Property Name="Version" Type="int" Nullable="false" />
