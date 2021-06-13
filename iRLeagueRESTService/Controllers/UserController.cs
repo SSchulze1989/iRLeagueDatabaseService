@@ -20,7 +20,7 @@ namespace iRLeagueRESTService.Controllers
         [HttpGet]
         [ActionName("GetUser")]
         [IdentityBasicAuthentication]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetUser([FromUri] string id)
         {
             if (id == null || id == "")
@@ -141,7 +141,7 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpPut]
         [IdentityBasicAuthentication]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult PutUser([FromBody] UserProfileDTO userDto)
         {
             if (userDto == null)

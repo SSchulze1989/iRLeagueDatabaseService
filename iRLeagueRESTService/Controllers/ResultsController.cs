@@ -28,7 +28,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSession([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] bool includeRaw = false, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
@@ -81,7 +81,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSeason([FromUri] string leagueName, [FromUri] long seasonId, [FromUri] bool includeRaw = false, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try

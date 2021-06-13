@@ -30,7 +30,7 @@ namespace iRLeagueRESTService.Controllers
         private ILog logger = log4net.LogManager.GetLogger(typeof(StatisticsCSVController));
 
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public HttpResponseMessage Get([FromUri] string leagueName, [FromUri] string culture = null)
         {
             try

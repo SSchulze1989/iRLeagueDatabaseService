@@ -1,5 +1,7 @@
 ﻿using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.Enums;
+using iRLeagueDatabase.Extensions;
 using iRLeagueRESTService.Filters;
 using iRLeagueRESTService.Models;
 using Microsoft.AspNet.Identity;
@@ -151,6 +153,29 @@ namespace iRLeagueRESTService.Controllers
             };
 
             return leagueDto;
+        }
+
+        /// <summary>
+        /// Get the league role flags from the provided IPrincipal
+        /// </summary>
+        /// <param name="user">User that has roles</param>
+        /// <param name="leagueName">Name of the league</param>
+        /// <returns></returns>
+        protected LeagueRoleEnum GetUserLeagueRoles(IPrincipal user, string leagueName)
+        {
+            var availableRoles = LeagueRoles.GetAvailableRoles();
+            LeagueRoleEnum userRoles = 0;
+
+            foreach (var role in availableRoles)
+            {
+                var leagueRoleName = $"{leagueName}_{role.Value}";
+                if (user.IsInRole(leagueRoleName))
+                {
+                    userRoles &= role.Key;
+                }
+            }
+
+            return userRoles;
         }
     }
 }

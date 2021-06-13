@@ -1,4 +1,6 @@
-﻿using iRLeagueRESTService.Models;
+﻿using iRLeagueDatabase;
+using iRLeagueRESTService.Filters;
+using iRLeagueRESTService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,23 @@ namespace iRLeagueRESTService.Controllers
     /// <summary>
     /// A simple endpoint with a single get method that returns the DateTime of the last applied change to the referred league
     /// </summary>
-    public class CheckUpdateController : ApiController
+    [IdentityBasicAuthentication]
+    public class CheckUpdateController : LeagueApiController
     {
         [HttpGet]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.None)]
         public IHttpActionResult Get([FromUri] string leagueName)
         {
+            using (var dbContext = new LeagueDbContext())
+            {
+                var league = dbContext.Leagues
+                    .SingleOrDefault(x => x.LeagueName == leagueName);
+                if (league.IsPublic == false)
+                {
+                    CheckLeagueRole(User, leagueName);
+                }
+            }
+
             var register = LeagueRegister.Get();
             if (register.Leagues.Any(x => x.Name == leagueName))
             {

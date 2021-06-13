@@ -28,7 +28,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns>Convenience DTO for season standings</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult Get([FromUri] string leagueName, [FromUri] long seasonId = 0, [FromUri] long? sessionId = null, [FromUri] bool includeRaw = false, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
