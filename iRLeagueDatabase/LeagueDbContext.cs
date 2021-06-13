@@ -69,7 +69,13 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
 
             LeagueName = leagueName;
-            var leagueEntity = Leagues.SingleOrDefault(x => x.LeagueName == LeagueName);
+            LeagueEntity leagueEntity = null;
+            try
+            {
+                leagueEntity = Leagues.SingleOrDefault(x => x.LeagueName == LeagueName);
+            }
+            catch (System.Data.Entity.Core.EntityCommandExecutionException) { }
+
             //if (leagueEntity == null)
             //{
             //    throw new ArgumentException("League name not found!", nameof(leagueName));

@@ -18,6 +18,11 @@ namespace iRLeagueDatabase.Entities
 
         public string LongName { get; set; }
 
+        // League settings:
+        public bool IsPublic { get; set; }
+
+        public bool IsActive { get; set; }
+
 
         [InverseProperty(nameof(SeasonEntity.League))]
         public virtual List<SeasonEntity> Seasons { get; set; }

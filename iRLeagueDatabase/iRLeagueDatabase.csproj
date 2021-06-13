@@ -190,6 +190,10 @@
     <Compile Include="Migrations\202105192303197_AddLeagueTable.designer.cs">
       <DependentUpon>202105192303197_AddLeagueTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106102314569_AddLeagueSettings.cs" />
+    <Compile Include="Migrations\202106102314569_AddLeagueSettings.designer.cs">
+      <DependentUpon>202106102314569_AddLeagueSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -255,6 +259,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105192303197_AddLeagueTable.resx">
       <DependentUpon>202105192303197_AddLeagueTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106102314569_AddLeagueSettings.resx">
+      <DependentUpon>202106102314569_AddLeagueSettings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
