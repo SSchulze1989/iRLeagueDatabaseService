@@ -17,6 +17,8 @@ using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Mapper;
 using System.Threading.Tasks;
+using iRLeagueRESTService.Exceptions;
+using iRLeagueDatabase.Enums;
 
 namespace iRLeagueRESTService.Data
 {
@@ -35,7 +37,7 @@ namespace iRLeagueRESTService.Data
         {
         }
 
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId)
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : base(context, userName, userId, roles)
         {
         }
 
@@ -121,6 +123,18 @@ namespace iRLeagueRESTService.Data
                 {
                     foreach (var entity in entities)
                     {
+                        // Check for league id
+                        if (entity is MappableEntity mappable)
+                        {
+                            var rememberLazyLoading = DbContext.Configuration.LazyLoadingEnabled;
+                            DbContext.Configuration.LazyLoadingEnabled = true;
+                            if (mappable.GetLeagueId() != DbContext.LeagueId)
+                            {
+                                throw new DataAccessException(DataAccessException.DataAccessType.Read, DataAccessException.DataAccessViolation.WrongLeague, DbContext.LeagueId, mappable.GetLeagueId());
+                            }
+                            DbContext.Configuration.LazyLoadingEnabled = rememberLazyLoading;
+                        }
+
                         var dto = mapper.MapTo(entity, requestType) as TModelDTO;
                         resultItems.Add(dto);
                     }
@@ -465,6 +479,6 @@ namespace iRLeagueRESTService.Data
         public ModelDataProvider(LeagueDbContext context) : base(context) { }
 
         public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName) { }
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId) { }
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : base(context, userName, userId, roles) { }
     }
 }

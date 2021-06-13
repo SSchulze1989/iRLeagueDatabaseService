@@ -1,4 +1,5 @@
 ﻿using iRLeagueDatabase;
+using iRLeagueDatabase.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,9 @@ namespace iRLeagueRESTService.Data
     {
         protected LeagueDbContext DbContext { get; }
 
-        public string UserName { get; set; }
-        public string UserId { get; set; }
+        public string UserName { get; }
+        public string UserId { get; }
+        public LeagueRoleEnum LeagueRoles { get; }
 
         public DataProviderBase()
         {
@@ -28,9 +30,10 @@ namespace iRLeagueRESTService.Data
             UserName = userName;
         }
 
-        public DataProviderBase(LeagueDbContext context, string userName, string userId) : this(context, userName)
+        public DataProviderBase(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : this(context, userName)
         {
             UserId = userId;
+            LeagueRoles = roles;
         }
     }
 }
