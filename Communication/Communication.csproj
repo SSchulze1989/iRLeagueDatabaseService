@@ -142,6 +142,7 @@
     <Compile Include="Enums\ConnectionStatusEnum.cs" />
     <Compile Include="Enums\DropRacesOption.cs" />
     <Compile Include="Enums\GetBestOption.cs" />
+    <Compile Include="Enums\LeagueRoleEnum.cs" />
     <Compile Include="Enums\LicenseLevelEnum.cs" />
     <Compile Include="Enums\ScoringSessionSelectionEnum.cs" />
     <Compile Include="Enums\SortOptionEnum.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Enums\VoteState.cs" />
     <Compile Include="Enums\WeekDaysFlag.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\NestedPropertyInfo.cs" />
