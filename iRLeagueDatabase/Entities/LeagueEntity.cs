@@ -5,10 +5,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using iRLeagueDatabase.Entities.Members;
+using iRLeagueDatabase.Entities.Reviews;
+using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase.Entities
 {
-    public class LeagueEntity : LeagueRevision
+    public class LeagueEntity : Revision, IHasLeagueId
     {
         [Key]
         public long LeagueId { get; set; }
@@ -26,8 +29,16 @@ namespace iRLeagueDatabase.Entities
 
         [InverseProperty(nameof(SeasonEntity.League))]
         public virtual List<SeasonEntity> Seasons { get; set; }
+        [InverseProperty(nameof(CustomIncidentEntity.League))]
+        public virtual List<CustomIncidentEntity> CustomIncidents { get; set; }
+        [InverseProperty(nameof(StatisticSetEntity.League))]
+        public virtual List<StatisticSetEntity> StatisticSets { get; set; }
+        [InverseProperty(nameof(LeagueMemberEntity.League))]
+        public virtual List<LeagueMemberEntity> LeagueMembers { get; set; }
+        [InverseProperty(nameof(VoteCategoryEntity.League))]
+        public virtual List<VoteCategoryEntity> VoteCategories { get; set; }
 
-        public override long GetLeagueId()
+        public long GetLeagueId()
         {
             return LeagueId;
         }

@@ -22,10 +22,6 @@ namespace iRLeagueDatabase.Entities.Members
         [InverseProperty(nameof(ScoredTeamResultRowEntity.Team))]
         public virtual List<ScoredTeamResultRowEntity> TeamResultRows { get; set; }
 
-        [ForeignKey(nameof(League))]
-        public long LeagueId { get; set; }
-        public virtual LeagueEntity League { get; set; }
-
         public string Name { get; set; }
         public string Profile { get; set; }
         public string TeamColor { get; set; }

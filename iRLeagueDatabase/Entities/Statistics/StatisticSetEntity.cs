@@ -22,10 +22,6 @@ namespace iRLeagueDatabase.Entities.Statistics
         [Key]
         public long Id { get; set; }
 
-        [ForeignKey(nameof(League))]
-        public long LeagueId { get; set; }
-        public virtual LeagueEntity League { get; set; }
-
         public string Name { get; set; }
 
         /// <summary>

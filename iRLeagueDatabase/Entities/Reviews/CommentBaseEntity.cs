@@ -18,10 +18,6 @@ namespace iRLeagueDatabase.Entities.Reviews
 
         public override object MappingId => CommentId;
 
-        [ForeignKey(nameof(League))]
-        public long LeagueId { get; set; }
-        public virtual LeagueEntity League { get; set; }
-
         public DateTime? Date { get; set; }
 
         public string AuthorUserId { get; set; }
