@@ -116,7 +116,7 @@ namespace iRLeagueRESTService.Data
                 raceNr = (seasonSessions.Select((x, i) => new { number = i + 1, item = x }).FirstOrDefault(x => x.item.SessionId == sessionId)?.number).GetValueOrDefault();
             }
 
-            PublicIncidentReviewDataDTO[] reviews = preLoadedReviews;
+            IncidentReviewDataDTO[] reviews = preLoadedReviews;
             if (preLoadedReviews == null)
             // get all reviews ids for this session and retrieve reviews data from ModelDataProvider
             {
@@ -206,14 +206,14 @@ namespace iRLeagueRESTService.Data
             {
                 reviewDtos = reviewEnties
                     .Where(x => CheckLeague(DbContext.CurrentLeagueId, x))
-                    .Select(x => mapper.MapTo<IncidentReviewDataDTO>(x))
+                    .Select(x => mapper.MapToReviewDataDTO(x))
                     .ToArray();
             }
             else
             {
                 reviewDtos = reviewEnties
                     .Where(x => CheckLeague(DbContext.CurrentLeagueId, x))
-                    .Select(x => mapper.MapTo<PublicIncidentReviewDataDTO, IncidentReviewEntity>(x, new IncidentReviewDataDTO()))
+                    .Select(x => mapper.MapToPublicReviewDataDTO(x))
                     .OfType<IncidentReviewDataDTO>()
                     .ToArray();
             }

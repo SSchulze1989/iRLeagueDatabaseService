@@ -16,8 +16,8 @@ namespace iRLeagueDatabase.Mapper
     {
         public void RegisterReviewsTypeMaps()
         {
-            RegisterTypeMap<IncidentReviewEntity, IncidentReviewInfoDTO>(MapToReviewInfoDTO);
-            RegisterTypeMap<IncidentReviewEntity, PublicIncidentReviewDataDTO>(MapToPublicReviewDataDTO);
+            //RegisterTypeMap<IncidentReviewEntity, IncidentReviewInfoDTO>(MapToReviewInfoDTO);
+            RegisterTypeMap<IncidentReviewEntity, IncidentReviewDataDTO>(MapToPublicReviewDataDTO);
             RegisterTypeMap<IncidentReviewEntity, IncidentReviewDataDTO>(MapToReviewDataDTO);
             RegisterTypeMap<CommentBaseEntity, CommentInfoDTO>(MapToCommentInfoDTO);
             RegisterTypeMap<CommentBaseEntity, CommentDataDTO>(MapToCommentDataDTO);
@@ -44,7 +44,7 @@ namespace iRLeagueDatabase.Mapper
             return target;
         }
 
-        public PublicIncidentReviewDataDTO MapToPublicReviewDataDTO(IncidentReviewEntity source, PublicIncidentReviewDataDTO target = null)
+        public IncidentReviewDataDTO MapToPublicReviewDataDTO(IncidentReviewEntity source, IncidentReviewDataDTO target = null)
         {
             if (source == null)
             {
@@ -52,7 +52,7 @@ namespace iRLeagueDatabase.Mapper
             }
             if (target == null)
             {
-                target = new PublicIncidentReviewDataDTO();
+                target = new IncidentReviewDataDTO();
             }
 
             MapToReviewInfoDTO(source, target);
