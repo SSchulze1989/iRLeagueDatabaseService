@@ -20,6 +20,11 @@ namespace iRLeagueDatabase.Entities.Filters
         [ForeignKey(nameof(Scoring)), Column(Order = 1)]
         public long ScoringId { get; set; }
         public virtual ScoringEntity Scoring { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public string ResultsFilterType { get; set; }
         public string ColumnPropertyName { get; set; }
         public ComparatorTypeEnum Comparator { get; set; }
@@ -43,11 +48,6 @@ namespace iRLeagueDatabase.Entities.Filters
                 }
             }
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Scoring.GetLeagueId();
         }
     }
 }

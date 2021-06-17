@@ -30,6 +30,11 @@ namespace iRLeagueDatabase.Entities.Results
         //public long ScoredResultId { get; set; }
         [Required]
         public virtual ScoredTeamResultEntity ScoredTeamResult { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         [ForeignKey(nameof(Team))]
         public long TeamId { get; set; }
         [Required]
@@ -83,11 +88,6 @@ namespace iRLeagueDatabase.Entities.Results
             }
 
             return this;
-        }
-
-        public override long GetLeagueId()
-        {
-            return ScoredTeamResult.GetLeagueId();
         }
     }
 }

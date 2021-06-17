@@ -17,6 +17,10 @@ namespace iRLeagueDatabase.Entities.Members
         public long TeamId { get; set; }
         public override object MappingId => TeamId;
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         [InverseProperty(nameof(LeagueMemberEntity.Team))]
         public virtual List<LeagueMemberEntity> Members { get; set; }
         [InverseProperty(nameof(ScoredTeamResultRowEntity.Team))]
@@ -32,11 +36,6 @@ namespace iRLeagueDatabase.Entities.Members
             Members?.ToList().ForEach(x => x.Team = null);
             TeamResultRows?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return LeagueId;
         }
     }
 }

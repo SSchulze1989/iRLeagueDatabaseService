@@ -26,8 +26,11 @@ namespace iRLeagueDatabase.Entities.Sessions
         [ForeignKey(nameof(Schedule))]
         public long? ScheduleId { get; set; }
         public virtual ScheduleEntity Schedule { get; set; }
-
         public override object MappingId => SessionId;
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         /// <summary>
         /// Unique Session Id for League Session
@@ -102,11 +105,6 @@ namespace iRLeagueDatabase.Entities.Sessions
             Reviews?.ToList().ForEach(x => x.Delete(dbContext));
             SubSessions?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Schedule.GetLeagueId();
         }
     }
 }

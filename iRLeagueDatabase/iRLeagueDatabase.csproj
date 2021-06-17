@@ -197,6 +197,10 @@
     <Compile Include="Migrations\202106102314569_AddLeagueSettings.designer.cs">
       <DependentUpon>202106102314569_AddLeagueSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106172302022_AddLeagueIdColToAll.cs" />
+    <Compile Include="Migrations\202106172302022_AddLeagueIdColToAll.designer.cs">
+      <DependentUpon>202106172302022_AddLeagueIdColToAll.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -265,6 +269,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202106102314569_AddLeagueSettings.resx">
       <DependentUpon>202106102314569_AddLeagueSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106172302022_AddLeagueIdColToAll.resx">
+      <DependentUpon>202106172302022_AddLeagueIdColToAll.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         [Key]
         public long Id { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public string Name { get; set; }
 
         /// <summary>
@@ -118,11 +122,6 @@ namespace iRLeagueDatabase.Entities.Statistics
 #pragma warning restore CS1998 // Bei der asynchronen Methode fehlen "await"-Operatoren. Die Methode wird synchron ausgeführt.
         {
             return RequiresRecalculation;
-        }
-
-        public override long GetLeagueId()
-        {
-            return LeagueId;
         }
     }
 }

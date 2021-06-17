@@ -9,10 +9,12 @@ namespace iRLeagueDatabase.Entities
 {
     public abstract class LeagueMappableEntity : MappableEntity, IHasLeagueId
     {
-        [ForeignKey(nameof(League))]
-        public long LeagueId { get; set; }
-        public virtual LeagueEntity League { get; set; }
+        public abstract long LeagueId { get; set; }
+        public abstract LeagueEntity League { get; set; }
 
-        public abstract long GetLeagueId();
+        public long GetLeagueId()
+        {
+            return LeagueId;
+        }
     }
 }

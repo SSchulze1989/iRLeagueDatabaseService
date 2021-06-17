@@ -25,6 +25,11 @@ namespace iRLeagueDatabase.Entities.Results
         public long ScoringId { get; set; }
         [ForeignKey(nameof(ScoringId))]
         public virtual ScoringEntity Scoring { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public virtual LeagueMemberEntity FastestLapDriver { get; set; }
         public long FastestLap { get; set; }
         public virtual LeagueMemberEntity FastestQualyLapDriver { get; set; }
@@ -50,11 +55,6 @@ namespace iRLeagueDatabase.Entities.Results
             HardChargers.Clear();
             CleanestDrivers.Clear();
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Scoring.GetLeagueId();
         }
     }
 }

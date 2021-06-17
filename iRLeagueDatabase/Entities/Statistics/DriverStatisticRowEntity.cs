@@ -43,6 +43,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         public long MemberId { get; set; }
         public virtual LeagueMemberEntity Member { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public int StartIRating { get; set; }
         public int EndIRating { get; set; }
 
@@ -130,11 +134,6 @@ namespace iRLeagueDatabase.Entities.Statistics
         public int CleanestDriverAwards { get; set; }
 
         public override object MappingId => new { StatisticSetId, MemberId };
-
-        public override long GetLeagueId()
-        {
-            return StatisticSet.GetLeagueId();
-        }
 
         public void ResetStatistic()
         {

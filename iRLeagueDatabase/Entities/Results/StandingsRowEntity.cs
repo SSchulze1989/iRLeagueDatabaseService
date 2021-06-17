@@ -12,7 +12,7 @@ using System.IO;
 namespace iRLeagueDatabase.Entities.Results
 {
     [NotMapped]
-    public class StandingsRowEntity : LeagueRevision
+    public class StandingsRowEntity : MappableEntity
     {
         public ScoringTableEntity ScoringTable { get; set; }
         public ScoringEntity Scoring { get; set; }
@@ -175,11 +175,6 @@ namespace iRLeagueDatabase.Entities.Results
             };
 
             return standingsRow;
-        }
-
-        public override long GetLeagueId()
-        {
-            return ScoringTable.GetLeagueId();
         }
     }
 }

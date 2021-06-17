@@ -15,6 +15,11 @@ namespace iRLeagueDatabase.Entities.Results
     {
         [Key]
         public long ScoringTableId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public ScoringKindEnum ScoringKind { get; set; }
         public override object MappingId => ScoringTableId;
         public string Name { get; set; }
@@ -242,11 +247,6 @@ namespace iRLeagueDatabase.Entities.Results
             }
 
             return source.Skip(maxRacesCount);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Season.GetLeagueId();
         }
     }
 

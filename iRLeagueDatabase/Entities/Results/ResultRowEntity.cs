@@ -27,6 +27,10 @@ namespace iRLeagueDatabase.Entities.Results
         [Required]
         public virtual ResultEntity Result { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public SimSessionTypeEnum SimSessionType { get; set; }
 
         public DateTime? Date => Result?.Session?.Date;
@@ -107,11 +111,6 @@ namespace iRLeagueDatabase.Entities.Results
                 Result.RequiresRecalculation = true;
             }
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Result.GetLeagueId();
         }
     }
 }

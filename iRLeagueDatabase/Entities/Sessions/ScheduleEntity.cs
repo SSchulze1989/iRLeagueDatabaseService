@@ -17,6 +17,10 @@ namespace iRLeagueDatabase.Entities.Sessions
         [Key]
         public long ScheduleId { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public string Name { get; set; }
 
         public override object MappingId => ScheduleId;
@@ -45,11 +49,6 @@ namespace iRLeagueDatabase.Entities.Sessions
             Sessions?.ToList().ForEach(x => x.Delete(dbContext));
             ConnectedScorings?.ToList().ForEach(x => x.ConnectedSchedule = null);
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Season.GetLeagueId();
         }
     }
 }

@@ -12,6 +12,11 @@ namespace iRLeagueDatabase.Entities.Results
     {
         [Key, ForeignKey(nameof(ScoredResultRow))]
         public long ScoredResultRowId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public virtual ScoredResultRowEntity ScoredResultRow { get; set; }
         public int PenaltyPoints { get; set; }
 
@@ -24,11 +29,6 @@ namespace iRLeagueDatabase.Entities.Results
                 ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
             }
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return ScoredResultRow.GetLeagueId();
         }
     }
 }

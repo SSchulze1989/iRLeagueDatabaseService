@@ -19,6 +19,10 @@ namespace iRLeagueDatabase.Entities
         [Key]
         public long SeasonId { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public override object MappingId => SeasonId;
 
         public string SeasonName { get; set; }
@@ -61,11 +65,6 @@ namespace iRLeagueDatabase.Entities
             Scorings?.ToList().ForEach(x => x.Delete(dbContext));
             ScoringTables?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return LeagueId;
         }
     }
 }

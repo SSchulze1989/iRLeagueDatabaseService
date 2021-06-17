@@ -21,6 +21,10 @@ namespace iRLeagueDatabase.Entities.Results
         [Required]
         public virtual SessionBaseEntity Session { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         [InverseProperty(nameof(IRSimSessionDetailsEntity.Result))]
         public virtual IRSimSessionDetailsEntity IRSimSessionDetails { get; set; }
 
@@ -70,11 +74,6 @@ namespace iRLeagueDatabase.Entities.Results
             RawResults?.ToList().ForEach(x => x.Delete(dbContext));
             ScoredResults?.ToList().ForEach(x =>  x.Delete(dbContext));
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Session.GetLeagueId();
         }
     }
 }

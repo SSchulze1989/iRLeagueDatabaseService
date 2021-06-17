@@ -34,6 +34,11 @@ namespace iRLeagueDatabase.Entities.Results
         [ForeignKey(nameof(ParentScoring))]
         public long? ParentScoringId { get; set; }
         public virtual ScoringEntity ParentScoring { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public ScoringKindEnum ScoringKind { get; set; }
         public SessionType ScoringSessionType { get; set; }
         public ScoringSessionSelectionEnum SessionSelectType { get; set; }
@@ -993,11 +998,6 @@ namespace iRLeagueDatabase.Entities.Results
             ScoringTables?.ForEach(x => x.Scorings.Remove(this));
             SubSessionScorings?.ToList().ForEach(x => x.ParentScoring = null);
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Season.GetLeagueId();
         }
     }
 

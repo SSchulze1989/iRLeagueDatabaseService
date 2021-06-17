@@ -36,6 +36,10 @@ namespace iRLeagueDatabase.Entities.Results
         [Required]
         public virtual ScoredResultEntity ScoredResult { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         [ForeignKey(nameof(Team))]
         public long? TeamId { get; set; }
         public virtual TeamEntity Team { get; set; }
@@ -153,11 +157,6 @@ namespace iRLeagueDatabase.Entities.Results
             ScoredTeamResultRows?.Clear();
 
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return ScoredResult.GetLeagueId();
         }
     }
 }

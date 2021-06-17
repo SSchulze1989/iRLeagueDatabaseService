@@ -13,15 +13,14 @@ namespace iRLeagueDatabase.Entities.Reviews
         [Key]
         public long CatId { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public string Text { get; set; }
         public int Index { get; set; }
         public int DefaultPenalty { get; set; }
 
         public override object MappingId => CatId;
-
-        public override long GetLeagueId()
-        {
-            return LeagueId;
-        }
     }
 }

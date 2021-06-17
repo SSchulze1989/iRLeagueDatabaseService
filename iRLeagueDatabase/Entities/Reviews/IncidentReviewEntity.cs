@@ -21,8 +21,11 @@ namespace iRLeagueDatabase.Entities.Reviews
     {
         [Key]
         public long ReviewId { get; set; }
-
         public override object MappingId => ReviewId;
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         //public virtual ResultEntity Result { get; set; }
 
@@ -78,11 +81,6 @@ namespace iRLeagueDatabase.Entities.Reviews
             Comments?.ToList().ForEach(x => x.Delete(dbContext));
             AcceptedReviewVotes?.ToList().ForEach(x => x.Delete(dbContext));
             base.Delete(dbContext);
-        }
-
-        public override long GetLeagueId()
-        {
-            return Session.GetLeagueId();
         }
     }
 }

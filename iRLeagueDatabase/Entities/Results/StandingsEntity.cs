@@ -10,7 +10,7 @@ using iRLeagueDatabase.Entities.Members;
 namespace iRLeagueDatabase.Entities.Results
 {
     [NotMapped]
-    public class StandingsEntity : LeagueMappableEntity
+    public class StandingsEntity : MappableEntity
     {
         public virtual ScoringTableEntity ScoringTable { get; set; }
         public virtual ScoringEntity Scoring { get; set; }
@@ -61,11 +61,6 @@ namespace iRLeagueDatabase.Entities.Results
         public override void Delete(LeagueDbContext dbContext)
         {
             throw new InvalidOperationException("Could not delete " + GetType().Name + ". Entity is not attached to database.");
-        }
-
-        public override long GetLeagueId()
-        {
-            return ScoringTable.GetLeagueId();
         }
     }
 }

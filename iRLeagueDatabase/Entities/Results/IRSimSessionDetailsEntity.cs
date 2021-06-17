@@ -17,6 +17,10 @@ namespace iRLeagueDatabase.Entities.Results
         public long ResultId { get; set; }
         public virtual ResultEntity Result { get; set; }
 
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         // Session details
         public long IRSubsessionId { get; set; }
         public long IRSeasonId { get; set; }
@@ -74,10 +78,5 @@ namespace iRLeagueDatabase.Entities.Results
         public int RaceGripCompound { get; set; }
 
         public override object MappingId => ResultId;
-
-        public override long GetLeagueId()
-        {
-            return Result.GetLeagueId();
-        }
     }
 }
