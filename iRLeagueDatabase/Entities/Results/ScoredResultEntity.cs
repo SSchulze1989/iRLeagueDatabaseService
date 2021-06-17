@@ -11,7 +11,7 @@ using iRLeagueDatabase.Entities.Sessions;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoredResultEntity : Revision
+    public class ScoredResultEntity : LeagueRevision
     {
         //[Key]
         //public long ScoredResultId { get; set; }

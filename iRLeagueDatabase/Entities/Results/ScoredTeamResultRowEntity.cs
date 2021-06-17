@@ -9,7 +9,7 @@ using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoredTeamResultRowEntity : MappableEntity
+    public class ScoredTeamResultRowEntity : LeagueMappableEntity
     {
         [Key, Column(Order = 0)]
         public long ScoredResultRowId { get; set; }

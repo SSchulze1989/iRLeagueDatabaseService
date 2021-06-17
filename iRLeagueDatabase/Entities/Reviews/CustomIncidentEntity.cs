@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iRLeagueDatabase.Entities.Reviews
 {
-    public class CustomIncidentEntity : MappableEntity
+    public class CustomIncidentEntity : LeagueMappableEntity
     {
         [Key]
         public long IncidentId { get; set; }

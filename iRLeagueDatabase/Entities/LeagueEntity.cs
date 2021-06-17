@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Entities
 {
-    public class LeagueEntity : Revision
+    public class LeagueEntity : LeagueRevision
     {
         [Key]
         public long LeagueId { get; set; }

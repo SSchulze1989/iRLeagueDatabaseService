@@ -4,6 +4,7 @@ using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using log4net;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace iRLeagueRESTService.Controllers
     /// 
     /// This endpoint only provides GET Method
     /// </summary>
+    [IdentityBasicAuthentication]
     public class ReviewsController : LeagueApiController
     {
         /// <summary>
@@ -43,7 +45,7 @@ namespace iRLeagueRESTService.Controllers
             try
             {
                 logger.Info($"Get Reviews for session id: {sessionId} - league: {leagueName}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 // check for empty parameters
                 if (string.IsNullOrEmpty(leagueName))
@@ -57,7 +59,7 @@ namespace iRLeagueRESTService.Controllers
                 SessionReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName));
                     data = reviewDataProvider.GetReviewsFromSession(sessionId);
                 }
 
@@ -96,7 +98,7 @@ namespace iRLeagueRESTService.Controllers
             try
             {
                 logger.Info($"Get Reviews for season id: {seasonId} - league: {leagueName}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 // check for empty parameters
                 if (string.IsNullOrEmpty(leagueName))
@@ -110,7 +112,7 @@ namespace iRLeagueRESTService.Controllers
                 SeasonReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName));
                     data = reviewDataProvider.GetReviewsFromSeason(seasonId);
                 }
 

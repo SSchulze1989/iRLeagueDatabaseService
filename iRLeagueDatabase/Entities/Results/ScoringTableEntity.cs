@@ -11,7 +11,7 @@ using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoringTableEntity : Revision
+    public class ScoringTableEntity : LeagueRevision
     {
         [Key]
         public long ScoringTableId { get; set; }

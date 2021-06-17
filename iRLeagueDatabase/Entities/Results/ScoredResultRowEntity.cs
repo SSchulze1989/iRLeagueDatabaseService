@@ -14,7 +14,7 @@ using System.CodeDom;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoredResultRowEntity : MappableEntity, IResultRow
+    public class ScoredResultRowEntity : LeagueMappableEntity, IResultRow
     {
         [Key, Column(Order = 0)]
         public long ScoredResultRowId { get; set; }

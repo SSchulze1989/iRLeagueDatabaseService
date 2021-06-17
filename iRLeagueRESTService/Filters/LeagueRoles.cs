@@ -10,10 +10,12 @@ namespace iRLeagueRESTService.Filters
 {
     public static class LeagueRoles
     {
-        private static Dictionary<LeagueRoleEnum, string> RoleNames { get; }
+        private static ReadOnlyDictionary<LeagueRoleEnum, string> RoleNames { get; }
 
         static LeagueRoles()
         {
+            Dictionary<LeagueRoleEnum, string> roleNames = new Dictionary<LeagueRoleEnum, string>();
+
             // Get rolenames from enum
             foreach (var role in Enum.GetValues(typeof(LeagueRoleEnum)).OfType<LeagueRoleEnum>())
             {
@@ -22,8 +24,10 @@ namespace iRLeagueRESTService.Filters
                 {
                     roleName = Enum.GetName(typeof(LeagueRoleEnum), role);
                 }
-                RoleNames.Add(role, roleName);
+                roleNames.Add(role, roleName);
             }
+
+            RoleNames = new ReadOnlyDictionary<LeagueRoleEnum, string>(roleNames);
         }
 
         public static string GetRoleName(LeagueRoleEnum role)

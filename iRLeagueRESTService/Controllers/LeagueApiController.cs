@@ -65,9 +65,9 @@ namespace iRLeagueRESTService.Controllers
         /// </summary>
         /// <param name="datbaseName">Full name of the target database</param>
         /// <returns><see cref="LeagueDbContext"/> of the target database</returns>
-        protected virtual LeagueDbContext CreateDbContext(string datbaseName)
+        protected virtual LeagueDbContext CreateDbContext(string leagueName)
         {
-            return new LeagueDbContext(datbaseName);
+            return new LeagueDbContext(leagueName);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace iRLeagueRESTService.Controllers
         /// <returns>Full name of the league database</returns>
         protected virtual string GetDatabaseNameFromLeagueName(string leagueName)
         {
-            return $"{leagueName}_leagueDb";
+            return leagueName;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace iRLeagueRESTService.Controllers
         /// <returns>Shortname of the league</returns>
         public static string GetLeagueNameFromDatabaseName(string dbName)
         {
-            return dbName.Substring(0, dbName.Length - "_leagueDb".Length);
+            return dbName;
         }
 
         /// <summary>
@@ -163,6 +163,16 @@ namespace iRLeagueRESTService.Controllers
         /// <returns></returns>
         protected LeagueRoleEnum GetUserLeagueRoles(IPrincipal user, string leagueName)
         {
+            if (user == null || user.Identity.IsAuthenticated == false)
+            {
+                return LeagueRoleEnum.None;
+            }
+
+            if (user.IsInRole("Administrator"))
+            {
+                return LeagueRoleEnum.Admin;
+            }
+
             var availableRoles = LeagueRoles.GetAvailableRoles();
             LeagueRoleEnum userRoles = 0;
 
@@ -171,7 +181,7 @@ namespace iRLeagueRESTService.Controllers
                 var leagueRoleName = $"{leagueName}_{role.Value}";
                 if (user.IsInRole(leagueRoleName))
                 {
-                    userRoles &= role.Key;
+                    userRoles |= role.Key;
                 }
             }
 

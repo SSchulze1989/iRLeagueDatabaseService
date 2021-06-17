@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class AddPenaltyEntity : MappableEntity
+    public class AddPenaltyEntity : LeagueMappableEntity
     {
         [Key, ForeignKey(nameof(ScoredResultRow))]
         public long ScoredResultRowId { get; set; }

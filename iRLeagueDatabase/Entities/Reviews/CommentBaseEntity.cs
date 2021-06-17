@@ -11,7 +11,7 @@ using iRLeagueDatabase.Entities.Members;
 namespace iRLeagueDatabase.Entities.Reviews
 {
     [Serializable]
-    public class CommentBaseEntity : Revision
+    public class CommentBaseEntity : LeagueRevision
     {
         [Key]
         public long CommentId { get; set; }

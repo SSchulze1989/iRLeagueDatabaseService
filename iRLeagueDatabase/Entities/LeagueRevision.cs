@@ -9,7 +9,7 @@ using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Entities
 {
-    public abstract class Revision : MappableEntity
+    public abstract class LeagueRevision : LeagueMappableEntity
     {
         public DateTime? CreatedOn { get; set; } = null;
         public DateTime? LastModifiedOn { get; set; } = null;

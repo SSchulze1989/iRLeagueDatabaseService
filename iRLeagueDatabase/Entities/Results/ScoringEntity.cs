@@ -27,7 +27,7 @@ using iRLeagueDatabase.Calculation;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoringEntity : Revision
+    public class ScoringEntity : LeagueRevision
     {
         [Key]
         public long ScoringId { get; set; }

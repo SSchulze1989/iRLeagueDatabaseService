@@ -11,7 +11,7 @@ using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Entities.Members
 {
-    public class TeamEntity : Revision
+    public class TeamEntity : LeagueRevision
     {
         [Key]
         public long TeamId { get; set; }

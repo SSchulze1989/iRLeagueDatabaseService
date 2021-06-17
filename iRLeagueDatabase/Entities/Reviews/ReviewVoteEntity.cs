@@ -12,7 +12,7 @@ using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Reviews
 {
-    public abstract class ReviewVoteEntity : MappableEntity
+    public abstract class ReviewVoteEntity : LeagueMappableEntity
     {
         [Key]
         public long ReviewVoteId { get; set; }

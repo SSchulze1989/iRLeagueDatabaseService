@@ -14,7 +14,7 @@ using iRLeagueDatabase.Entities.Reviews;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ResultEntity : Revision
+    public class ResultEntity : LeagueRevision
     {
         [Key, ForeignKey(nameof(Session))]
         public virtual long ResultId { get; set; }

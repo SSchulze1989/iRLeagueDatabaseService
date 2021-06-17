@@ -28,9 +28,10 @@ namespace iRLeagueDatabase
         public virtual DbSet<VoteCategoryEntity> CustomVoteCategories { get; set; }
         public virtual DbSet<LeagueStatisticSetEntity> LeagueStatistics { get; set; }
 
-        public string LeagueName { get; set; }
+        public string CurrentLeagueName { get; set; }
 
-        public long LeagueId { get; set; }
+        public long CurrentLeagueId { get; set; }
+        public LeagueEntity CurrentLeague { get; set; }
 
         private readonly OrphansToHandle OrphansToHandle;
 
@@ -45,8 +46,8 @@ namespace iRLeagueDatabase
 
         public LeagueDbContext() : this("")
         {
-            LeagueName = "";
-            LeagueId = 0;
+            CurrentLeagueName = "";
+            CurrentLeagueId = 0;
         }
 
         public LeagueDbContext(string leagueName, bool createDb = false) : base(GetConnectionString(databaseName))
@@ -68,11 +69,11 @@ namespace iRLeagueDatabase
             OrphansToHandle.Add<ScoredResultRowEntity, ScoredResultEntity>(x => x.ScoredResult);
             OrphansToHandle.Add<ScoredResultRowEntity, ResultRowEntity>(x => x.ResultRow);
 
-            LeagueName = leagueName;
+            CurrentLeagueName = leagueName;
             LeagueEntity leagueEntity = null;
             try
             {
-                leagueEntity = Leagues.SingleOrDefault(x => x.LeagueName == LeagueName);
+                leagueEntity = Leagues.SingleOrDefault(x => x.LeagueName == CurrentLeagueName);
             }
             catch (System.Data.Entity.Core.EntityCommandExecutionException) { }
 
@@ -82,7 +83,8 @@ namespace iRLeagueDatabase
             //}
             if (leagueEntity != null)
             {
-                LeagueId = leagueEntity.LeagueId;
+                CurrentLeagueId = leagueEntity.LeagueId;
+                CurrentLeague = leagueEntity;
             }
         }
 

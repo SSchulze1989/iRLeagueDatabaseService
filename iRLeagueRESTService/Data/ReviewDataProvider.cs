@@ -12,26 +12,22 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.Enums;
 
 namespace iRLeagueRESTService.Data
 {
     /// <summary>
     /// Data access class for retrieving review convenience data from League database
     /// </summary>
-    public class ReviewDataProvider : IReviewDataProvider
+    public class ReviewDataProvider : DataProviderBase, IReviewDataProvider
     {
-        /// <summary>
-        /// Data context of the database
-        /// </summary>
-        private LeagueDbContext DbContext { get; }
 
         /// <summary>
         /// Create new instance provided with an existing database context
         /// </summary>
         /// <param name="dbContext">Data context of the database</param>
-        public ReviewDataProvider(LeagueDbContext dbContext)
+        public ReviewDataProvider(LeagueDbContext dbContext, string userName, string userId, LeagueRoleEnum roles) : base(dbContext, userName, userId, roles)
         {
-            DbContext = dbContext;
         }
 
         /// <summary>
@@ -120,13 +116,13 @@ namespace iRLeagueRESTService.Data
                 raceNr = (seasonSessions.Select((x, i) => new { number = i + 1, item = x }).FirstOrDefault(x => x.item.SessionId == sessionId)?.number).GetValueOrDefault();
             }
 
-            IncidentReviewDataDTO[] reviews = preLoadedReviews;
+            PublicIncidentReviewDataDTO[] reviews = preLoadedReviews;
             if (preLoadedReviews == null)
             // get all reviews ids for this session and retrieve reviews data from ModelDataProvider
             {
                 var reviewIds = session.Reviews.Select(x => x.ReviewId);
-                var modelDataProvider = new ModelDataProvider(DbContext);
-                reviews = modelDataProvider.GetReviews(reviewIds.ToArray());
+                var modelDataProvider = new ModelDataProvider(DbContext, UserName, UserId, LeagueRoles);
+                reviews = GetReviews(reviewIds.ToArray());
             }
 
             // get custom vote categories information from database
@@ -167,7 +163,7 @@ namespace iRLeagueRESTService.Data
                 Reviews = reviews,
                 Total = reviews.Count(),
                 Open = reviews.Count(x => x.AcceptedReviewVotes == null || x.AcceptedReviewVotes.Count() == 0),
-                Voted = reviews.Count(x => x.Comments.Any(y => y.CommentReviewVotes.Count() > 0)),
+                Voted = reviews.Count(x => x is IncidentReviewDataDTO review ? review.Comments.Any(y => y.CommentReviewVotes.Count() > 0) : false),
                 Closed = reviews.Count(x => x.AcceptedReviewVotes?.Count() > 0),
                 Penalties = penaltySummary,
                 Results = reviews
@@ -205,7 +201,22 @@ namespace iRLeagueRESTService.Data
 
             DbContext.ChangeTracker.DetectChanges();
 
-            var reviewDtos = reviewEnties.Select(x => mapper.MapTo<IncidentReviewDataDTO>(x)).ToArray();
+            IncidentReviewDataDTO[] reviewDtos;
+            if (LeagueRoles.HasFlag(LeagueRoleEnum.Steward))
+            {
+                reviewDtos = reviewEnties
+                    .Where(x => CheckLeague(DbContext.CurrentLeagueId, x))
+                    .Select(x => mapper.MapTo<IncidentReviewDataDTO>(x))
+                    .ToArray();
+            }
+            else
+            {
+                reviewDtos = reviewEnties
+                    .Where(x => CheckLeague(DbContext.CurrentLeagueId, x))
+                    .Select(x => mapper.MapTo<PublicIncidentReviewDataDTO, IncidentReviewEntity>(x, new IncidentReviewDataDTO()))
+                    .OfType<IncidentReviewDataDTO>()
+                    .ToArray();
+            }
             DbContext.Configuration.LazyLoadingEnabled = true;
 
             return reviewDtos;

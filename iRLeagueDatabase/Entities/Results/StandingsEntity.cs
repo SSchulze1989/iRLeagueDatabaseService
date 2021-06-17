@@ -10,7 +10,7 @@ using iRLeagueDatabase.Entities.Members;
 namespace iRLeagueDatabase.Entities.Results
 {
     [NotMapped]
-    public class StandingsEntity : MappableEntity
+    public class StandingsEntity : LeagueMappableEntity
     {
         public virtual ScoringTableEntity ScoringTable { get; set; }
         public virtual ScoringEntity Scoring { get; set; }

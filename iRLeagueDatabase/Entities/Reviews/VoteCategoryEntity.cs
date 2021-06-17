@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iRLeagueDatabase.Entities.Reviews
 {
-    public class VoteCategoryEntity : MappableEntity
+    public class VoteCategoryEntity : LeagueMappableEntity
     {
         [Key]
         public long CatId { get; set; }

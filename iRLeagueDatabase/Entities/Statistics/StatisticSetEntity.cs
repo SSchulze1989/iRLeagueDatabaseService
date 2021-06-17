@@ -17,7 +17,7 @@ namespace iRLeagueDatabase.Entities.Statistics
     /// All derived classes will be mapped on one table in the database. This table will share all possible column values for all derived classes
     /// but each class can have additional dependencies to foreign keys and mapping tables.
     /// </summary>
-    public abstract class StatisticSetEntity : Revision
+    public abstract class StatisticSetEntity : LeagueRevision
     {
         [Key]
         public long Id { get; set; }

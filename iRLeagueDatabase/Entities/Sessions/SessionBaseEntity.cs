@@ -16,7 +16,7 @@ namespace iRLeagueDatabase.Entities.Sessions
     /// <summary>
     /// Base type for league sessions.
     /// </summary>
-    public class SessionBaseEntity : Revision
+    public class SessionBaseEntity : LeagueRevision
     {
         //[Key]
         //[ForeignKey(nameof(Schedule))]

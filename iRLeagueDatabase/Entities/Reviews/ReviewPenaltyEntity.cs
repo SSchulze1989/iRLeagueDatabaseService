@@ -10,7 +10,7 @@ using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Entities.Reviews
 {
-    public class ReviewPenaltyEntity : MappableEntity
+    public class ReviewPenaltyEntity : LeagueMappableEntity
     {
         [Key, ForeignKey(nameof(ScoredResultRow)), Column(Order = 0)]
         public long ResultRowId { get; set; }

@@ -53,7 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculation\Accumulator.cs" />
+    <Compile Include="Entities\IHasLeagueId.cs" />
     <Compile Include="Entities\LeagueEntity.cs" />
+    <Compile Include="Entities\LeagueMappableEntity.cs" />
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
@@ -136,7 +138,7 @@
     <Compile Include="Entities\Reviews\CommentBaseEntity.cs" />
     <Compile Include="Entities\Reviews\IncidentReviewEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewCommentEntity.cs" />
-    <Compile Include="Entities\Revision.cs" />
+    <Compile Include="Entities\LeagueRevision.cs" />
     <Compile Include="Entities\SeasonEntity.cs" />
     <Compile Include="Entities\Sessions\RaceSessionEntity.cs" />
     <Compile Include="Entities\Sessions\ScheduleEntity.cs" />

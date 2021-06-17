@@ -1,5 +1,7 @@
 ﻿using iRLeagueDatabase;
+using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Enums;
+using iRLeagueRESTService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +36,25 @@ namespace iRLeagueRESTService.Data
         {
             UserId = userId;
             LeagueRoles = roles;
+        }
+
+        /// <summary>
+        /// Check if the provided entity belongs to the required league
+        /// </summary>
+        /// <param name="leagueId">Id of the league the entity must belong to</param>
+        /// <param name="entity">Entity to check</param>
+        /// <returns><see langword="true"/> if the entity belongs to the league</returns>
+        protected bool CheckLeague(long leagueId, IHasLeagueId entity)
+        {
+            bool result = false;
+            var rememberLazyLoading = DbContext.Configuration.LazyLoadingEnabled;
+            DbContext.Configuration.LazyLoadingEnabled = true;
+            if (entity.GetLeagueId() == DbContext.CurrentLeagueId)
+            {
+                result = true;
+            }
+            DbContext.Configuration.LazyLoadingEnabled = rememberLazyLoading;
+            return result;
         }
     }
 }
