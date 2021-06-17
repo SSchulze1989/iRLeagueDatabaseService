@@ -1,4 +1,5 @@
 ﻿using iRLeagueDatabase;
+using iRLeagueManager.Enums;
 using iRLeagueDatabase.DataTransfer.Sessions;
 using iRLeagueDatabase.DataTransfer.Sessions.Convenience;
 using iRLeagueDatabase.Entities;
@@ -32,7 +33,7 @@ namespace iRLeagueRESTService.Data
             if (sessionId == 0)
             {
                 session = DbContext.Set<SessionBaseEntity>()
-                    .Where(x => x.SessionResult != null && x.SessionType != iRLeagueManager.Enums.SessionType.Heat)
+                    .Where(x => x.SessionResult != null && x.SessionType != SessionType.Heat)
                     .OrderByDescending(x => x.Date)
                     .FirstOrDefault();
             }
@@ -48,15 +49,15 @@ namespace iRLeagueRESTService.Data
 
             // get session race number
             int raceNr = 0;
-            if (session.SessionType == iRLeagueManager.Enums.SessionType.Race)
+            if (IsRaceType(session.SessionType))
             {
                 var season = session.Schedule.Season;
-                var seasonSessions = season.Schedules.SelectMany(x => x.Sessions).Where(x => x.SessionType == iRLeagueManager.Enums.SessionType.Race).OrderBy(x => x.Date);
+                var seasonSessions = season.Schedules.SelectMany(x => x.Sessions).Where(x => IsRaceType(x.SessionType)).OrderBy(x => x.Date);
                 raceNr = (seasonSessions.Select((x, i) => new { number = i + 1, item = x }).FirstOrDefault(x => x.item.SessionId == sessionId)?.number).GetValueOrDefault();
             }
 
             SessionDataDTO sessionDTO;
-            if (session.SessionType == iRLeagueManager.Enums.SessionType.Race)
+            if (IsRaceType(session.SessionType))
             {
                 RaceSessionConvenienceDTO raceSessionDTO = (RaceSessionConvenienceDTO)mapper.MapToRaceSessionDataDTO(session as RaceSessionEntity, new RaceSessionConvenienceDTO());
                 raceSessionDTO.RaceNr = raceNr;
@@ -100,8 +101,8 @@ namespace iRLeagueRESTService.Data
                 Sessions = sessions,
                 SessionsCount = sessions.Count(),
                 SessionsFinished = sessions.Count(x => x.SessionResultId != null),
-                RacesCount = sessions.Count(x => x.SessionType == iRLeagueManager.Enums.SessionType.Race),
-                RacesFinished = sessions.Count(x => x.SessionType == iRLeagueManager.Enums.SessionType.Race && x.SessionResultId != null)
+                RacesCount = sessions.Count(x => IsRaceType(x.SessionType)),
+                RacesFinished = sessions.Count(x => IsRaceType(x.SessionType) && x.SessionResultId != null)
             };
 
             return scheduleSessions;
@@ -143,6 +144,11 @@ namespace iRLeagueRESTService.Data
             };
 
             return seasonSessions;
+        }
+
+        public bool IsRaceType(SessionType sessionType)
+        {
+            return sessionType == SessionType.Race || sessionType == SessionType.HeatEvent;
         }
     }
 }
