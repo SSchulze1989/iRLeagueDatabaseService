@@ -120,9 +120,9 @@ namespace iRLeagueRESTService.Data
             if (preLoadedReviews == null)
             // get all reviews ids for this session and retrieve reviews data from ModelDataProvider
             {
-                var reviewIds = session.Reviews.Select(x => x.ReviewId);
+                //var reviewIds = session.Reviews.Select(x => x.ReviewId);
                 var modelDataProvider = new ModelDataProvider(DbContext, UserName, UserId, LeagueRoles);
-                reviews = GetReviews(reviewIds.ToArray());
+                reviews = GetReviews(session.SessionId);
             }
 
             // get custom vote categories information from database
@@ -181,7 +181,7 @@ namespace iRLeagueRESTService.Data
             return reviewData;
         }
 
-        public IncidentReviewDataDTO[] GetReviews(long[] sessionIds)
+        public IncidentReviewDataDTO[] GetReviews(params long[] sessionIds)
         {
             var mapper = new DTOMapper(DbContext);
 

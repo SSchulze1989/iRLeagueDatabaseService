@@ -37,7 +37,7 @@ namespace iRLeagueRESTService.Filters
             }
 
             // get league name from actionContext
-            var url = actionContext.Request.RequestUri.AbsoluteUri;
+            var url = actionContext.Request.RequestUri.AbsoluteUri.Split('?').Last();
             var parameters = GetUrlParameters(url);
 
             string requestLeagueName = parameters.Get(LeagueParameterName);
