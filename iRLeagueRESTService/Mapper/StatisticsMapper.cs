@@ -20,9 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using iRLeagueDatabase.DataTransfer.Members.Convenience;
 using iRLeagueDatabase.DataTransfer.Results;
 using iRLeagueDatabase.DataTransfer.Statistics;
 using iRLeagueDatabase.Entities;
+using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Statistics;
 using iRLeagueDatabase.Extensions;
@@ -201,6 +203,7 @@ namespace iRLeagueDatabase.Mapper
             target.LeadingKm = source.LeadingKm;
             target.LeadingLaps = (int)source.LeadingLaps;
             target.MemberId = source.MemberId;
+            target.MemberName = source.Member.Fullname;
             target.PenaltyPoints = (int)source.PenaltyPoints;
             target.Poles = source.Poles;
             target.RacePoints = (int)source.RacePoints;
@@ -224,6 +227,24 @@ namespace iRLeagueDatabase.Mapper
             target.Titles = source.Titles;
             target.HardChargerAwards = source.HardChargerAwards;
             target.CleanestDriverAwards = source.CleanestDriverAwards;
+
+            return target;
+        }
+
+        public DriverDTO MapToDriverDTO(LeagueMemberEntity source, DriverDTO target = null)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                target = new DriverDTO();
+            }
+
+            target.MemberId = source.MemberId;
+            target.Name = source.Fullname;
+            target.TeamName = source.Team.Name;
 
             return target;
         }

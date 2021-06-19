@@ -314,6 +314,7 @@
     <Compile Include="Controllers\SessionsController.cs" />
     <Compile Include="Controllers\StandingsController.cs" />
     <Compile Include="Controllers\StatisticsCSVController.cs" />
+    <Compile Include="Controllers\StatsController.cs" />
     <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Data\ISeasonDataProvider.cs" />
     <Compile Include="Data\ISessionsDataProvider.cs" />
     <Compile Include="Data\IStandingsDataProvider.cs" />
+    <Compile Include="Data\IStatsDataProvider.cs" />
     <Compile Include="Data\LeagueActionProvider.cs" />
     <Compile Include="Data\ModelDataProvider.cs" />
     <Compile Include="Data\ResultsDataProvider.cs" />
@@ -336,6 +338,7 @@
     <Compile Include="Data\ShouldSerializeContractResolver.cs" />
     <Compile Include="Data\StandingsDataProvider.cs" />
     <Compile Include="Data\StatisticCalculationWatcher.cs" />
+    <Compile Include="Data\StatsDataProvider.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\HttpAuthenticationChallengeContextExtensions.cs" />

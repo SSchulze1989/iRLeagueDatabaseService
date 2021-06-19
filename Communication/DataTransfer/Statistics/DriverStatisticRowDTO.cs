@@ -15,6 +15,8 @@ namespace iRLeagueDatabase.DataTransfer.Statistics
         [DataMember]
         public long MemberId { get; set; }
         [DataMember]
+        public string MemberName { get; set; }
+        [DataMember]
         public int StartIRating { get; set; }
         [DataMember]
         public int EndIRating { get; set; }
