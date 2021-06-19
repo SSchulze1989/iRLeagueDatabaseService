@@ -11,7 +11,7 @@ using System.Web;
 
 namespace iRLeagueRESTService.Data
 {
-    public class StatisticsDataProvider : DataProviderBase
+    public class StatisticsDataProvider : DataProviderBase, IStatsDataProvider
     {
         public StatisticsDataProvider(LeagueDbContext dbContext) : base(dbContext)
         { }
