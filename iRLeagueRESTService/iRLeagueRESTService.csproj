@@ -336,6 +336,7 @@
     <Compile Include="Data\ShouldSerializeContractResolver.cs" />
     <Compile Include="Data\StandingsDataProvider.cs" />
     <Compile Include="Data\StatisticCalculationWatcher.cs" />
+    <Compile Include="Data\StatisticsDataProvider.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\HttpAuthenticationChallengeContextExtensions.cs" />

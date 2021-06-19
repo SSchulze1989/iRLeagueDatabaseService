@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace iRLeagueDatabase.DataTransfer.Statistics.Convenience
 {
     [DataContract]
-    public class SeasonStatsSetConvenienceDTO : StatisticConvenienceDTO
+    public class SeasonStatsSetConvenienceDTO : StatsSetConvenienceDTO
     {
         [DataMember]
         public long SeasonId { get; set; }
         [DataMember]
-        public long SeasonName { get; set; }
+        public string SeasonName { get; set; }
     }
 }

@@ -63,11 +63,10 @@ namespace iRLeagueDatabase.Mapper
             return MapTo(source, target, source.GetType(), target.GetType());
         }
 
-        public TTarget MapTo<TTarget>(object source) where TTarget : MappableEntity
+        public TTarget MapTo<TTarget>(object source, TTarget target = null) where TTarget : MappableEntity
         {
             if (source == null)
                 return null;
-            TTarget target = null;
             target = MapTo(source, target, source.GetType(), typeof(TTarget)) as TTarget;
 
             return target;

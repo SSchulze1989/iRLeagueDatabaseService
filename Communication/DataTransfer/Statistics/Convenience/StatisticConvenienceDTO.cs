@@ -11,11 +11,6 @@ namespace iRLeagueDatabase.DataTransfer.Statistics.Convenience
     public class StatisticConvenienceDTO : BaseDTO
     {
         [DataMember]
-        public long LeagueId { get; set; }
-        [DataMember]
-        public string LeagueName { get; set; }
-
-        [DataMember]
         public SeasonStatsSetConvenienceDTO[] SeasonStats { get; set; }
         [DataMember]
         public LeagueStatsSetConvenienceDTO[] LeagueStats { get; set; }
