@@ -11,9 +11,9 @@ using System.Web;
 
 namespace iRLeagueRESTService.Data
 {
-    public class StatisticsDataProvider : DataProviderBase, IStatsDataProvider
+    public class StatsDataProvider : DataProviderBase, IStatsDataProvider
     {
-        public StatisticsDataProvider(LeagueDbContext dbContext) : base(dbContext)
+        public StatsDataProvider(LeagueDbContext dbContext) : base(dbContext)
         { }
 
         public StatisticConvenienceDTO GetStatistics(long seasonId = 0, bool includeSeason = false, bool includeLeague = false)

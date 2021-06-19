@@ -34,7 +34,7 @@ namespace iRLeagueRESTService.Controllers
                 StatisticConvenienceDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IStatsDataProvider statsDataProvider = new StatisticsDataProvider(dbContext);
+                    IStatsDataProvider statsDataProvider = new StatsDataProvider(dbContext);
                     data = statsDataProvider.GetStatistics(seasonId, seasonStats, leagueStats);
                 }
 
