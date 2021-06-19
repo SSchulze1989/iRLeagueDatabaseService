@@ -10,9 +10,9 @@ namespace iRLeagueDatabase.DataTransfer.Statistics.Convenience
     [DataContract]
     public class StatisticConvenienceDTO : BaseDTO
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public SeasonStatsSetConvenienceDTO[] SeasonStats { get; set; }
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public LeagueStatsSetConvenienceDTO[] LeagueStats { get; set; }
     }
 }

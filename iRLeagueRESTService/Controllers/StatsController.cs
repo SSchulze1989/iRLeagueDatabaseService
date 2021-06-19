@@ -39,7 +39,7 @@ namespace iRLeagueRESTService.Controllers
                 }
 
                 // return complete DTO or select fields
-                logger.Info($"Send data - StatisticSets for seasonId: {data.SeasonStats.FirstOrDefault()?.SeasonId}");
+                logger.Info($"Send data - StatisticSets for seasonId: {data.SeasonStats?.FirstOrDefault()?.SeasonId}");
                 if (string.IsNullOrEmpty(fields))
                 {
                     return Ok(data);

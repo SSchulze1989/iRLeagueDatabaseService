@@ -80,8 +80,8 @@ namespace iRLeagueRESTService.Data
 
             var statisticDto = new StatisticConvenienceDTO()
             {
-                SeasonStats = seasonStats.ToArray(),
-                LeagueStats = leagueStats.ToArray()
+                SeasonStats = seasonStats.Count > 0 ? seasonStats.ToArray() : null,
+                LeagueStats = leagueStats.Count > 0 ? leagueStats.ToArray() : null
             };
 
             return statisticDto;
