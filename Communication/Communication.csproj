@@ -123,6 +123,10 @@
     <Compile Include="DataTransfer\Sessions\ScheduleInfoDTO.cs" />
     <Compile Include="DataTransfer\Sessions\SessionDataDTO.cs" />
     <Compile Include="DataTransfer\Sessions\SessionInfoDTO.cs" />
+    <Compile Include="DataTransfer\Statistics\Convenience\LeagueStatsSetConvenienceDTO.cs" />
+    <Compile Include="DataTransfer\Statistics\Convenience\SeasonStatsSetConvenienceDTO.cs" />
+    <Compile Include="DataTransfer\Statistics\Convenience\StatisticConvenienceDTO.cs" />
+    <Compile Include="DataTransfer\Statistics\Convenience\StatsSetConvenienceDTO.cs" />
     <Compile Include="DataTransfer\Statistics\DriverStatisticDTO.cs" />
     <Compile Include="DataTransfer\Statistics\DriverStatisticRowDTO.cs" />
     <Compile Include="DataTransfer\Statistics\ImportedStatisticSetDTO.cs" />
