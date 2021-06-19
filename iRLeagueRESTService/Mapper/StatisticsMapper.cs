@@ -201,6 +201,7 @@ namespace iRLeagueDatabase.Mapper
             target.LeadingKm = source.LeadingKm;
             target.LeadingLaps = (int)source.LeadingLaps;
             target.MemberId = source.MemberId;
+            target.MemberName = source.Member.Fullname;
             target.PenaltyPoints = (int)source.PenaltyPoints;
             target.Poles = source.Poles;
             target.RacePoints = (int)source.RacePoints;
