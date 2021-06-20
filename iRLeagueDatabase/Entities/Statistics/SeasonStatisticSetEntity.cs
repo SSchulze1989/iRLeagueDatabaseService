@@ -146,7 +146,9 @@ namespace iRLeagueDatabase.Entities.Statistics
                 .Include(x => x.FinalResults.Select(y => y.ReviewPenalties))
                 .LoadAsync();
 
-            var resultIds = scorings.SelectMany(x => x.ScoredResults.Select(y => y.ResultId));
+            var resultIds = scorings
+                .Where(x => x.ScoredResults != null) 
+                .SelectMany(x => x.ScoredResults.Select(y => y.ResultId));
 
             await dbContext.Set<ResultEntity>()
                 .Where(x => resultIds.Contains(x.ResultId))
@@ -175,6 +177,12 @@ namespace iRLeagueDatabase.Entities.Statistics
 
             // Get all scored races
             var scoredRaces = scorings.SelectMany(x => x.GetAllSessions().Where(y => y.SessionResult != null).Select(y => new { x, y })).GroupBy(x => x.x, x => x.y);
+
+            // End stats calculation if no scored races available
+            if (scoredRaces.Count() == 0)
+            {
+                return;
+            }
 
             // Get races that need recalculation and recalculate results
             scoredRaces.ForEach(x => x.Where(y => y.SessionResult.RequiresRecalculation).ForEach(y => x.Key.CalculateResults(y.SessionId, dbContext)));
