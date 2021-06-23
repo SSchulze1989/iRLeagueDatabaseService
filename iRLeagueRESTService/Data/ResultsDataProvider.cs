@@ -260,6 +260,7 @@ namespace iRLeagueRESTService.Data
 
             DbContext.Set<LeagueMemberEntity>()
                 .Where(x => memberIds.Contains(x.MemberId))
+                .Include(x => x.Team)
                 .Load();
 
             //foreach (var scoredResultEntity in scoredResultEntities)

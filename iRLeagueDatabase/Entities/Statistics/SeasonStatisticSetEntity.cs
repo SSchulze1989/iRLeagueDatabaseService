@@ -185,10 +185,20 @@ namespace iRLeagueDatabase.Entities.Statistics
             }
 
             // Get races that need recalculation and recalculate results
-            scoredRaces.ForEach(x => x.Where(y => y.SessionResult.RequiresRecalculation).ForEach(y => x.Key.CalculateResults(y.SessionId, dbContext)));
+            scoredRaces
+                .ForEach(x => x
+                    .Where(y => y.SessionResult != null)
+                    .Where(y => y.SessionResult.RequiresRecalculation)
+                    .ForEach(y => x.Key.CalculateResults(y.SessionId, dbContext))
+                );
 
             // Get all scored resultrows and group by driver
-            var scoredResultsRows = scorings.SelectMany(x => x.ScoredResults).SelectMany(x => x.FinalResults).OrderBy(x => x.ResultRow.Date).GroupBy(x => x.ResultRow.Member);
+            var scoredResultsRows = scorings
+                .Where(x => x.ScoredResults != null)
+                .SelectMany(x => x.ScoredResults)
+                .SelectMany(x => x.FinalResults)
+                .OrderBy(x => x.ResultRow.Date)
+                .GroupBy(x => x.ResultRow.Member);
 
             if (DriverStatistic == null)
             {

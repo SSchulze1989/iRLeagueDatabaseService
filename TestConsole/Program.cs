@@ -50,7 +50,10 @@ namespace TestConsole
             // Calculate season statistics
             using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
             {
-                var seasonStatistics = dbContext.Set<SeasonStatisticSetEntity>().ToList();
+                var seasonStatistics = dbContext
+                    .Set<SeasonStatisticSetEntity>()
+                    .Where(x => x.RequiresRecalculation && x.SeasonId == 5)
+                    .ToList();
 
                 dbContext.Configuration.LazyLoadingEnabled = false;
 
@@ -73,17 +76,17 @@ namespace TestConsole
             //}
 
             // Calculate league statistics
-            using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
-            {
-                var leagueStatistic = dbContext.Set<LeagueStatisticSetEntity>().First();
+            //using (var dbContext = new LeagueDbContext("SkippyCup_leagueDb"))
+            //{
+            //    var leagueStatistic = dbContext.Set<LeagueStatisticSetEntity>().First();
 
-                dbContext.Configuration.LazyLoadingEnabled = false;
+            //    dbContext.Configuration.LazyLoadingEnabled = false;
 
-                leagueStatistic.LoadRequiredDataAsync(dbContext).Wait();
-                leagueStatistic.Calculate(dbContext);
+            //    leagueStatistic.LoadRequiredDataAsync(dbContext).Wait();
+            //    leagueStatistic.Calculate(dbContext);
 
-                dbContext.SaveChanges();
-            }
+            //    dbContext.SaveChanges();
+            //}
 
             //Console.Read();
         }

@@ -160,7 +160,7 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringId = source.ScoringId;
             target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
             target.TotalPoints = (int)source.TotalPoints;
-            target.TeamId = source.Team?.TeamId;
+            target.TeamId = source.TeamId;
             target.TeamName = source.Team?.Name;
 
             return target;

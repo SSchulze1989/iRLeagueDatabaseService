@@ -24,11 +24,11 @@ namespace iRLeagueRESTService
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             GlobalConfiguration.Configuration.EnsureInitialized();
 
-            // Start watchers for statistic calculation
-            StatisticCalculationWatcher.RegisterWatcher("SkippyCup_leagueDb");
-
             //Configure logger
             SetupLog4Net("C:\\Logging\\config.xml");
+
+            // Start watchers for statistic calculation
+            StatisticCalculationWatcher.RegisterWatcher("SkippyCup_leagueDb");
 
             var logger = log4net.LogManager.GetLogger(typeof(WebApiApplication));
             logger.Info("Starting iRLeagueRESTService ...");

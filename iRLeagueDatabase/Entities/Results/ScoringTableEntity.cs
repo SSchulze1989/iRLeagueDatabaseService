@@ -110,7 +110,9 @@ namespace iRLeagueDatabase.Entities.Results
                 return GetSeasonTeamStandings(currentSession, dbContext, maxRacesCount);
             }
 
-            var allScoredResults = Scorings?.SelectMany(x => x.ScoredResults).ToList();
+            var allScoredResults = Scorings?
+                .Where(x => x.ScoredResults != null)
+                .SelectMany(x => x.ScoredResults).ToList();
             var previousScoredResults = allScoredResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
 
             var currentResult = currentSession.SessionResult;
@@ -154,7 +156,9 @@ namespace iRLeagueDatabase.Entities.Results
             if (maxRacesCount == -1)
                 maxRacesCount = Sessions.Count() - maxRacesCount;
 
-            var allScoredResults = Scorings?.SelectMany(x => x.ScoredResults).OfType<ScoredTeamResultEntity>().ToList();
+            var allScoredResults = Scorings?
+                .Where(x => x.ScoredResults != null)
+                .SelectMany(x => x.ScoredResults).OfType<ScoredTeamResultEntity>().ToList();
             var previousScoredResults = allScoredResults.Where(x => x.Result.Session.Date < currentSession.Date).ToList();
 
             foreach(var scoredTeamResult in previousScoredResults)

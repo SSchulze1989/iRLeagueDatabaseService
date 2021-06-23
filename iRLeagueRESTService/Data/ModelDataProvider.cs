@@ -97,7 +97,9 @@ namespace iRLeagueRESTService.Data
                 {
                     if (requestIds != null)
                     {
-                        var requestKeys = requestIds.Select(x => x.Cast<object>().ToArray()).ToArray();
+                        var requestKeys = requestIds
+                            .Where(x => x != null)
+                            .Select(x => x.Cast<object>().ToArray()).ToArray();
                         foreach (var keys in requestKeys)
                         {
                             object entity = DbContext.Set(rqEntityType).Find(keys);

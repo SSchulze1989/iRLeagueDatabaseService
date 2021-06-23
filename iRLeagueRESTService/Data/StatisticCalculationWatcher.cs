@@ -1,6 +1,7 @@
 ﻿using iRLeagueDatabase;
 using iRLeagueDatabase.Entities.Statistics;
 using iRLeagueManager.Timing;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace iRLeagueRESTService.Data
 {
     public static class StatisticCalculationWatcher
     {
-        private static TimeSpan TickInterval = TimeSpan.FromMinutes(30);
+        private static readonly ILog logger = log4net.LogManager.GetLogger(typeof(StatisticCalculationWatcher));
+
+        private static TimeSpan TickInterval = TimeSpan.FromMinutes(10);
 
         private static IDictionary<string, Timer> RegisteredWatchers { get; } = new Dictionary<string, Timer>();
 
@@ -36,11 +39,13 @@ namespace iRLeagueRESTService.Data
             timer.Elapsed += async (sender, e) => await Tick(leagueDbName);
             RegisteredWatchers.Add(leagueDbName, timer);
             timer.Start();
+            logger.Info($"Startet Watcher with parameters: {TickInterval.Minutes} m");
             GC.Collect();
         }
 
         private static async Task Tick(string leagueDbName)
         {
+            logger.Info("Searching for statistics that need recalculation");
             // Load statistic sets and check for recalculation interval
             using (var dbContext = new LeagueDbContext(leagueDbName))
             {
@@ -63,8 +68,16 @@ namespace iRLeagueRESTService.Data
             await statisticSet.CheckRequireRecalculationAsync(dbContext);
             if (statisticSet.RequiresRecalculation)
             {
-                await statisticSet.LoadRequiredDataAsync(dbContext);
-                statisticSet.Calculate(dbContext);
+                logger.Info($"Calculate statistic set {statisticSet.Name}[{statisticSet.Id}] - {statisticSet.GetType().Name}");
+                try
+                {
+                    await statisticSet.LoadRequiredDataAsync(dbContext);
+                    statisticSet.Calculate(dbContext);
+                }
+                catch (Exception e)
+                {
+                    logger.Error($"Error while calculating statistic set {statisticSet.Name}[{statisticSet.Id}] - {statisticSet.GetType().Name}", e);
+                }
             }
 
             dbContext.Configuration.LazyLoadingEnabled = true;
