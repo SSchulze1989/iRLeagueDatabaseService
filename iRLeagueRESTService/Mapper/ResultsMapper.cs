@@ -99,6 +99,7 @@ namespace iRLeagueDatabase.Mapper
             target.Interval = TimeSpanConverter.Convert(source.Interval);
             target.LeadLaps = (int)source.LeadLaps;
             target.MemberId = source.MemberId; // MapToMemberInfoDTO(source.Member);
+            target.MemberName = null;
             target.PositionChange = (int)source.PositionChange;
             target.QualifyingTime = TimeSpanConverter.Convert(source.QualifyingTime);
             target.ResultRowId = source.ResultRowId;

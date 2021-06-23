@@ -49,6 +49,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
 
         [DataMember]
         public long MemberId { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        public string MemberName { get; set; }
         [DataMember]
         public long? TeamId { get; set; }
 
