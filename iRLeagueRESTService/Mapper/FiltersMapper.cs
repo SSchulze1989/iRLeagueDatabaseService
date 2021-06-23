@@ -43,6 +43,9 @@ namespace iRLeagueDatabase.Mapper
                 case nameof(ResultRowEntity.Member)+"."+nameof(LeagueMemberEntity.Team)+"."+nameof(TeamEntity.Name):
                     target.ColumnPropertyName = nameof(ResultRowDataDTO.TeamName);
                     break;
+                case nameof(ResultRowEntity.Member)+"."+nameof(LeagueMemberEntity.Fullname):
+                    target.ColumnPropertyName = nameof(ResultRowDataDTO.MemberName);
+                    break;
                 default:
                     target.ColumnPropertyName = source.ColumnPropertyName;
                     break;
@@ -134,6 +137,9 @@ namespace iRLeagueDatabase.Mapper
                     break;
                 case nameof(ResultRowDataDTO.TeamName):
                     target.ColumnPropertyName = $"{nameof(ResultRowEntity.Member)}.{nameof(LeagueMemberEntity.Team)}.{nameof(TeamEntity.Name)}";
+                    break;
+                case nameof(ResultRowDataDTO.MemberName):
+                    target.ColumnPropertyName = $"{nameof(ResultRowEntity.Member)}.{nameof(LeagueMemberEntity.Fullname)}";
                     break;
                 default:
                     target.ColumnPropertyName = source.ColumnPropertyName;
