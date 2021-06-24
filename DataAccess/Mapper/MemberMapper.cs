@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.DataTransfer.Members;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public partial class DTOMapper
     {

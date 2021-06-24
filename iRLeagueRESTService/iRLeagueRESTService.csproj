@@ -317,26 +317,9 @@
     <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Data\CSVExportHelper.cs" />
-    <Compile Include="Data\DataProviderBase.cs" />
-    <Compile Include="Data\ILeagueActionProvider.cs" />
-    <Compile Include="Data\IModelDataProvider.cs" />
-    <Compile Include="Data\IResultsDataProvider.cs" />
-    <Compile Include="Data\IReviewDataProvider.cs" />
-    <Compile Include="Data\ISeasonDataProvider.cs" />
-    <Compile Include="Data\ISessionsDataProvider.cs" />
-    <Compile Include="Data\IStandingsDataProvider.cs" />
-    <Compile Include="Data\IStatsDataProvider.cs" />
-    <Compile Include="Data\LeagueActionProvider.cs" />
-    <Compile Include="Data\ModelDataProvider.cs" />
-    <Compile Include="Data\ResultsDataProvider.cs" />
-    <Compile Include="Data\ReviewDataProvider.cs" />
-    <Compile Include="Data\SeasonDataProvider.cs" />
     <Compile Include="Data\SelectFieldsHelper.cs" />
-    <Compile Include="Data\SessionsDataProvider.cs" />
     <Compile Include="Data\ShouldSerializeContractResolver.cs" />
-    <Compile Include="Data\StandingsDataProvider.cs" />
     <Compile Include="Data\StatisticCalculationWatcher.cs" />
-    <Compile Include="Data\StatsDataProvider.cs" />
     <Compile Include="Exceptions\DataAccessException.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
@@ -346,16 +329,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Mapper\BaseMapper.cs" />
-    <Compile Include="Mapper\DTOMapper.cs" />
-    <Compile Include="Mapper\EntityMapper.cs" />
-    <Compile Include="Mapper\FiltersMapper.cs" />
-    <Compile Include="Mapper\MemberMapper.cs" />
-    <Compile Include="Mapper\ResultsMapper.cs" />
-    <Compile Include="Mapper\ReviewsMapper.cs" />
-    <Compile Include="Mapper\SessionsMapper.cs" />
-    <Compile Include="Mapper\StatisticsMapper.cs" />
-    <Compile Include="Mapper\TypeMap.cs" />
     <Compile Include="Models\LeagueEntry.cs" />
     <Compile Include="Models\LeagueRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -451,6 +424,10 @@
     <ProjectReference Include="..\Communication\Communication.csproj">
       <Project>{0afd7545-de7f-44d0-a3b0-daf3a1e0844f}</Project>
       <Name>Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{24385375-2ec7-443a-8176-2022313487a4}</Project>
+      <Name>DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\iRLeagueDatabase\iRLeagueDatabase.csproj">
       <Project>{aaac06db-63ac-4002-9f30-2ac330f64b33}</Project>

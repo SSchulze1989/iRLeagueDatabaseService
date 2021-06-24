@@ -11,7 +11,7 @@ using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Entities.Results;
 using System.Runtime.CompilerServices;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class LeagueActionProvider : ILeagueActionProvider, IDisposable
     {

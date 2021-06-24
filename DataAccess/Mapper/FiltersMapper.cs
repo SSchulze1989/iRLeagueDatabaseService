@@ -11,10 +11,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http.Results;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public partial class DTOMapper
     {

@@ -11,15 +11,13 @@ using System.Data.Entity;
 using iRLeagueDatabase.Extensions;
 using iRLeagueManager.Timing;
 using iRLeagueDatabase.DataTransfer.Sessions;
-using Microsoft.AspNetCore.Http.Features.Authentication;
 using iRLeagueDatabase.DataTransfer.Members;
-using System.Security.Cryptography.Xml;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Members;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public partial class DTOMapper
     {

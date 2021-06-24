@@ -1,13 +1,12 @@
 ﻿using iRLeagueDatabase;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Enums;
-using iRLeagueRESTService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class DataProviderBase
     {

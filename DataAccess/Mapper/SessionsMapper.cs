@@ -4,7 +4,7 @@ using iRLeagueDatabase.Entities.Sessions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public partial class DTOMapper
     {

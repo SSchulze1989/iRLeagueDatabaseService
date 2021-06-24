@@ -5,14 +5,12 @@ using iRLeagueDatabase.DataTransfer.Sessions.Convenience;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Extensions;
-using iRLeagueDatabase.Mapper;
+using iRLeagueDatabase.DataAccess.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.Xml;
-using System.Web;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     /// <summary>
     /// Data access class for retrieving review convenience data from League database

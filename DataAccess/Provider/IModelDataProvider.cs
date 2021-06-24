@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using iRLeagueDatabase.DataTransfer;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public interface IModelDataProvider<TDataTransferObject, TModelId> : IDisposable
     {

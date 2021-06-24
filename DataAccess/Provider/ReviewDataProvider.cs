@@ -5,7 +5,7 @@ using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
-using iRLeagueDatabase.Mapper;
+using iRLeagueDatabase.DataAccess.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Data.Entity;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Enums;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     /// <summary>
     /// Data access class for retrieving review convenience data from League database

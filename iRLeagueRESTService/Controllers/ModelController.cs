@@ -31,6 +31,7 @@ using Microsoft.AspNet.Identity;
 
 using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.DataAccess.Provider;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using System.Security.Principal;

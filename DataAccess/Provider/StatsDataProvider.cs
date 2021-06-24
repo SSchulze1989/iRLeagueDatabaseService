@@ -3,13 +3,13 @@ using iRLeagueDatabase.DataTransfer.Statistics;
 using iRLeagueDatabase.DataTransfer.Statistics.Convenience;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Statistics;
-using iRLeagueDatabase.Mapper;
+using iRLeagueDatabase.DataAccess.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class StatsDataProvider : DataProviderBase, IStatsDataProvider
     {
