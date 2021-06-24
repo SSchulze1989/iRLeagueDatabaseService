@@ -24,37 +24,52 @@ namespace iRLeagueRESTService.Controllers
     public class CheckLeagueController : LeagueApiController
     {    
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.None)]
         public IHttpActionResult ReturnLeagueNames()
         {
-            var leagueNames = GetDatabaseList()
-                .Where(x => x.Contains("_leagueDb"))
-                .Where(x => CheckLeagueRole(User, GetLeagueNameFromDatabaseName(x)))
-                .Select(GetLeagueNameFromDatabaseName)
-                .ToArray();
+            IEnumerable<string> leagueNames;
+
+            using (var dbContext = new LeagueDbContext())
+            {
+                leagueNames = dbContext.Leagues
+                    .Where(x => CheckLeagueRole(User, x.LeagueName) || x.IsPublic)
+                    .Select(x => x.LeagueName);
+            }
+            //var leagueNames = GetDatabaseList()
+            //    .Where(x => x.Contains("_leagueDb"))
+            //    .Where(x => CheckLeagueRole(User, GetLeagueNameFromDatabaseName(x)))
+            //    .Select(GetLeagueNameFromDatabaseName)
+            //    .ToArray();
             return Ok(leagueNames);
         }
 
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.None)]
         public IHttpActionResult GetLeagueInfo([FromUri] string id)
         {
             var leagueName = id;
-            var databaseExists = CheckDatabaseExists(new SqlConnection("server=(local)\\IRLEAGUEDB;Trusted_Connection=yes"), GetDatabaseNameFromLeagueName(leagueName));
-
-            if (databaseExists)
+            //var databaseExists = CheckDatabaseExists(new SqlConnection("server=(local)\\IRLEAGUEDB;Trusted_Connection=yes"), GetDatabaseNameFromLeagueName(leagueName));
+            using (var dbContext = new LeagueDbContext())
             {
-                base.CheckLeagueRole(User, leagueName);
-                
-                var leagueInfo = GetLeagueRegisterInfo(id);
-                return Ok(leagueInfo);
+                var league = dbContext.Leagues
+                    .SingleOrDefault(x => x.LeagueName == leagueName);
+                if (league != null)
+                {
+                    if (league.IsPublic == false)
+                    {
+                        base.CheckLeagueRole(User, leagueName);
+                    }
+
+                    var leagueInfo = GetLeagueRegisterInfo(leagueName);
+                    return Ok(leagueInfo);
+                }
             }
-            else
-                return BadRequest($"League {id} does not exist");
+
+            return BadRequest($"League {id} does not exist");
         }
 
         [HttpPost]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [Authorize(Roles = "User")]
         public IHttpActionResult PostLeague([FromUri] string leagueName, [FromUri] string fullName = "")
         {
             // check for empty body and invalid data

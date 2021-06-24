@@ -4,6 +4,7 @@ using iRLeagueDatabase.DataTransfer.Reviews.Convenience;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using log4net;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace iRLeagueRESTService.Controllers
     /// 
     /// This endpoint only provides GET Method
     /// </summary>
+    [IdentityBasicAuthentication]
     public class ReviewsController : LeagueApiController
     {
         /// <summary>
@@ -37,13 +39,13 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns><see cref="SessionReviewsDTO"/> containing summary for the session reviews and penalties; <see cref="HttpError"/> on Error</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSession([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] string fields = null, bool excludeFields = false)
         {
             try
             {
                 logger.Info($"Get Reviews for session id: {sessionId} - league: {leagueName}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 // check for empty parameters
                 if (string.IsNullOrEmpty(leagueName))
@@ -57,7 +59,7 @@ namespace iRLeagueRESTService.Controllers
                 SessionReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName));
                     data = reviewDataProvider.GetReviewsFromSession(sessionId);
                 }
 
@@ -90,13 +92,13 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns><see cref="SessionReviewsDTO"/> containing summary for the session reviews and penalties; <see cref="HttpError"/> on Error</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSeason([FromUri] string leagueName, [FromUri] long seasonId, [FromUri] string fields = null, bool excludeFields = false)
         {
             try
             {
                 logger.Info($"Get Reviews for season id: {seasonId} - league: {leagueName}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 // check for empty parameters
                 if (string.IsNullOrEmpty(leagueName))
@@ -110,7 +112,7 @@ namespace iRLeagueRESTService.Controllers
                 SeasonReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext);
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName));
                     data = reviewDataProvider.GetReviewsFromSeason(seasonId);
                 }
 

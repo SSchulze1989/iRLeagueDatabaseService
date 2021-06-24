@@ -27,13 +27,18 @@ using iRLeagueDatabase.Calculation;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoringEntity : Revision
+    public class ScoringEntity : LeagueRevision
     {
         [Key]
         public long ScoringId { get; set; }
         [ForeignKey(nameof(ParentScoring))]
         public long? ParentScoringId { get; set; }
         public virtual ScoringEntity ParentScoring { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public ScoringKindEnum ScoringKind { get; set; }
         public SessionType ScoringSessionType { get; set; }
         public ScoringSessionSelectionEnum SessionSelectType { get; set; }

@@ -11,10 +11,15 @@ using iRLeagueManager.Enums;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoringTableEntity : Revision
+    public class ScoringTableEntity : LeagueRevision
     {
         [Key]
         public long ScoringTableId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public ScoringKindEnum ScoringKind { get; set; }
         public override object MappingId => ScoringTableId;
         public string Name { get; set; }

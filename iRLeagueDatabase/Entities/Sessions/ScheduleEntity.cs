@@ -12,10 +12,14 @@ using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Entities.Sessions
 {
-    public class ScheduleEntity : Revision
+    public class ScheduleEntity : LeagueRevision
     {
         [Key]
         public long ScheduleId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         public string Name { get; set; }
 

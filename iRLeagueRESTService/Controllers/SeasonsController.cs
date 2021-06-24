@@ -31,7 +31,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns><see cref="SeasonConvenienceDTO"/> of the season</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult Get([FromUri] string leagueName, [FromUri] long seasonId, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
@@ -76,7 +76,7 @@ namespace iRLeagueRESTService.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSeasons([FromUri] string leagueName, [FromUri] string seasonIds = null, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try

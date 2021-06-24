@@ -14,12 +14,16 @@ using iRLeagueDatabase.Entities.Reviews;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ResultEntity : Revision
+    public class ResultEntity : LeagueRevision
     {
         [Key, ForeignKey(nameof(Session))]
         public virtual long ResultId { get; set; }
         [Required]
         public virtual SessionBaseEntity Session { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         [InverseProperty(nameof(IRSimSessionDetailsEntity.Result))]
         public virtual IRSimSessionDetailsEntity IRSimSessionDetails { get; set; }

@@ -53,6 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculation\Accumulator.cs" />
+    <Compile Include="Entities\IHasLeagueId.cs" />
+    <Compile Include="Entities\LeagueEntity.cs" />
+    <Compile Include="Entities\LeagueMappableEntity.cs" />
     <Compile Include="Entities\Members\IClientUser.cs" />
     <Compile Include="Entities\Results\AddPenaltyEntity.cs" />
     <Compile Include="Entities\Filters\DoubleFilterValueEntity.cs" />
@@ -79,6 +82,7 @@
     <Compile Include="Entities\Reviews\CustomIncidentEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewVoteEntity.cs" />
     <Compile Include="Entities\Reviews\VoteCategoryEntity.cs" />
+    <Compile Include="Entities\Revision.cs" />
     <Compile Include="Entities\Sessions\SubSessionEntity.cs" />
     <Compile Include="Entities\Statistics\DriverStatisticRowEntity.cs" />
     <Compile Include="Entities\Statistics\ImportedStatisticSetEntity.cs" />
@@ -135,7 +139,7 @@
     <Compile Include="Entities\Reviews\CommentBaseEntity.cs" />
     <Compile Include="Entities\Reviews\IncidentReviewEntity.cs" />
     <Compile Include="Entities\Reviews\ReviewCommentEntity.cs" />
-    <Compile Include="Entities\Revision.cs" />
+    <Compile Include="Entities\LeagueRevision.cs" />
     <Compile Include="Entities\SeasonEntity.cs" />
     <Compile Include="Entities\Sessions\RaceSessionEntity.cs" />
     <Compile Include="Entities\Sessions\ScheduleEntity.cs" />
@@ -184,6 +188,18 @@
     <Compile Include="Migrations\202104060050369_AddScoringDescription.cs" />
     <Compile Include="Migrations\202104060050369_AddScoringDescription.designer.cs">
       <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105192303197_AddLeagueTable.cs" />
+    <Compile Include="Migrations\202105192303197_AddLeagueTable.designer.cs">
+      <DependentUpon>202105192303197_AddLeagueTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106102314569_AddLeagueSettings.cs" />
+    <Compile Include="Migrations\202106102314569_AddLeagueSettings.designer.cs">
+      <DependentUpon>202106102314569_AddLeagueSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106172302022_AddLeagueIdColToAll.cs" />
+    <Compile Include="Migrations\202106172302022_AddLeagueIdColToAll.designer.cs">
+      <DependentUpon>202106172302022_AddLeagueIdColToAll.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
@@ -247,6 +263,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202104060050369_AddScoringDescription.resx">
       <DependentUpon>202104060050369_AddScoringDescription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105192303197_AddLeagueTable.resx">
+      <DependentUpon>202105192303197_AddLeagueTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106102314569_AddLeagueSettings.resx">
+      <DependentUpon>202106102314569_AddLeagueSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106172302022_AddLeagueIdColToAll.resx">
+      <DependentUpon>202106172302022_AddLeagueIdColToAll.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -14,7 +14,7 @@ using iRLeagueDatabase.Entities.Members;
 namespace iRLeagueDatabase.Entities.Results
 {
     [Serializable]
-    public class ResultRowEntity : MappableEntity, IResultRow
+    public class ResultRowEntity : LeagueMappableEntity, IResultRow
     {
         [Key, Column(Order = 0), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ResultRowId { get; set; }
@@ -26,6 +26,10 @@ namespace iRLeagueDatabase.Entities.Results
         public long ResultId { get; set; }
         [Required]
         public virtual ResultEntity Result { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         public SimSessionTypeEnum SimSessionType { get; set; }
 

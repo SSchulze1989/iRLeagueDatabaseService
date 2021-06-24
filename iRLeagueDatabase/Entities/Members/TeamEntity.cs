@@ -11,11 +11,15 @@ using iRLeagueDatabase.Entities.Results;
 
 namespace iRLeagueDatabase.Entities.Members
 {
-    public class TeamEntity : Revision
+    public class TeamEntity : LeagueRevision
     {
         [Key]
         public long TeamId { get; set; }
         public override object MappingId => TeamId;
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         [InverseProperty(nameof(LeagueMemberEntity.Team))]
         public virtual List<LeagueMemberEntity> Members { get; set; }

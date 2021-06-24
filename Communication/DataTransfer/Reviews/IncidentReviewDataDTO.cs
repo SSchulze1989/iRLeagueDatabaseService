@@ -66,8 +66,6 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         [DataMember]
         public long[] InvolvedMemberIds { get; set; }
         [DataMember]
-        public ReviewCommentDataDTO[] Comments { get; set; }
-        [DataMember]
         public ReviewVoteDataDTO[] AcceptedReviewVotes { get; set; }
 
         [DataMember]
@@ -83,6 +81,9 @@ namespace iRLeagueDatabase.DataTransfer.Reviews
         //public LeagueMemberInfoDTO CreatedBy { get; set; }
         //[DataMember]
         //public LeagueMemberInfoDTO LastModifiedBy { get; set; }
+
+        [DataMember]
+        public ReviewCommentDataDTO[] Comments { get; set; }
 
         #region Version Info
         [DataMember]

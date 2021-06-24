@@ -12,10 +12,15 @@ namespace iRLeagueDatabase.Entities.Members
     /// <summary>
     /// This class manages information considering the member's iracing user profile
     /// </summary>
-    public class LeagueMemberEntity : MappableEntity
+    public class LeagueMemberEntity : LeagueMappableEntity
     {
         [Key]
         public long MemberId { get; set; } = 0;
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public string Firstname { get; set; } = "Firstname";
         public string Lastname { get; set; } = "Lastname";
         public string Fullname => Firstname + ' ' + Lastname;

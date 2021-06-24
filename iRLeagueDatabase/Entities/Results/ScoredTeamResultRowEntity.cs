@@ -9,7 +9,7 @@ using iRLeagueDatabase.Entities.Members;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoredTeamResultRowEntity : MappableEntity
+    public class ScoredTeamResultRowEntity : LeagueMappableEntity
     {
         [Key, Column(Order = 0)]
         public long ScoredResultRowId { get; set; }
@@ -30,6 +30,11 @@ namespace iRLeagueDatabase.Entities.Results
         //public long ScoredResultId { get; set; }
         [Required]
         public virtual ScoredTeamResultEntity ScoredTeamResult { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         [ForeignKey(nameof(Team))]
         public long TeamId { get; set; }
         [Required]

@@ -53,7 +53,7 @@ namespace iRLeagueDatabase.DataTransfer.Reviews.Convenience
         /// List of reviews
         /// </summary>
         [DataMember]
-        public IncidentReviewDataDTO[] Reviews { get; set; }
+        public IncidentReviewInfoDTO[] Reviews { get; set; }
 
     }
 }

@@ -12,7 +12,7 @@ using System.IO;
 namespace iRLeagueDatabase.Entities.Results
 {
     [NotMapped]
-    public class StandingsRowEntity : Revision
+    public class StandingsRowEntity : MappableEntity
     {
         public ScoringTableEntity ScoringTable { get; set; }
         public ScoringEntity Scoring { get; set; }
