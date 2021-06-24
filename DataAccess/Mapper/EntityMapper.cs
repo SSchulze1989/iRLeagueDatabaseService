@@ -8,7 +8,7 @@ using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.DataTransfer;
 using System.Runtime.Serialization;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public partial class EntityMapper
     {

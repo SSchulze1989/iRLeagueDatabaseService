@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public interface IReviewDataProvider
     {

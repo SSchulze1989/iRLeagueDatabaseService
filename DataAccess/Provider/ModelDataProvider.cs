@@ -15,10 +15,10 @@ using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
-using iRLeagueDatabase.Mapper;
+using iRLeagueDatabase.DataAccess.Mapper;
 using System.Threading.Tasks;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class ModelDataProvider<TModelDTO> : DataProviderBase, IModelDataProvider<TModelDTO, long[]>, IDisposable where TModelDTO : class, IMappableDTO
     {

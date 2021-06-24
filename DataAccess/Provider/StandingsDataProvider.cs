@@ -7,9 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.WebSockets;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class StandingsDataProvider : DataProviderBase, IStandingsDataProvider
     {

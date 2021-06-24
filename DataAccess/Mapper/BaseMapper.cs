@@ -8,7 +8,7 @@ using iRLeagueDatabase;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.DataTransfer;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public partial class DTOMapper
     {

@@ -6,7 +6,7 @@ using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
-using iRLeagueDatabase.Mapper;
+using iRLeagueDatabase.DataAccess.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Web;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     /// <summary>
     /// Data access class for retrieving review convenience data from League database

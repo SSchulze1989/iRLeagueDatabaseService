@@ -7,7 +7,7 @@ using System.Data.Entity.Core.Common.CommandTrees;
 using System.Linq;
 using System.Web;
 
-namespace iRLeagueRESTService.Data
+namespace iRLeagueDatabase.DataAccess.Provider
 {
     /// <summary>
     /// Provides methods to access season data from the provided LeagueDbContext

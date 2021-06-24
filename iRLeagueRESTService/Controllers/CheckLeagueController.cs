@@ -12,6 +12,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 using iRLeagueDatabase;
 using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.DataAccess.Provider;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using System.Net;

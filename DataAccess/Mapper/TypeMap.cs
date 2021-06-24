@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace iRLeagueDatabase.Mapper
+namespace iRLeagueDatabase.DataAccess.Mapper
 {
     public abstract class TypeMap
     {
