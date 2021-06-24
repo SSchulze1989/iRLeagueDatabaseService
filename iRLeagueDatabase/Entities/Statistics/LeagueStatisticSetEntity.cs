@@ -164,9 +164,9 @@ namespace iRLeagueDatabase.Entities.Statistics
             // Calculate current champ
             var seasonStatisticSets = StatisticSets.OfType<SeasonStatisticSetEntity>().Where(x => x.IsSeasonFinished);
             var importedStatisticSets = StatisticSets.OfType<ImportedStatisticSetEntity>();
-            var lastSeasonStatistic = seasonStatisticSets.OrderBy(x => x.Season.SeasonEnd).LastOrDefault();
-            var lastImportedStatistic = importedStatisticSets.OrderBy(x => x.LastDate).LastOrDefault();
-            if (lastSeasonStatistic?.Season.SeasonEnd >= lastImportedStatistic?.LastDate)
+            var lastSeasonStatistic = seasonStatisticSets.OrderBy(x => x.EndDate).LastOrDefault();
+            var lastImportedStatistic = importedStatisticSets.OrderBy(x => x.EndDate).LastOrDefault();
+            if (lastSeasonStatistic?.EndDate >= lastImportedStatistic?.EndDate)
             {
                 CurrentChamp = lastSeasonStatistic?.DriverStatistic?.SingleOrDefault(x => x.CurrentSeasonPosition == 1)?.Member;
             }

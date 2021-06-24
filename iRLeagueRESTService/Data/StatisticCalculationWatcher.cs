@@ -46,22 +46,28 @@ namespace iRLeagueRESTService.Data
             {
                 var statisticSets = dbContext.Set<StatisticSetEntity>().ToList();
                 var checkStatisticSets = statisticSets.Where(x => IsDueTick(x.UpdateTime, TimeSpanConverter.Convert(x.UpdateInterval))).OrderBy(x => GetTypePriority(x));
-
-
-                dbContext.Configuration.LazyLoadingEnabled = false;
+                
                 foreach(var statisticSet in checkStatisticSets)
                 {
-                    await statisticSet.CheckRequireRecalculationAsync(dbContext);
-                    if (statisticSet.RequiresRecalculation)
-                    {
-                        await statisticSet.LoadRequiredDataAsync(dbContext);
-                        statisticSet.Calculate(dbContext);
-                    }
+                    await Calculate(dbContext, statisticSet);
                 }
-                dbContext.Configuration.LazyLoadingEnabled = true;
                 dbContext.SaveChanges();
             }
             GC.Collect();
+        }
+
+        public static async Task Calculate(LeagueDbContext dbContext, StatisticSetEntity statisticSet)
+        {
+            dbContext.Configuration.LazyLoadingEnabled = false;
+
+            await statisticSet.CheckRequireRecalculationAsync(dbContext);
+            if (statisticSet.RequiresRecalculation)
+            {
+                await statisticSet.LoadRequiredDataAsync(dbContext);
+                statisticSet.Calculate(dbContext);
+            }
+
+            dbContext.Configuration.LazyLoadingEnabled = true;
         }
 
         private static int GetTypePriority(object o)

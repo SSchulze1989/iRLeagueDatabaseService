@@ -74,12 +74,9 @@ namespace iRLeagueManager.Locations
         {
             get
             {
-                if (MapImageSrc == null)
-                    return null;
-
                 if (mapImage == null)
                 {
-                    var uri = "Graphics/TrackImages/Maps/" + MapImageSrc;
+                    var uri = $"Graphics/TrackImages/Maps/{Track.TrackId}-{ConfigId}.png";
                     mapImage = CreateImageFromPng(uri);
                 }
                 return mapImage;
