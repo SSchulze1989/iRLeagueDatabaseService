@@ -8,10 +8,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iRLeagueDatabase.Entities.Reviews
 {
-    public class VoteCategoryEntity : MappableEntity
+    public class VoteCategoryEntity : LeagueMappableEntity
     {
         [Key]
         public long CatId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public string Text { get; set; }
         public int Index { get; set; }
         public int DefaultPenalty { get; set; }

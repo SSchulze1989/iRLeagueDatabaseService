@@ -11,11 +11,15 @@ namespace iRLeagueDatabase.Entities.Results
     /// <summary>
     /// Detailed information from iracing JSON result
     /// </summary>
-    public class IRSimSessionDetailsEntity : MappableEntity
+    public class IRSimSessionDetailsEntity : LeagueMappableEntity
     {
         [Key, ForeignKey(nameof(Result))]
         public long ResultId { get; set; }
         public virtual ResultEntity Result { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         // Session details
         public long IRSubsessionId { get; set; }

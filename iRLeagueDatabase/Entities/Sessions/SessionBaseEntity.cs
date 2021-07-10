@@ -16,7 +16,7 @@ namespace iRLeagueDatabase.Entities.Sessions
     /// <summary>
     /// Base type for league sessions.
     /// </summary>
-    public class SessionBaseEntity : Revision
+    public class SessionBaseEntity : LeagueRevision
     {
         //[Key]
         //[ForeignKey(nameof(Schedule))]
@@ -26,8 +26,11 @@ namespace iRLeagueDatabase.Entities.Sessions
         [ForeignKey(nameof(Schedule))]
         public long? ScheduleId { get; set; }
         public virtual ScheduleEntity Schedule { get; set; }
-
         public override object MappingId => SessionId;
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         /// <summary>
         /// Unique Session Id for League Session

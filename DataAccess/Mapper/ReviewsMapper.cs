@@ -17,7 +17,8 @@ namespace iRLeagueDatabase.DataAccess.Mapper
         public void RegisterReviewsTypeMaps()
         {
             RegisterTypeMap<IncidentReviewEntity, IncidentReviewInfoDTO>(MapToReviewInfoDTO);
-            RegisterTypeMap<IncidentReviewEntity, IncidentReviewDataDTO>(MapToReviewDataDTO);
+            RegisterTypeMap<IncidentReviewEntity, IncidentReviewDataDTO>(MapToPublicReviewDataDTO);
+            //RegisterTypeMap<IncidentReviewEntity, IncidentReviewDataDTO>(MapToReviewDataDTO);
             RegisterTypeMap<CommentBaseEntity, CommentInfoDTO>(MapToCommentInfoDTO);
             RegisterTypeMap<CommentBaseEntity, CommentDataDTO>(MapToCommentDataDTO);
             RegisterTypeMap<ReviewCommentEntity, ReviewCommentDataDTO>(MapToReviewCommentDataDTO);
@@ -43,19 +44,22 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             return target;
         }
 
-        public IncidentReviewDataDTO MapToReviewDataDTO(IncidentReviewEntity source, IncidentReviewDataDTO target = null)
+        public IncidentReviewDataDTO MapToPublicReviewDataDTO(IncidentReviewEntity source, IncidentReviewDataDTO target = null)
         {
             if (source == null)
+            {
                 return null;
+            }
             if (target == null)
+            {
                 target = new IncidentReviewDataDTO();
+            }
 
             MapToReviewInfoDTO(source, target);
             //target.Author = MapToMemberInfoDTO(source.Author);
             target.IncidentKind = source.IncidentKind;
             target.FullDescription = source.FullDescription;
             target.AuthorName = source.AuthorName;
-            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToArray();
             target.Corner = source.Corner;
             target.InvolvedMemberIds = source.InvolvedMembers?.Select(x => x.MemberId).ToArray();
             target.OnLap = source.OnLap;
@@ -65,6 +69,20 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             target.AcceptedReviewVotes = source.AcceptedReviewVotes?.Select(x => MapToReviewVoteDataDTO(x)).ToArray();
             target.ResultLongText = source.ResultLongText;
             target.IncidentNr = source.IncidentNr;
+            target.Comments = new ReviewCommentDataDTO[0];
+
+            return target;
+        }
+
+        public IncidentReviewDataDTO MapToReviewDataDTO(IncidentReviewEntity source, IncidentReviewDataDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new IncidentReviewDataDTO();
+
+            MapToPublicReviewDataDTO(source, target);
+            target.Comments = source.Comments?.Select(x => MapToReviewCommentDataDTO(x)).ToArray();
 
             return target;
         }
@@ -214,7 +232,8 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             target.AuthorName = source.AuthorName;
             if (target.Comments == null)
                 target.Comments = new List<ReviewCommentEntity>();
-            MapCollection(source.Comments, target.Comments, MapToReviewCommentEntity, x => x.CommentId);
+            MapCollection(source.Comments, target.Comments, MapToReviewCommentEntity, x => x.CommentId,
+                removeFromCollection: false, removeFromDatabase: false, autoAddMissing: false);
             target.Corner = source.Corner;
             if (target.InvolvedMembers == null)
                 target.InvolvedMembers = new List<Entities.Members.LeagueMemberEntity>();

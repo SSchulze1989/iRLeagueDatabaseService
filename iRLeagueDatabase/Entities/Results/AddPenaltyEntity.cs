@@ -8,10 +8,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class AddPenaltyEntity : MappableEntity
+    public class AddPenaltyEntity : LeagueMappableEntity
     {
         [Key, ForeignKey(nameof(ScoredResultRow))]
         public long ScoredResultRowId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
+
         public virtual ScoredResultRowEntity ScoredResultRow { get; set; }
         public int PenaltyPoints { get; set; }
 

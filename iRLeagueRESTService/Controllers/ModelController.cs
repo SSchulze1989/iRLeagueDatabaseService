@@ -48,19 +48,19 @@ using iRLeagueRESTService.Models;
 namespace iRLeagueRESTService.Controllers
 {
     [IdentityBasicAuthentication]
-    public class ModelController : ApiController
+    public class ModelController : LeagueApiController
     {
         private static readonly ILog logger = log4net.LogManager.GetLogger(typeof(ModelController));
 
         [HttpGet]
         [ActionName("Get")]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetModel(string requestId, string requestType, string leagueName)
         {
             try
             {
                 logger.Info($"Get Model request || type: {requestType} - league: {leagueName} - id: [{requestId}]");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (requestId == null || requestType == null || leagueName == null)
                 {
@@ -94,14 +94,14 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpGet]
         [ActionName("GetArray")]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
             try
             {
                 logger.Info($"Get Models request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))}");
 
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (requestType == null || leagueName == null)
                 {
@@ -143,13 +143,13 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpGet]
         [ActionName("Get")]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetModel(string requestId, string requestType, string leagueName, string fields, bool excludeFields = false)
         {
             try
             {
                 logger.Info($"Get Model Fields request || type: {requestType} - league: {leagueName} - id: [{requestId}] - fields: {fields}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (requestId == null || requestType == null || leagueName == null)
                 {
@@ -197,14 +197,14 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpGet]
         [ActionName("GetArray")]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetModelsSelectFields([FromUri] string[] requestIds, string requestType, string leagueName, string fields, bool excludeFields = false)
         {
             try
             {
                 logger.Info($"Get Models Fields request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{string.Join(",", x)}]"))} - fields: {fields}");
 
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (requestType == null || leagueName == null)
                 {
@@ -303,14 +303,14 @@ namespace iRLeagueRESTService.Controllers
         //}
 
         [HttpPost]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.Steward | iRLeagueDatabase.Enums.LeagueRoleEnum.Admin)]
         [ActionName("PostArray")]
         public IHttpActionResult PostModels([FromBody] MappableDTO[] data, string requestType, string leagueName)
         {
             try
             {
                 logger.Info($"Post Models request || type: {requestType} - league: {leagueName} - data: {string.Join("/", (object[])data)}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (leagueName == null)
                 {
@@ -343,7 +343,7 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName)))
                 {
                     data = modelDataProvider.PostArray(requestTypeType, data);
                     if (dbContext.DbChanged)
@@ -403,14 +403,14 @@ namespace iRLeagueRESTService.Controllers
         //}
 
         [HttpPut]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.Steward | iRLeagueDatabase.Enums.LeagueRoleEnum.Admin)]
         [ActionName("PutArray")]
         public IHttpActionResult PutModels([FromBody] MappableDTO[] data, [FromUri] string requestType, [FromUri] string leagueName)
         {
             try
             {
                 logger.Info($"Put Models request || type: {requestType} - league: {leagueName} - data: {string.Join("/", (object[])data)}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (leagueName == null)
                 {
@@ -445,7 +445,7 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
                 
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId()))
+                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName)))
                 {
                     data = modelDataProvider.PutArray(requestTypeType, data);
                     if (dbContext.DbChanged)
@@ -489,14 +489,14 @@ namespace iRLeagueRESTService.Controllers
         //}
 
         [HttpDelete]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.Steward | iRLeagueDatabase.Enums.LeagueRoleEnum.Admin)]
         [ActionName("DeleteArray")]
         public IHttpActionResult DeleteModels([FromUri] string[] requestIds, string requestType, string leagueName)
         {
             try
             {
                 logger.Info($"Delete Models request || type: {requestType} - league: {leagueName} - ids: {string.Join("/", requestIds.Select(x => $"[{x}]"))}");
-                CheckLeagueRole(User, leagueName);
+                //CheckLeagueRole(User, leagueName);
 
                 if (requestIds == null || requestType == null || leagueName == null)
                 {
@@ -543,15 +543,16 @@ namespace iRLeagueRESTService.Controllers
             }
 }
 
-        private LeagueDbContext CreateDbContext(string datbaseName)
-        {
-            return new LeagueDbContext(datbaseName);
-        }
+        //private LeagueDbContext CreateDbContext(string datbaseName)
+        //{
+        //    return new LeagueDbContext(datbaseName);
+        //}
 
-        private string GetDatabaseNameFromLeagueName(string leagueName)
-        {
-            return $"{leagueName}_leagueDb";
-        }
+        //private string GetDatabaseNameFromLeagueName(string leagueName)
+        //{
+        //    //return $"{leagueName}_leagueDb";
+        //    return leagueName;
+        //}
 
         private Type GetRequestType(string requestTypeString)
         {
@@ -603,38 +604,38 @@ namespace iRLeagueRESTService.Controllers
             return idList.ToArray();
         }
 
-        private void CheckLeagueRole(IPrincipal principal, string leagueName)
-        {
-            if (principal.IsInRole($"{leagueName}_User") || principal.IsInRole("Administrator"))
-                return;
+        //private void CheckLeagueRole(IPrincipal principal, string leagueName)
+        //{
+        //    if (principal.IsInRole($"{leagueName}_User") || principal.IsInRole("Administrator"))
+        //        return;
             
-            throw new HttpResponseException(HttpStatusCode.Unauthorized);
-        }
+        //    throw new HttpResponseException(HttpStatusCode.Unauthorized);
+        //}
 
-        private void UpdateLeague(string leagueName, IPrincipal principal)
-        {
-            var register = LeagueRegister.Get();
+        //private void UpdateLeague(string leagueName, IPrincipal principal)
+        //{
+        //    var register = LeagueRegister.Get();
 
-            LeagueEntry leagueEntry = null;
-            if (register.Leagues.Any(x => x.Name == leagueName) == false)
-            {
-                leagueEntry = new LeagueEntry()
-                {
-                    Name = leagueName,
-                    CreatorName = principal.Identity.Name,
-                    CreatorId = Guid.Parse(principal.Identity.GetUserId()),
-                    CreatedOn = DateTime.Now,
-                    PrettyName = leagueName
-                };
-                register.Leagues.Add(leagueEntry);
-            }
-            else
-            {
-                leagueEntry = register.Leagues.SingleOrDefault(x => x.Name == leagueName);
-            }
-            leagueEntry.LastUpdate = DateTime.Now;
+        //    LeagueEntry leagueEntry = null;
+        //    if (register.Leagues.Any(x => x.Name == leagueName) == false)
+        //    {
+        //        leagueEntry = new LeagueEntry()
+        //        {
+        //            Name = leagueName,
+        //            CreatorName = principal.Identity.Name,
+        //            CreatorId = Guid.Parse(principal.Identity.GetUserId()),
+        //            CreatedOn = DateTime.Now,
+        //            PrettyName = leagueName
+        //        };
+        //        register.Leagues.Add(leagueEntry);
+        //    }
+        //    else
+        //    {
+        //        leagueEntry = register.Leagues.SingleOrDefault(x => x.Name == leagueName);
+        //    }
+        //    leagueEntry.LastUpdate = DateTime.Now;
 
-            register.Save();
-        }
+        //    register.Save();
+        //}
     }
 }

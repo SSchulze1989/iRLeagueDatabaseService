@@ -307,7 +307,6 @@
     <Compile Include="Controllers\LeagueApiController.cs" />
     <Compile Include="Controllers\CheckLeagueController.cs" />
     <Compile Include="Controllers\ModelController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ResultsController.cs" />
     <Compile Include="Controllers\ReviewsController.cs" />
     <Compile Include="Controllers\SeasonsController.cs" />
@@ -317,14 +316,16 @@
     <Compile Include="Controllers\StatsController.cs" />
     <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Data\CSVExportHelper.cs" />
     <Compile Include="Data\SelectFieldsHelper.cs" />
     <Compile Include="Data\ShouldSerializeContractResolver.cs" />
     <Compile Include="Data\StatisticCalculationWatcher.cs" />
+    <Compile Include="Data\StatsDataProvider.cs" />
+    <Compile Include="Exceptions\DataAccessException.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\IdentityBasicAuthenticationAttribute.cs" />
     <Compile Include="Filters\HttpAuthenticationChallengeContextExtensions.cs" />
+    <Compile Include="Filters\LeagueAuthorizeAttribute.cs" />
     <Compile Include="Filters\LeagueRoles.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

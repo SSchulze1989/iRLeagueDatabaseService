@@ -35,7 +35,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns><see cref="SessionDataDTO"/> of the session</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSession([FromUri] string leagueName, [FromUri] long sessionId = 0, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
@@ -88,7 +88,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns><see cref="ScheduleSessionsDTO"/> of the schedule</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSchedule([FromUri] string leagueName, [FromUri] long scheduleId, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
@@ -145,7 +145,7 @@ namespace iRLeagueRESTService.Controllers
         /// <param name="excludeFields">If True, specified <paramref name="fields"/> will be excluded - JSON only! (default: false)</param>
         /// <returns><see cref="SeasonSessionsDTO"/> of the season</returns>
         [HttpGet]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult GetSeason([FromUri] string leagueName, [FromUri] long seasonId, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try

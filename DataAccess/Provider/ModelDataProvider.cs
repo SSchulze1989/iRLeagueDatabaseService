@@ -17,6 +17,8 @@ using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataAccess.Mapper;
 using System.Threading.Tasks;
+using iRLeagueRESTService.Exceptions;
+using iRLeagueDatabase.Enums;
 
 namespace iRLeagueDatabase.DataAccess.Provider
 {
@@ -35,7 +37,7 @@ namespace iRLeagueDatabase.DataAccess.Provider
         {
         }
 
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId)
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : base(context, userName, userId, roles)
         {
         }
 
@@ -81,7 +83,8 @@ namespace iRLeagueDatabase.DataAccess.Provider
             }
             else if (requestType.Equals(typeof(IncidentReviewDataDTO)))
             {
-                items = GetReviews(requestIds.Select(x => x.FirstOrDefault()).ToArray()).Cast<TModelDTO>().ToArray();
+                var reviewDataProvider = new ReviewDataProvider(DbContext, UserName, UserId, LeagueRoles);
+                items = reviewDataProvider.GetReviews(requestIds.Select(x => x.FirstOrDefault()).ToArray()).Cast<TModelDTO>().ToArray();
             }
             else
             {
@@ -109,7 +112,12 @@ namespace iRLeagueDatabase.DataAccess.Provider
                     }
                     else
                     {
-                        entities = DbContext.Set(rqEntityType).ToListAsync().Result;
+                        entities = DbContext
+                            .Set(rqEntityType)
+                            .OfType<LeagueMappableEntity>()
+                            .Where(x => x.LeagueId == DbContext.CurrentLeagueId)
+                            .Cast<object>()
+                            .ToListAsync().Result;
                     }
                 }
                 catch (Exception e)
@@ -121,6 +129,15 @@ namespace iRLeagueDatabase.DataAccess.Provider
                 {
                     foreach (var entity in entities)
                     {
+                        // Check for league id
+                        if (entity is IHasLeagueId hasLeague && DbContext.CurrentLeagueId != 0)
+                        {
+                            if (CheckLeague(DbContext.CurrentLeagueId, hasLeague) == false)
+                            {
+                                continue;
+                            }
+                        }
+
                         var dto = mapper.MapTo(entity, requestType) as TModelDTO;
                         resultItems.Add(dto);
                     }
@@ -135,30 +152,45 @@ namespace iRLeagueDatabase.DataAccess.Provider
             return items;
         }
 
-        public IncidentReviewDataDTO[] GetReviews(long[] keys)
-        {
-            var mapper = new DTOMapper(DbContext);
+        //public PublicIncidentReviewDataDTO[] GetReviews(long[] keys)
+        //{
+        //    var mapper = new DTOMapper(DbContext);
 
-            DbContext.Configuration.LazyLoadingEnabled = false;
-            var reviewEnties = DbContext.Set<IncidentReviewEntity>().Where(x => keys.Contains(x.ReviewId))
-                .Include(x => x.Session)
-                .Include(x => x.InvolvedMembers).ToArray();
+        //    DbContext.Configuration.LazyLoadingEnabled = false;
+        //    var reviewEnties = DbContext.Set<IncidentReviewEntity>().Where(x => keys.Contains(x.ReviewId))
+        //        .Include(x => x.Session)
+        //        .Include(x => x.InvolvedMembers).ToArray();
 
-            DbContext.Set<ReviewCommentEntity>().Where(x => keys.Contains(x.ReviewId))
-                .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
-                .Include(x => x.Replies).Load();
-            DbContext.Set<AcceptedReviewVoteEntity>().Where(x => keys.Contains(x.ReviewId))
-                .Include(x => x.MemberAtFault)
-                .Include(x => x.CustomVoteCat)
-                .Load();
+        //    DbContext.Set<ReviewCommentEntity>().Where(x => keys.Contains(x.ReviewId))
+        //        .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
+        //        .Include(x => x.Replies).Load();
+        //    DbContext.Set<AcceptedReviewVoteEntity>().Where(x => keys.Contains(x.ReviewId))
+        //        .Include(x => x.MemberAtFault)
+        //        .Include(x => x.CustomVoteCat)
+        //        .Load();
 
-            DbContext.ChangeTracker.DetectChanges();
+        //    DbContext.ChangeTracker.DetectChanges();
 
-            var reviewDtos = reviewEnties.Select(x => mapper.MapTo<IncidentReviewDataDTO>(x)).ToArray();
-            DbContext.Configuration.LazyLoadingEnabled = true;
+        //    PublicIncidentReviewDataDTO[] reviewDtos;
+        //    if (LeagueRoles.HasFlag(LeagueRoleEnum.Steward))
+        //    {
+        //        reviewDtos = reviewEnties
+        //            .Where(x => CheckLeague(DbContext.LeagueId, x))
+        //            .Select(x => mapper.MapTo<IncidentReviewDataDTO>(x))
+        //            .ToArray();
+        //    }
+        //    else
+        //    {
+        //        reviewDtos = reviewEnties
+        //            .Where(x => CheckLeague(DbContext.LeagueId, x))
+        //            .Select(x => mapper.MapTo<PublicIncidentReviewDataDTO>(x))
+        //            .ToArray();
+        //    }
 
-            return reviewDtos;
-        }
+        //    DbContext.Configuration.LazyLoadingEnabled = true;
+
+        //    return reviewDtos;
+        //}
 
         public TModelDTO Post(Type requestType, TModelDTO data)
         {
@@ -196,6 +228,13 @@ namespace iRLeagueDatabase.DataAccess.Provider
                 {
                     entity = dbSet.Create();
                     dbSet.Add(entity);
+                }
+                else if (entity is IHasLeagueId hasLeague)
+                {
+                    if (CheckLeague(DbContext.CurrentLeagueId, hasLeague) == false)
+                    {
+                        continue;
+                    }
                 }
                 entityMapper.MapTo(item, entity, requestType, rqEntityType);
 
@@ -236,6 +275,14 @@ namespace iRLeagueDatabase.DataAccess.Provider
             foreach (object item in items)
             {
                 object entity = entityMapper.MapTo(item, null, requestType, rqEntityType);
+                if (entity is IHasLeagueId hasLeague)
+                {
+                    if (CheckLeague(DbContext.CurrentLeagueId, hasLeague) == false)
+                    {
+                        continue;
+                    }
+                }
+
                 try
                 {
                     DbContext.SaveChanges();
@@ -280,6 +327,14 @@ namespace iRLeagueDatabase.DataAccess.Provider
 
                 if (entity != null)
                 {
+                    if (entity is IHasLeagueId hasLeague)
+                    {
+                        if (CheckLeague(DbContext.CurrentLeagueId, hasLeague) == false)
+                        {
+                            continue;
+                        }
+                    }
+
                     //dbContext.Set(rqEntityType).Remove(entity);
                     entity.Delete(DbContext);
                     status  = true;
@@ -332,6 +387,11 @@ namespace iRLeagueDatabase.DataAccess.Provider
                 //.Include(x => x.Result.RawResults.Select(y => y.ScoredResultRows))
                 //.Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
                 .FirstOrDefault(x => x.ResultId == sessionId && x.ScoringId == scoringId);
+
+            if (CheckLeague(DbContext.CurrentLeagueId, scoredResultEntity) == false)
+            {
+                return null;
+            }
 
             if (scoredResultEntity == null || scoredResultEntity.Scoring.ShowResults == false)
                 return new ScoredResultDataDTO()
@@ -406,6 +466,12 @@ namespace iRLeagueDatabase.DataAccess.Provider
                         //.Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                         //.Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
                         .FirstOrDefault();
+
+                    if (CheckLeague(DbContext.CurrentLeagueId, scoringTable) == false)
+                    {
+                        return null;
+                    }
+
                     var loadScoringEntityIds = DbContext.Set<ScoringEntity>().Local.Select(y => y.ScoringId).Except(loadedScoringEntityIds);
 
                     if (loadScoringEntityIds.Count() > 0)
@@ -465,6 +531,6 @@ namespace iRLeagueDatabase.DataAccess.Provider
         public ModelDataProvider(LeagueDbContext context) : base(context) { }
 
         public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName) { }
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId) : base(context, userName, userId) { }
+        public ModelDataProvider(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : base(context, userName, userId, roles) { }
     }
 }

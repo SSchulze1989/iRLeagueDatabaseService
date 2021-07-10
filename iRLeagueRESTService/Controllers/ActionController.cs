@@ -44,7 +44,7 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpPut]
         [ActionName("CalcResultArray")]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.LightAdmin)]
         public IHttpActionResult CalculateResultsTrigger([FromUri] string[] requestIds, string leagueName)
         {
             CheckLeagueRole(User, leagueName);

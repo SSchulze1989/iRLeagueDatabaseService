@@ -14,10 +14,14 @@ using iRLeagueDatabase.Entities.Statistics;
 
 namespace iRLeagueDatabase.Entities
 {
-    public class SeasonEntity : Revision
-    {   
+    public class SeasonEntity : LeagueRevision
+    {
         [Key]
         public long SeasonId { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         public override object MappingId => SeasonId;
 

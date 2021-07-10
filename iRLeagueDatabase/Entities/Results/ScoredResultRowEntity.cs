@@ -14,7 +14,7 @@ using System.CodeDom;
 
 namespace iRLeagueDatabase.Entities.Results
 {
-    public class ScoredResultRowEntity : MappableEntity, IResultRow
+    public class ScoredResultRowEntity : LeagueMappableEntity, IResultRow
     {
         [Key, Column(Order = 0)]
         public long ScoredResultRowId { get; set; }
@@ -35,6 +35,10 @@ namespace iRLeagueDatabase.Entities.Results
         //public long ScoredResultId { get; set; }
         [Required]
         public virtual ScoredResultEntity ScoredResult { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         [ForeignKey(nameof(Team))]
         public long? TeamId { get; set; }

@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 
 namespace iRLeagueDatabase.Entities.Statistics
 {
-    public class DriverStatisticRowEntity : MappableEntity
+    public class DriverStatisticRowEntity : LeagueMappableEntity
     {
         [Key, ForeignKey(nameof(StatisticSet)), Column(Order = 1)]
         public long StatisticSetId { get; set; }
@@ -42,6 +42,10 @@ namespace iRLeagueDatabase.Entities.Statistics
         [Key, ForeignKey(nameof(Member)), Column(Order = 2)]
         public long MemberId { get; set; }
         public virtual LeagueMemberEntity Member { get; set; }
+
+        [ForeignKey(nameof(League))]
+        public override long LeagueId { get; set; }
+        public override LeagueEntity League { get; set; }
 
         public int StartIRating { get; set; }
         public int EndIRating { get; set; }

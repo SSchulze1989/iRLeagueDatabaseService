@@ -18,7 +18,7 @@ namespace iRLeagueRESTService.Controllers
 
         // POST api/<controller>
         [IdentityBasicAuthentication]
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult Post([FromBody] AddUserDTO userDto)
         {
             if (userDto == null)
@@ -26,7 +26,7 @@ namespace iRLeagueRESTService.Controllers
                 return BadRequest("Content was null");
             }
 
-            if (userDto.UserId != User.Identity.GetUserId() && User.IsInRole(LeagueRoles.Admin) == false)
+            if (userDto.UserId != User.Identity.GetUserId() && User.IsInRole("Administrator") == false)
             {
                 throw new HttpResponseException(HttpStatusCode.Unauthorized);
             }

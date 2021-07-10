@@ -19,7 +19,7 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             RegisterTypeMap<SeasonEntity, SeasonDataDTO>(MapToSeasonDataDTO);
         }
 
-        public VersionInfoDTO MapToVersionInfoDTO(Revision source, VersionInfoDTO target)
+        public VersionInfoDTO MapToVersionInfoDTO(LeagueRevision source, VersionInfoDTO target)
         {
             if (source == null)
                 return null;
@@ -34,7 +34,7 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             return target;
         }
 
-        public VersionDTO MapToVersionDTO(Revision source, VersionDTO target)
+        public VersionDTO MapToVersionDTO(LeagueRevision source, VersionDTO target)
         {
             if (source == null)
                 return null;
@@ -98,18 +98,39 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             RegisterTypeMap<SeasonInfoDTO, SeasonEntity>(MapToSeasonEntity);
         }
 
+        public LeagueMappableEntity MapToMappableEntity(MappableDTO source, LeagueMappableEntity target)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+            if (target == null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            if (target.LeagueId == 0 && target.League == null)
+            {
+                target.League = DbContext.CurrentLeague;
+            }
+
+            return target;
+        }
+
         /// <summary>
         /// Checks if source version is newer than target version and maps 
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public bool MapToRevision(VersionInfoDTO source, Revision target)
+        public bool MapToRevision(VersionInfoDTO source, LeagueRevision target)
         {
             if (source == null)
                 return false;
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
+
+            MapToMappableEntity(source, target);
 
             target.Version = source.Version;
 
