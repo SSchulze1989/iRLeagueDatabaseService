@@ -214,7 +214,9 @@ namespace iRLeagueDatabase.DataAccess.Provider
 
             scoredResultEntities = scoringSessionIds
                 .Select(x => scoredResultEntities
-                    .SingleOrDefault(y => x.Key == y.ScoringId && x.Value == y.ResultId)).ToArray(); // Filter data after fetching from database to the exact needed scoredResults
+                    .SingleOrDefault(y => x.Key == y.ScoringId && x.Value == y.ResultId))
+                .Where(x => x != null)
+                .ToArray(); // Filter data after fetching from database to the exact needed scoredResults
 
             DbContext.Set<ScoredResultRowEntity>()
                 .Where(x => sessionIds.Contains(x.ScoredResultId) && scoringIds.Contains(x.ScoringId))
