@@ -60,7 +60,8 @@ namespace iRLeagueRESTService.Controllers
                 SessionReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName));
+                    var providerContext = CreateProviderContext(dbContext);
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(providerContext);
                     data = reviewDataProvider.GetReviewsFromSession(sessionId);
                 }
 
@@ -113,7 +114,8 @@ namespace iRLeagueRESTService.Controllers
                 SeasonReviewsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName));
+                    var providerContext = CreateProviderContext(dbContext);
+                    IReviewDataProvider reviewDataProvider = new ReviewDataProvider(providerContext);
                     data = reviewDataProvider.GetReviewsFromSeason(seasonId);
                 }
 

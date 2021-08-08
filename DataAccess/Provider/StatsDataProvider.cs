@@ -13,8 +13,9 @@ namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class StatsDataProvider : DataProviderBase, IStatsDataProvider
     {
-        public StatsDataProvider(LeagueDbContext dbContext) : base(dbContext)
-        { }
+        public StatsDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
+        {
+        }
 
         public StatisticConvenienceDTO GetStatistics(long seasonId = 0, bool includeSeason = false, bool includeLeague = false)
         {

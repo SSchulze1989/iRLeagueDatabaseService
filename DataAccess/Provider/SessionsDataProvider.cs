@@ -18,7 +18,7 @@ namespace iRLeagueDatabase.DataAccess.Provider
     /// </summary>
     public class SessionsDataProvider : DataProviderBase, ISessionsDataProvider
     {
-        public SessionsDataProvider(LeagueDbContext dbContext) : base(dbContext)
+        public SessionsDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
         {
         }
 

@@ -48,7 +48,8 @@ namespace iRLeagueRESTService.Controllers
                 SeasonStandingsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IStandingsDataProvider standingsDataProvider = new StandingsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    IStandingsDataProvider standingsDataProvider = new StandingsDataProvider(providerContext);
                     data = standingsDataProvider.GetStandingsFromSeason(seasonId, sessionId);
                 }
 

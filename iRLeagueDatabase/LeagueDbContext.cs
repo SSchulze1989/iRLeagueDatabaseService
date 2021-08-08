@@ -14,11 +14,12 @@ using iRLeagueDatabase.Entities.Results;
 using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.Entities.Statistics;
+using iRLeagueDatabase.Interfaces;
 
 namespace iRLeagueDatabase
 {
     [DbConfigurationType(typeof(iRLeagueDatabase.MyContextConfiguration))]
-    public class LeagueDbContext : DbContext
+    public class LeagueDbContext : DbContext, ILeagueInfo
     {
         public virtual DbSet<LeagueEntity> Leagues { get; set; }
         public virtual DbSet<SeasonEntity> Seasons { get; set; }
@@ -31,7 +32,9 @@ namespace iRLeagueDatabase
         public string CurrentLeagueName { get; set; }
 
         public long CurrentLeagueId { get; set; }
+        long ILeagueInfo.LeagueId => CurrentLeagueId;
         public LeagueEntity CurrentLeague { get; set; }
+        string ILeagueInfo.LeagueName => CurrentLeague?.LeagueName;
 
         private readonly OrphansToHandle OrphansToHandle;
 

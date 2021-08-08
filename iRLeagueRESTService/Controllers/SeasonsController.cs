@@ -52,7 +52,8 @@ namespace iRLeagueRESTService.Controllers
                 SeasonConvenieneDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    ISeasonDataProvider sessionsDataProvider = new SeasonDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    ISeasonDataProvider sessionsDataProvider = new SeasonDataProvider(providerContext);
                     data = sessionsDataProvider.GetSeason(seasonId);
                 }
 
@@ -111,7 +112,8 @@ namespace iRLeagueRESTService.Controllers
                 SeasonConvenieneDTO[] data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    ISeasonDataProvider sessionsDataProvider = new SeasonDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    ISeasonDataProvider sessionsDataProvider = new SeasonDataProvider(providerContext);
                     data = sessionsDataProvider.GetSeasons(seasonIdValues?.ToArray());
                 }
 

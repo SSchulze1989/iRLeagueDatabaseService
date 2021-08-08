@@ -1,7 +1,10 @@
 ﻿using iRLeagueDatabase;
+using iRLeagueDatabase.DataAccess.Provider;
 using iRLeagueDatabase.DataTransfer;
+using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Enums;
 using iRLeagueDatabase.Extensions;
+using iRLeagueDatabase.Interfaces;
 using iRLeagueRESTService.Filters;
 using iRLeagueRESTService.Models;
 using Microsoft.AspNet.Identity;
@@ -186,6 +189,18 @@ namespace iRLeagueRESTService.Controllers
             }
 
             return userRoles;
+        }
+
+        protected IProviderContext<TModelStore> CreateProviderContext<TModelStore>(TModelStore modelStore) where TModelStore : ILeagueInfo
+        {
+            return new ProviderContext<TModelStore>(
+                modelStore, 
+                modelStore.LeagueId, 
+                User.Identity.GetUserName(), 
+                User.Identity.GetUserId(), 
+                GetUserLeagueRoles(User, modelStore.LeagueName)
+                );
+
         }
     }
 }

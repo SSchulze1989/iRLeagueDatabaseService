@@ -16,7 +16,7 @@ namespace iRLeagueRESTService.Controllers
     {
         private static readonly ILog logger = log4net.LogManager.GetLogger(typeof(StandingsController));
 
-        [Authorize(Roles = LeagueRoles.UserOrAdmin)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult Get([FromUri] string leagueName, [FromUri] long seasonId = 0, [FromUri] bool seasonStats = true, [FromUri] bool leagueStats = true, [FromUri] string fields = null, [FromUri] bool excludeFields = false)
         {
             try
@@ -35,7 +35,8 @@ namespace iRLeagueRESTService.Controllers
                 StatisticConvenienceDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IStatsDataProvider statsDataProvider = new StatsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    IStatsDataProvider statsDataProvider = new StatsDataProvider(providerContext);
                     data = statsDataProvider.GetStatistics(seasonId, seasonStats, leagueStats);
                 }
 

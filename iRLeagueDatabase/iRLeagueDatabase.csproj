@@ -91,6 +91,7 @@
     <Compile Include="Entities\Statistics\StatisticSetEntity.cs" />
     <Compile Include="Exceptions\LeagueDatabaseException.cs" />
     <Compile Include="Exceptions\ResultsCalculationException.cs" />
+    <Compile Include="Extensions\ContextExtensions.cs" />
     <Compile Include="Filters\ColumnPropertyFilter.cs" />
     <Compile Include="Filters\FilterFactoryHelper.cs" />
     <Compile Include="Filters\FilterTypeEnum.cs" />

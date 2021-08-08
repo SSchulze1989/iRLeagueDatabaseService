@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 
-using iRLeagueDatabase;
+using iRLeagueDatabase.Extensions;
 using iRLeagueDatabase.DataTransfer;
 using iRLeagueDatabase.DataTransfer.Members;
 using iRLeagueDatabase.DataTransfer.Results;
@@ -17,27 +17,15 @@ using iRLeagueDatabase.Entities.Reviews;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueDatabase.DataAccess.Mapper;
 using System.Threading.Tasks;
-using iRLeagueRESTService.Exceptions;
 using iRLeagueDatabase.Enums;
+using System.Data.SqlClient;
+using iRLeagueDatabase.DataAccess.Provider.Generic;
 
 namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class ModelDataProvider<TModelDTO> : DataProviderBase, IModelDataProvider<TModelDTO, long[]>, IDisposable where TModelDTO : class, IMappableDTO
     {
-
-        public ModelDataProvider() : base(new LeagueDbContext())
-        {
-        }
-
-        public ModelDataProvider(LeagueDbContext context) : base (context)
-        {
-        }
-
-        public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName)
-        {
-        }
-
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : base(context, userName, userId, roles)
+        public ModelDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
         {
         }
 
@@ -67,7 +55,15 @@ namespace iRLeagueDatabase.DataAccess.Provider
 
             var mapper = new DTOMapper(DbContext);
 
-            if (requestType.Equals(typeof(ScoredResultDataDTO)))
+            var dataProvider = GenericDataProvider<LeagueDbContext, long[]>.GetProvider(requestType, ProviderContext);
+            if (dataProvider != null)
+            {
+                items = dataProvider
+                    .GetData(requestIds)
+                    .Cast<TModelDTO>()
+                    .ToArray();
+            }
+            else if (requestType.Equals(typeof(ScoredResultDataDTO)))
             {
                 //var leagueService = new LeagueDBService.LeagueDBService();
                 if (requestIds != null && requestIds.Count() > 0)
@@ -79,11 +75,16 @@ namespace iRLeagueDatabase.DataAccess.Provider
             {
                 //var scoringIds = requestIds.Select(x => x[0]).ToArray();
                 //var sessionIds = requestIds.Select(x => x.Count() > 0 ? x[1] : 0).ToArray();
-                items = GetStandings(requestIds).Cast<TModelDTO>().ToArray();
+                var genericDataProvider = GenericDataProvider<LeagueDbContext, long[]>.GetGenericProvider<StandingsDataDTO>(DbContext);
+
+                items = genericDataProvider
+                    .GetData(requestIds)
+                    .Cast<TModelDTO>()
+                    .ToArray();
             }
             else if (requestType.Equals(typeof(IncidentReviewDataDTO)))
             {
-                var reviewDataProvider = new ReviewDataProvider(DbContext, UserName, UserId, LeagueRoles);
+                var reviewDataProvider = new ReviewDataProvider(ProviderContext);
                 items = reviewDataProvider.GetReviews(requestIds.Select(x => x.FirstOrDefault()).ToArray()).Cast<TModelDTO>().ToArray();
             }
             else
@@ -112,11 +113,13 @@ namespace iRLeagueDatabase.DataAccess.Provider
                     }
                     else
                     {
-                        entities = DbContext
-                            .Set(rqEntityType)
-                            .OfType<LeagueMappableEntity>()
-                            .Where(x => x.LeagueId == DbContext.CurrentLeagueId)
-                            .Cast<object>()
+                        // if requestIds is empty all entries belonging to this league should be returned
+                        // this requires the league id to be checked additionally while executing the query
+                        var set = DbContext.Set(rqEntityType);
+                        var tableName = set.GetTableName();
+                        var sql = set.AddConditionToSql("LeagueId = @leagueId");
+                        entities = set
+                            .SqlQuery(sql, new SqlParameter("@leagueId", DbContext.CurrentLeagueId))
                             .ToListAsync().Result;
                     }
                 }
@@ -438,99 +441,12 @@ namespace iRLeagueDatabase.DataAccess.Provider
 
             return scoredResultData;
         }
-
-        public StandingsDataDTO[] GetStandings(long[] scoringIds)
-        {
-            return GetStandings(scoringIds.Select(x => new long[] { x }).ToArray());
-        }
-
-        public StandingsDataDTO[] GetStandings(long[][] requestIds)
-        {
-            var mapper = new DTOMapper(DbContext);
-
-            DbContext.Configuration.LazyLoadingEnabled = false;
-            List<StandingsDataDTO> responseItems = new List<StandingsDataDTO>();
-            List<long> loadedScoringEntityIds = new List<long>();
-            foreach (var requestId in requestIds)
-            {
-                var scoringTableId = requestId[0];
-                var sessionId = requestId.Count() > 1 ? requestId[1] : 0;
-                ScoringTableEntity scoringTable = null;
-
-                try
-                {
-                    scoringTable = DbContext.Set<ScoringTableEntity>()
-                        .Where(x => x.ScoringTableId == scoringTableId)
-                        .Include(x => x.Scorings.Select(y => y.ExtScoringSource))
-                        //.Include(x => x.Scorings.Select(y => y.Sessions.Select(z => z.SessionResult)))
-                        //.Include(x => x.Scorings.Select(y => y.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
-                        //.Include(x => x.Scorings.Select(y => y.ExtScoringSource.ScoredResults.Select(z => z.FinalResults.Select(q => q.ResultRow.Member))))
-                        .FirstOrDefault();
-
-                    if (CheckLeague(DbContext.CurrentLeagueId, scoringTable) == false)
-                    {
-                        return null;
-                    }
-
-                    var loadScoringEntityIds = DbContext.Set<ScoringEntity>().Local.Select(y => y.ScoringId).Except(loadedScoringEntityIds);
-
-                    if (loadScoringEntityIds.Count() > 0)
-                    {
-                        var loadScorings = DbContext.Set<ScoringEntity>()
-                            .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
-                            .Include(x => x.Sessions.Select(y => y.SessionResult))
-                            .ToList();
-                        var loadScoredResults = DbContext.Set<ScoredResultEntity>()
-                            .Where(x => loadScoringEntityIds.Contains(x.ScoringId))
-                            .Include(x => x.FinalResults.Select(y => y.ResultRow.Member))
-                            .Include(x => x.FinalResults.Select(y => y.Team))
-                            .ToList();
-                    }
-
-                    DbContext.ChangeTracker.DetectChanges();
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Error while getting data from Database.", e);
-                }
-
-                try
-                {
-                    if (scoringTable != null)
-                    {
-                        StandingsEntity standings;
-                        if (sessionId == 0)
-                            standings = scoringTable.GetSeasonStandings(DbContext);
-                        else
-                        {
-                            var scoringSession = scoringTable.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId);
-                            if (scoringSession == null)
-                            {
-                                var session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
-                                scoringSession = scoringTable.GetAllSessions().LastOrDefault(x => x.Date <= session?.Date);
-                            }
-                            standings = scoringTable.GetSeasonStandings(scoringSession, DbContext);
-                        }
-                        var standingsDTO = mapper.MapTo<StandingsDataDTO>(standings);
-                        responseItems.Add(standingsDTO);
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Error while mapping data.", e);
-                }
-            }
-            DbContext.Configuration.LazyLoadingEnabled = true;
-
-            return responseItems.ToArray();
-        }
     }
 
     public class ModelDataProvider : ModelDataProvider<MappableDTO>, IModelDataProvider
     {
-        public ModelDataProvider(LeagueDbContext context) : base(context) { }
-
-        public ModelDataProvider(LeagueDbContext context, string userName) : base(context, userName) { }
-        public ModelDataProvider(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : base(context, userName, userId, roles) { }
+        public ModelDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
+        {
+        }
     }
 }

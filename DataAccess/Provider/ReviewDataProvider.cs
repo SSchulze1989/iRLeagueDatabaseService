@@ -13,6 +13,7 @@ using System.Web;
 using System.Data.Entity;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Enums;
+using iRLeagueDatabase.DataAccess.Provider.Generic;
 
 namespace iRLeagueDatabase.DataAccess.Provider
 {
@@ -21,12 +22,11 @@ namespace iRLeagueDatabase.DataAccess.Provider
     /// </summary>
     public class ReviewDataProvider : DataProviderBase, IReviewDataProvider
     {
-
         /// <summary>
         /// Create new instance provided with an existing database context
         /// </summary>
-        /// <param name="dbContext">Data context of the database</param>
-        public ReviewDataProvider(LeagueDbContext dbContext, string userName, string userId, LeagueRoleEnum roles) : base(dbContext, userName, userId, roles)
+        /// <param name="context">Provider context containing model store and user information</param>
+        public ReviewDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
         {
         }
 
@@ -121,7 +121,7 @@ namespace iRLeagueDatabase.DataAccess.Provider
             // get all reviews ids for this session and retrieve reviews data from ModelDataProvider
             {
                 //var reviewIds = session.Reviews.Select(x => x.ReviewId);
-                var modelDataProvider = new ModelDataProvider(DbContext, UserName, UserId, LeagueRoles);
+                var modelDataProvider = new ModelDataProvider(ProviderContext);
                 reviews = GetReviews(session.SessionId);
             }
 

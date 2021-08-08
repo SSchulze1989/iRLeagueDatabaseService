@@ -21,8 +21,8 @@ namespace iRLeagueDatabase.DataAccess.Provider
     /// </summary>
     public class ResultsDataProvider : DataProviderBase, IResultsDataProvider
     {
-        public ResultsDataProvider(LeagueDbContext dbContext) : base(dbContext)
-        { 
+        public ResultsDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
+        {
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace iRLeagueDatabase.DataAccess.Provider
             }
 
             // get scoredResults using ModelDataProvider
-            var modelDataProvider = new ModelDataProvider(DbContext);
+            var modelDataProvider = new ModelDataProvider(ProviderContext);
             ResultDataDTO rawResults = null;
             SimSessionDetailsDTO sessionDetails = null;
             if (session.SessionResult != null)

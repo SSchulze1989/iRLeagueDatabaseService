@@ -14,9 +14,8 @@ namespace iRLeagueDatabase.DataAccess.Provider
     /// </summary>
     public class SeasonDataProvider : DataProviderBase, ISeasonDataProvider
     {
-        public SeasonDataProvider(LeagueDbContext dbContext) : base(dbContext)
+        public SeasonDataProvider(IProviderContext<LeagueDbContext> context) : base(context)
         {
-
         }
 
         public SeasonConvenieneDTO GetSeason(long seasonId)

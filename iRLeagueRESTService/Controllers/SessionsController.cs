@@ -55,7 +55,8 @@ namespace iRLeagueRESTService.Controllers
                 SessionDataDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    ISessionsDataProvider sessionsDataProvider = new SessionsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    ISessionsDataProvider sessionsDataProvider = new SessionsDataProvider(providerContext);
                     data = sessionsDataProvider.GetSession(sessionId);
                 }
 
@@ -112,7 +113,8 @@ namespace iRLeagueRESTService.Controllers
                 ScheduleSessionsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    var sessionsDataProvider = new SessionsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    var sessionsDataProvider = new SessionsDataProvider(providerContext);
                     data = sessionsDataProvider.GetSessionsFromSchedule(scheduleId);
                 }
 
@@ -165,7 +167,8 @@ namespace iRLeagueRESTService.Controllers
                 SeasonSessionsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    var sessionsDataProvider = new SessionsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    var sessionsDataProvider = new SessionsDataProvider(providerContext);
                     data = sessionsDataProvider.GetSessionsFromSeason(seasonId);
                 }
 

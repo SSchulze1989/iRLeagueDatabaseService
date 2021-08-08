@@ -48,7 +48,8 @@ namespace iRLeagueRESTService.Controllers
                 SessionResultsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IResultsDataProvider resultsDataProvider = new ResultsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    IResultsDataProvider resultsDataProvider = new ResultsDataProvider(providerContext);
                     data = resultsDataProvider.GetResultsFromSession(sessionId, includeRaw);
                 }
 
@@ -101,7 +102,8 @@ namespace iRLeagueRESTService.Controllers
                 SeasonResultsDTO data;
                 using (var dbContext = CreateDbContext(databaseName))
                 {
-                    IResultsDataProvider resultsDataProvider = new ResultsDataProvider(dbContext);
+                    var providerContext = CreateProviderContext(dbContext);
+                    IResultsDataProvider resultsDataProvider = new ResultsDataProvider(providerContext);
                     data = resultsDataProvider.GetResultsFromSeason(seasonId, includeRaw);
                 }
 

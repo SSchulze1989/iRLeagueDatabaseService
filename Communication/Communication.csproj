@@ -179,6 +179,7 @@
     <Compile Include="Interfaces\IHierarchichalModel.cs" />
     <Compile Include="Interfaces\ILeague.cs" />
     <Compile Include="Interfaces\ILeagueContext.cs" />
+    <Compile Include="Interfaces\ILeagueInfo.cs" />
     <Compile Include="Interfaces\ILeagueMember.cs" />
     <Compile Include="Interfaces\ILocation.cs" />
     <Compile Include="Interfaces\IHasPassword.cs" />

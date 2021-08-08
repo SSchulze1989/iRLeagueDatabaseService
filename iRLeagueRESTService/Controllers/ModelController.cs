@@ -75,9 +75,12 @@ namespace iRLeagueRESTService.Controllers
 
                 MappableDTO data;
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
-                    data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
+                    {
+                        data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                    }
                 }
                 //GC.Collect();
 
@@ -124,9 +127,12 @@ namespace iRLeagueRESTService.Controllers
 
                 MappableDTO[] data;
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
-                    data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
+                    {
+                        data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                    }
                 }
                 //GC.Collect();
 
@@ -174,9 +180,12 @@ namespace iRLeagueRESTService.Controllers
 
                 MappableDTO data;
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
-                    data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
+                    {
+                        data = modelDataProvider.Get(requestTypeType, requestIdValue);
+                    }
                 }
                 //GC.Collect();
 
@@ -242,9 +251,12 @@ namespace iRLeagueRESTService.Controllers
 
                 MappableDTO[] data;
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
-                    data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
+                    {
+                        data = modelDataProvider.GetArray(requestTypeType, requestIdValues);
+                    }
                 }
                 //GC.Collect();
 
@@ -343,12 +355,15 @@ namespace iRLeagueRESTService.Controllers
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
 
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName)))
                 {
-                    data = modelDataProvider.PostArray(requestTypeType, data);
-                    if (dbContext.DbChanged)
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
                     {
-                        UpdateLeague(leagueName, User);
+                        data = modelDataProvider.PostArray(requestTypeType, data);
+                        if (dbContext.DbChanged)
+                        {
+                            UpdateLeague(leagueName, User);
+                        }
                     }
                 }
                 //GC.Collect();
@@ -443,14 +458,17 @@ namespace iRLeagueRESTService.Controllers
                 }
 
                 var databaseName = GetDatabaseNameFromLeagueName(leagueName);
-                
+
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext, User.Identity.Name, User.Identity.GetUserId(), GetUserLeagueRoles(User, leagueName)))
                 {
-                    data = modelDataProvider.PutArray(requestTypeType, data);
-                    if (dbContext.DbChanged)
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
                     {
-                        UpdateLeague(leagueName, User);
+                        data = modelDataProvider.PutArray(requestTypeType, data);
+                        if (dbContext.DbChanged)
+                        {
+                            UpdateLeague(leagueName, User);
+                        }
                     }
                 }
                 //GC.Collect();
@@ -524,12 +542,15 @@ namespace iRLeagueRESTService.Controllers
 
                 bool data;
                 using (var dbContext = new LeagueDbContext(databaseName))
-                using (IModelDataProvider modelDataProvider = new ModelDataProvider(dbContext))
                 {
-                    data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
-                    if (dbContext.DbChanged)
+                    var providerContext = CreateProviderContext(dbContext);
+                    using (IModelDataProvider modelDataProvider = new ModelDataProvider(providerContext))
                     {
-                        UpdateLeague(leagueName, User);
+                        data = modelDataProvider.DeleteArray(requestTypeType, requestIdValues);
+                        if (dbContext.DbChanged)
+                        {
+                            UpdateLeague(leagueName, User);
+                        }
                     }
                 }
                 //GC.Collect();

@@ -1,7 +1,6 @@
 ﻿using iRLeagueDatabase;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Enums;
-using iRLeagueRESTService.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,31 +10,16 @@ namespace iRLeagueDatabase.DataAccess.Provider
 {
     public class DataProviderBase
     {
-        protected LeagueDbContext DbContext { get; }
+        protected IProviderContext<LeagueDbContext> ProviderContext { get; }
+        protected LeagueDbContext DbContext => ProviderContext.ModelStore;
 
-        public string UserName { get; }
-        public string UserId { get; }
-        public LeagueRoleEnum LeagueRoles { get; }
+        public string UserName => ProviderContext.UserName;
+        public string UserId => ProviderContext.UserId;
+        public LeagueRoleEnum LeagueRoles => ProviderContext.LeagueRoles;
 
-        public DataProviderBase()
+        public DataProviderBase(IProviderContext<LeagueDbContext> context)
         {
-            DbContext = new LeagueDbContext();
-        }
-
-        public DataProviderBase(LeagueDbContext context)
-        {
-            DbContext = context;
-        }
-
-        public DataProviderBase(LeagueDbContext context, string userName) : this(context)
-        {
-            UserName = userName;
-        }
-
-        public DataProviderBase(LeagueDbContext context, string userName, string userId, LeagueRoleEnum roles) : this(context, userName)
-        {
-            UserId = userId;
-            LeagueRoles = roles;
+            ProviderContext = context;
         }
 
         /// <summary>
