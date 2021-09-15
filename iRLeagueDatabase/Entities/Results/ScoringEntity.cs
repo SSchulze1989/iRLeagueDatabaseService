@@ -249,6 +249,8 @@ namespace iRLeagueDatabase.Entities.Results
             if (session == null)
                 return null;
 
+            var season = session.Schedule.Season;
+
             // Check if session is actually in scoring sessions or a subsession
             if (Sessions.Contains(session) == false)
             {
@@ -278,7 +280,10 @@ namespace iRLeagueDatabase.Entities.Results
 
             //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
             var scoredResult = GetCurrentScoredResult(session, dbContext);
-            var firstResult = ScoredResults.Select(x => x?.Result).OrderBy(x => x?.Session.Date).FirstOrDefault();
+            var firstResult = Season.Schedules
+                .SelectMany(x => x.Sessions)
+                .FirstOrDefault(x => x.SessionResult != null)
+                ?.SessionResult;
             
             if (scoredResult == null || scoredResult.Result?.RequiresRecalculation == false)
             {
@@ -601,6 +606,12 @@ namespace iRLeagueDatabase.Entities.Results
                 return null;
             }
 
+            var season = session.Schedule.Season;
+            var firstResult = season.Schedules
+                .SelectMany(x => x.Sessions)
+                .FirstOrDefault(x => x.SessionResult != null)
+                ?.SessionResult;
+
             // Check Result existence and if recalc is required
             ResultEntity accResult = session.SessionResult;
             if (accResult == null)
@@ -711,8 +722,10 @@ namespace iRLeagueDatabase.Entities.Results
                     }
                 }
 
+                var memberFirstResultRow = firstResult?.RawResults.SingleOrDefault(x => x.MemberId == driver.MemberId);
+
                 //accResultRow.AvgLapTime = accumulator.Accumulate(rows.Select(x => x.AvgLapTime), AccumulateResultsOption.WeightedAverage, GetBestOption.MinValue, rows.Select(x => x.CompletedLaps));
-                accResultRow.SeasonStartIRating = rows.Where(x => x.SeasonStartIRating != 0).FirstOrDefault()?.SeasonStartIRating ?? 0;
+                accResultRow.SeasonStartIRating = memberFirstResultRow?.SeasonStartIRating ?? rows.FirstOrDefault(x => x.SeasonStartIRating != 0)?.SeasonStartIRating ?? 0;
                 accResultRow.StartPosition = rows.OrderBy(x => x.ResultRow.Result.Session.Date?.TimeOfDay).FirstOrDefault()?.StartPosition ?? 0;
                 accResultRow.AvgLapTime = 0;
                 accResultRow.Car = rows.First().Car;
