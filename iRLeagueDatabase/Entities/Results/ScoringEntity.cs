@@ -249,8 +249,6 @@ namespace iRLeagueDatabase.Entities.Results
             if (session == null)
                 return null;
 
-            var season = session.Schedule.Season;
-
             // Check if session is actually in scoring sessions or a subsession
             if (Sessions.Contains(session) == false)
             {
@@ -606,8 +604,10 @@ namespace iRLeagueDatabase.Entities.Results
                 return null;
             }
 
-            var season = session.Schedule.Season;
-            var firstResult = season.Schedules
+            var sessions = Season.Schedules
+                .SelectMany(x => x.Sessions)
+                .Where(x => x.SessionResult != null).ToList();
+            var firstResult = Season.Schedules
                 .SelectMany(x => x.Sessions)
                 .FirstOrDefault(x => x.SessionResult != null)
                 ?.SessionResult;
