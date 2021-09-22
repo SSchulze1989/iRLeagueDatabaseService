@@ -24,6 +24,7 @@ using System.CodeDom;
 using System.Globalization;
 using iRLeagueDatabase.Entities.Members;
 using iRLeagueDatabase.Calculation;
+using System.Data.SqlClient;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -243,6 +244,49 @@ namespace iRLeagueDatabase.Entities.Results
             }
         }
 
+        private IEnumerable<(long MemberId, int IRating)> GetSeasonStartIrating(long seasonId, LeagueDbContext dbContext)
+        {
+            List<(long MemberId, int IRating)> result = new List<(long MemberId, int IRating)>();
+            using (var cmd = dbContext.Database.Connection.CreateCommand())
+            {
+                cmd.CommandText = 
+                    @"with summary 
+                    as
+                    (
+	                    select r.MemberId, r.OldIRating, rss.Season_SeasonId, 
+		                    ROW_NUMBER() over(partition by r.MemberId
+			                    order by rs.Date) as rank
+		                    from dbo.ResultRowEntities r
+			                    join dbo.SessionBaseEntities as rs on r.ResultId = rs.SessionId
+			                    join dbo.ScheduleEntities as rss on rs.ScheduleId = rss.ScheduleId
+		                    where Season_SeasonId = @seasonId
+                    )
+
+                    select MemberId, OldIRating
+	                    from summary
+                    where rank = 1;";
+
+                if (cmd.Connection.State != ConnectionState.Open) 
+                { 
+                    cmd.Connection.Open(); 
+                }
+               
+                cmd.Parameters.Add(new SqlParameter("seasonId", seasonId));
+
+                using (var dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        var memberId = dataReader.GetInt64(0);
+                        var iRating = dataReader.GetInt32(1);
+                        result.Add((memberId, iRating));
+                    }
+                }
+            }
+
+            return result;
+        }
+
         //public IEnumerable<ScoredResultRowEntity> CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         public ScoredResultEntity CalculateResults(SessionBaseEntity session, LeagueDbContext dbContext)
         {
@@ -278,7 +322,12 @@ namespace iRLeagueDatabase.Entities.Results
 
             //List<ScoredResultRowEntity> scoredResultRows = new List<ScoredResultRowEntity>();
             var scoredResult = GetCurrentScoredResult(session, dbContext);
-            var firstResult = ScoredResults.Select(x => x?.Result).OrderBy(x => x?.Session.Date).FirstOrDefault();
+            var firstResult = Season.Schedules
+                .SelectMany(x => x.Sessions)
+                .FirstOrDefault(x => x.SessionResult != null)
+                ?.SessionResult;
+
+            var startIRatings = GetSeasonStartIrating(Season.SeasonId, dbContext);
             
             if (scoredResult == null || scoredResult.Result?.RequiresRecalculation == false)
             {
@@ -400,11 +449,8 @@ namespace iRLeagueDatabase.Entities.Results
                         }
                     }
 
-                    var memberFirstResultRow = firstResult?.RawResults.SingleOrDefault(x => x.MemberId == resultRow.MemberId);
-                    if (memberFirstResultRow != null)
-                    {
-                        resultRow.SeasonStartIRating = memberFirstResultRow.SeasonStartIRating;
-                    }
+                    var startIRating = startIRatings.FirstOrDefault(x => x.MemberId == resultRow.MemberId).IRating;
+                    resultRow.SeasonStartIRating = startIRating != 0 ? startIRating : resultRow.OldIRating;
 
                     var scoredResultRowReviewVotes = reviewVotes.Where(x => x.MemberAtFaultId == scoredResultRow.ResultRow.MemberId);
                     if (scoredResultRow.ReviewPenalties != null)
@@ -601,6 +647,8 @@ namespace iRLeagueDatabase.Entities.Results
                 return null;
             }
 
+            var startIRatings = GetSeasonStartIrating(Season.SeasonId, dbContext);
+
             // Check Result existence and if recalc is required
             ResultEntity accResult = session.SessionResult;
             if (accResult == null)
@@ -712,7 +760,6 @@ namespace iRLeagueDatabase.Entities.Results
                 }
 
                 //accResultRow.AvgLapTime = accumulator.Accumulate(rows.Select(x => x.AvgLapTime), AccumulateResultsOption.WeightedAverage, GetBestOption.MinValue, rows.Select(x => x.CompletedLaps));
-                accResultRow.SeasonStartIRating = rows.Where(x => x.SeasonStartIRating != 0).FirstOrDefault()?.SeasonStartIRating ?? 0;
                 accResultRow.StartPosition = rows.OrderBy(x => x.ResultRow.Result.Session.Date?.TimeOfDay).FirstOrDefault()?.StartPosition ?? 0;
                 accResultRow.AvgLapTime = 0;
                 accResultRow.Car = rows.First().Car;
@@ -746,6 +793,9 @@ namespace iRLeagueDatabase.Entities.Results
                 accResultRow.License = rows.Last().License;
                 accResultRow.QualifyingTime = accumulator.Accumulate(rows.Select(x => x.QualifyingTime), GetBestOption.MinValue);
                 accResultRow.PointsEligible = rows.Select(x => x.PointsEligible).Aggregate((x, y) => x |= y);
+
+                var startIRating = startIRatings.FirstOrDefault(x => x.MemberId == accResultRow.MemberId).IRating;
+                accResultRow.SeasonStartIRating = startIRating != 0 ? startIRating : accResultRow.OldIRating;
 
                 var accScoredResultRow = accScoredResult.FinalResults.SingleOrDefault(x => x.Member == driver);
                 if (accScoredResultRow == null)
