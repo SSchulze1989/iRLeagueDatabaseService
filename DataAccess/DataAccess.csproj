@@ -67,6 +67,7 @@
     <Compile Include="Provider\Generic\GenericDataProviderBase.cs" />
     <Compile Include="Provider\Generic\GenericScoredResultsDataProvider.cs" />
     <Compile Include="Provider\Generic\GenericStandingsDataProvider.cs" />
+    <Compile Include="Provider\Generic\GenericStatsDataProvider.cs" />
     <Compile Include="Provider\Generic\IDataProvider.cs" />
     <Compile Include="Provider\ILeagueActionProvider.cs" />
     <Compile Include="Provider\IModelDataProvider.cs" />
