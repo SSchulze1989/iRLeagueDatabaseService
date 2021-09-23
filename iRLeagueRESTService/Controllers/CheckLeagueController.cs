@@ -18,14 +18,16 @@ using iRLeagueRESTService.Filters;
 using System.Net;
 using System.Data;
 using iRLeagueRESTService.Models;
+using iRLeagueDatabase.Entities;
 
 namespace iRLeagueRESTService.Controllers
 {
     [IdentityBasicAuthentication]
+    [Authorize]
     public class CheckLeagueController : LeagueApiController
     {    
         [HttpGet]
-        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.None)]
+        [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult ReturnLeagueNames()
         {
             IEnumerable<string> leagueNames;
@@ -33,6 +35,7 @@ namespace iRLeagueRESTService.Controllers
             using (var dbContext = new LeagueDbContext())
             {
                 leagueNames = dbContext.Leagues
+                    .ToList()
                     .Where(x => CheckLeagueRole(User, x.LeagueName) || x.IsPublic)
                     .Select(x => x.LeagueName);
             }
@@ -82,7 +85,6 @@ namespace iRLeagueRESTService.Controllers
             {
                 fullName = leagueName;
             }
-            base.CheckLeagueRole(User, leagueName);
 
             var dbName = GetDatabaseNameFromLeagueName(leagueName);
             var register = LeagueRegister.Get();
@@ -100,29 +102,48 @@ namespace iRLeagueRESTService.Controllers
                     return BadRequest($"Create league failed. Maximum numbers of {maxLeagues} leagues per user reached.");
                 }
 
-                using (var dbContext = new LeagueDbContext(dbName, createDb: true))
+                using (var dbContext = new LeagueDbContext(leagueName))
                 {
-                    var seasons = dbContext.Seasons;
-                    if (seasons == null || seasons.Count() == 0)
+                    if (dbContext.CurrentLeague != null)
                     {
-                        seasons.Add(new iRLeagueDatabase.Entities.SeasonEntity()
-                        {
-                            SeasonName = "First Season",
-                            CreatedByUserName = User.Identity.Name,
-                            CreatedByUserId = User.Identity.GetUserId(),
-                            LastModifiedByUserName = User.Identity.Name,
-                            LastModifiedByUserId = User.Identity.GetUserId()
-                        });
-                        dbContext.SaveChanges();
-                        // Create new entry in league register
-                        return Ok($"New League {leagueName} with database {dbName} created!");
+                        return BadRequest($"League {leagueName} already exists!");
                     }
-                    UpdateLeague(leagueName, User);
-                    return BadRequest($"League {leagueName} already exists!");
+
+                    var leagueEntity = dbContext.Leagues.Create();
+                    leagueEntity.CreatedByUserName = User.Identity.Name;
+                    leagueEntity.CreatedOn = DateTime.Now;
+                    leagueEntity.CreatedByUserId = User.Identity.GetUserId();
+                    leagueEntity.IsPublic = false;
+                    leagueEntity.LeagueName = leagueName;
+                    leagueEntity.LongName = fullName;
+                    dbContext.Leagues.Add(leagueEntity);
+
+                    var seasons = new List<SeasonEntity>();
+                    seasons.Add(new SeasonEntity()
+                    {
+                        SeasonName = "First Season",
+                        CreatedByUserName = User.Identity.Name,
+                        CreatedByUserId = User.Identity.GetUserId(),
+                        LastModifiedByUserName = User.Identity.Name,
+                        LastModifiedByUserId = User.Identity.GetUserId()
+                    });
+                    leagueEntity.Seasons = seasons;
+                    dbContext.SaveChanges();
+
+                    // Create new entry in league register
+                    UpdateLeague(leagueName, User, fullName);
+
+                    // Add creator to user and admin roles
+                    var UserController = new UserController();
+                    UserController.UserAddRole(User.Identity.GetUserName(), "User");
+                    UserController.UserAddRole(User.Identity.GetUserName(), "Administrator");
+
+                    return Ok($"New League {leagueName} with database {dbName} created!");
                 }
             }
 
             // if league exists just update fullname
+            base.CheckLeagueRole(User, leagueName);
             league.PrettyName = fullName;
             register.Save();
             return Ok("League information updated");

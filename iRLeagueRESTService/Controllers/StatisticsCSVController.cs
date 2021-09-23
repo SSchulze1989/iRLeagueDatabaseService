@@ -1,10 +1,9 @@
-﻿using iRLeagueDatabase.DataTransfer.Statistics;
+﻿using iRLeagueDatabase.DataAccess.Mapper;
+using iRLeagueDatabase.DataTransfer.Statistics;
 using iRLeagueDatabase.DataTransfer.Statistics.Special;
 using iRLeagueDatabase.Entities;
 using iRLeagueDatabase.Entities.Statistics;
 using iRLeagueDatabase.Extensions;
-using iRLeagueDatabase.DataAccess.Mapper;
-using iRLeagueDatabase.DataAccess.Provider;
 using iRLeagueRESTService.Data;
 using iRLeagueRESTService.Filters;
 using log4net;

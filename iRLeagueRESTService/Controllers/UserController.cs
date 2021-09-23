@@ -142,6 +142,7 @@ namespace iRLeagueRESTService.Controllers
 
         [HttpPut]
         [IdentityBasicAuthentication]
+        [Authorize]
         [LeagueAuthorize(Roles = iRLeagueDatabase.Enums.LeagueRoleEnum.User)]
         public IHttpActionResult PutUser([FromBody] UserProfileDTO userDto)
         {

@@ -98,7 +98,7 @@ namespace iRLeagueRESTService.Controllers
         /// </summary>
         /// <param name="leagueName">Shortname of the league</param>
         /// <param name="principal">Principal of the current User</param>
-        protected void UpdateLeague(string leagueName, IPrincipal principal)
+        protected void UpdateLeague(string leagueName, IPrincipal principal, string fullName = "")
         {
             var register = LeagueRegister.Get();
 
@@ -112,7 +112,7 @@ namespace iRLeagueRESTService.Controllers
                     OwnerId = Guid.Parse(principal.Identity.GetUserId()),
                     CreatorId = Guid.Parse(principal.Identity.GetUserId()),
                     CreatedOn = DateTime.Now,
-                    PrettyName = leagueName
+                    PrettyName = string.IsNullOrEmpty(fullName) ? leagueName : fullName
                 };
                 register.Leagues.Add(leagueEntry);
             }

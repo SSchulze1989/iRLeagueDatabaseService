@@ -48,6 +48,7 @@ using iRLeagueRESTService.Models;
 namespace iRLeagueRESTService.Controllers
 {
     [IdentityBasicAuthentication]
+    [Authorize]
     public class ModelController : LeagueApiController
     {
         private static readonly ILog logger = log4net.LogManager.GetLogger(typeof(ModelController));
