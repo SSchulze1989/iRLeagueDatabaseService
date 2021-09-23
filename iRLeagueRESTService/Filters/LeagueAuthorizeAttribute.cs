@@ -44,7 +44,7 @@ namespace iRLeagueRESTService.Filters
 
             // check for league being set to "public" when only "user" role is required
             // public league will treat everyone as user
-            if (Roles == LeagueRoleEnum.User)
+            if (Roles == LeagueRoleEnum.User) 
             {
                 if (GetLeagueIsPublic(requestLeagueName))
                 {
@@ -79,6 +79,11 @@ namespace iRLeagueRESTService.Filters
 
         private bool GetLeagueIsPublic(string leagueName)
         {
+            if (string.IsNullOrEmpty(leagueName))
+            {
+                return true;
+            }
+
             using (var dbContext = new LeagueDbContext())
             {
                 var league = dbContext.Leagues.SingleOrDefault(x => x.LeagueName == leagueName);
