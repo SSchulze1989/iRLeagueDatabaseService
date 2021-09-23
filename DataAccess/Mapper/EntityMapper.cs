@@ -154,6 +154,15 @@ namespace iRLeagueDatabase.DataAccess.Mapper
             if (source.MappingId == null)
             {
                 target = DbContext.Set<TTarget>().Create();
+                if (target is IHasLeagueId hasLeagueId)
+                {
+                    // try to set League through reflection
+                    var LeagueProperty = target.GetType().GetProperty(nameof(LeagueMappableEntity.League));
+                    if (LeagueProperty != null)
+                    {
+                        LeagueProperty.SetValue(target, DbContext.CurrentLeague);
+                    }
+                }
             }
             else
             {
