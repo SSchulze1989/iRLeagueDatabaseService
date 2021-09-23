@@ -89,6 +89,11 @@ namespace iRLeagueDatabase
                 CurrentLeagueId = leagueEntity.LeagueId;
                 CurrentLeague = leagueEntity;
             }
+            else
+            {
+                CurrentLeagueId = 0;
+                CurrentLeague = null;
+            }
         }
 
         private static string GetConnectionString(string dbName)
