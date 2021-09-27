@@ -130,7 +130,14 @@ namespace iRLeagueRESTService.Data
             }
 
             // get custom vote categories information from database
-            var voteCatIds = reviews.Where(x => x.AcceptedReviewVotes?.Count() > 0).SelectMany(x => x.AcceptedReviewVotes.Select(y => y.VoteCategoryId)).Distinct();
+            var voteCatIds = reviews
+                .SelectMany(x => x.Comments
+                    .SelectMany(y => y.CommentReviewVotes
+                        .Select(z => z.VoteCategoryId)))
+                .Concat(reviews
+                    .SelectMany(x => x.AcceptedReviewVotes
+                        .Select(y => y.VoteCategoryId)))
+                .Distinct();
             var voteCats = DbContext.Set<VoteCategoryEntity>().Local.Where(x => voteCatIds.Contains(x.CatId)).ToList().Select(x => mapper.MapToVoteCategoryDTO(x));
             if (voteCats.Count() < voteCatIds.Count())
             {
