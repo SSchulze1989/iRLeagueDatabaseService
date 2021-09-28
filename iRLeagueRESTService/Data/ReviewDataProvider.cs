@@ -132,9 +132,11 @@ namespace iRLeagueRESTService.Data
             // get custom vote categories information from database
             var voteCatIds = reviews
                 .SelectMany(x => x.Comments
+                    .Where(y => y.CommentReviewVotes != null)
                     .SelectMany(y => y.CommentReviewVotes
                         .Select(z => z.VoteCategoryId)))
                 .Concat(reviews
+                    .Where(x => x.AcceptedReviewVotes != null)
                     .SelectMany(x => x.AcceptedReviewVotes
                         .Select(y => y.VoteCategoryId)))
                 .Distinct();
@@ -143,6 +145,8 @@ namespace iRLeagueRESTService.Data
             {
                 voteCats = DbContext.Set<VoteCategoryEntity>().Where(x => voteCatIds.Contains(x.CatId)).ToList().Select(x => mapper.MapToVoteCategoryDTO(x));
             }
+
+            DbContext.ChangeTracker.DetectChanges();
 
             /* construct DTOs */
             // get all vote results that resulted in a penalty

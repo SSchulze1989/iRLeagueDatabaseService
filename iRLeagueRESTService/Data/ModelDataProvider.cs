@@ -148,6 +148,7 @@ namespace iRLeagueRESTService.Data
 
             DbContext.Set<ReviewCommentEntity>().Where(x => keys.Contains(x.ReviewId))
                 .Include(x => x.CommentReviewVotes.Select(y => y.MemberAtFault))
+                .Include(x => x.CommentReviewVotes.Select(y => y.CustomVoteCat))
                 .Include(x => x.Replies).Load();
             DbContext.Set<AcceptedReviewVoteEntity>().Where(x => keys.Contains(x.ReviewId))
                 .Include(x => x.MemberAtFault)
