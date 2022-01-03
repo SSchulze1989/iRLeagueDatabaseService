@@ -46,7 +46,7 @@ namespace iRLeagueDatabase.Entities.Results
         {
             if (Scorings != null && Scorings.Count > 0)
             {
-                return Scorings.Where(x => x.Sessions != null).SelectMany(x => x.Sessions).ToList();
+                return Scorings.Where(x => x.Sessions != null).SelectMany(x => x.Sessions).Distinct().ToList();
             }
             return Sessions.ToList();
         }

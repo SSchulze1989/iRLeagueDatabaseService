@@ -440,7 +440,7 @@ namespace iRLeagueRESTService.Data
                             standings = scoringTable.GetSeasonStandings(DbContext);
                         else
                         {
-                            var scoringSession = scoringTable.GetAllSessions().SingleOrDefault(x => x.SessionId == sessionId);
+                            var scoringSession = scoringTable.GetAllSessions().FirstOrDefault(x => x.SessionId == sessionId);
                             if (scoringSession == null)
                             {
                                 var session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
