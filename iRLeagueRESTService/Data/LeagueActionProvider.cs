@@ -84,7 +84,7 @@ namespace iRLeagueRESTService.Data
 
             foreach (var session in sessions)
             {
-                IEnumerable<ScoringEntity> scorings = session.Scorings;
+                IEnumerable<ScoringEntity> scorings = session.Scorings ?? new List<ScoringEntity>();
                 scorings = scorings.Concat(session.SubSessions.SelectMany(x => x.Scorings)).Where(x => x != null);
 
                 // reorder scorings to get subsession scorings recalculated before accumulated scorings
@@ -98,15 +98,18 @@ namespace iRLeagueRESTService.Data
                     scoring.CalculateResults(session, DbContext);
                 }
 
-                foreach (var scoredResult in session.SessionResult.ScoredResults.ToList())
+                if (session.SessionResult?.ScoredResults != null)
                 {
-                    if (scoredResult != null && session.Scorings.Contains(scoredResult.Scoring) == false)
+                    foreach (var scoredResult in session.SessionResult.ScoredResults.ToList())
                     {
-                        scoredResult.Delete(DbContext);
-                        session.SessionResult.ScoredResults.Remove(scoredResult);
+                        if (scoredResult != null && scorings.Contains(scoredResult.Scoring) == false)
+                        {
+                            scoredResult.Delete(DbContext);
+                            session.SessionResult.ScoredResults.Remove(scoredResult);
+                        }
                     }
+                    session.SessionResult.RequiresRecalculation = false;
                 }
-                session.SessionResult.RequiresRecalculation = false;
             }
 
             DbContext.SaveChanges();

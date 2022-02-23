@@ -29,6 +29,8 @@ namespace iRLeagueRESTService
 
             // Start watchers for statistic calculation
             StatisticCalculationWatcher.RegisterWatcher("SkippyCup_leagueDb");
+            StatisticCalculationWatcher.RegisterWatcher("DAC-F4-Cup_leagueDb");
+            StatisticCalculationWatcher.RegisterWatcher("SkipBarber-WorldCup");
 
             var logger = log4net.LogManager.GetLogger(typeof(WebApiApplication));
             logger.Info("Starting iRLeagueRESTService ...");
