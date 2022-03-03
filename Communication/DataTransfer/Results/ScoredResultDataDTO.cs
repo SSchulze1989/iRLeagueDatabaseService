@@ -47,14 +47,24 @@ namespace iRLeagueDatabase.DataTransfer.Results
 
         [DataMember(Name = "HrdChrgIds")]
         public long[] HardChargerMemberIds { get; set; }
+        [DataMember(Name  = "MostPosGainedIds")]
+        public long[] MostPositionsGainedMemberIds { get; set; }
+        [DataMember(Name = "MostPosGained")]
+        public int MostPositionsGained { get; set; }
         [DataMember(Name = "CleanDrvIds")]
         public long[] CleanesDriverMemberIds { get; set; }
         [DataMember(Name = "FLapDrvId")]
         public long? FastestLapDriverId { get; set; }
-        [DataMember(Name = "PLapDrvId")]
+        [DataMember(Name = "FLapTime")]
+        public TimeSpan FastesLapTime { get; set; }
+        [DataMember(Name = "QLapDrvId")]
         public long? FastestQualyLapDriver { get; set; }
+        [DataMember(Name = "QLapTime")]
+        public TimeSpan FastestQualyLapTime { get; set; }
         [DataMember(Name = "FAvgLapDrvId")]
         public long? FastestAvgLapDriver { get; set; }
+        [DataMember(Name = "FAvgLapTime")]
+        public TimeSpan FastestAvgLapTime { get; set; }
 
         public override Type Type => typeof(ScoredResultDataDTO);
         //object IMappableDTO.MappingId => MappingId;
