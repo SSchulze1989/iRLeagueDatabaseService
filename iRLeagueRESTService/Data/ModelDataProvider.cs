@@ -444,7 +444,7 @@ namespace iRLeagueRESTService.Data
                             if (scoringSession == null)
                             {
                                 var session = DbContext.Set<SessionBaseEntity>().Find(sessionId);
-                                scoringSession = scoringTable.GetAllSessions().LastOrDefault(x => x.Date <= session?.Date);
+                                scoringSession = scoringTable.GetAllSessions().LastOrDefault(x => x.Date?.Date <= session?.Date?.Date);
                             }
                             standings = scoringTable.GetSeasonStandings(scoringSession, DbContext);
                         }
