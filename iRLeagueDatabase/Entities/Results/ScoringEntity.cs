@@ -398,9 +398,9 @@ namespace iRLeagueDatabase.Entities.Results
                 IDictionary<int, int> basePoints = new Dictionary<int, int>();
                 if (BasePoints != "" && BasePoints != null)
                     basePoints = BasePoints.Split(' ').Select((x, i) => new { Item = int.Parse(x), Index = i }).ToDictionary(x => x.Index + 1, x => x.Item);
-                IDictionary<int, int> bonusPoints = new Dictionary<int, int>();
+                IDictionary<string, int> bonusPoints = new Dictionary<string, int>();
                 if (BonusPoints != "" && BonusPoints != null)
-                    bonusPoints = BonusPoints.Split(' ').Select(x => new { Item = int.Parse(x.Split(':').Last()), Index = int.Parse(x.Split(':').First().TrimStart(new char[] { 'p' })) }).ToDictionary(x => x.Index, x => x.Item);
+                    bonusPoints = BonusPoints.Split(' ').Select(x => new { Item = int.Parse(x.Split(':').Last()), Index = x.Split(':').First() }).ToDictionary(x => x.Index, x => x.Item);
 
                 var removeRows = scoredResultRows.ToList();
 
@@ -481,8 +481,15 @@ namespace iRLeagueDatabase.Entities.Results
                         //dbContext.SaveChanges();
                     }
                     scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
-                    scoredResultRow.RacePoints = 0;
-                    scoredResultRow.BonusPoints = 0;
+                    if (BasePoints.Count() > 0)
+                    {
+                        scoredResultRow.RacePoints = 0;
+                        scoredResultRow.BonusPoints = 0;
+                    }
+                    else if (BonusPoints.Count() > 0)
+                    {
+                        scoredResultRow.BonusPoints = 0;
+                    }
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 
@@ -500,8 +507,10 @@ namespace iRLeagueDatabase.Entities.Results
                 {
                     var scoredResultRow = scoredResultRowObj.row;
                     var position = scoredResultRowObj.index + 1;
-                    scoredResultRow.RacePoints = basePoints.ContainsKey(position) ? basePoints[position] : 0;
-                    scoredResultRow.BonusPoints = bonusPoints.ContainsKey(position) ? bonusPoints[position] : 0;
+                    var startPosition = scoredResultRowObj.row.StartPosition;
+                    scoredResultRow.RacePoints = basePoints.ContainsKey(position) ? basePoints[position] : scoredResultRow.RacePoints;
+                    scoredResultRow.BonusPoints += bonusPoints.ContainsKey($"p{position}") ? bonusPoints[$"p{position}"] : 0;
+                    scoredResultRow.BonusPoints += bonusPoints.ContainsKey($"q{startPosition}") ? bonusPoints[$"q{startPosition}"] : 0;
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 
@@ -728,7 +737,6 @@ namespace iRLeagueDatabase.Entities.Results
                     AccumulateWeights = ScoringWeights
                 };
 
-
                 var accResultRow = accResult.RawResults.SingleOrDefault(x => x.Member == driver);
                 if (accResultRow == null)
                 {
@@ -784,7 +792,7 @@ namespace iRLeagueDatabase.Entities.Results
                 accResultRow.FastLapNr = 0;
                 accResultRow.FastestLapTime = accumulator.Accumulate(rows.Select(x => x.FastestLapTime), AccumulateResultsOption.Best, GetBestOption.MinValue);
                 accResultRow.FinishPosition = accumulator.Accumulate(rows.Select(x => x.FinishPosition), GetBestOption.MinValue);
-                accResultRow.CompletedPct = accumulator.Accumulate(rows.Select(x => x.CompletedPct), AccumulateResultsOption.WeightedAverage, GetBestOption.MaxValue, ScoringWeights ?? rows.Select(x => x.ResultRow.Result.CompletedLaps / totalLaps));
+                accResultRow.CompletedPct = accumulator.Accumulate(rows.Select(x => x.CompletedPct), AccumulateResultsOption.WeightedAverage, GetBestOption.MaxValue, rows.Select(x => x.ResultRow.Result.CompletedLaps / totalLaps));
                 accResultRow.Division = rows.Last().Division;
                 accResultRow.Incidents = rows.Sum(x => x.Incidents);
                 //accResultRow.Interval = (new LapInterval(TimeSpan.Zero, (int)(maxCompletedLaps - accResultRow.CompletedLaps))).Time.Ticks;
