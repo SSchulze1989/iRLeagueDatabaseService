@@ -530,7 +530,8 @@ namespace iRLeagueDatabase.Mapper
             target.IRSimSessionDetails = MapToSimSessionDetailsEntity(source.SimSessionDetails, target.IRSimSessionDetails);
             if (target.RawResults?.Count > 0)
             {
-                target.PoleLaptime = (target.RawResults?.Select(x => x.QualifyingTime).Where(x => x > 0).Min()).GetValueOrDefault();
+                var validLapTimes = target.RawResults?.Select(x => x.QualifyingTime).Where(x => x > 0);
+                target.PoleLaptime = validLapTimes?.Count() > 0 ? validLapTimes.Min() : 0;
             }
 
 
