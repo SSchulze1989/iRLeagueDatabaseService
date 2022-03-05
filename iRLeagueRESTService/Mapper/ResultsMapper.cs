@@ -130,8 +130,8 @@ namespace iRLeagueDatabase.Mapper
             target.FinalResults = source.FinalResults?.Select(x => MapToScoredResultRowDataDTO(x)).OrderBy(x => x.FinalPosition).ToArray();
             target.CleanesDriverMemberIds = source.CleanestDrivers?.Select(x => x.MemberId).ToArray() ?? new long[0];
             target.HardChargerMemberIds = source.HardChargers?.Select(x => x.MemberId).ToArray() ?? new long[0];
-            target.MostPositionsGained = source.FinalResults?.Count == 0 ? -1 : (int)(source.FinalResults?.Max(x => x.PositionChange) ?? -1);
-            target.MostPositionsGainedMemberIds = source.FinalResults.Where(x => x.PositionChange != 0 && x.PositionChange == target.MostPositionsGained).Select(x => x.MemberId).ToArray() ?? new long[0];
+            target.MostPositionsGained = source.FinalResults?.Count == 0 ? -1 : (int)(source.FinalResults?.Max(x => x.FinalPositionChange) ?? -1);
+            target.MostPositionsGainedMemberIds = source.FinalResults.Where(x => x.FinalPositionChange != 0 && x.FinalPositionChange == target.MostPositionsGained).Select(x => x.MemberId).ToArray() ?? new long[0];
             target.FastestLapDriverId = source.FastestLapDriver?.MemberId;
             target.FastesLapTime = TimeSpanConverter.Convert(source.FinalResults?.SingleOrDefault(x => x.MemberId == target.FastestLapDriverId)?.FastestLapTime ?? 0);
             target.FastestQualyLapDriver = source.FastestQualyLapDriver?.MemberId;
