@@ -799,7 +799,8 @@ namespace iRLeagueDatabase.Entities.Results
                 //accResultRow.Interval = accumulator.Accumulate(rows.Select(x => x.Interval), GetBestOption.MinValue);
                 accResultRow.LeadLaps = rows.Sum(x => x.LeadLaps);
                 accResultRow.License = rows.Last().License;
-                accResultRow.QualifyingTime = accumulator.Accumulate(rows.Select(x => x.QualifyingTime), GetBestOption.MinValue);
+                //accResultRow.QualifyingTime = accumulator.Accumulate(rows.Select(x => x.QualifyingTime), GetBestOption.MinValue);
+                accResultRow.QualifyingTime = rows.FirstOrDefault()?.QualifyingTime ?? 0;
                 accResultRow.PointsEligible = rows.Select(x => x.PointsEligible).Aggregate((x, y) => x |= y);
 
                 var startIRating = startIRatings.FirstOrDefault(x => x.MemberId == accResultRow.MemberId).IRating;
