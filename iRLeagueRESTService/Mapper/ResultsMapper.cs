@@ -321,6 +321,7 @@ namespace iRLeagueDatabase.Mapper
             droppedResults.ForEach(x => x.IsDroppedResult = true);
             target.DriverResults = countedResults.Concat(droppedResults).OrderBy(x => x.Date).ToArray();
             target.TeamId = source.Team?.TeamId;
+            target.SeasonStartIRating = target.DriverResults?.FirstOrDefault()?.SeasonStartIRating ?? 0;
 
             return target;
         }

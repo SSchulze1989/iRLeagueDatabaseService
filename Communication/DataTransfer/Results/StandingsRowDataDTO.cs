@@ -111,5 +111,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public ScoredResultRowDataDTO[] DriverResults { get; set; }
         [DataMember]
         public long? TeamId { get; set; }
+        [DataMember]
+        public int SeasonStartIRating { get; set; }
     }
 }
