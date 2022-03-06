@@ -213,6 +213,7 @@
     <Compile Include="Timing\TimeSpanConverter.cs" />
     <Compile Include="TrackCollection.cs" />
     <Compile Include="TrackConfig.cs" />
+    <Compile Include="TrackMapSvg.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

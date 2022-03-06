@@ -315,6 +315,7 @@
     <Compile Include="Controllers\StandingsController.cs" />
     <Compile Include="Controllers\StatisticsCSVController.cs" />
     <Compile Include="Controllers\StatsController.cs" />
+    <Compile Include="Controllers\TrackMapController.cs" />
     <Compile Include="Controllers\TrackInfoController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
