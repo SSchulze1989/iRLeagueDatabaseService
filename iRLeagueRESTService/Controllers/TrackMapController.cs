@@ -76,7 +76,7 @@ namespace iRLeagueRESTService.Controllers
                     foreach(var idString in ids)
                     {
                         if (int.TryParse(idString.Split('-').First(), out int trackId) &&
-                            int.TryParse(idString.Split('-').First(), out int configId))
+                            int.TryParse(idString.Split('-').Last(), out int configId))
                         {
                             maps.AddRange(mapsDict[(trackId, configId)]);
                         }
