@@ -85,6 +85,9 @@ namespace iRLeagueManager.Locations
         [XmlIgnore]
         public string ShortName => ConfigName.Substring(0, Math.Min(12, ConfigName.Length));
 
+        [XmlElement]
+        public TrackMapSvg TrackMap { get; set; }
+
         public TrackConfig() { }
 
         public TrackConfig(RaceTrack track, int configId, string configName, int lengtKm = 0, bool hasNightLighting = false)
