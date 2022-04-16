@@ -376,6 +376,27 @@
           <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Scorings" Relationship="Self.ScoringTableEntity_Scorings" FromRole="ScoringTableEntity_Scorings_Source" ToRole="ScoringTableEntity_Scorings_Target" />
           <NavigationProperty Name="Season" Relationship="Self.ScoringTableEntity_Season" FromRole="ScoringTableEntity_Season_Source" ToRole="ScoringTableEntity_Season_Target" />
+          <NavigationProperty Name="StandingsFilterOptions" Relationship="Self.ScoringTableEntity_StandingsFilterOptions" FromRole="ScoringTableEntity_StandingsFilterOptions_Source" ToRole="ScoringTableEntity_StandingsFilterOptions_Target" />
+        </EntityType>
+        <EntityType Name="StandingsFilterOptionEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Filters.StandingsFilterOptionEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <Key>
+            <PropertyRef Name="ResultsFilterId" />
+          </Key>
+          <Property Name="ResultsFilterId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScoringTableId" Type="Int64" Nullable="false" />
+          <Property Name="ResultsFilterType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnPropertyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Comparator" Type="Self.ComparatorTypeEnum" Nullable="false" />
+          <Property Name="Exclude" Type="Boolean" Nullable="false" />
+          <Property Name="FilterValues" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTime" />
+          <Property Name="LastModifiedOn" Type="DateTime" />
+          <Property Name="Version" Type="Int32" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastModifiedByUserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastModifiedByUserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ScoringTable" Relationship="Self.ScoringTableEntity_StandingsFilterOptions" FromRole="ScoringTableEntity_StandingsFilterOptions_Target" ToRole="ScoringTableEntity_StandingsFilterOptions_Source" />
         </EntityType>
         <EntityType Name="SeasonStatisticSetEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Statistics.SeasonStatisticSetEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" BaseType="Self.StatisticSetEntity">
           <Property Name="SeasonId" Type="Int64" Nullable="false" />
@@ -698,14 +719,6 @@
           <Member Name="PerTeamResults" Value="0" />
           <Member Name="PerDriverResults" Value="1" />
         </EnumType>
-        <EnumType Name="VoteEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.VoteEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
-          <Member Name="NoVote" Value="0" />
-          <Member Name="Kat0" Value="1" />
-          <Member Name="Kat1" Value="2" />
-          <Member Name="Kat2" Value="3" />
-          <Member Name="Kat3" Value="4" />
-          <Member Name="Indecisive" Value="5" />
-        </EnumType>
         <EnumType Name="ComparatorTypeEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.ComparatorTypeEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
           <Member Name="IsSmaller" Value="0" />
           <Member Name="IsSmallerOrEqual" Value="1" />
@@ -714,6 +727,14 @@
           <Member Name="IsBigger" Value="4" />
           <Member Name="NotEqual" Value="5" />
           <Member Name="InList" Value="6" />
+        </EnumType>
+        <EnumType Name="VoteEnum" IsFlags="false" customannotation:ClrType="iRLeagueManager.Enums.VoteEnum, Communication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" UnderlyingType="Int32">
+          <Member Name="NoVote" Value="0" />
+          <Member Name="Kat0" Value="1" />
+          <Member Name="Kat1" Value="2" />
+          <Member Name="Kat2" Value="3" />
+          <Member Name="Kat3" Value="4" />
+          <Member Name="Indecisive" Value="5" />
         </EnumType>
         <Association Name="TeamEntity_Members">
           <End Role="TeamEntity_Members_Source" Type="Self.TeamEntity" Multiplicity="0..1" />
@@ -840,6 +861,20 @@
             </Principal>
             <Dependent Role="ScoringTableEntity_Season_Source">
               <PropertyRef Name="SeasonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoringTableEntity_StandingsFilterOptions">
+          <End Role="ScoringTableEntity_StandingsFilterOptions_Source" Type="Self.ScoringTableEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ScoringTableEntity_StandingsFilterOptions_Target" Type="Self.StandingsFilterOptionEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringTableEntity_StandingsFilterOptions_Source">
+              <PropertyRef Name="ScoringTableId" />
+            </Principal>
+            <Dependent Role="ScoringTableEntity_StandingsFilterOptions_Target">
+              <PropertyRef Name="ScoringTableId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1381,6 +1416,7 @@
           <EntitySet Name="ScheduleEntities" EntityType="Self.ScheduleEntity" />
           <EntitySet Name="Seasons" EntityType="Self.SeasonEntity" />
           <EntitySet Name="ScoringTableEntities" EntityType="Self.ScoringTableEntity" />
+          <EntitySet Name="StandingsFilterOptionEntities" EntityType="Self.StandingsFilterOptionEntity" />
           <EntitySet Name="DriverStatisticRowEntities" EntityType="Self.DriverStatisticRowEntity" />
           <EntitySet Name="SessionBaseEntities" EntityType="Self.SessionBaseEntity" />
           <EntitySet Name="IncidentReviewEntities" EntityType="Self.IncidentReviewEntity" />
@@ -1449,6 +1485,10 @@
           <AssociationSet Name="ScoringTableEntity_Season" Association="Self.ScoringTableEntity_Season">
             <End Role="ScoringTableEntity_Season_Source" EntitySet="ScoringTableEntities" />
             <End Role="ScoringTableEntity_Season_Target" EntitySet="Seasons" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringTableEntity_StandingsFilterOptions" Association="Self.ScoringTableEntity_StandingsFilterOptions">
+            <End Role="ScoringTableEntity_StandingsFilterOptions_Source" EntitySet="ScoringTableEntities" />
+            <End Role="ScoringTableEntity_StandingsFilterOptions_Target" EntitySet="StandingsFilterOptionEntities" />
           </AssociationSet>
           <AssociationSet Name="AcceptedReviewVoteEntity_CustomVoteCat" Association="Self.AcceptedReviewVoteEntity_CustomVoteCat">
             <End Role="AcceptedReviewVoteEntity_CustomVoteCat_Source" EntitySet="AcceptedReviewVoteEntities" />
@@ -2022,6 +2062,26 @@
                 <ScalarProperty Name="ScoringFactors" ColumnName="ScoringFactors" />
                 <ScalarProperty Name="DropRacesOption" ColumnName="DropRacesOption" />
                 <ScalarProperty Name="ResultsPerRaceCount" ColumnName="ResultsPerRaceCount" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+                <ScalarProperty Name="CreatedByUserName" ColumnName="CreatedByUserName" />
+                <ScalarProperty Name="LastModifiedByUserId" ColumnName="LastModifiedByUserId" />
+                <ScalarProperty Name="LastModifiedByUserName" ColumnName="LastModifiedByUserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StandingsFilterOptionEntities">
+            <EntityTypeMapping TypeName="iRLeagueDatabase.StandingsFilterOptionEntity">
+              <MappingFragment StoreEntitySet="StandingsFilterOptionEntity">
+                <ScalarProperty Name="ResultsFilterId" ColumnName="ResultsFilterId" />
+                <ScalarProperty Name="ScoringTableId" ColumnName="ScoringTableId" />
+                <ScalarProperty Name="ResultsFilterType" ColumnName="ResultsFilterType" />
+                <ScalarProperty Name="ColumnPropertyName" ColumnName="ColumnPropertyName" />
+                <ScalarProperty Name="Comparator" ColumnName="Comparator" />
+                <ScalarProperty Name="Exclude" ColumnName="Exclude" />
+                <ScalarProperty Name="FilterValues" ColumnName="FilterValues" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="LastModifiedOn" ColumnName="LastModifiedOn" />
                 <ScalarProperty Name="Version" ColumnName="Version" />
@@ -2729,6 +2789,25 @@
           <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
         </EntityType>
+        <EntityType Name="StandingsFilterOptionEntity">
+          <Key>
+            <PropertyRef Name="ResultsFilterId" />
+          </Key>
+          <Property Name="ResultsFilterId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScoringTableId" Type="bigint" customannotation:Index="{ Name: IX_ScoringTableId, Order: 0 }" Nullable="false" />
+          <Property Name="ResultsFilterType" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="ColumnPropertyName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="Comparator" Type="int" Nullable="false" />
+          <Property Name="Exclude" Type="bit" Nullable="false" />
+          <Property Name="FilterValues" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="true" />
+          <Property Name="LastModifiedOn" Type="datetime" Nullable="true" />
+          <Property Name="Version" Type="int" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="CreatedByUserName" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="LastModifiedByUserId" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="LastModifiedByUserName" Type="nvarchar(max)" Nullable="true" />
+        </EntityType>
         <EntityType Name="DriverStatisticRowEntity">
           <Key>
             <PropertyRef Name="StatisticSetId" />
@@ -3230,6 +3309,20 @@
             </Principal>
             <Dependent Role="ScoringTableEntity">
               <PropertyRef Name="SeasonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ScoringTableEntity_StandingsFilterOptions">
+          <End Role="ScoringTableEntity" Type="Self.ScoringTableEntity" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StandingsFilterOptionEntity" Type="Self.StandingsFilterOptionEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ScoringTableEntity">
+              <PropertyRef Name="ScoringTableId" />
+            </Principal>
+            <Dependent Role="StandingsFilterOptionEntity">
+              <PropertyRef Name="ScoringTableId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3864,6 +3957,7 @@
           <EntitySet Name="ScheduleEntity" EntityType="Self.ScheduleEntity" Schema="dbo" Table="ScheduleEntities" />
           <EntitySet Name="SeasonEntity" EntityType="Self.SeasonEntity" Schema="dbo" Table="SeasonEntities" />
           <EntitySet Name="ScoringTableEntity" EntityType="Self.ScoringTableEntity" Schema="dbo" Table="ScoringTableEntities" />
+          <EntitySet Name="StandingsFilterOptionEntity" EntityType="Self.StandingsFilterOptionEntity" Schema="dbo" Table="StandingsFilterOptionEntities" />
           <EntitySet Name="DriverStatisticRowEntity" EntityType="Self.DriverStatisticRowEntity" Schema="dbo" Table="DriverStatisticRowEntities" />
           <EntitySet Name="SessionBaseEntity" EntityType="Self.SessionBaseEntity" Schema="dbo" Table="SessionBaseEntities" />
           <EntitySet Name="IncidentReviewEntity" EntityType="Self.IncidentReviewEntity" Schema="dbo" Table="IncidentReviewEntities" />
@@ -3950,6 +4044,10 @@
           <AssociationSet Name="ScoringTableEntity_Season" Association="Self.ScoringTableEntity_Season">
             <End Role="SeasonEntity" EntitySet="SeasonEntity" />
             <End Role="ScoringTableEntity" EntitySet="ScoringTableEntity" />
+          </AssociationSet>
+          <AssociationSet Name="ScoringTableEntity_StandingsFilterOptions" Association="Self.ScoringTableEntity_StandingsFilterOptions">
+            <End Role="ScoringTableEntity" EntitySet="ScoringTableEntity" />
+            <End Role="StandingsFilterOptionEntity" EntitySet="StandingsFilterOptionEntity" />
           </AssociationSet>
           <AssociationSet Name="AcceptedReviewVoteEntity_CustomVoteCat" Association="Self.AcceptedReviewVoteEntity_CustomVoteCat">
             <End Role="VoteCategoryEntity" EntitySet="VoteCategoryEntity" />
