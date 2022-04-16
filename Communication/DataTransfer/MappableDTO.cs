@@ -66,6 +66,7 @@ namespace iRLeagueDatabase.DataTransfer
         XmlInclude(typeof(StandingsRowDataDTO)),
         XmlInclude(typeof(AddPenaltyDTO)),
         XmlInclude(typeof(TeamDataDTO)),
+        XmlInclude(typeof(StandingsFilterOptionDTO)),
         KnownType(typeof(SeasonDataDTO)),
         KnownType(typeof(SeasonInfoDTO)),
         KnownType(typeof(SessionInfoDTO)),
@@ -107,7 +108,8 @@ namespace iRLeagueDatabase.DataTransfer
         KnownType(typeof(ImportedStatisticSetDTO)),
         KnownType(typeof(DriverStatisticDTO)),
         KnownType(typeof(DriverStatisticRowDTO)),
-        KnownType(typeof(SimSessionDetailsDTO))]
+        KnownType(typeof(SimSessionDetailsDTO)),
+        KnownType(typeof(StandingsFilterOptionDTO))]
     public abstract class MappableDTO : BaseDTO, IMappableDTO
     {
         public bool IsReadOnly { get; set; }
