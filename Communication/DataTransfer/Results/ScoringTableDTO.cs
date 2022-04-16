@@ -55,6 +55,7 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         //public SessionInfoDTO[] Sessions { get; set; }
         public long[] SessionIds { get; set; }
+        public long[] StandingsFilterOptionIds { get; set; }
         #region Version Info
         [DataMember]
         public new DateTime? CreatedOn { get => base.CreatedOn; set => base.CreatedOn = value; }

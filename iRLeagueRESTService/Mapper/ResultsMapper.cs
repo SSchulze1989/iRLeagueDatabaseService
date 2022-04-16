@@ -251,6 +251,7 @@ namespace iRLeagueDatabase.Mapper
             target.ScoringIds = source.Scorings.Select(x => x.ScoringId).ToArray();
             target.SeasonId = source.SeasonId; // MapToSeasonInfoDTO(source.Season);
             target.SessionIds = source.Sessions.Select(x => x.SessionId).ToArray();
+            target.StandingsFilterOptionIds = source.StandingsFilterOptions.Select(x => x.ResultsFilterId).ToArray();
             target.DropRacesOption = source.DropRacesOption;
             target.ResultsPerRaceCount = source.ResultsPerRaceCount;
 

@@ -65,6 +65,7 @@
     <Compile Include="DataTransfer\Filters\FilterValueBaseDTO.cs" />
     <Compile Include="DataTransfer\Filters\IntFilterValue.cs" />
     <Compile Include="DataTransfer\Filters\ResultsFilterOptionDTO.cs" />
+    <Compile Include="DataTransfer\Filters\StandingsFilterOptionDTO.cs" />
     <Compile Include="DataTransfer\Filters\StringFilterValueDTO.cs" />
     <Compile Include="DataTransfer\IMappableDTO.cs" />
     <Compile Include="DataTransfer\CountValue.cs" />
