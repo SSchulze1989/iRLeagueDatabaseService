@@ -508,9 +508,16 @@ namespace iRLeagueDatabase.Entities.Results
                     var scoredResultRow = scoredResultRowObj.row;
                     var position = scoredResultRowObj.index + 1;
                     var startPosition = scoredResultRowObj.row.StartPosition;
+                    var fastestLapPosition = scoredResultRows
+                        .Where(x => x.FastestLapTime != 0)
+                        .OrderBy(x => x.FastestLapTime)
+                        .Select((x, i) => new { index = i, row = x })
+                        .SingleOrDefault(x => x.row.MemberId == scoredResultRow.MemberId)
+                        ?.index + 1 ?? 0;
                     scoredResultRow.RacePoints = basePoints.ContainsKey(position) ? basePoints[position] : scoredResultRow.RacePoints;
                     scoredResultRow.BonusPoints += bonusPoints.ContainsKey($"p{position}") ? bonusPoints[$"p{position}"] : 0;
                     scoredResultRow.BonusPoints += bonusPoints.ContainsKey($"q{startPosition}") ? bonusPoints[$"q{startPosition}"] : 0;
+                    scoredResultRow.BonusPoints += bonusPoints.ContainsKey($"f{fastestLapPosition}") ? bonusPoints[$"f{fastestLapPosition}"] : 0;
                     scoredResultRow.TotalPoints = scoredResultRow.RacePoints + scoredResultRow.BonusPoints - scoredResultRow.PenaltyPoints;
                 }
 
