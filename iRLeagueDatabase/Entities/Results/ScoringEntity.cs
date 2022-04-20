@@ -141,8 +141,8 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 sortOptions = new List<SortOption>()
                 {
+                    new SortOption(SortOptionEnum.Interval, 1),
                     new SortOption(SortOptionEnum.FinishPosition, 1),
-                    new SortOption(SortOptionEnum.Interval, 1)
                 };
             }
             else

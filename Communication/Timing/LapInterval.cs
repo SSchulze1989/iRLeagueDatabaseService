@@ -64,6 +64,11 @@ namespace iRLeagueManager.Timing
             Laps = interval.Laps;
         }
 
+        public LapInterval Add(TimeSpan time)
+        {
+            return new LapInterval(Time.Add(time));
+        }
+
         public override string ToXmlString()
         {
             TimeSpan time = Time.Add(TimeSpan.FromDays(Laps));

@@ -156,6 +156,7 @@ namespace iRLeagueDatabase.Mapper
             target.FinalPosition = source.FinalPosition;
             target.FinalPositionChange = (int)source.FinalPositionChange;
             target.PenaltyPoints = (int)source.PenaltyPoints;
+            target.PenaltyTime = TimeSpanConverter.Convert(source.PenaltyTime);
             target.RacePoints = (int)source.RacePoints;
             target.ScoringId = source.ScoringId;
             target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
