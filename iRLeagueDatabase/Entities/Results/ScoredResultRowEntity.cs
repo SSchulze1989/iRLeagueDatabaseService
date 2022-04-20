@@ -44,6 +44,7 @@ namespace iRLeagueDatabase.Entities.Results
         public double BonusPoints { get; set; }
         //public int PenaltyPoints { get => (AddPenalty != null) ? AddPenalty.PenaltyPoints : 0; set { } }
         public double PenaltyPoints { get; set; }
+        public long PenaltyTime { get; set; }
         [InverseProperty(nameof(AddPenaltyEntity.ScoredResultRow))]
         public virtual AddPenaltyEntity AddPenalty { get; set; }
         [InverseProperty(nameof(ReviewPenaltyEntity.ScoredResultRow))]
@@ -114,7 +115,7 @@ namespace iRLeagueDatabase.Entities.Results
 
         public long QualifyingTime => ((IResultRow)ResultRow).QualifyingTime;
 
-        public long Interval => ((IResultRow)ResultRow).Interval;
+        public long Interval => ((IResultRow)ResultRow).Interval + PenaltyTime;
 
         public long AvgLapTime => ((IResultRow)ResultRow).AvgLapTime;
 
