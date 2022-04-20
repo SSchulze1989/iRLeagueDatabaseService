@@ -92,6 +92,7 @@
           <Property Name="RacePoints" Type="Double" Nullable="false" />
           <Property Name="BonusPoints" Type="Double" Nullable="false" />
           <Property Name="PenaltyPoints" Type="Double" Nullable="false" />
+          <Property Name="PenaltyTime" Type="Int64" Nullable="false" />
           <Property Name="FinalPosition" Type="Int32" Nullable="false" />
           <Property Name="FinalPositionChange" Type="Double" Nullable="false" />
           <Property Name="TotalPoints" Type="Double" Nullable="false" />
@@ -109,6 +110,7 @@
           </Key>
           <Property Name="ScoredResultRowId" Type="Int64" Nullable="false" />
           <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <Property Name="PenaltyTime" Type="Int64" Nullable="false" />
           <NavigationProperty Name="ScoredResultRow" Relationship="Self.ScoredResultRowEntity_AddPenalty" FromRole="ScoredResultRowEntity_AddPenalty_Target" ToRole="ScoredResultRowEntity_AddPenalty_Source" />
         </EntityType>
         <EntityType Name="ResultRowEntity" customannotation:ClrType="iRLeagueDatabase.Entities.Results.ResultRowEntity, iRLeagueDatabase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -577,6 +579,7 @@
           <Property Name="ReviewId" Type="Int64" Nullable="false" />
           <Property Name="ReviewVoteId" Type="Int64" />
           <Property Name="PenaltyPoints" Type="Int32" Nullable="false" />
+          <Property Name="PenaltyTime" Type="Int64" Nullable="false" />
           <NavigationProperty Name="Review" Relationship="Self.ReviewPenaltyEntity_Review" FromRole="ReviewPenaltyEntity_Review_Source" ToRole="ReviewPenaltyEntity_Review_Target" />
           <NavigationProperty Name="ReviewVote" Relationship="Self.AcceptedReviewVoteEntity_ReviewPenalties" FromRole="AcceptedReviewVoteEntity_ReviewPenalties_Target" ToRole="AcceptedReviewVoteEntity_ReviewPenalties_Source" />
           <NavigationProperty Name="ScoredResultRow" Relationship="Self.ScoredResultRowEntity_ReviewPenalties" FromRole="ScoredResultRowEntity_ReviewPenalties_Target" ToRole="ScoredResultRowEntity_ReviewPenalties_Source" />
@@ -1795,6 +1798,7 @@
                 <ScalarProperty Name="RacePoints" ColumnName="RacePoints" />
                 <ScalarProperty Name="BonusPoints" ColumnName="BonusPoints" />
                 <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
+                <ScalarProperty Name="PenaltyTime" ColumnName="PenaltyTime" />
                 <ScalarProperty Name="FinalPosition" ColumnName="FinalPosition" />
                 <ScalarProperty Name="FinalPositionChange" ColumnName="FinalPositionChange" />
                 <ScalarProperty Name="TotalPoints" ColumnName="TotalPoints" />
@@ -1807,6 +1811,7 @@
               <MappingFragment StoreEntitySet="AddPenaltyEntity">
                 <ScalarProperty Name="ScoredResultRowId" ColumnName="ScoredResultRowId" />
                 <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
+                <ScalarProperty Name="PenaltyTime" ColumnName="PenaltyTime" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2258,6 +2263,7 @@
                 <ScalarProperty Name="ReviewId" ColumnName="ReviewId" />
                 <ScalarProperty Name="ReviewVoteId" ColumnName="ReviewVoteId" />
                 <ScalarProperty Name="PenaltyPoints" ColumnName="PenaltyPoints" />
+                <ScalarProperty Name="PenaltyTime" ColumnName="PenaltyTime" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2541,6 +2547,7 @@
           <Property Name="RacePoints" Type="float" Nullable="false" />
           <Property Name="BonusPoints" Type="float" Nullable="false" />
           <Property Name="PenaltyPoints" Type="float" Nullable="false" />
+          <Property Name="PenaltyTime" Type="bigint" Nullable="false" />
           <Property Name="FinalPosition" Type="int" Nullable="false" />
           <Property Name="FinalPositionChange" Type="float" Nullable="false" />
           <Property Name="TotalPoints" Type="float" Nullable="false" />
@@ -2552,6 +2559,7 @@
           </Key>
           <Property Name="ScoredResultRowId" Type="bigint" customannotation:Index="{ Name: IX_ScoredResultRowId, Order: 0 }" Nullable="false" />
           <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+          <Property Name="PenaltyTime" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="ResultRowEntity">
           <Key>
@@ -2956,6 +2964,7 @@
           <Property Name="ReviewId" Type="bigint" customannotation:Index="{ Name: IX_ReviewId, Order: 0 }" Nullable="false" />
           <Property Name="ReviewVoteId" Type="bigint" customannotation:Index="{ Name: IX_ReviewVoteId, Order: 0 }" Nullable="true" />
           <Property Name="PenaltyPoints" Type="int" Nullable="false" />
+          <Property Name="PenaltyTime" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="CommentBaseEntity">
           <Key>
