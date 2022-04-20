@@ -113,6 +113,7 @@ namespace iRLeagueDatabase.Mapper
             target.NewCpi = source.NewCpi;
             target.OldLicenseLevel = source.OldLicenseLevel;
             target.NewLicenseLevel = source.NewLicenseLevel;
+            target.Disqualified = !source.PointsEligible;
 
             return target;
         }
@@ -635,6 +636,7 @@ namespace iRLeagueDatabase.Mapper
             target.NewLicenseLevel = source.NewLicenseLevel;
             target.OldCpi = source.OldCpi;
             target.NewCpi = source.NewCpi;
+            target.PointsEligible = !source.Disqualified;
 
             return target;
         }
