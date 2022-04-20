@@ -21,6 +21,7 @@ namespace iRLeagueDatabase.Mapper
         public void RegisterFiltersTypeMaps()
         {
             RegisterTypeMap<ResultsFilterOptionEntity, ResultsFilterOptionDTO>(MapToResultsFilterOptionDTO);
+            RegisterTypeMap<StandingsFilterOptionEntity, StandingsFilterOptionDTO>(MapToStandingsFilterOptionDTO);
         }
 
         public ResultsFilterOptionDTO MapToResultsFilterOptionDTO(ResultsFilterOptionEntity source, ResultsFilterOptionDTO target = null)
@@ -58,6 +59,44 @@ namespace iRLeagueDatabase.Mapper
             target.Exclude = source.Exclude;
             target.ScoringId = source.ScoringId;
             target.FilterPointsOnly = source.FilterPointsOnly;
+
+            return target;
+        }
+
+        public StandingsFilterOptionDTO MapToStandingsFilterOptionDTO(StandingsFilterOptionEntity source, StandingsFilterOptionDTO target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = new StandingsFilterOptionDTO();
+
+            MapToVersionDTO(source, target);
+
+            target.ColumnPropertyName = source.ColumnPropertyName;
+            target.Comparator = source.Comparator;
+
+            switch (source.ColumnPropertyName)
+            {
+                case nameof(ResultRowEntity.MemberId):
+                    target.ColumnPropertyName = nameof(ResultRowDataDTO.MemberId);
+                    break;
+                case nameof(ResultRowEntity.Member) + "." + nameof(LeagueMemberEntity.Team) + "." + nameof(TeamEntity.Name):
+                    target.ColumnPropertyName = nameof(ResultRowDataDTO.TeamName);
+                    break;
+                case nameof(ResultRowEntity.Member) + "." + nameof(LeagueMemberEntity.Fullname):
+                    target.ColumnPropertyName = nameof(ResultRowDataDTO.MemberName);
+                    break;
+                default:
+                    target.ColumnPropertyName = source.ColumnPropertyName;
+                    break;
+            }
+            var targetColumnProperty = typeof(ResultRowDataDTO).GetNestedPropertyInfo(target.ColumnPropertyName);
+            var sourceColumnProperty = typeof(ResultRowEntity).GetNestedPropertyInfo(source.ColumnPropertyName);
+            target.FilterValues = source.FilterValues.Split(';').Select(x => ConvertToResultsValueObject(sourceColumnProperty.PropertyType, x, targetColumnProperty.PropertyType)).ToArray();
+            target.FilterId = source.ResultsFilterId;
+            target.ResultsFilterType = source.ResultsFilterType;
+            target.Exclude = source.Exclude;
+            target.ScoringTableId = source.ScoringTableId;
 
             return target;
         }
@@ -116,6 +155,7 @@ namespace iRLeagueDatabase.Mapper
         public void RegisterFiltersTypeMaps()
         {
             RegisterTypeMap<ResultsFilterOptionDTO, ResultsFilterOptionEntity>(MapToResultsFilterOptionEntity);
+            RegisterTypeMap<StandingsFilterOptionDTO, StandingsFilterOptionEntity>(MapToStandingsFilterOptionEntity);
         }
 
         public ResultsFilterOptionEntity MapToResultsFilterOptionEntity(ResultsFilterOptionDTO source, ResultsFilterOptionEntity target = null)
@@ -158,6 +198,48 @@ namespace iRLeagueDatabase.Mapper
             }
             target.Scoring?.GetAllSessions().Where(x => x.SessionResult != null).ForEach(x => x.SessionResult.RequiresRecalculation = true);
             target.FilterPointsOnly = source.FilterPointsOnly;
+
+            return target;
+        }
+
+        public StandingsFilterOptionEntity MapToStandingsFilterOptionEntity(StandingsFilterOptionDTO source, StandingsFilterOptionEntity target = null)
+        {
+            if (source == null)
+                return null;
+            if (target == null)
+                target = DefaultGet<StandingsFilterOptionDTO, StandingsFilterOptionEntity>(source);
+
+            if (MapToRevision(source, target) == false)
+            {
+                return target;
+            }
+
+            switch (source.ColumnPropertyName)
+            {
+                case nameof(ResultRowDataDTO.MemberId):
+                    target.ColumnPropertyName = nameof(ResultRowEntity.MemberId);
+                    break;
+                case nameof(ResultRowDataDTO.TeamName):
+                    target.ColumnPropertyName = $"{nameof(ResultRowEntity.Member)}.{nameof(LeagueMemberEntity.Team)}.{nameof(TeamEntity.Name)}";
+                    break;
+                case nameof(ResultRowDataDTO.MemberName):
+                    target.ColumnPropertyName = $"{nameof(ResultRowEntity.Member)}.{nameof(LeagueMemberEntity.Fullname)}";
+                    break;
+                default:
+                    target.ColumnPropertyName = source.ColumnPropertyName;
+                    break;
+            }
+            target.Comparator = source.Comparator;
+            // get target and source columnproperty
+            var targetColumnProperty = typeof(ResultRowEntity).GetNestedPropertyInfo(target.ColumnPropertyName);
+            var sourceColumnProperty = typeof(ResultRowDataDTO).GetNestedPropertyInfo(source.ColumnPropertyName);
+            target.FilterValues = String.Join(";", source.FilterValues.Select(x => ConvertToResultsValueString(sourceColumnProperty.PropertyType, x, targetColumnProperty.PropertyType)));
+            target.ResultsFilterType = source.ResultsFilterType;
+            target.Exclude = source.Exclude;
+            if (target.ScoringTable == null && target.ScoringTableId == 0)
+            {
+                target.ScoringTable = DefaultGet<ScoringTableEntity>(new object[] { source.ScoringTableId });
+            }
 
             return target;
         }

@@ -8,6 +8,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using iRLeagueDatabase.Entities.Sessions;
 using iRLeagueManager.Enums;
+using iRLeagueDatabase.Entities.Filters;
+using iRLeagueDatabase.Filters;
 
 namespace iRLeagueDatabase.Entities.Results
 {
@@ -28,6 +30,9 @@ namespace iRLeagueDatabase.Entities.Results
         public DropRacesOption DropRacesOption { get; set; }
         public int ResultsPerRaceCount { get; set; }
         public virtual List<ScoringEntity> Scorings { get; set; }
+        [InverseProperty(nameof(StandingsFilterOptionEntity.ScoringTable))]
+        public virtual List<StandingsFilterOptionEntity> StandingsFilterOptions { get; set; }
+
         [NotMapped]
         public IEnumerable<SessionBaseEntity> Sessions => Scorings?.SelectMany(x => x.Sessions);
 
@@ -110,6 +115,20 @@ namespace iRLeagueDatabase.Entities.Results
                 return GetSeasonTeamStandings(currentSession, dbContext, maxRacesCount);
             }
 
+            // load filters 
+            if (StandingsFilterOptions == null)
+            {
+                dbContext.Entry(this).Collection(x => x.StandingsFilterOptions).Load();
+            }
+
+            List<IResultsFilter> resultsFilters = new List<IResultsFilter>();
+            foreach (var filterOption in StandingsFilterOptions)
+            {
+                var filter = FilterFactoryHelper.GetFilter(filterOption.ResultsFilterType, filterOption.ColumnPropertyName, filterOption.Exclude, false, filterOption.Comparator);
+                filter.SetFilterValueStrings(filterOption.FilterValues.Split(';'));
+                resultsFilters.Add(filter);
+            }
+
             var allScoredResults = Scorings?
                 .Where(x => x.ScoredResults != null)
                 .SelectMany(x => x.ScoredResults).ToList();
@@ -118,7 +137,12 @@ namespace iRLeagueDatabase.Entities.Results
             var currentResult = currentSession.SessionResult;
             var currentScoredResult = allScoredResults.SingleOrDefault(x => x.Result.Session == currentSession);
 
-            var previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
+            IEnumerable<ScoredResultRowEntity> previousScoredRows = previousScoredResults.SelectMany(x => x.FinalResults).ToList();
+            // apply filter
+            foreach(var filter in resultsFilters)
+            {
+                previousScoredRows = filter.GetFilteredRows(previousScoredRows);
+            }
             var previousStandingsRows = previousScoredRows
                 .AggregateByDriver(maxRacesCount, true)
                 .OrderBy(x => -x.TotalPoints)
@@ -128,8 +152,12 @@ namespace iRLeagueDatabase.Entities.Results
 
             allScoredResults = previousScoredResults.ToList();
             allScoredResults.Add(currentScoredResult);
-            var currentStandingsRows = allScoredResults
-                .SelectMany(x => x.FinalResults)
+            IEnumerable<ScoredResultRowEntity> allScoredResultRows = allScoredResults.SelectMany(x => x.FinalResults).ToList();
+            foreach(var filter in resultsFilters)
+            {
+                allScoredResultRows = filter.GetFilteredRows(allScoredResultRows);
+            }
+            var currentStandingsRows = allScoredResultRows
                 .AggregateByDriver(maxRacesCount, true)
                 .OrderBy(x => -x.TotalPoints)
                 .ThenBy(x => x.PenaltyPoints)
