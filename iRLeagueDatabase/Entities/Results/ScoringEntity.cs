@@ -141,7 +141,8 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 sortOptions = new List<SortOption>()
                 {
-                    new SortOption(SortOptionEnum.FinishPosition, 1)
+                    new SortOption(SortOptionEnum.Interval, 1),
+                    new SortOption(SortOptionEnum.FinishPosition, 1),
                 };
             }
             else
@@ -481,6 +482,7 @@ namespace iRLeagueDatabase.Entities.Results
                         //dbContext.SaveChanges();
                     }
                     scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
+                    scoredResultRow.PenaltyTime = GetPenaltyTime(scoredResultRow).Ticks;
                     if (BasePoints.Count() > 0)
                     {
                         scoredResultRow.RacePoints = 0;
@@ -1049,6 +1051,31 @@ namespace iRLeagueDatabase.Entities.Results
             }
 
             return penaltyPoints;
+        }
+
+        private TimeSpan GetPenaltyTime(ScoredResultRowEntity scoredResultRow)
+        {
+            if (scoredResultRow == null)
+            {
+                return TimeSpan.Zero;
+            }
+
+            TimeSpan penaltyTime = TimeSpan.Zero;
+
+            if (scoredResultRow.AddPenalty != null)
+            {
+                penaltyTime += TimeSpan.FromTicks(scoredResultRow.AddPenalty.PenaltyTime);
+            }
+
+            if (scoredResultRow.ReviewPenalties != null)
+            {
+                foreach(var reviewPenalty in scoredResultRow.ReviewPenalties)
+                {
+                    penaltyTime += TimeSpan.FromTicks(reviewPenalty.PenaltyTime);
+                }
+            }
+
+            return penaltyTime;
         }
 
         public override void Delete(LeagueDbContext dbContext)

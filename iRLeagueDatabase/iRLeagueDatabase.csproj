@@ -193,6 +193,10 @@
     <Compile Include="Migrations\202204160648278_AddStandingsFilters.designer.cs">
       <DependentUpon>202204160648278_AddStandingsFilters.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204201523030_AddTimePenalties.cs" />
+    <Compile Include="Migrations\202204201523030_AddTimePenalties.designer.cs">
+      <DependentUpon>202204201523030_AddTimePenalties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -258,6 +262,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204160648278_AddStandingsFilters.resx">
       <DependentUpon>202204160648278_AddStandingsFilters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204201523030_AddTimePenalties.resx">
+      <DependentUpon>202204201523030_AddTimePenalties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

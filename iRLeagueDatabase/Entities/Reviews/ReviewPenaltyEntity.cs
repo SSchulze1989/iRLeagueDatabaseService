@@ -25,6 +25,7 @@ namespace iRLeagueDatabase.Entities.Reviews
         public virtual AcceptedReviewVoteEntity ReviewVote { get; set; }
 
         public int PenaltyPoints { get; set; }
+        public long PenaltyTime { get; set; }
 
         public override object MappingId => new { ResultRowId, ReviewId };
 

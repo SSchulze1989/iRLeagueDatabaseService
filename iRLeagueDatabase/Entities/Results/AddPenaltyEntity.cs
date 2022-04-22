@@ -14,6 +14,7 @@ namespace iRLeagueDatabase.Entities.Results
         public long ScoredResultRowId { get; set; }
         public virtual ScoredResultRowEntity ScoredResultRow { get; set; }
         public int PenaltyPoints { get; set; }
+        public long PenaltyTime { get; set; }
 
         public override object MappingId => ScoredResultRowId;
 

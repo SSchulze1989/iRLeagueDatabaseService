@@ -113,6 +113,7 @@ namespace iRLeagueDatabase.Mapper
             target.NewCpi = source.NewCpi;
             target.OldLicenseLevel = source.OldLicenseLevel;
             target.NewLicenseLevel = source.NewLicenseLevel;
+            target.Disqualified = !source.PointsEligible;
 
             return target;
         }
@@ -155,6 +156,7 @@ namespace iRLeagueDatabase.Mapper
             target.FinalPosition = source.FinalPosition;
             target.FinalPositionChange = (int)source.FinalPositionChange;
             target.PenaltyPoints = (int)source.PenaltyPoints;
+            target.PenaltyTime = TimeSpanConverter.Convert(source.PenaltyTime);
             target.RacePoints = (int)source.RacePoints;
             target.ScoringId = source.ScoringId;
             target.ReviewPenalties = source.ReviewPenalties?.Select(x => MapToReviewPenaltyDTO(x)).ToArray();
@@ -336,6 +338,7 @@ namespace iRLeagueDatabase.Mapper
 
             target.ScoredResultRowId = source.ScoredResultRowId;
             target.PenaltyPoints = source.PenaltyPoints;
+            target.PenaltyTime = TimeSpanConverter.Convert(source.PenaltyTime);
 
             return target;
         }
@@ -635,6 +638,11 @@ namespace iRLeagueDatabase.Mapper
             target.NewLicenseLevel = source.NewLicenseLevel;
             target.OldCpi = source.OldCpi;
             target.NewCpi = source.NewCpi;
+            target.PointsEligible = !source.Disqualified;
+            if (target.Result != null)
+            {
+                target.Result.RequiresRecalculation = true;
+            }
 
             return target;
         }
@@ -784,6 +792,7 @@ namespace iRLeagueDatabase.Mapper
 
             target.ScoredResultRow = GetScoredResultRowEntity(new ScoredResultRowDataDTO() { ScoredResultRowId = source.ScoredResultRowId });
             target.PenaltyPoints = source.PenaltyPoints;
+            target.PenaltyTime = TimeSpanConverter.Convert(source.PenaltyTime);
             if (target.ScoredResultRow?.ScoredResult?.Result != null)
             {
                 target.ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
