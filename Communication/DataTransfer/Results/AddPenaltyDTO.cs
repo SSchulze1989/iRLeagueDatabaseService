@@ -36,6 +36,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public long? ScoredResultRowId { get; set; }
         [DataMember]
         public int PenaltyPoints { get; set; }
+        [DataMember]
+        public TimeSpan PenaltyTime { get; set; }
 
         public override object MappingId => ScoredResultRowId;
 

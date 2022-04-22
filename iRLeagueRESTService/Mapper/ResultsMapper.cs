@@ -338,6 +338,7 @@ namespace iRLeagueDatabase.Mapper
 
             target.ScoredResultRowId = source.ScoredResultRowId;
             target.PenaltyPoints = source.PenaltyPoints;
+            target.PenaltyTime = TimeSpanConverter.Convert(source.PenaltyTime);
 
             return target;
         }
@@ -787,6 +788,7 @@ namespace iRLeagueDatabase.Mapper
 
             target.ScoredResultRow = GetScoredResultRowEntity(new ScoredResultRowDataDTO() { ScoredResultRowId = source.ScoredResultRowId });
             target.PenaltyPoints = source.PenaltyPoints;
+            target.PenaltyTime = TimeSpanConverter.Convert(source.PenaltyTime);
             if (target.ScoredResultRow?.ScoredResult?.Result != null)
             {
                 target.ScoredResultRow.ScoredResult.Result.RequiresRecalculation = true;
