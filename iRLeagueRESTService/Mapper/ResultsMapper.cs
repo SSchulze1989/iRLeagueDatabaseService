@@ -639,6 +639,10 @@ namespace iRLeagueDatabase.Mapper
             target.OldCpi = source.OldCpi;
             target.NewCpi = source.NewCpi;
             target.PointsEligible = !source.Disqualified;
+            if (target.Result != null)
+            {
+                target.Result.RequiresRecalculation = true;
+            }
 
             return target;
         }
