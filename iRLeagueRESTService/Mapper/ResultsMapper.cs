@@ -163,6 +163,7 @@ namespace iRLeagueDatabase.Mapper
             target.TotalPoints = (int)source.TotalPoints;
             target.TeamId = source.TeamId;
             target.TeamName = source.Team?.Name;
+            target.FinalInterval = TimeSpanConverter.Convert(source.Interval);
 
             return target;
         }

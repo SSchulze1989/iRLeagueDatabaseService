@@ -52,6 +52,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         [DataMember]
         public int FinalPositionChange { get; set; }
         [DataMember]
+        public TimeSpan FinalInterval { get; set; }
+        [DataMember]
         public ReviewPenaltyDTO[] ReviewPenalties { get; set; }
         [DataMember(EmitDefaultValue = false)]
         public bool? IsDroppedResult { get; set; } = null;
