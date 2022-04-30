@@ -160,6 +160,7 @@
           <Property Name="OfftrackLaps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="NumContactLaps" Type="Int32" Nullable="false" />
           <Property Name="ContactLaps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RacePoints" Type="Double" Nullable="false" />
           <Property Name="PointsEligible" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Member" Relationship="Self.ResultRowEntity_Member" FromRole="ResultRowEntity_Member_Source" ToRole="ResultRowEntity_Member_Target" />
           <NavigationProperty Name="Result" Relationship="Self.ResultEntity_RawResults" FromRole="ResultEntity_RawResults_Target" ToRole="ResultEntity_RawResults_Source" />
@@ -1861,6 +1862,7 @@
                 <ScalarProperty Name="OfftrackLaps" ColumnName="OfftrackLaps" />
                 <ScalarProperty Name="NumContactLaps" ColumnName="NumContactLaps" />
                 <ScalarProperty Name="ContactLaps" ColumnName="ContactLaps" />
+                <ScalarProperty Name="RacePoints" ColumnName="RacePoints" />
                 <ScalarProperty Name="PointsEligible" ColumnName="PointsEligible" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2608,6 +2610,7 @@
           <Property Name="OfftrackLaps" Type="nvarchar(max)" Nullable="true" />
           <Property Name="NumContactLaps" Type="int" Nullable="false" />
           <Property Name="ContactLaps" Type="nvarchar(max)" Nullable="true" />
+          <Property Name="RacePoints" Type="float" Nullable="false" />
           <Property Name="PointsEligible" Type="bit" Nullable="false" />
           <Property Name="IRacingId" Type="nvarchar(max)" Nullable="true" />
           <Property Name="Discriminator" Type="nvarchar" MaxLength="128" Nullable="false" />

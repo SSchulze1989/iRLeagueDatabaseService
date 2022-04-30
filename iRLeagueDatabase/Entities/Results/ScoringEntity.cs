@@ -481,6 +481,7 @@ namespace iRLeagueDatabase.Entities.Results
                         removePenalty.ForEach(x => x.Delete(dbContext));
                         //dbContext.SaveChanges();
                     }
+                    scoredResultRow.RacePoints = resultRow.RacePoints;
                     scoredResultRow.PenaltyPoints = GetPenaltyPoints(scoredResultRow);
                     scoredResultRow.PenaltyTime = GetPenaltyTime(scoredResultRow).Ticks;
                     if (BasePoints.Count() > 0)

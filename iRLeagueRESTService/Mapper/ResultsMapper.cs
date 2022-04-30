@@ -114,6 +114,7 @@ namespace iRLeagueDatabase.Mapper
             target.OldLicenseLevel = source.OldLicenseLevel;
             target.NewLicenseLevel = source.NewLicenseLevel;
             target.Disqualified = !source.PointsEligible;
+            target.RacePoints = (int)source.RacePoints;
 
             return target;
         }
@@ -164,6 +165,9 @@ namespace iRLeagueDatabase.Mapper
             target.TeamId = source.TeamId;
             target.TeamName = source.Team?.Name;
             target.FinalInterval = TimeSpanConverter.Convert(source.Interval);
+            target.Firstname = source.Member?.Firstname;
+            target.Lastname = source.Member?.Lastname;
+            target.TeamColor = source.Team?.TeamColor;
 
             return target;
         }
@@ -644,6 +648,7 @@ namespace iRLeagueDatabase.Mapper
             {
                 target.Result.RequiresRecalculation = true;
             }
+            target.RacePoints = source.RacePoints;
 
             return target;
         }
