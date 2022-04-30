@@ -120,6 +120,8 @@ namespace iRLeagueDatabase.DataTransfer.Results
         public int NewLicenseLevel { get; set; }
         [DataMember]
         public bool Disqualified { get; set; }
+        [DataMember]
+        public int RacePoints { get; set; }
 
 
         public override object MappingId => ResultRowId;

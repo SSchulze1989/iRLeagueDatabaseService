@@ -197,6 +197,10 @@
     <Compile Include="Migrations\202204201523030_AddTimePenalties.designer.cs">
       <DependentUpon>202204201523030_AddTimePenalties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202204300850355_AddRacePointsToRawResult.cs" />
+    <Compile Include="Migrations\202204300850355_AddRacePointsToRawResult.designer.cs">
+      <DependentUpon>202204300850355_AddRacePointsToRawResult.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="MyContextConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -265,6 +269,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204201523030_AddTimePenalties.resx">
       <DependentUpon>202204201523030_AddTimePenalties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204300850355_AddRacePointsToRawResult.resx">
+      <DependentUpon>202204300850355_AddRacePointsToRawResult.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
