@@ -648,6 +648,7 @@ namespace iRLeagueDatabase.Mapper
             {
                 target.Result.RequiresRecalculation = true;
             }
+            target.RacePoints = source.RacePoints;
 
             return target;
         }
