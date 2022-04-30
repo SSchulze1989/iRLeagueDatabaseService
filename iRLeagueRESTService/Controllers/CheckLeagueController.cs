@@ -78,11 +78,11 @@ namespace iRLeagueRESTService.Controllers
                 // check current number of leagues for that user
                 string userId = User.Identity.GetUserId();
                 var leagueCount = register.Leagues.Count(x => x.CreatorId.ToString() == userId);
-                var maxLeagues = 3;
-                if (leagueCount >= maxLeagues)
-                {
-                    return BadRequest($"Create league failed. Maximum numbers of {maxLeagues} leagues per user reached.");
-                }
+                //var maxLeagues = 3;
+                //if (leagueCount >= maxLeagues)
+                //{
+                //    return BadRequest($"Create league failed. Maximum numbers of {maxLeagues} leagues per user reached.");
+                //}
 
                 using (var dbContext = new LeagueDbContext(dbName, createDb: true))
                 {

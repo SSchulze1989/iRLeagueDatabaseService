@@ -141,7 +141,7 @@ namespace iRLeagueDatabase.Entities.Results
             {
                 sortOptions = new List<SortOption>()
                 {
-                    new SortOption(SortOptionEnum.Interval, 1),
+                    //new SortOption(SortOptionEnum.Interval, 1),
                     new SortOption(SortOptionEnum.FinishPosition, 1),
                 };
             }
@@ -511,7 +511,7 @@ namespace iRLeagueDatabase.Entities.Results
                     var position = scoredResultRowObj.index + 1;
                     var startPosition = scoredResultRowObj.row.StartPosition;
                     var fastestLapPosition = scoredResultRows
-                        .Where(x => x.FastestLapTime != 0)
+                        .Where(x => x.FastestLapTime > 0)
                         .OrderBy(x => x.FastestLapTime)
                         .Select((x, i) => new { index = i, row = x })
                         .SingleOrDefault(x => x.row.MemberId == scoredResultRow.MemberId)
@@ -712,8 +712,8 @@ namespace iRLeagueDatabase.Entities.Results
             // Make sure every driver in this event has a result row for every subsession
             // only drivers that have participated in all events will be scored
             var eventDrivers = subSessionResults
-                .Select(x => x.Result.DriverList)
-                .Aggregate((x, y) => x.Intersect(y))
+                .SelectMany(x => x.Result.DriverList)
+                //.Aggregate((x, y) => x.Intersect(y))
                 .Distinct();
 
             var driverResultRows = subSessionResultRows
